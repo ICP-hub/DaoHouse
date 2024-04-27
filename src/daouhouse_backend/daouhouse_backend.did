@@ -1,3 +1,87 @@
+type CanisterChange = record {
+  timestamp_nanos : nat64;
+  canister_version : nat64;
+  origin : CanisterChangeOrigin;
+  details : CanisterChangeDetails;
+};
+type CanisterChangeDetails = variant {
+  creation : CreationRecord;
+  code_deployment : CodeDeploymentRecord;
+  controllers_change : CreationRecord;
+  code_uninstall;
+};
+type CanisterChangeOrigin = variant {
+  from_user : FromUserRecord;
+  from_canister : FromCanisterRecord;
+};
+type CanisterIdRecord = record { canister_id : principal };
+type CanisterInfoRequest = record {
+  canister_id : principal;
+  num_requested_changes : opt nat64;
+};
+type CanisterInfoResponse = record {
+  controllers : vec principal;
+  module_hash : opt blob;
+  recent_changes : vec CanisterChange;
+  total_num_changes : nat64;
+};
+type CanisterInstallMode = variant {
+  reinstall;
+  upgrade : opt opt bool;
+  install;
+};
+type CanisterSettings = record {
+  freezing_threshold : opt nat;
+  controllers : opt vec principal;
+  reserved_cycles_limit : opt nat;
+  memory_allocation : opt nat;
+  compute_allocation : opt nat;
+};
+type CanisterStatusResponse = record {
+  status : CanisterStatusType;
+  memory_size : nat;
+  cycles : nat;
+  settings : DefiniteCanisterSettings;
+  query_stats : QueryStats;
+  idle_cycles_burned_per_day : nat;
+  module_hash : opt blob;
+  reserved_cycles : nat;
+};
+type CanisterStatusType = variant { stopped; stopping; running };
+type ChunkHash = record { hash : blob };
+type CodeDeploymentMode = variant { reinstall; upgrade; install };
+type CodeDeploymentRecord = record {
+  mode : CodeDeploymentMode;
+  module_hash : blob;
+};
+type CreateCanisterArgument = record { settings : opt CanisterSettings };
+type CreationRecord = record { controllers : vec principal };
+type DefiniteCanisterSettings = record {
+  freezing_threshold : nat;
+  controllers : vec principal;
+  reserved_cycles_limit : nat;
+  memory_allocation : nat;
+  compute_allocation : nat;
+};
+type FromCanisterRecord = record {
+  canister_version : opt nat64;
+  canister_id : principal;
+};
+type FromUserRecord = record { user_id : principal };
+type InstallChunkedCodeArgument = record {
+  arg : blob;
+  wasm_module_hash : blob;
+  mode : CanisterInstallMode;
+  chunk_hashes_list : vec ChunkHash;
+  target_canister : principal;
+  store_canister : opt principal;
+};
+type InstallCodeArgument = record {
+  arg : blob;
+  wasm_module : blob;
+  mode : CanisterInstallMode;
+  canister_id : principal;
+};
 type Profile = record {
   username : text;
   user_id : principal;
@@ -9,11 +93,71 @@ type Profileinput = record {
   email_id : text;
   profile_img : blob;
 };
-type Result = variant { Ok; Err : text };
+type QueryStats = record {
+  response_payload_bytes_total : nat;
+  num_instructions_total : nat;
+  num_calls_total : nat;
+  request_payload_bytes_total : nat;
+};
+type RejectionCode = variant {
+  NoError;
+  CanisterError;
+  SysTransient;
+  DestinationInvalid;
+  Unknown;
+  SysFatal;
+  CanisterReject;
+};
+type Result = variant {
+  Ok : record { CanisterInfoResponse };
+  Err : record { RejectionCode; text };
+};
+type Result_1 = variant {
+  Ok : record { CanisterStatusResponse };
+  Err : record { RejectionCode; text };
+};
+type Result_2 = variant { Ok; Err : record { RejectionCode; text } };
+type Result_3 = variant {
+  Ok : record { CanisterIdRecord };
+  Err : record { RejectionCode; text };
+};
+type Result_4 = variant { Ok; Err : text };
+type Result_5 = variant {
+  Ok : record { blob };
+  Err : record { RejectionCode; text };
+};
+type Result_6 = variant {
+  Ok : record { vec ChunkHash };
+  Err : record { RejectionCode; text };
+};
+type Result_7 = variant {
+  Ok : record { ChunkHash };
+  Err : record { RejectionCode; text };
+};
+type UpdateSettingsArgument = record {
+  canister_id : principal;
+  settings : CanisterSettings;
+};
+type UploadChunkArgument = record { chunk : blob; canister_id : principal };
 service : () -> {
-  create_profile : (Profileinput) -> (Result);
+  canister_info : (CanisterInfoRequest) -> (Result);
+  canister_status : (CanisterIdRecord) -> (Result_1);
+  clear_chunk_store : (CanisterIdRecord) -> (Result_2);
+  create_canister : (CreateCanisterArgument, nat) -> (Result_3);
+  create_profile : (Profileinput) -> (Result_4);
+  delete_canister : (CanisterIdRecord) -> (Result_2);
   delete_profile : () -> ();
+  deposit_cycles : (CanisterIdRecord, nat) -> (Result_2);
   get_profile : () -> (opt Profile) query;
   greet : (text) -> (text) query;
-  update_profile : (Profileinput) -> (Result);
+  install_chunked_code : (InstallChunkedCodeArgument) -> (Result_2);
+  install_code : (InstallCodeArgument) -> (Result_2);
+  raw_rand : () -> (Result_5);
+  start_canister : (CanisterIdRecord) -> (Result_2);
+  stop_canister : (CanisterIdRecord) -> (Result_2);
+  stored_chunks : (CanisterIdRecord) -> (Result_6);
+  uninstall_code : (CanisterIdRecord) -> (Result_2);
+  update_profile : (Profileinput) -> (Result_4);
+  update_settings : (UpdateSettingsArgument) -> (Result_2);
+  upload_chunk : (UploadChunkArgument) -> (Result_7);
 }

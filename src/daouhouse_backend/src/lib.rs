@@ -1,8 +1,20 @@
+mod types;
+
 use ic_cdk::{api, init, query, update, export_candid};
 use std::cell::RefCell;
 use std::collections::BTreeMap;
 use candid::{CandidType, Principal};
-use serde::{Deserialize};
+use serde::Deserialize;
+use crate::api::call::CallResult;
+
+
+// use candid::{Encode, Decode};
+
+pub mod tesing;
+
+use types::*;
+
+
 
 type ProfileStore = BTreeMap<Principal, Profile>;
 
@@ -19,7 +31,7 @@ struct Profileinput{
     pub email_id: String,
     pub profile_img: Vec<u8>,
     pub username: String,
-}
+}   
 
 thread_local! {
     static PROFILE_STORE: RefCell<ProfileStore> = RefCell::default();
@@ -101,10 +113,43 @@ fn delete_profile() {
     });
 }
 
-// This function is your initial greet function.
 #[query]
 fn greet(name: String) -> String {
     format!("Hello, {}!", name)
 }
+
+
+// #[derive(CandidType, Deserialize)]
+// struct CreateCanisterArgument {{
+//     // Your struct fields here
+// }}
+
+// #[derive(CandidType, Deserialize)]
+// struct InstallCodeArgument {{
+//     // Your struct fields here
+// }}
+
+// pub async fn create_canister_and_install_code(create_arg: CreateCanisterArgument, install_arg: InstallCodeArgument) -> Result<(), String> {{
+//     // Your create canister logic here
+
+//     // Your install code logic here
+// }}
+
+// #[update]
+// async fn run() {{
+//     let create_canister_arg = CreateCanisterArgument {{
+//         // Initialize your struct fields here
+//     }};
+
+//     let install_code_arg = InstallCodeArgument {{
+//         // Initialize your struct fields here
+//     }};
+
+//     create_canister_and_install_code(create_canister_arg, install_code_arg).await.unwrap();
+// }}
+
+
+
+
 
 export_candid!();
