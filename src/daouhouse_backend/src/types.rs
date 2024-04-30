@@ -457,3 +457,31 @@ pub struct CanisterInfoResponse {
     /// Controllers of the canister.
     pub controllers: Vec<Principal>,
 }
+
+#[derive(Clone, CandidType, Serialize,Deserialize)]
+pub struct UserProfile{
+    pub user_id: Principal,
+    pub email_id: String,
+    pub profile_img: Vec<i8>,
+    pub username: String,
+    pub dao_ids: Vec<String>,
+}
+
+
+#[derive(Clone,CandidType,Serialize,Deserialize)]
+pub struct Profileinput{
+    pub email_id: String,
+    pub profile_img: Vec<i8>,
+    pub username: String,
+} 
+
+#[derive(Clone,CandidType,Serialize,Deserialize)]
+pub struct DaoInput{
+    pub dao_name:String,
+    pub purpose:String,
+    pub link_of_document:String,
+    pub cool_down_period:String,
+    pub members:Vec<String>,
+}
+
+

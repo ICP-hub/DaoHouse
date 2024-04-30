@@ -82,16 +82,10 @@ type InstallCodeArgument = record {
   mode : CanisterInstallMode;
   canister_id : principal;
 };
-type Profile = record {
-  username : text;
-  user_id : principal;
-  email_id : text;
-  profile_img : blob;
-};
 type Profileinput = record {
   username : text;
   email_id : text;
-  profile_img : blob;
+  profile_img : vec int8;
 };
 type QueryStats = record {
   response_payload_bytes_total : nat;
@@ -121,16 +115,15 @@ type Result_3 = variant {
   Ok : record { CanisterIdRecord };
   Err : record { RejectionCode; text };
 };
-type Result_4 = variant { Ok; Err : text };
-type Result_5 = variant {
+type Result_4 = variant {
   Ok : record { blob };
   Err : record { RejectionCode; text };
 };
-type Result_6 = variant {
+type Result_5 = variant {
   Ok : record { vec ChunkHash };
   Err : record { RejectionCode; text };
 };
-type Result_7 = variant {
+type Result_6 = variant {
   Ok : record { ChunkHash };
   Err : record { RejectionCode; text };
 };
@@ -139,25 +132,32 @@ type UpdateSettingsArgument = record {
   settings : CanisterSettings;
 };
 type UploadChunkArgument = record { chunk : blob; canister_id : principal };
-service : () -> {
+type UserProfile = record {
+  username : text;
+  dao_ids : vec text;
+  user_id : principal;
+  email_id : text;
+  profile_img : vec int8;
+};
+service : {
   canister_info : (CanisterInfoRequest) -> (Result);
   canister_status : (CanisterIdRecord) -> (Result_1);
   clear_chunk_store : (CanisterIdRecord) -> (Result_2);
   create_canister : (CreateCanisterArgument, nat) -> (Result_3);
-  create_profile : (Profileinput) -> (Result_4);
+  create_profile : (Profileinput) -> (text);
   delete_canister : (CanisterIdRecord) -> (Result_2);
-  delete_profile : () -> ();
+  delete_profile : () -> (text);
   deposit_cycles : (CanisterIdRecord, nat) -> (Result_2);
-  get_profile : () -> (opt Profile) query;
+  get_user_profile : () -> (UserProfile) query;
   greet : (text) -> (text) query;
   install_chunked_code : (InstallChunkedCodeArgument) -> (Result_2);
   install_code : (InstallCodeArgument) -> (Result_2);
-  raw_rand : () -> (Result_5);
+  raw_rand : () -> (Result_4);
   start_canister : (CanisterIdRecord) -> (Result_2);
   stop_canister : (CanisterIdRecord) -> (Result_2);
-  stored_chunks : (CanisterIdRecord) -> (Result_6);
+  stored_chunks : (CanisterIdRecord) -> (Result_5);
   uninstall_code : (CanisterIdRecord) -> (Result_2);
-  update_profile : (Profileinput) -> (Result_4);
+  update_profile : (Profileinput) -> (text);
   update_settings : (UpdateSettingsArgument) -> (Result_2);
-  upload_chunk : (UploadChunkArgument) -> (Result_7);
+  upload_chunk : (UploadChunkArgument) -> (Result_6);
 }
