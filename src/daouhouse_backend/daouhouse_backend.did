@@ -56,6 +56,13 @@ type CodeDeploymentRecord = record {
 };
 type CreateCanisterArgument = record { settings : opt CanisterSettings };
 type CreationRecord = record { controllers : vec principal };
+type DaoInput = record {
+  members : vec text;
+  dao_name : text;
+  link_of_document : text;
+  cool_down_period : text;
+  purpose : text;
+};
 type DefiniteCanisterSettings = record {
   freezing_threshold : nat;
   controllers : vec principal;
@@ -115,15 +122,16 @@ type Result_3 = variant {
   Ok : record { CanisterIdRecord };
   Err : record { RejectionCode; text };
 };
-type Result_4 = variant {
+type Result_4 = variant { Ok : text; Err : text };
+type Result_5 = variant {
   Ok : record { blob };
   Err : record { RejectionCode; text };
 };
-type Result_5 = variant {
+type Result_6 = variant {
   Ok : record { vec ChunkHash };
   Err : record { RejectionCode; text };
 };
-type Result_6 = variant {
+type Result_7 = variant {
   Ok : record { ChunkHash };
   Err : record { RejectionCode; text };
 };
@@ -144,6 +152,7 @@ service : {
   canister_status : (CanisterIdRecord) -> (Result_1);
   clear_chunk_store : (CanisterIdRecord) -> (Result_2);
   create_canister : (CreateCanisterArgument, nat) -> (Result_3);
+  create_dao : (DaoInput) -> (Result_4);
   create_profile : (Profileinput) -> (text);
   delete_canister : (CanisterIdRecord) -> (Result_2);
   delete_profile : () -> (text);
@@ -152,12 +161,12 @@ service : {
   greet : (text) -> (text) query;
   install_chunked_code : (InstallChunkedCodeArgument) -> (Result_2);
   install_code : (InstallCodeArgument) -> (Result_2);
-  raw_rand : () -> (Result_4);
+  raw_rand : () -> (Result_5);
   start_canister : (CanisterIdRecord) -> (Result_2);
   stop_canister : (CanisterIdRecord) -> (Result_2);
-  stored_chunks : (CanisterIdRecord) -> (Result_5);
+  stored_chunks : (CanisterIdRecord) -> (Result_6);
   uninstall_code : (CanisterIdRecord) -> (Result_2);
   update_profile : (Profileinput) -> (text);
   update_settings : (UpdateSettingsArgument) -> (Result_2);
-  upload_chunk : (UploadChunkArgument) -> (Result_6);
+  upload_chunk : (UploadChunkArgument) -> (Result_7);
 }
