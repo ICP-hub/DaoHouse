@@ -40,9 +40,9 @@ async fn delete_profile() -> String {
 pub async fn create_dao( dao_detail: DaoInput) -> Result<String,String> {
     let principal_id = api::caller();
 
-    if with_state(|state| state.user_profile.contains_key(&principal_id)).await {
-        return Err("User not registered".to_string());
-    }
+    // if with_state(|state| state.user_profile.contains_key(&principal_id)).await {
+    //     return Err("User not registered".to_string());
+    // }
 
     // let user_detail=with_state(|state| state.user_profile.get(&principal_id));
 
@@ -115,7 +115,7 @@ async fn install_code(arg: InstallCodeArgument) -> CallResult<()> {
     // let wasm_base64: &str = "3831fb07143cd43c3c51f770342d2b7d0a594311529f5503587bf1544ccd44be";
     // let wasm_module_sample: Vec<u8> = base64::decode(wasm_base64).expect("Decoding failed");
 
-    let wasm_module_sample: Vec<u8> = include_bytes!("/home/harshit/Desktop/company/DaoHouse/.dfx/local/canisters/daouhouse_backend/daouhouse_backend.wasm").to_vec();
+    let wasm_module_sample: Vec<u8> = include_bytes!("/home/harshit/Desktop/company/DaoHouse/.dfx/ic/canisters/daouhouse_backend/daouhouse_backend.wasm").to_vec();
     
     
     let cycles: u128 = 10_000_000_000; 
