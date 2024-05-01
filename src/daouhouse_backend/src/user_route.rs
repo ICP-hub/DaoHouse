@@ -44,8 +44,9 @@ pub async fn create_dao( dao_detail: DaoInput) -> Result<String,String> {
         return Err("User not registered".to_string());
     }
 
-    // let user_detail=with_state(|state| state.user_profile.get(&principal_id)).unwrap().clone();
+    // let user_detail=with_state(|state| state.user_profile.get(&principal_id));
 
+    let mut user_profile_detail =  with_state(|state| routes::get_user_profile(state)).await;
     let arg = CreateCanisterArgument {
         settings: None,
     };
@@ -59,6 +60,18 @@ pub async fn create_dao( dao_detail: DaoInput) -> Result<String,String> {
     let canister_id_principal = canister_id.canister_id;
 
     println!("Canister ID: {}", canister_id_principal.to_string());
+
+
+    user_profile_detail.dao_ids.push(canister_id_principal.to_string());
+
+    let new_profile = UserProfile {
+        user_id: user_profile_detail.user_id,
+        email_id: user_profile_detail.email_id,
+        profile_img: user_profile_detail.profile_img,
+        username: user_profile_detail.username,
+        dao_ids: user_profile_detail.dao_ids,
+    };
+    with_state(|state| {state.user_profile.insert(principal_id, new_profile)}).await;
     let arg1 = InstallCodeArgument {
         mode: CanisterInstallMode::Install, 
         canister_id: canister_id_principal, 
