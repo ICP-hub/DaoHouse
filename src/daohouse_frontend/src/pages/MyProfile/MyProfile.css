@@ -4,15 +4,6 @@
     top: 15px;
     left: 15px;
   }
-  .BigLine {
-    width: 60px;
-    border-top-width: 1px;
-  }
-  .SmallLine {
-    width: 40px;
-    border-top-width: 1px;
-    margin-top: 0.2rem;
-  }
   #lottie-bigCircle {
     height: 78px !important;
     width: 78px !important;
@@ -29,9 +20,8 @@
     position: relative;
     height: 18vh;
   }
-  .edit-btn {
-    width: 2.6rem;
-    border-radius: 100%;
+  .edit-pen {
+    margin: auto;
   }
   .user-acc-info {
     display: none;

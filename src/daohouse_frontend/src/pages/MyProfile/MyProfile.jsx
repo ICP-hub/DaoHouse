@@ -119,8 +119,8 @@ const MyProfile = () => {
             My Profile
           </h1>
           <div className="flex flex-col items-start">
-            <div className="w-32 border-t-2 border-white BigLine"></div>
-            <div className="w-14 mt-2 border-t-2 border-white SmallLine"></div>
+            <div className="md:w-32 w-[60px] md:border-t-2 border-t-[1px] border-white BigLine"></div>
+            <div className="md:w-14 w-[40px] wd:mt-2 mt-1 md:border-t-2 border-t-[1px] border-white SmallLine"></div>
           </div>
         </div>
       </div>
@@ -170,14 +170,14 @@ const MyProfile = () => {
                 <p className="text-[12px] md:text-[16px] font-normal text-left text-[#646464]">
                   gmail@gmail.xyz
                 </p>
-                <div className="flex justify-between mt-3 user-acc-info">
-                  <span className="md:mr-5 md:text-[32px] font-normal text-[#05212C] ">
+                <div className="flex justify-between mt-3">
+                  <span className="md:mr-5 md:text-[32px] font-normal text-[#05212C] user-acc-info">
                     6 <span className=" md:text-[16px] mx-1">Posts</span>
                   </span>
-                  <span className="md:mx-5 md:text-[32px] font-normal text-[#05212C]">
+                  <span className="md:mx-5 md:text-[32px] font-normal text-[#05212C] user-acc-info">
                     3 <span className=" md:text-[16px] mx-1">Followers</span>
                   </span>
-                  <span className="md:mx-5 md:text-[32px] font-normal text-[#05212C]">
+                  <span className="md:mx-5 md:text-[32px] font-normal text-[#05212C] user-acc-info">
                     3 <span className=" md:text-[16px] mx-1">Following</span>
                   </span>
                 </div>
@@ -187,9 +187,13 @@ const MyProfile = () => {
             <div className="flex justify-end gap-4 md:mt-4 md:mr-4">
               <button
                 onClick={() => navigate("/edit-profile")}
-                className="bg-white text-[16px] text-[#05212C] gap-1  shadow-xl py-4 px-3 rounded-[27px] w-[181px] h-[40px] flex items-center space-x-4 rounded-2xl edit-btn"
+                className="bg-white text-[16px] text-[#05212C] gap-1  shadow-xl md:py-4 md:px-3 rounded-[27px] md:w-[181px] md:h-[40px] w-[2.5rem] h-[2.5rem] md:flex items-center space-x-4 rounded-2xl"
               >
-                <img src={EditPen} alt="edit" className="mr-2 h-4 w-4" />
+                <img
+                  src={EditPen}
+                  alt="edit"
+                  className="md:mr-2 h-4 w-4 edit-pen"
+                />
                 <span className="hidden sm:inline">Edit Profile</span>
               </button>
             </div>
@@ -210,7 +214,7 @@ const MyProfile = () => {
             <h3 className="text-[#05212C] md:text-[24px] text-[18px] md:font-bold font-semibold ml-4">
               About Me
             </h3>
-            <div className="md:mt-4 mt-2 bg-[#F4F2EC] p-4 rounded-lg">
+            <div className="md:mt-4 mt-2 mb-6 bg-[#F4F2EC] p-4 rounded-lg">
               <p className="md:text-[20px] text-[16px] font-semibold text-[#05212C] md:ml-2 md:mb-3">
                 Description
               </p>
