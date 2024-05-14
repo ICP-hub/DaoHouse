@@ -134,7 +134,10 @@ const Navbar = () => {
       </div>
       <LoginModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() =>{
+          setIsModalOpen(false)
+          setIsLoading(false)
+        }}
         onLogin={handleLogin}
         onLoginPlug={handleLoginPlug}
       />
