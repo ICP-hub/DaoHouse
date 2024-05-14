@@ -13,6 +13,7 @@ import Lottie from "react-lottie";
 import BigCircleAnimation from "./BigCircleAnimation.json";
 import SmallCircleAnimation from "./SmallCircleAnimation.json";
 import "./MyProfile.css";
+import ProfileTitleDivider from "../../Components/MyProfile/ProfileTitleDivider";
 
 // Main component function
 const MyProfile = () => {
@@ -72,7 +73,7 @@ const MyProfile = () => {
           />
 
           {/* Big circle animation */}
-          <div className="absolute z-20  md:right-[68px] md:top-1/2 top-[60%] -translate-y-1/2 right-[-50px]">
+          <div className="absolute z-20  md:right-[68px] md:top-1/2 top-[59%] -translate-y-1/2 right-[-50px]">
             <Lottie
               options={defaultOptions}
               style={{ height: "112px", width: "112px" }}
@@ -87,7 +88,7 @@ const MyProfile = () => {
           />
 
           {/* Small circle animation */}
-          <div className="absolute md:right-[24.75rem] right-[7.1rem] md:top-[30%] top-[35%] -translate-y-[93%]">
+          <div className="absolute md:right-[24.75rem] right-[7.1rem] md:top-[30%] top-[33%] -translate-y-[93%]">
             <Lottie
               options={defaultOptions2}
               height={50}
@@ -100,7 +101,7 @@ const MyProfile = () => {
           <img
             src={MediumCircle}
             alt="Medium Circle"
-            className="absolute w-[36px] h-36[px] md:w-[52px] md:h-[52px] md:right-[40rem] right-[13rem] -translate-y-full md:top-[95%] top-[86%]"
+            className="absolute w-[36px] h-36[px] md:w-[52px] md:h-[52px] md:right-[40rem] right-[13rem] -translate-y-full md:top-[95%] top-[89%]"
           />
 
           {/* Medium circle animation */}
@@ -114,16 +115,7 @@ const MyProfile = () => {
           </div>
         </div>
 
-        {/* Profile title and divider */}
-        <div className="flex justify-between items-center md:gap-4 gap-0 my-profile">
-          <h1 className="md:text-[40px] text-[24px] p-2 text-white">
-            My Profile
-          </h1>
-          <div className="flex flex-col items-start">
-            <div className="md:w-32 w-[60px] md:border-t-2 border-t-[1px] border-white BigLine"></div>
-            <div className="md:w-14 w-[40px] wd:mt-2 mt-1 md:border-t-2 border-t-[1px] border-white SmallLine"></div>
-          </div>
-        </div>
+        <ProfileTitleDivider title="My Profile" />
       </div>
       {/* Main profile content */}
       <div className="bg-[#c8ced3] md:py-8 md:px-8 flex md:flex-row gap-2 flex-col w-full user-container">
@@ -229,7 +221,17 @@ const MyProfile = () => {
               <p className="md:text-[20px] text-[16px] font-semibold text-[#05212C] md:ml-2 md:mb-3 mt-6">
                 Tags That Defines You
               </p>
-              <Tags />
+              <Tags
+                tags={[
+                  "ICP",
+                  "Blockchain",
+                  "Engineer",
+                  "Digital Artist",
+                  "NFT Artist",
+                  "Decentralization",
+                  "Ethereum",
+                ]}
+              />
               <p className="md:text-[20px] text-[16px] font-semibold text-[#05212C] ml-2 mb-3 mt-6">
                 Personal Links & Contact Info
               </p>

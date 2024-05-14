@@ -1,16 +1,6 @@
 import React from "react";
 
-const Tags = () => {
-  const tags = [
-    "ICP",
-    "Blockchain",
-    "Engineer",
-    "Digital Artist",
-    "NFT Artist",
-    "Decentralization",
-    "Ethereum",
-  ];
-
+const Tags = ({ tags }) => {
   return (
     <div className="bg-[#FFFFFF] md:text-[16px] text-[12px] font-normal text-[#646464] md:p-2 p-3 my-2 rounded-lg">
       <div className="flex flex-wrap">
