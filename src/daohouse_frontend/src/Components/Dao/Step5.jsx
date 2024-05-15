@@ -25,7 +25,7 @@ const Step5 = ({ setData, setActiveStep }) => {
   function handleSaveAndNext() {
     setData((prevData) => ({
       ...prevData,
-      step5: { ...quorum },
+      step5: quorum,
     }))
 
     setActiveStep(5)
