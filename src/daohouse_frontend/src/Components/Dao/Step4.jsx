@@ -109,7 +109,7 @@ const Step4 = ({ data, setData, setActiveStep }) => {
 
         {activeStage === 0 && (
           <React.Fragment>
-            <table className={className + "__table w-full overflow-x-auto"}>
+            <table className="table-auto">
               <thead>
                 <tr>
                   <th className="font-semibold w-2/5 p-4 flex justify-left">
