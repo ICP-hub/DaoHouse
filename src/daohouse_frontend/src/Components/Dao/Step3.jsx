@@ -4,7 +4,7 @@ import { FaSquarePlus } from "react-icons/fa6";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 
-const Step3 = ({ data, setData, setActiveStep }) => {
+const Step3 = ({ setData, setActiveStep }) => {
   const [count, setCount] = useState(1);
   const [showMemberNameInput, setShowMemberNameInput] = useState(false);
   const [showCouncilNameInput, setShowCouncilNameInput] = useState(false);
@@ -21,7 +21,7 @@ const Step3 = ({ data, setData, setActiveStep }) => {
   function handleSaveAndNext() {
     setData((prev) => ({
       ...prev,
-      step3: { ...list },
+      step3: [...list],
     }));
 
     setActiveStep(3);
@@ -204,21 +204,19 @@ const Step3 = ({ data, setData, setActiveStep }) => {
           {list.slice(1).map((item, index) => (
             <div
               key={index}
-              className={`flex flex-col my-2 bg-white rounded-lg ${
-                addMemberIndex === item.index || item.name == "All"
-                  ? ""
-                  : "cursor-pointer transition"
-              }`}
+              className={`flex flex-col my-2 bg-white rounded-lg ${addMemberIndex === item.index || item.name == "All"
+                ? ""
+                : "cursor-pointer transition"
+                }`}
               onClick={() => item.name !== "All" && openMemberNames(item.index)}
             >
               {/**The section that appears */}
               <section
                 key={index}
-                className={`w-full py-2 px-8 flex ${
-                  addMemberIndex === item.index
-                    ? "border-b-2 border-[#b4b4b4]"
-                    : "rounded-lg"
-                } items-center justify-between`}
+                className={`w-full py-2 px-8 flex ${addMemberIndex === item.index
+                  ? "border-b-2 border-[#b4b4b4]"
+                  : "rounded-lg"
+                  } items-center justify-between`}
               >
                 {/**Group Name */}
                 {groupNameInputIndex == item.index ? (
