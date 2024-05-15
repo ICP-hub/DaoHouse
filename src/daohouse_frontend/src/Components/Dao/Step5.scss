@@ -1,0 +1,97 @@
+.custom-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(
+    to right,
+    #0e3746 0%,
+    #0e3746 var(--value),
+    #ddd var(--value),
+    #ddd 100%
+  );
+  border-radius: 5px;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.custom-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0e3746;
+  cursor: pointer;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+  margin-top: -6px; /* Adjust this value to move the thumb up or down */
+}
+
+.custom-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0e3746;
+  cursor: pointer;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+.custom-range::-ms-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0e3746;
+  cursor: pointer;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Optional: for better accessibility */
+.custom-range:focus {
+  outline: none;
+}
+
+.custom-range::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 8px;
+  cursor: pointer;
+  background: linear-gradient(
+    to right,
+    #0e3746 0%,
+    #0e3746 var(--value),
+    #ddd var(--value),
+    #ddd 100%
+  );
+  border-radius: 5px;
+}
+
+.custom-range::-moz-range-track {
+  width: 100%;
+  height: 8px;
+  cursor: pointer;
+  background: linear-gradient(
+    to right,
+    #0e3746 0%,
+    #0e3746 var(--value),
+    #ddd var(--value),
+    #ddd 100%
+  );
+  border-radius: 5px;
+}
+
+.custom-range::-ms-track {
+  width: 100%;
+  height: 8px;
+  cursor: pointer;
+  background: linear-gradient(
+    to right,
+    #0e3746 0%,
+    #0e3746 var(--value),
+    #ddd var(--value),
+    #ddd 100%
+  );
+  border-radius: 5px;
+  border-color: transparent;
+  color: transparent;
+}

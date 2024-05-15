@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import './Step5.scss'
 import { RiGroupLine } from "react-icons/ri";
 import { LuAlertCircle } from "react-icons/lu";
 import { IoPersonOutline } from "react-icons/io5";
@@ -6,13 +7,14 @@ import { MdOutlineVerifiedUser } from "react-icons/md";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 
 const Step5 = ({ data, setData, setActiveStep }) => {
-  const className = "DAO_Step5";
-
+  const [value, setValue] = useState(0);
   const [quorum, setQuorum] = useState([
     { name: "Council", index: 0, vote: 50 },
     { name: "Group 1", index: 1, vote: 50 },
     { name: "Group 2", index: 2, vote: 50 },
   ]);
+  const gradient = `linear-gradient(to right, #0e3746 ${value}%, #ddd ${value}%)`;
+  const className = "DAO_Step5";
 
   const handleVoteChange = (index, newValue) => {
     setQuorum((prevQuorum) =>
@@ -21,6 +23,29 @@ const Step5 = ({ data, setData, setActiveStep }) => {
       )
     );
   };
+
+  const handleChange = (e) => {
+    const newValue = parseInt(e.target.value);
+    setValue(newValue);
+    handleVoteChange(index, newValue);
+  };
+
+  function handleSaveAndNext() {
+    setData((prevData) => ({
+      ...prevData,
+      step5: { ...quorum },
+    }))
+
+    // setActiveStep(5)
+  }
+
+  useEffect(() => {
+    console.log(data);
+  }, [data])
+
+  useEffect(() => {
+    console.log(data);
+  }, [data])
 
   return (
     <React.Fragment>
@@ -55,16 +80,7 @@ const Step5 = ({ data, setData, setActiveStep }) => {
               </p>
 
               <div className="w-1/3 gap-2 flex items-center">
-                <input
-                  type="range"
-                  min={0}
-                  max={100}
-                  className="w-10/12"
-                  step={1}
-                  onChange={(e) =>
-                    handleVoteChange(index, parseInt(e.target.value))
-                  }
-                />
+                <RangeInput index={index} handleVoteChange={handleVoteChange} />
                 <span className="text-nowrap">{vote} %</span>
               </div>
             </div>
@@ -86,7 +102,7 @@ const Step5 = ({ data, setData, setActiveStep }) => {
         </button>
         <button
           type="submit"
-          onClick={() => setActiveStep(5)}
+          onClick={handleSaveAndNext}
           className="flex m-4 flex-row items-center gap-2 bg-[#0E3746] px-4 py-2 rounded-[2rem] text-white"
         >
           Save & Next <FaArrowRightLong />
@@ -97,3 +113,30 @@ const Step5 = ({ data, setData, setActiveStep }) => {
 };
 
 export default Step5;
+
+const RangeInput = ({ index, handleVoteChange }) => {
+  const [value, setValue] = useState(0);
+
+  const handleChange = (e) => {
+    const newValue = parseInt(e.target.value);
+    setValue(newValue);
+    handleVoteChange(index, newValue);
+  };
+
+  const gradient = `linear-gradient(to right, #0e3746 ${value}%, #ddd ${value}%)`;
+
+  return (
+    <input
+      type="range"
+      min={0}
+      max={100}
+      className="w-10/12 custom-range"
+      step={1}
+      value={value}
+      onChange={handleChange}
+      style={{
+        background: gradient,
+      }}
+    />
+  );
+};
