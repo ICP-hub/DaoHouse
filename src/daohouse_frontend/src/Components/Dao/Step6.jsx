@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { FiUpload } from "react-icons/fi";
 import defaultImage from "../../../assets/defaultImage.png";
@@ -9,7 +9,7 @@ const Step6 = ({ data, setData, setActiveStep }) => {
 
   const handleFileInput = async (event) => {
     const file = event.target.files[0];
-    
+
     if (file) {
       const url = URL.createObjectURL(file);
       setFileURL(url);
@@ -17,6 +17,17 @@ const Step6 = ({ data, setData, setActiveStep }) => {
       setFileURL(defaultImage);
     }
   };
+
+  useEffect(() => {
+    console.log(data);
+  }, [data])
+
+  function createDAO() {
+    setData((prevData) => ({
+      ...prevData,
+      step6: { imageURI: fileURL },
+    }))
+  }
 
   return (
     <React.Fragment>
@@ -67,7 +78,7 @@ const Step6 = ({ data, setData, setActiveStep }) => {
         </button>
         <button
           type="submit"
-          onClick={() => setActiveStep(5)}
+          onClick={createDAO}
           className="flex m-4 flex-row items-center gap-2 bg-[#0E3746] px-4 py-2 rounded-[2rem] text-white"
         >
           Create DAO

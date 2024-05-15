@@ -17,6 +17,8 @@ const CreateDao = () => {
     step1: {},
     step2: {},
     step3: {},
+    step4: {},
+    step5: {},
     step6: {
       imageURI: "",
     },
@@ -42,7 +44,7 @@ const CreateDao = () => {
         );
       case 4:
         return (
-          <Step5 data={data} setData={setData} setActiveStep={setActiveStep} />
+          <Step5 setData={setData} setActiveStep={setActiveStep} />
         );
       case 5:
         return (

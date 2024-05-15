@@ -6,14 +6,12 @@ import { IoPersonOutline } from "react-icons/io5";
 import { MdOutlineVerifiedUser } from "react-icons/md";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 
-const Step5 = ({ data, setData, setActiveStep }) => {
-  const [value, setValue] = useState(0);
+const Step5 = ({ setData, setActiveStep }) => {
   const [quorum, setQuorum] = useState([
-    { name: "Council", index: 0, vote: 50 },
-    { name: "Group 1", index: 1, vote: 50 },
-    { name: "Group 2", index: 2, vote: 50 },
+    { name: "Council", index: 0, vote: 0 },
+    { name: "Group 1", index: 1, vote: 0 },
+    { name: "Group 2", index: 2, vote: 0 },
   ]);
-  const gradient = `linear-gradient(to right, #0e3746 ${value}%, #ddd ${value}%)`;
   const className = "DAO_Step5";
 
   const handleVoteChange = (index, newValue) => {
@@ -24,12 +22,6 @@ const Step5 = ({ data, setData, setActiveStep }) => {
     );
   };
 
-  const handleChange = (e) => {
-    const newValue = parseInt(e.target.value);
-    setValue(newValue);
-    handleVoteChange(index, newValue);
-  };
-
   function handleSaveAndNext() {
     setData((prevData) => ({
       ...prevData,
@@ -38,14 +30,6 @@ const Step5 = ({ data, setData, setActiveStep }) => {
 
     setActiveStep(5)
   }
-
-  useEffect(() => {
-    console.log(data);
-  }, [data])
-
-  useEffect(() => {
-    console.log(data);
-  }, [data])
 
   return (
     <React.Fragment>
