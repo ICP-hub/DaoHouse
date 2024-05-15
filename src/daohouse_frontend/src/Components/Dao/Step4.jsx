@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./Step4.scss";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 
 const Step4 = ({ data, setData, setActiveStep }) => {
   const [activeStage, setActiveStage] = useState(0);
-  const className = "DAO__Step4";
-  const groups = data.step3.map((grp) => {
-    return grp.name;
+  const [inputData, setInputData] = useState({
+    proposal: theList(),
+    voting: theList(),
   });
+  const groups = data.step3.map((grp) => grp.name);
+  const className = "DAO__Step4";
 
   {
     /**Mind blowing */
@@ -32,11 +34,6 @@ const Step4 = ({ data, setData, setActiveStep }) => {
 
     return list;
   }
-
-  const [inputData, setInputData] = useState({
-    proposal: theList(),
-    voting: theList(),
-  });
 
   const permissionList = [
     "ChangeDAOConfig",
