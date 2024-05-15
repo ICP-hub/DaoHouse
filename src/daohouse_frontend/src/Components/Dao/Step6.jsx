@@ -9,6 +9,7 @@ const Step6 = ({ data, setData, setActiveStep }) => {
 
   const handleFileInput = async (event) => {
     const file = event.target.files[0];
+    
     if (file) {
       const url = URL.createObjectURL(file);
       setFileURL(url);

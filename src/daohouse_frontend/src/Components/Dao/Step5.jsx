@@ -36,7 +36,7 @@ const Step5 = ({ data, setData, setActiveStep }) => {
       step5: { ...quorum },
     }))
 
-    // setActiveStep(5)
+    setActiveStep(5)
   }
 
   useEffect(() => {
