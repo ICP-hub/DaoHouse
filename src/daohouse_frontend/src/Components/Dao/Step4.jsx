@@ -4,11 +4,11 @@ import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 
 const Step4 = ({ data, setData, setActiveStep }) => {
   const [activeStage, setActiveStage] = useState(0);
+  const groups = data.step3.map((grp) => grp.name);
   const [inputData, setInputData] = useState({
     proposal: theList(),
     voting: theList(),
   });
-  const groups = data.step3.map((grp) => grp.name);
   const className = "DAO__Step4";
 
   {
