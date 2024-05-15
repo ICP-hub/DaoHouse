@@ -115,8 +115,10 @@ const Step4 = ({ data, setData, setActiveStep }) => {
                   <th className="font-semibold w-2/5 p-4 flex justify-left">
                     Actions
                   </th>
-                  {Object.keys(inputData.proposal).map((groupName) => (
-                    <th className="font-semibold p-4">{groupName}</th>
+                  {Object.keys(inputData.proposal).map((groupName, index) => (
+                    <th key={index} className="font-semibold p-4">
+                      {groupName}
+                    </th>
                   ))}
                 </tr>
               </thead>
@@ -175,8 +177,10 @@ const Step4 = ({ data, setData, setActiveStep }) => {
                   <th className="font-semibold w-2/5 p-4 flex justify-left">
                     Actions
                   </th>
-                  {Object.keys(inputData.voting).map((groupName) => (
-                    <th className="font-semibold p-4">{groupName}</th>
+                  {Object.keys(inputData.voting).map((groupName, index) => (
+                    <th key={index} className="font-semibold p-4">
+                      {groupName}
+                    </th>
                   ))}
                 </tr>
               </thead>
