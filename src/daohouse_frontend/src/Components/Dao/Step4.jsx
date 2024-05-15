@@ -52,7 +52,7 @@ const Step4 = ({ data, setData, setActiveStep }) => {
   function handleSaveAndNext() {
     setData((prev) => ({
       ...prev,
-      step4: { ...inputData },
+      step4: inputData,
     }));
 
     setActiveStep(4);
@@ -84,16 +84,14 @@ const Step4 = ({ data, setData, setActiveStep }) => {
       >
         <ul className={className + "__steps flex flex-row gap-8 px-4"}>
           <li
-            className={`list-disc text-lg font-semibold ${
-              activeStage == 0 ? "" : "opacity-50"
-            }`}
+            className={`list-disc text-lg font-semibold ${activeStage == 0 ? "" : "opacity-50"
+              }`}
           >
             Proposal Creation
           </li>
           <li
-            className={`list-disc text-lg font-semibold ${
-              activeStage == 1 ? "" : "opacity-50"
-            }`}
+            className={`list-disc text-lg font-semibold ${activeStage == 1 ? "" : "opacity-50"
+              }`}
           >
             Voting Permission
           </li>
@@ -248,9 +246,8 @@ const Step4 = ({ data, setData, setActiveStep }) => {
           type="submit"
           onClick={handleSaveAndNext}
           disabled={activeStage == 0 ? true : false}
-          className={`flex m-4 flex-row items-center gap-2 bg-[#0E3746] px-4 py-2 rounded-[2rem] text-white ${
-            activeStage == 0 ? "opacity-50" : "opacity-100"
-          }`}
+          className={`flex m-4 flex-row items-center gap-2 bg-[#0E3746] px-4 py-2 rounded-[2rem] text-white ${activeStage == 0 ? "opacity-50" : "opacity-100"
+            }`}
         >
           Save & Next <FaArrowRightLong />
         </button>
