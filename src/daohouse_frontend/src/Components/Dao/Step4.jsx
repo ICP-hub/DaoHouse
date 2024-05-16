@@ -137,6 +137,7 @@ const Step4 = ({ data, setData, setActiveStep }) => {
                             <input
                               key={groupIndex}
                               type="checkbox"
+                              className="cursor-pointer"
                               checked={
                                 inputData["proposal"][groupName][permissionName]
                               }
@@ -199,6 +200,7 @@ const Step4 = ({ data, setData, setActiveStep }) => {
                             <input
                               key={groupIndex}
                               type="checkbox"
+                              className="cursor-pointer"
                               checked={
                                 inputData["voting"][groupName][permissionName]
                               }
