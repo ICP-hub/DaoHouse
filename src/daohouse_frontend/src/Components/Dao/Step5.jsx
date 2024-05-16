@@ -55,7 +55,7 @@ const Step5 = ({ setData, setActiveStep }) => {
 
         <section className="bg-white rounded-2xl w-full p-4 gap-4 flex flex-col">
           {quorum.map(({ name, index, vote }) => (
-            <div className="border border-slate-200 p-3 flex items-center w-full rounded-lg">
+            <div key={index} className="border border-slate-200 p-3 flex items-center w-full rounded-lg">
               <p className="w-1/3">{name}</p>
 
               <p className="w-1/3 flex flex-row gap-4">

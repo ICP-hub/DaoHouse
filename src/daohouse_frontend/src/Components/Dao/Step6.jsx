@@ -71,7 +71,7 @@ const Step6 = ({ data, setData, setActiveStep }) => {
         }
       >
         <button
-          onClick={() => setActiveStep(3)}
+          onClick={() => setActiveStep(4)}
           className="flex m-4 flex-row items-center gap-2 border border-[#0E3746] hover:bg-[#0E3746] text-[#0E3746] hover:text-white transition px-4 py-2 rounded-[2rem]"
         >
           <FaArrowLeftLong /> Back

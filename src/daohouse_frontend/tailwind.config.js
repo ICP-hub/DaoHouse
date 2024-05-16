@@ -20,7 +20,9 @@ module.exports = {
         wiggle: "wiggle 4s ease-in-out infinite",
       },
       screens: {
-        mobile: "450px",
+        small_phone: "400px",
+        mobile: "500px",
+        big_tablet: "800px",
         tablet: "1050px",
         laptop: "1280px",
         desktop: "1440px",
