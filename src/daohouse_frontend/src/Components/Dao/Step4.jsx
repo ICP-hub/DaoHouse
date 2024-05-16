@@ -16,18 +16,20 @@ const Step4 = ({ data, setData, setActiveStep }) => {
   }
   function theList() {
     const list = groups.reduce((acc, group) => {
+      const flag = group == "Council" ? true : false
+
       acc[group] = {
-        ChangeDAOConfig: false,
-        ChangeDAOPolicy: false,
-        Bounty: false,
-        BountyDone: false,
-        Transfer: false,
-        Polls: false,
-        AddMembers: false,
-        FunctionCalls: false,
-        UpgradeSelf: false,
-        UpgradeRemote: false,
-        setVoteToken: false,
+        ChangeDAOConfig: flag,
+        ChangeDAOPolicy: flag,
+        Bounty: flag,
+        BountyDone: flag,
+        Transfer: flag,
+        Polls: flag,
+        AddMembers: flag,
+        FunctionCalls: flag,
+        UpgradeSelf: flag,
+        UpgradeRemote: flag,
+        setVoteToken: flag,
       };
       return acc;
     }, {});
