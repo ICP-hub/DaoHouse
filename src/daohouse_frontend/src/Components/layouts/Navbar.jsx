@@ -6,7 +6,7 @@ import LoginModal from "../Auth/LoginModal";
 import { FaUser, FaCog, FaSignOutAlt } from "react-icons/fa";
 import avatarprofile from "../../../assets/avatarprofile.png";
 import logo from "../../../assets/ColorLogo.png";
-import aboutImg from '../../../assets/avatar.png';
+import aboutImg from "../../../assets/avatar.png";
 
 const Navbar = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -30,8 +30,6 @@ const Navbar = () => {
     { label: "DAOs", route: "/dao" },
     { label: "Proposals", route: "/proposals" },
   ];
-
-
 
   // Function to handle login
   const handleLogin = async () => {
@@ -63,16 +61,84 @@ const Navbar = () => {
     setIsModalOpen(true);
   };
 
+  useEffect(() => {
 
+    if(backendActor===null){
+      return 
+    }
+    const fetchUserProfile = async () => {
+      try {
+        const userProfileData = await backendActor.get_user_profile();
+        console.log("User profile data after creation:", userProfileData);
+        // setUserProfile(userProfileData);
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+
+    const createAndFetchUserProfile = async () => {
+      try {
+        //  // Fetch the image and convert to Uint8Array
+        //  const response = await fetch(aboutImg);
+        //  const arrayBuffer = await response.arrayBuffer();
+        //  const uint8Array = new Uint8Array(arrayBuffer);
+
+        const response = await fetch(aboutImg);
+        const blob = await response.blob();
+        console.log("blob", blob);
+        // Convert to Uint8Array
+        const arrayBuffer = await blob.arrayBuffer();
+        const uint8Array = new Uint8Array(arrayBuffer);
+        console.log("uint8Array", uint8Array);
+
+
+        // const imageBlob = await response.blob();
+        // console.log("imageBlob", imageBlob);
+        // const image = URL.createObjectURL(imageBlob);
+        // // const img_URL = `blob:${image}`;
+        // console.log("image", image);
+
+        // await backendActor.delete_profile();
+        // await backendActor.create_profile({
+        //   username: "Admin1",
+        //   email_id: "admin@example.com",
+        //   profile_img: Array.from(uint8Array),
+        //   description: "This is a sample profile description.",
+        //   contact_number: "123-456-7890",
+        //   twitter_id: "@admin_twitter",
+        //   telegram: "@admin_telegram",
+        //   website: "https://admin.com",
+        //   tag_defines: ["ICP", "Blockchain", "NFT Artist"]
+        // });
+        // After profile creation, fetch user profile
+        await fetchUserProfile();
+      } catch (error) {
+        console.error("Error creating user profile:", error);
+      }
+    };
+
+    createAndFetchUserProfile();
+  }, [backendActor, principal]);
 
   const dropdownItems = [
-    { label: "Profile", route: "/my-profile", icon: <FaUser className="mr-2" /> },
-    { label: "My Proposals", route: "/my-proposals", icon: <FaUser className="mr-2" /> },
+    {
+      label: "Profile",
+      route: "/my-profile",
+      icon: <FaUser className="mr-2" />,
+    },
+    {
+      label: "My Proposals",
+      route: "/my-proposals",
+      icon: <FaUser className="mr-2" />,
+    },
     { label: "My Dao", route: "/my-dao", icon: <FaUser className="mr-2" /> },
     { label: "Settings", route: "/settings", icon: <FaCog className="mr-2" /> },
-    { label: "Logout", onClick: handleLogout, icon: <FaSignOutAlt className="mr-2" /> },
+    {
+      label: "Logout",
+      onClick: handleLogout,
+      icon: <FaSignOutAlt className="mr-2" />,
+    },
   ];
-
 
   return (
     <nav>
@@ -86,19 +152,26 @@ const Navbar = () => {
               >
                 <Link
                   to={item.route}
-                  className={`hover:text-[#05212C] hover:font-medium cursor-pointer text-[16px] text-[#829095] ${location.pathname === item.route
-                    ? "font-semibold border-b-2 border-[#05212C] text-black"
-                    : "border-transparent border-b-0.5"
-                    }`}
+                  className={`hover:text-[#05212C] hover:font-medium cursor-pointer text-[16px] text-[#829095] ${
+                    location.pathname === item.route
+                      ? "font-semibold border-b-2 border-[#05212C] text-black"
+                      : "border-transparent border-b-0.5"
+                  }`}
                 >
                   {item.label}
                 </Link>
               </div>
             ))}
           </div>
-          <div className="flex items-center">
-            <img src={logo} alt="DAO House" className="mobile:h-10 small_phone:w-30 w-25 h-8 object-contain" />
-          </div>
+          <Link to="/">
+            <div className="flex items-center">
+              <img
+                src={logo}
+                alt="DAO House"
+                className="mobile:h-10 small_phone:w-30 w-25 h-8 object-contain"
+              />
+            </div>
+          </Link>
 
           {!isAuthenticated ? (
             <div className="flex items-center tablet:space-x-4 space-x-2">
@@ -143,7 +216,6 @@ const Navbar = () => {
                         <span>{item.label}</span>
                       </Link>
                     ))}
-
                   </div>
                 )}
               </div>

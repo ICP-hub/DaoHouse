@@ -11,11 +11,13 @@ const Footer = () => {
     <React.Fragment>
       <footer className="bg-[#05212C] small_phone:py-12 py-8 text-center">
         <div className="w-full small_phone:mb-8 mb-4">
-          <img
-            src={logo}
-            alt="DAO HOuse"
-            className="small_phone:w-32 w-20 mx-auto small_phone:mb-10 mb-6"
-          />
+          <Link to="/">
+            <img
+              src={logo}
+              alt="DAO HOuse"
+              className="small_phone:w-32 w-20 mx-auto small_phone:mb-10 mb-6"
+            />
+          </Link>
           <div className="flex justify-center mb-4 gap-x-3">
             <Link
               to="/"
@@ -68,7 +70,7 @@ const Footer = () => {
       </footer>
       <div className="bg-[#0E3746] py-4 flex justify-center items-center">
         <p className="text-white font-inter font-normal  text-[10px] md:text-base ">
-          All rights reserved. &copy; {new Date().getFullYear()} Your DAO House
+          &copy; {new Date().getFullYear()}, DAO House. All rights reserved.
         </p>
       </div>
     </React.Fragment>

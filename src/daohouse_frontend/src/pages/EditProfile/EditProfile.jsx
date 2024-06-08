@@ -8,7 +8,8 @@ import MediumCircle from "../../../assets/MediumCircle.png";
 import SmallestCircle from "../../../assets/SmallestCircle.png";
 import EditTags from "../../Components/EditProfile/EditTags";
 import EditPersonalLinksAndContactInfo from "./EditPersonalLinksAndContactInfo";
-
+import BigCircleAnimation from "../../Components/Ellipse-Animation/BigCircle/BigCircleAnimation.json";
+import SmallCircleAnimation from "../../Components/Ellipse-Animation/SmallCircle/SmallCircleAnimation.json";
 import SuccessModal from "../../Components/EditProfile/SuccessModal";
 import BigCircleComponent from "../../Components/Ellipse-Animation/BigCircle/BigCircleComponent";
 import SmallCircleComponent from "../../Components/Ellipse-Animation/SmallCircle/SmallCircleComponent";
@@ -16,19 +17,49 @@ import MediumCircleComponent from "../../Components/Ellipse-Animation/MediumCirc
 import { useAuth } from "../../Components/utils/useAuthClient";
 import { useUserProfile } from "../../context/UserProfileContext";
 import { toast } from "react-toastify";
+import Lottie from "react-lottie";
+import { AssetManager } from "@dfinity/assets";
+import { HttpAgent } from "@dfinity/agent";
+
 
 const EditProfile = () => {
-
-  const { userProfile, setUserProfile, fetchUserProfile } = useUserProfile();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const {
-    backendActor,
-  } = useAuth();
+  const { backendActor, frontendCanisterId, identity } = useAuth();
+  const { userProfile, setUserProfile, fetchUserProfile } = useUserProfile();
 
-  console.log({ userProfile })
+  // Create Agent
+  const isLocal = !window.location.host.endsWith('ic0.app');
+  const agent = new HttpAgent({
+    host: isLocal ? `http://127.0.0.1:${window.location.port}` : 'https://ic0.app', identity,
+  });
+  if (isLocal) {
+    agent.fetchRootKey();
+  }
+
+  // Initiate AssetManager
+  const assetManager = new AssetManager({
+    canisterId: frontendCanisterId, 
+    agent: agent,
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const files = await assetManager.list();
+        console.log({ files });
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+    fetchData();
+  }, [])
+
+  console.log({ agent });
+  console.log({ assetManager });
+  console.log({ userProfile });
 
   const [profileData, setProfileData] = useState({
-    username: userProfile?.username || "",
+    name: userProfile?.name || "",
     email_id: userProfile?.email_id || "",
     contact_number: userProfile?.contact_number || "",
     twitter_id: userProfile?.twitter_id || "",
@@ -87,7 +118,42 @@ const EditProfile = () => {
   };
 
   const handleRemoveImage = () => {
-    setProfileData((prevData) => ({ ...prevData, profile_img: MyProfileImage }));
+    setProfileData((prevData) => ({
+      ...prevData,
+      profile_img: MyProfileImage,
+    }));
+  };
+
+  // Animation options for the big circle
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: BigCircleAnimation,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+      id: "lottie-bigCircle",
+    },
+  };
+
+  // Animation options for the small circle
+  const defaultOptions2 = {
+    loop: true,
+    autoplay: true,
+    animationData: SmallCircleAnimation,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+      id: "lottie-smallCircle",
+    },
+  };
+  // Animation options for the medium circle
+  const defaultOptions3 = {
+    loop: true,
+    autoplay: true,
+    animationData: SmallCircleAnimation,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+      id: "lottie-mediumCircle",
+    },
   };
 
   const handleTagsChange = (tags) => {
@@ -96,7 +162,7 @@ const EditProfile = () => {
   return (
     <div className="bg-zinc-200 w-full pb-20 relative">
       <div
-        className="w-full lg:h-[25vh] h-[18vh] p-20 flex flex-col items-start justify-center relative hero-container"
+        className="w-full lg:h-[25vh] h-[18vh] md:p-20 pt-6 pl-2 flex flex-col items-start md:justify-center relative hero-container"
         style={{
           backgroundImage: `url("${MyProfileRectangle}")`,
           backgroundRepeat: "no-repeat",
@@ -110,6 +176,16 @@ const EditProfile = () => {
             <div className="relative tablet:w-[96px] tablet:h-[96px] md:w-[88.19px] md:h-[88.19px] w-[65px] h-[65px]">
               <BigCircleComponent imgSrc={BigCircle} />
             </div>
+
+            {/* Big circle animation */}
+            <div className="absolute inset-0 flex items-center justify-center z-20">
+              <div className="tablet:w-[112px] tablet:h-[112px] md:w-[104px] md:h-[104px] w-[75px] h-[75px]">
+                <Lottie
+                  options={defaultOptions}
+                  style={{ width: "100%", height: "100%" }}
+                />
+              </div>
+            </div>
           </div>
 
           <div className="absolute right-[25%] -translate-y-full top-[30%]">
@@ -118,12 +194,32 @@ const EditProfile = () => {
 
               <SmallCircleComponent imgSrc={SmallestCircle} />
             </div>
+
+            {/* Small circle animation */}
+            <div className="absolute inset-0 flex items-center justify-center z-20">
+              <div className="tablet:w-[47px] tablet:h-[47px] md:w-[37.3px] md:h-[37.3px] w-[23.19px] h-[23.19px]">
+                <Lottie
+                  options={defaultOptions2}
+                  style={{ width: "100%", height: "100%" }}
+                />
+              </div>
+            </div>
           </div>
 
           {/* Medium circle image */}
           <div className="absolute right-[45%] -translate-y-full top-[95%]">
             <div className="relative tablet:w-[52px] tablet:h-[52px] md:w-[43.25px] md:h-[43.25px] w-[29.28px] h-[29.28px] ">
               <MediumCircleComponent imgSrc={MediumCircle} />
+            </div>
+
+            {/* Medium circle animation */}
+            <div className="absolute inset-0 flex items-center justify-center z-20">
+              <div className="tablet:w-[60px] tablet:h-[60px] md:w-[47.25px] md:h-[47.25px] w-[33.28px] h-[33.28px]">
+                <Lottie
+                  options={defaultOptions3}
+                  style={{ width: "100%", height: "100%" }}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -164,7 +260,6 @@ const EditProfile = () => {
               Remove<span className="hidden sm:inline-block ml-1">Photo</span>
             </button>
           </div>
-
 
           <div className="lg:ml-40 md:ml-24 lg:mr-5 md:mt-12 mt-5">
             <h3 className="text-[#05212C] text-[16px] md:text-[18px] lg:text-[24px] md:font-semibold font-medium ml-3">

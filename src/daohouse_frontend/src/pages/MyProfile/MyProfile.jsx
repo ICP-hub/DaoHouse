@@ -22,14 +22,12 @@ import { useUserProfile } from "../../context/UserProfileContext";
 const MyProfile = ({ childComponent }) => {
   const {userProfile} = useUserProfile();
 
-  console.log({ userProfile })
+  console.log({ userProfile });
   const [activeTab, setActiveTab] = useState(0);
   const navigate = useNavigate();
   const className = "MyProfile";
   const tabButtonsStyle =
     "my-1 big_phone:text-base mobile:text-md text-sm flex flex-row items-center gap-2 hover:text-white";
-
-
 
   // Animation options for the big circle
   const defaultOptions = {
@@ -63,9 +61,6 @@ const MyProfile = ({ childComponent }) => {
     },
   };
 
-
-
-
   // Main return statement
   return (
     <div className={className + " bg-zinc-200 w-full relative"}>
@@ -73,7 +68,7 @@ const MyProfile = ({ childComponent }) => {
       <div
         className={
           className +
-          "__topComponent w-full lg:h-[25vh] h-[20vh] md:p-20 pt-6 pl-2 flex flex-col items-start md:justify-center relative"
+          "__topComponent w-full lg:h-[25vh] h-[18vh] md:p-20 pt-6 pl-2 flex flex-col items-start md:justify-center relative"
         }
         style={{
           backgroundImage: `url("${MyProfileRectangle}")`,
@@ -157,8 +152,9 @@ const MyProfile = ({ childComponent }) => {
           <div className="flex md:flex-col flex-row items-start md:justify-center justify-around gap-y-6 py-6 md:py-0 lg:text-base md:text-sm text-nowrap">
             <Link to="/my-profile" onClick={() => setActiveTab(0)}>
               <p
-                className={`${tabButtonsStyle}  ${activeTab == 0 ? "text-white" : ""
-                  }`}
+                className={`${tabButtonsStyle}  ${
+                  activeTab == 0 ? "text-white" : ""
+                }`}
               >
                 Overview{" "}
                 {activeTab == 0 ? (
@@ -171,8 +167,9 @@ const MyProfile = ({ childComponent }) => {
 
             <Link to="/my-profile/my-post" onClick={() => setActiveTab(1)}>
               <p
-                className={`${tabButtonsStyle} ${activeTab == 1 ? "text-white" : ""
-                  }`}
+                className={`${tabButtonsStyle} ${
+                  activeTab == 1 ? "text-white" : ""
+                }`}
               >
                 My Posts{" "}
                 {activeTab == 1 ? (
@@ -185,8 +182,9 @@ const MyProfile = ({ childComponent }) => {
 
             <Link to="/my-profile/followers" onClick={() => setActiveTab(2)}>
               <p
-                className={`${tabButtonsStyle} ${activeTab == 2 ? "text-white" : ""
-                  }`}
+                className={`${tabButtonsStyle} ${
+                  activeTab == 2 ? "text-white" : ""
+                }`}
               >
                 Followers{" "}
                 {activeTab == 2 ? (
@@ -199,8 +197,9 @@ const MyProfile = ({ childComponent }) => {
 
             <Link to="/my-profile/following" onClick={() => setActiveTab(3)}>
               <p
-                className={`${tabButtonsStyle}  ${activeTab == 3 ? "text-white" : ""
-                  }`}
+                className={`${tabButtonsStyle}  ${
+                  activeTab == 3 ? "text-white" : ""
+                }`}
               >
                 Following{" "}
                 {activeTab == 3 ? (
@@ -221,7 +220,8 @@ const MyProfile = ({ childComponent }) => {
               <div>
                 <img
                   className="rounded-tablet tablet:w-full md:w-[90px] w-[70px]  min-w-[60px] mt-[-20px] rounded-md z-50"
-                  src={userProfile?.profileImage || MyProfileImage} alt="profile-pic"
+                  src={userProfile?.profileImage || MyProfileImage}
+                  alt="profile-pic"
                   style={{
                     boxShadow:
                       "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
@@ -230,12 +230,15 @@ const MyProfile = ({ childComponent }) => {
               </div>
               <div className="ml-5">
                 <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C]">
-                  {userProfile?.username || "Username.user"}                </h2>
+                  {userProfile?.username || "Username.user"}{" "}
+                </h2>
                 <p className="md:text-[14px] text-[10px]  tablet:text-[16px] font-normal text-left text-[#646464]">
-                  {userProfile?.email || "gmail@gmail.xyz"}                </p>
+                  {userProfile?.email || "gmail@gmail.xyz"}{" "}
+                </p>
                 <div className="md:flex hidden justify-between mt-3">
                   <span className="md:mr-5 tablet:text-[32px] text-[24px] font-normal text-[#05212C] user-acc-info">
-                    {userProfile?.post_count || 0}{" "}                    <span className=" tablet:text-[16px] text-[14px] mx-1">
+                    {userProfile?.post_count || 0}{" "}
+                    <span className=" tablet:text-[16px] text-[14px] mx-1">
                       Posts
                     </span>
                   </span>
@@ -264,19 +267,24 @@ const MyProfile = ({ childComponent }) => {
                   alt="edit"
                   className="tablet:mr-2 h-4 w-4 edit-pen"
                 />
-                <span className="md:inline hidden whitespace-nowrap">{userProfile === null ? "Complete Profile" : "Edit Profile"}</span>
+                <span className="md:inline hidden whitespace-nowrap">
+                  {userProfile === null ? "Complete Profile" : "Edit Profile"}
+                </span>
               </button>
             </div>
           </div>
           <div className="flex justify-start gap-8 p-4 mx-6 md:hidden text-center text-[#05212C]">
             <div className="text-[22px] font-semibold ">
-              {userProfile?.post_count}  <div className="text-[15px] font-medium">Posts</div>
+              {userProfile?.post_count}{" "}
+              <div className="text-[15px] font-medium">Posts</div>
             </div>
             <div className=" text-[22px] font-semibold ">
-              {userProfile?.followers_count}  <div className="text-[15px] font-medium">Followers</div>
+              {userProfile?.followers_count}{" "}
+              <div className="text-[15px] font-medium">Followers</div>
             </div>
             <div className=" text-[22px] font-semibold ">
-              {userProfile?.followings_count} <div className="text-[15px] font-medium">Following</div>
+              {userProfile?.followings_count}{" "}
+              <div className="text-[15px] font-medium">Following</div>
             </div>
           </div>
 
