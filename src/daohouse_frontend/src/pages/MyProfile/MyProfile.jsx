@@ -20,7 +20,7 @@ import { useUserProfile } from "../../context/UserProfileContext";
 
 // Main component function
 const MyProfile = ({ childComponent }) => {
-  const userProfile = useUserProfile();
+  const {userProfile} = useUserProfile();
 
   console.log({ userProfile })
   const [activeTab, setActiveTab] = useState(0);

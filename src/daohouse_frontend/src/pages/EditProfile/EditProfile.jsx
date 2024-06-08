@@ -15,10 +15,11 @@ import SmallCircleComponent from "../../Components/Ellipse-Animation/SmallCircle
 import MediumCircleComponent from "../../Components/Ellipse-Animation/MediumCircle/MediumCircleComponent";
 import { useAuth } from "../../Components/utils/useAuthClient";
 import { useUserProfile } from "../../context/UserProfileContext";
+import { toast } from "react-toastify";
 
 const EditProfile = () => {
 
-  const userProfile = useUserProfile();
+  const { userProfile, setUserProfile, fetchUserProfile } = useUserProfile();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const {
     backendActor,
@@ -41,12 +42,10 @@ const EditProfile = () => {
 
 
 
-
   const handleSaveChangesClick = async () => {
-    setIsModalOpen(true);
 
     const profilePayload = {
-      username: profileData.name,
+      username: profileData.username,
       email_id: profileData.email_id,
       profile_img: profileData.profile_img,
       description: profileData.description,
@@ -60,7 +59,11 @@ const EditProfile = () => {
     try {
       await backendActor.delete_profile();
       const ans = await backendActor.create_profile(profilePayload);
-      console.log("Profile created successfully", ans);
+
+      setIsModalOpen(true);
+      toast.success("Profile created successfully")
+
+      fetchUserProfile()
     } catch (error) {
       console.error("Error creating profile:", error);
     }
@@ -171,7 +174,7 @@ const EditProfile = () => {
               <span className="text-[#05212C] md:mr-32 mr-4">Name</span>
               <input
                 type="text"
-                name="name"
+                name="username"
                 value={profileData.username}
                 onChange={handleInputChange}
                 placeholder="Username.user"

@@ -8,28 +8,30 @@ export const UserProfileProvider = ({ children }) => {
   const [userProfile, setUserProfile] = useState(null);
   const { backendActor } = useAuth();
 
+
+  const fetchUserProfile = async () => {
+    try {
+      const userProfileResponse = await backendActor.get_user_profile();
+      const userProfile = userProfileResponse.Ok;
+      console.log({userProfileResponse,userProfile})
+      if (userProfile) {
+        setUserProfile(userProfile);
+      }
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+    }
+  };
+
+
   useEffect(() => {
     if (backendActor === null) {
       return 
     } 
-    const fetchUserProfile = async () => {
-      try {
-        const userProfileResponse = await backendActor.get_user_profile();
-        const userProfile = userProfileResponse.Ok;
-        console.log({userProfile})
-        if (userProfile) {
-          setUserProfile(userProfile);
-        }
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
-      }
-    };
-
-    fetchUserProfile();
+      fetchUserProfile();
   }, [backendActor]);
 
   return (
-    <UserProfileContext.Provider value={userProfile}>
+    <UserProfileContext.Provider value={{ userProfile, setUserProfile, fetchUserProfile }}>
       {children}
     </UserProfileContext.Provider>
   );

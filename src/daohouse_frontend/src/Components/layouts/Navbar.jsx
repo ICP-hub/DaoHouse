@@ -63,50 +63,7 @@ const Navbar = () => {
     setIsModalOpen(true);
   };
 
-  useEffect(() => {
 
-    if(backendActor===null){
-      return 
-    }
-    const fetchUserProfile = async () => {
-      try {
-        const userProfileData = await backendActor.get_user_profile();
-        console.log("User profile data after creation:", userProfileData);
-        // setUserProfile(userProfileData);
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
-      }
-    };
-
-    const createAndFetchUserProfile = async () => {
-      try {
-        const response = await fetch(aboutImg);
-        const imageBlob = await response.blob();
-        const image = URL.createObjectURL(imageBlob);
-        // const img_URL = `blob:${image}`;
-        console.log("image", image);
-
-        await backendActor.delete_profile();
-        // await backendActor.create_profile({
-        //   username: "Admin1",
-        //   email_id: "admin@example.com",
-        //   profile_img: image,
-        //   description: "This is a sample profile description.",
-        //   contact_number: "123-456-7890",
-        //   twitter_id: "@admin_twitter",
-        //   telegram: "@admin_telegram",
-        //   website: "https://admin.com",
-        //   tag_defines: ["ICP", "Blockchain", "NFT Artist"]
-        // });
-        // After profile creation, fetch user profile
-        await fetchUserProfile();
-      } catch (error) {
-        console.error("Error creating user profile:", error);
-      }
-    };
-
-    createAndFetchUserProfile();
-  }, [backendActor, principal]);
 
   const dropdownItems = [
     { label: "Profile", route: "/my-profile", icon: <FaUser className="mr-2" /> },
