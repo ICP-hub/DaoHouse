@@ -42,8 +42,20 @@ async fn create_profile(asset_handler_canister_id: String, profile: Profileinput
     }
 
 
+    // image upload
+    let image_id = upload_image(
+        asset_handler_canister_id,
+        ImageData {
+            content: profile.image_content,
+            name: profile.image_title.clone(),
+            content_type: profile.image_content_type.clone(),
+        },
+    ).await.map_err(|err| format!("Image upload failed: {}", err))?;
+
+
 
     
+
     // upload image
  
     // image upload
@@ -55,6 +67,7 @@ async fn create_profile(asset_handler_canister_id: String, profile: Profileinput
             content_type: profile.image_content_type.clone(),
         },
     ).await.map_err(|err| format!("Image upload failed: {}", err))?;
+
 
 
 

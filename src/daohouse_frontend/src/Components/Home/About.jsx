@@ -27,7 +27,7 @@ const About = () => {
     },
   };
   return (
-    <div className="bg-[#05212C] relative flex justify-center items-center py-8 w-screen">
+    <div className="bg-[#05212C] relative flex justify-center items-center py-8 w-full">
       <div className="absolute pointer-events-none select-none xl:left-[32%] 2xl:left-[35%] lg:left-[29%] md:left-[30%] left-0 md:top-0 top-[18%] mt-8">
         <div>
           <img

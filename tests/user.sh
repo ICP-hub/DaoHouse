@@ -18,7 +18,9 @@
 
 # creare_profile function
     test1=$(dfx canister call daohouse_backend create_profile '(
+
     "br5f7-7uaaa-aaaaa-qaaca-cai",
+
 
     record {
         email_id = "bhanupra@gmail.com";
