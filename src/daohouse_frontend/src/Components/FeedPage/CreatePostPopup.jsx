@@ -9,6 +9,7 @@ import { useAuth } from "../utils/useAuthClient";
 import { constant } from "../utils/constants";
 import { toast } from "react-toastify";
 
+
 const CreatePostPopup = ({ onClose }) => {
   const [showDescription, setShowDescription] = useState(false);
   const [description, setDescription] = useState("");
@@ -17,36 +18,43 @@ const CreatePostPopup = ({ onClose }) => {
 
   const [imageData, setImageData] = useState({
     base64: "",
-    int8Array: [],
+    image_content: [],
+    image_title: "",
+    image_content_type: "",
   });
 
   const { handleFileUpload } = constant();
+  // const userData = userProfile();
   const { backendActor } = useAuth();
 
-  async function handleCreatePost() {
+  async function handleCreatePost(button) {
+    disableBtn(button);
     const canisterId = process.env.CANISTER_ID_IC_ASSET_HANDLER;
 
     console.log(canisterId);
 
     const postPayload = {
+      username: "User",
+      post_img: "This is Post image",
       post_description: "This is a sample post description.",
-      post_img: "testing",
-      username: "prataptechnologies",
-      image_content: [10],
-      image_title: "bhanuprofile.png",
-      image_content_type: "image/png",
+      image_content: imageData.image_content || "",
+      image_title: imageData.image_title || "",
+      image_content_type: imageData.image_content_type || "",
     };
-          // const postPayload = {
-          //   post_description: description,
-          //   post_img: "",
-          // };
+    console.log(postPayload);
+
     try {
+      console.log("Inside try");
       const ans = await backendActor.create_new_post(canisterId, postPayload);
 
       toast.success("Post created successfully");
       console.log("Post created successfully", ans);
       onClose();
+      enableBtn(button);
     } catch (error) {
+      setTimeout(() => {
+        enableBtn(button);
+      }, 1000);
       console.error("Error creating post:", error);
     }
   }
@@ -54,10 +62,20 @@ const CreatePostPopup = ({ onClose }) => {
   const handleFileUploading = async (event) => {
     // const files = Array.from(event.target.files);
     // setSelectedImages(files);
+    const file = event.target.files[0];
+    const arrayBuffer = await file.arrayBuffer();
+    const content = new Uint8Array(arrayBuffer);
 
     try {
-      const { base64, int8Array } = await handleFileUpload(event);
-      setImageData({ base64, int8Array });
+      const { base64 } = await handleFileUpload(event);
+
+      setImageData((prevData) => ({
+        ...prevData,
+        base64,
+        image_content: Array.from(content),
+        image_title: file.name,
+        image_content_type: file.type,
+      }));
     } catch (error) {
       if (typeof error === "string") {
         toast.error(error);
@@ -79,15 +97,15 @@ const CreatePostPopup = ({ onClose }) => {
   const handleDiscard = () => {
     setImageData(null);
     setShowConfirmation(false);
+    setImageData({ base64: "" });
     onClose();
-    // setSelectedImages([]);
   };
 
   const handleDeleteImage = () => {
     setImageData(null);
+    setImageData({ base64: "" });
     // const newImages = [...selectedImages];
     // newImages.splice(index, 1);
-    // setSelectedImages(newImages);
   };
 
   function disableBtn(button) {
@@ -99,58 +117,34 @@ const CreatePostPopup = ({ onClose }) => {
     button.style.opacity = "1";
   }
 
-  React.useEffect(() => {
-    const postButton = document.getElementById("postButton");
+  // React.useEffect(() => {
+  //   const postButton = document.getElementById("postButton");
 
-    if (postButton) {
-      postButton.addEventListener("click", async () => {
-        disableBtn(postButton);
-
-        try {
-          const canisterId = "br5f7-7uaaa-aaaaa-qaaca-cai";
-
-          // const postPayload = {
-          //   post_description: description,
-          //   post_img: "",
-          // };
-
-          console.log(canisterId);
-
-          const postPayload = {
-            post_description: "This is a sample post description.",
-            post_img: "testing",
-            username: "prataptechnologies",
-            image_content: [10],
-            image_title: "bhanuprofile.png",
-            image_content_type: "image/png",
-          };
-          console.log("hello");
-          console.log(canisterId);
-          const ans = await backendActor.create_new_post(
-            canisterId,
-            postPayload
-          );
-          toast.success("Post created successfully");
-          console.log("Post created successfully", ans);
-          onClose();
-
-          enableBtn(postButton);
-        } catch (error) {
-          console.error("Error creating post:", error);
-        } finally {
-          enableBtn(postButton);
-        }
-      });
-    }
-  }, []);
+  //   if (postButton) {
+  //     postButton.addEventListener("click", handleCreatePost(postButton));
+  //   }
+  // }, []);
 
   useEffect(() => {
     async function callMe() {
+      
       const data = await backendActor.get_all_posts();
+      const lol = await backendActor.get_user_profile()
+      console.log("user data is: ", lol)
       console.log("data: ", data);
     }
     callMe();
   }, []);
+
+  // useEffect(() => {
+  //   console.log("function calleddddd")
+  //   async function callMe() {
+  //     const data = await backendActor.get_user_profile();
+  //     console.log("user profile is : ", data);
+  //   }
+
+  //   callMe();
+  // }, []);
 
   return (
     <div
@@ -200,7 +194,16 @@ const CreatePostPopup = ({ onClose }) => {
                     <button
                       className="flex items-center justify-center md:w-24 w-18 md:gap-4 gap-2 mt-2 bg-[#0E3746] text-white md:text-[16px] text-[14px] md:px-4 px-3 py-2 font-semibold rounded-[10px]"
                       style={{ boxShadow: "0px 3px 6px 0px #00000026" }}
-                      onClick={handleCreatePost}
+                      onClick={() => {
+                        const postButton =
+                          document.getElementById("postButton");
+                        if (postButton) {
+                          postButton.addEventListener(
+                            "click",
+                            handleCreatePost(postButton)
+                          );
+                        }
+                      }}
                       id="postButton"
                     >
                       <span>Post</span>

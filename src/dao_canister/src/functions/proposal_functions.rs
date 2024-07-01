@@ -59,5 +59,9 @@ async fn get_dao_detail() -> Dao {
     with_state(|state| state.dao.clone())
 }
 
+// #[query]
+// fn get_all_daos() -> Vec<Dao> {
 
+//     with_state(|state| state.dao.)
+// }
 

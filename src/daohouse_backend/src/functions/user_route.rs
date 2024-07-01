@@ -214,23 +214,33 @@ pub async fn create_dao(canister_id: String, dao_detail: DaoInput) -> Result<Str
     updated_members.push(principal_id);
 
 
-    // upload image
-    let image_id: Result<String, String> = upload_image(canister_id, ImageData { content: dao_detail.image_content, name: dao_detail.image_title, content_type: dao_detail.image_content_type }).await;
-    let mut id = String::new();
-    let image_create_res: bool = match image_id {
-        Ok(value) => {
-            id = value;
-            Ok(())
-        }
-        Err(er) => {
-            ic_cdk::println!("{:?}", er);
-            Err(())
-        }
-    }.is_err();
+    //upload image
+    // let image_id: Result<String, String> = upload_image(canister_id, ImageData { content: dao_detail.image_content.clone(), name: dao_detail.image_title, content_type: dao_detail.image_content_type }).await;
+    // let mut id = String::new();
+    // let image_create_res: bool = match image_id {
+    //     Ok(value) => {
+    //         id = value;
+    //         Ok(())
+    //     }
+    //     Err(er) => {
+    //         ic_cdk::println!("{:?}", er);
+    //         Err(())
+    //     }
+    // }.is_err();
 
-    if image_create_res {
-        return Err("Image upload failed".to_string());
-    }
+    // if image_create_res {
+    //     return Err("Image upload failed".to_string());
+    // }
+
+     // image upload
+     let image_id = upload_image(
+        canister_id,
+        ImageData {
+            content: dao_detail.image_content,
+            name: dao_detail.image_title.clone(),
+            content_type: dao_detail.image_content_type.clone(),
+        },
+    ).await.map_err(|err| format!("Image upload failed: {}", err))?;
 
 
     let update_dau_detail=DaoInput{
@@ -244,7 +254,7 @@ pub async fn create_dao(canister_id: String, dao_detail: DaoInput) -> Result<Str
         linksandsocials:dao_detail.linksandsocials,
         required_votes:dao_detail.required_votes,
 
-        image_id: Some(id),
+        image_id: Some(image_id),
         image_content: None,
         image_content_type: "".to_string(),
         image_title: "".to_string(),
@@ -270,7 +280,7 @@ pub async fn create_dao(canister_id: String, dao_detail: DaoInput) -> Result<Str
         Err((_, err_string)) => return Err(err_string),
     };
     // let (id,)=canister_id;
-    let addcycles = deposit_cycles(canister_id, 100000000).await;
+    let _addcycles = deposit_cycles(canister_id, 100000000).await;
 
     let canister_id_principal = canister_id.canister_id;
 

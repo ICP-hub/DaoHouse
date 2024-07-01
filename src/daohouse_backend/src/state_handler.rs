@@ -12,6 +12,8 @@ pub struct State {
     pub user_profile : StableBTreeMap<Principal, UserProfile,Memory>,
 
     pub post_detail:StableBTreeMap<String,PostInfo,Memory>,
+
+    // pub dao_details: StableBTreeMap<Str>
     
 
     // pub users: HashMap<Principal, User>,
