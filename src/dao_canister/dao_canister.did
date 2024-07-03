@@ -10,9 +10,13 @@ type Dao = record {
   cool_down_period : text;
   purpose : text;
   required_votes : int8;
+  // members: vec principal;
+  members: vec text;
+
 };
 type DaoInput = record {
-  members : vec principal;
+  //members : vec principal;
+  members : vec text;
   linksandsocials : vec text;
   daotype : text;
   dao_name : text;
@@ -52,6 +56,7 @@ type Proposals = record {
 
 
 type Result = variant { Ok : GroupList; Err : text };
+type JoinDaoResponse = variant { Ok: text; Err: text};
 type ProposalResponse = variant {Ok: vec Proposals; Err: text };
 
 service : (DaoInput) -> {
@@ -63,4 +68,5 @@ service : (DaoInput) -> {
   remove_member_from_group : (text, principal) -> (text);
   get_all_proposals: () -> (vec Proposals) query;
   get_my_proposals: () -> (ProposalResponse) query;
+  join_dao: () -> (JoinDaoResponse); 
 }

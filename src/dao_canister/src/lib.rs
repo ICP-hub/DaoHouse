@@ -41,6 +41,7 @@ async fn init(dao_input: DaoInput) {
         group_name: vec!["council".to_string()],
         groups_count: 1,
         required_votes: dao_input.required_votes,
+        members: Vec::new()
     };
 
     let permission=Votingandpermissions{

@@ -5,6 +5,7 @@ use std::cell::RefCell;
 const POST_DATA: MemoryId = MemoryId::new(0);
 const USER_DATA:MemoryId=MemoryId::new(1);
 const DAO_DATA: MemoryId = MemoryId::new(2);
+const ANALYTICS_DATA: MemoryId = MemoryId::new(3);
 
 pub type Memory = VirtualMemory<DefaultMemoryImpl>;
 
@@ -17,12 +18,14 @@ pub fn get_postdata_memory() -> Memory {
     MEMORY_MANAGER.with(|m| m.borrow().get(POST_DATA))
 }
 
-
-
 pub fn get_user_memory() -> Memory {
     MEMORY_MANAGER.with(|m| m.borrow().get(USER_DATA))
 }
 
 pub fn get_dao_memory() -> Memory {
     MEMORY_MANAGER.with(|m| m.borrow().get(DAO_DATA))
+}
+
+pub fn get_analytics_memory() -> Memory {
+    MEMORY_MANAGER.with(|m| m.borrow().get(ANALYTICS_DATA))
 }

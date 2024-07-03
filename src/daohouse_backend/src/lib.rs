@@ -1,5 +1,5 @@
 mod types;
-use ic_cdk::{api, export_candid};
+use ic_cdk::{api, export_candid, init};
 use std::cell::RefCell;
 pub mod routes;
 pub mod functions;
@@ -23,6 +23,18 @@ thread_local! {
 
 pub fn with_state<R>(f: impl FnOnce(&mut State) -> R) -> R {
     STATE.with(|cell| f(&mut cell.borrow_mut()))
+}
+
+#[init]
+async fn init() {
+    let analytics = Analytics {
+        dao_counts: 0,
+        members_count: 0,
+        post_count: 0,
+        proposals_count: 0
+    };
+
+    with_state(|state| state.analytics_content.insert(0, analytics));
 }
 
 

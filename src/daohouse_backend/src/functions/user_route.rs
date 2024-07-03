@@ -212,26 +212,8 @@ pub async fn create_dao(canister_id: String, dao_detail: DaoInput) -> Result<Str
     };
 
     let mut updated_members = dao_detail.members.clone();
-    updated_members.push(principal_id);
+    updated_members.push(principal_id.to_string().clone());
 
-
-    //upload image
-    // let image_id: Result<String, String> = upload_image(canister_id, ImageData { content: dao_detail.image_content.clone(), name: dao_detail.image_title, content_type: dao_detail.image_content_type }).await;
-    // let mut id = String::new();
-    // let image_create_res: bool = match image_id {
-    //     Ok(value) => {
-    //         id = value;
-    //         Ok(())
-    //     }
-    //     Err(er) => {
-    //         ic_cdk::println!("{:?}", er);
-    //         Err(())
-    //     }
-    // }.is_err();
-
-    // if image_create_res {
-    //     return Err("Image upload failed".to_string());
-    // }
 
      // image upload
      let image_id = upload_image(
@@ -243,6 +225,14 @@ pub async fn create_dao(canister_id: String, dao_detail: DaoInput) -> Result<Str
         },
     ).await.map_err(|err| format!("Image upload failed: {}", err))?;
 
+    let prinic = Principal::from_text("dyced-eio47-esslv-qfsgw-4dono-lh4xn-jlgm6-hypko-f7nkc-afe52-xae").unwrap();
+
+    let mut mem: Vec<Principal> = Vec::new();
+
+    mem.push(prinic);
+
+
+
 
     let update_dau_detail=DaoInput{
         dao_name:dao_detail.dao_name.clone(),
@@ -250,7 +240,7 @@ pub async fn create_dao(canister_id: String, dao_detail: DaoInput) -> Result<Str
         daotype:dao_detail.daotype,
         link_of_document:dao_detail.link_of_document,
         cool_down_period:dao_detail.cool_down_period,
-        members:updated_members,
+        members:dao_detail.members.clone(),
         tokenissuer:dao_detail.tokenissuer,
         linksandsocials:dao_detail.linksandsocials,
         required_votes:dao_detail.required_votes,
@@ -259,6 +249,7 @@ pub async fn create_dao(canister_id: String, dao_detail: DaoInput) -> Result<Str
         image_content: None,
         image_content_type: "".to_string(),
         image_title: "".to_string(),
+
         
     };
 
@@ -285,7 +276,7 @@ pub async fn create_dao(canister_id: String, dao_detail: DaoInput) -> Result<Str
 
     let canister_id_principal = canister_id.canister_id;
 
-    println!("Canister ID: {}", canister_id_principal.to_string());
+    ic_cdk::println!("Canister ID: {}", canister_id_principal.to_string());
 
     let dao_details: DaoDetails = DaoDetails {
         dao_canister_id: canister_id_principal.to_string().clone(),
@@ -407,36 +398,36 @@ async fn install_code(arg: InstallCodeArgument) -> CallResult<()> {
 // }
 
 
-#[update]
-pub async fn get_dao_details(dao_canister_id: String) -> String {
-    ic_cdk::println!("inside this function: {}", &dao_canister_id);
+// #[update]
+// pub async fn get_dao_details(dao_canister_id: String) -> String {
+//     ic_cdk::println!("inside this function: {}", &dao_canister_id);
 
-    type ReturnResult = DaoResponse;
+//     type ReturnResult = DaoResponse;
 
-    // let principal = match Principal::from_text(&dao_canister_id) {
-    //     Ok(p) => p,
-    //     Err(e) => {
-    //         ic_cdk::println!("Invalid principal: {}", e);
-    //         return "Invalid principal".to_string();
-    //     }
-    // };
+//     // let principal = match Principal::from_text(&dao_canister_id) {
+//     //     Ok(p) => p,
+//     //     Err(e) => {
+//     //         ic_cdk::println!("Invalid principal: {}", e);
+//     //         return "Invalid principal".to_string();
+//     //     }
+//     // };
 
-    let principal =  Principal::from_text(&dao_canister_id).unwrap();
+//     let principal =  Principal::from_text(&dao_canister_id).unwrap();
 
 
-    ic_cdk::println!("principal id is {:?} ", &principal);
+//     ic_cdk::println!("principal id is {:?} ", &principal);
 
-    let response: CallResult<(ReturnResult,)> = ic_cdk::call(principal, "get_dao_detail", ()).await;
+//     let response: CallResult<(ReturnResult,)> = ic_cdk::call(principal, "get_dao_detail", ()).await;
 
-    match response {
-        Ok((dao_response,)) => {
-            ic_cdk::println!("DAO response: {:?}", dao_response);
-            // Return the DAO response or any other appropriate data
-            "DAO details fetched successfully".to_string()
-        }
-        Err((rejection_code, message)) => {
-            ic_cdk::println!("Call failed with code {:?} and message {:?}", rejection_code, message);
-            "Call failed".to_string()
-        }
-    }
-}
+//     match response {
+//         Ok((dao_response,)) => {
+//             ic_cdk::println!("DAO response: {:?}", dao_response);
+//             // Return the DAO response or any other appropriate data
+//             "DAO details fetched successfully".to_string()
+//         }
+//         Err((rejection_code, message)) => {
+//             ic_cdk::println!("Call failed with code {:?} and message {:?}", rejection_code, message);
+//             "Call failed".to_string()
+//         }
+//     }
+// }

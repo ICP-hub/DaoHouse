@@ -73,11 +73,7 @@ type Profileinput = record {
   image_content: opt blob;
   image_title: text;
   image_content_type: text;
-
-
 };
-
-
 
 type Result = variant { Ok : text; Err : text };
 type Result_1 = variant { Ok; Err : text };
@@ -85,6 +81,15 @@ type Result_2 = variant { Ok : PostInfo; Err : text };
 type Result_3 = variant { Ok : UserProfile; Err : text };
 type Result_4 = variant { Ok: vec record {text; PostInfo}; Err: text  };
 type Result_5 = variant {Ok: vec principal; Err: text};
+type AnalyticsResponse = variant {Ok: Analytics; Err: text};
+
+type Analytics = record {
+    members_count : nat64;
+    proposals_count : nat64;
+    dao_counts : nat64;
+    post_count : nat64;
+};
+
 type UserProfile = record {
   post_id : vec text;
   username : text;
@@ -136,5 +141,6 @@ service : {
   get_my_follower: () -> (Result_5);
   get_my_following: () -> (Result_5);
   get_all_dao: () -> (vec DaoDetails);
-  get_dao_details: (text) -> (text);
+ // get_dao_details: (text) -> (text);
+  get_analytics: () -> (AnalyticsResponse) query;
 }

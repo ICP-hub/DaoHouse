@@ -22,7 +22,7 @@ echo $ASSET_HANDLER_ID
 
 # creare_profile function
     test1=$(dfx canister call daohouse_backend create_profile '(
-    "br5f7-7uaaa-aaaaa-qaaca-cai",
+    "bw4dl-smaaa-aaaaa-qaacq-cai",
 
     record {
         email_id = "bhanupradddd@gmail.com";
@@ -209,50 +209,65 @@ echo $test1
 
 
 
-dao_test=$(dfx canister call daohouse_backend create_dao '("br5f7-7uaaa-aaaaa-qaaca-cai", record {
-    dao_name = "DAO by bhanu";
-    purpose = "this is by bhanu";
-    daotype = "Non-profit";
-    link_of_document = "https://example.com/charter.pdf";
-    cool_down_period = "7 days";
-    members=vec{
-        principal "aaaaa-aa";
-    };
-    tokenissuer="sample";
-    linksandsocials=vec{
-        "https://twitter.com/sampledao";
-    };
-    required_votes=100;
+# dao_test=$(dfx canister call daohouse_backend create_dao '("br5f7-7uaaa-aaaaa-qaaca-cai", record {
+#     dao_name = "test number 5001";
+#     purpose = "this is by bhanu";
+#     daotype = "Non-profit";
+#     link_of_document = "https://example.com/charter.pdf";
+#     cool_down_period = "7 days";
+#     members=vec{
+#         principal "dyced-eio47-esslv-qfsgw-4dono-lh4xn-jlgm6-hypko-f7nkc-afe52-xae"
+#     };
+#     tokenissuer="sample";
+#     linksandsocials=vec{
+#         "https://twitter.com/sampledao";
+#         "https://twitter.com/sampledao";
+#         "https://twitter.com/sampledao";
+#     };
+#     required_votes=100;
     
-      image_content= opt vec {10};
-  image_title = "samppe.jpg";
-  image_content_type = "image/jpg";
+#       image_content= opt vec {10};
+#   image_title = "samppe.jpg";
+#   image_content_type = "image/jpg";
 
-})')
+# })')
+
+# echo $dao_test
 
 
-# echo $dao_test\n
-# 
+# # echo $dao_test\n
+# # # 
 # # TO LIST ALL DAO BASIC DETAIL
-dao_test0=$(dfx canister call daohouse_backend get_all_dao)
-echo $dao_test0\n\n
+# dao_test0=$(dfx canister call daohouse_backend get_all_dao)
+# echo $dao_test0\n\n
 
 
 
-echo "\n\n"
+# echo "\n\n"
 
 
 # dao_test1=$(dfx canister call daohouse_backend get_dao_details '("be2us-64aaa-aaaaa-qaabq-cai")')
 # echo $dao_test1
 
-# dao_test008=$(dfx canister call bw4dl-smaaa-aaaaa-qaacq-cai get_dao_detail)
+# dao_test008=$(dfx canister call avqkn-guaaa-aaaaa-qaaea-cai get_dao_detail)
+# echo $dao_test008
+# #
+
+# # echo "\n\n\n"
+
+# dao_test007=$(dfx canister call bw4dl-smaaa-aaaaa-qaacq-cai get_dao_detail)
+# echo $dao_test007
+
+
+# # # TO JOIN DAO
+# dao_test008=$(dfx canister call bkyz2-fmaaa-aaaaa-qaaaq-cai join_dao)
 # echo $dao_test008
 
+# TO GET ANALYTICS
+analytics_test=$(dfx canister call daohouse_backend get_analytics)
+echo $analytics_test
 
-# echo "\n\n\n"
 
-# dao_test007=$(dfx canister call by6od-j4aaa-aaaaa-qaadq-cai get_dao_detail)
-# echo $dao_test007
 
 # # dfx canister call br5f7-7uaaa-aaaaa-qaaca-cai add_member_to_group '("council", principal "lebve-ee3za-txcur-xbw36-ujg7l-gpofb-x6onu-cuxxs-kx2fx-mlklc-bqe")'
 

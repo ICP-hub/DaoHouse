@@ -32,6 +32,7 @@ impl State {
                 required_votes:0,
                 groups_count:0,
                 group_name:Vec::new(),
+                members: Vec::new()
             },
 
             permision:Votingandpermissions{

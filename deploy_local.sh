@@ -8,7 +8,7 @@ dfx deploy dao_canister --argument '(record{
     link_of_document="https://example.com/charter.pdf";
     cool_down_period="7 days";
     members=vec{
-        principal "aaaaa-aa";
+        "aaaaa-aa";
     };
     tokenissuer="sample_token_issuer";
     linksandsocials=vec{

@@ -51,6 +51,9 @@ pub struct Dao{
     pub required_votes:i8,
     pub groups_count:u64,
     pub group_name:Vec<String>,
+    // pub members: Vec<Principal>,
+    pub members: Vec<String>,
+
 }
 
 #[derive(Clone,CandidType,Serialize,Deserialize)]
@@ -60,7 +63,9 @@ pub struct DaoInput{
     pub daotype:String,
     pub link_of_document:String,
     pub cool_down_period:String,
-    pub members:Vec<Principal>,
+    // pub members:Vec<Principal>,
+    pub members:Vec<String>,
+
     pub tokenissuer:String,
     pub linksandsocials:Vec<String>,
     pub required_votes:i8,
@@ -69,7 +74,9 @@ pub struct DaoInput{
 
 #[derive(Clone,CandidType,Serialize,Deserialize)]
 pub struct GroupList{
-    pub users:Vec<Principal>,
+    // pub users:Vec<Principal>,
+    pub users:Vec<String>,
+
 
 }
 
