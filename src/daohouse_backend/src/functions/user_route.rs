@@ -1,45 +1,48 @@
 use std::borrow::{Borrow, BorrowMut};
 
+use crate::api::call::{call_with_payment128, CallResult};
+use crate::api::canister_version;
 use crate::routes::upload_image;
+use crate::types::{
+    CanisterIdRecord, CanisterInstallMode, CreateCanisterArgument, CreateCanisterArgumentExtended,
+    InstallCodeArgument, InstallCodeArgumentExtended,
+};
 use crate::types::{DaoInput, Profileinput, UserProfile};
 use crate::{routes, with_state, DaoDetails, DaoResponse, ImageData};
-use ic_cdk::{query, update};
-use crate::types::{CreateCanisterArgument,CanisterInstallMode,CanisterIdRecord,CreateCanisterArgumentExtended,InstallCodeArgument,InstallCodeArgumentExtended};
-use crate::api::call::{ call_with_payment128, CallResult};
-use crate::api::canister_version;
+use candid::{encode_one, Principal};
 use ic_cdk::api;
-use candid::{Principal, encode_one};
 use ic_cdk::println;
+use ic_cdk::{query, update};
 // use ic_cdk::trap;
 
-
 #[update]
-async fn create_profile(asset_handler_canister_id: String, profile: Profileinput) -> Result<(), String> {
-
-           // Validate email format
-   if !profile.email_id.contains('@') || !profile.email_id.contains('.') {
-    return Err("Enter correct Email ID".to_string());
-}
+async fn create_profile(
+    asset_handler_canister_id: String,
+    profile: Profileinput,
+) -> Result<(), String> {
+    // Validate email format
+    if !profile.email_id.contains('@') || !profile.email_id.contains('.') {
+        return Err("Enter correct Email ID".to_string());
+    }
     let principal_id = api::caller();
-
 
     // Check if the caller is anonymous
     if principal_id == Principal::anonymous() {
-       return Err("Anonymous principal not allowed to make calls.".to_string());
-   }
-
-   // Check if the user is already registered
-   let is_registered = with_state(|state|  {
-        if state.user_profile.contains_key(&principal_id) {
-        return Err("User already registered".to_string());
-        };
-        Ok(())
-    }).is_err();
-
-    if is_registered {
-        return Err("User already exist".to_string())
+        return Err("Anonymous principal not allowed to make calls.".to_string());
     }
 
+    // Check if the user is already registered
+    let is_registered = with_state(|state| {
+        if state.user_profile.contains_key(&principal_id) {
+            return Err("User already registered".to_string());
+        };
+        Ok(())
+    })
+    .is_err();
+
+    if is_registered {
+        return Err("User already exist".to_string());
+    }
 
     // image upload
     let image_id = upload_image(
@@ -49,8 +52,9 @@ async fn create_profile(asset_handler_canister_id: String, profile: Profileinput
             name: profile.image_title.clone(),
             content_type: profile.image_content_type.clone(),
         },
-    ).await.map_err(|err| format!("Image upload failed: {}", err))?;
-
+    )
+    .await
+    .map_err(|err| format!("Image upload failed: {}", err))?;
 
     let new_profile = UserProfile {
         user_id: principal_id,
@@ -74,21 +78,79 @@ async fn create_profile(asset_handler_canister_id: String, profile: Profileinput
 
     // with_state(|state| routes::create_new_profile(state, profile.clone()))
 
-    
+    with_state(|state| -> Result<(), String> {
+        // let mut analytics = state.analytics_content.borrow().get(&0).unwrap();
+        // analytics.members_count += 1;
+        let mut analytics = state.analytics_content.borrow().get(&0).unwrap();
+        analytics.members_count += 1;
+        // state.analytics_content.borrow_mut().get(&0).unwrap().members_count += 1;
+        state.analytics_content.insert(0, analytics);
+        // state.analytics_content.borrow_mut().get(&0).unwrap().members_count += 1;
+        //  state.analytics_content.insert(0, analytics);
+        state.user_profile.insert(principal_id, new_profile);
+        Ok(())
+    })
+}
+
+
+#[update]
+async fn update_profile(
+    asset_handler_canister_id: String,
+    profile: Profileinput,
+) -> Result<(), String> {
+    // Validate email format
+    if !profile.email_id.contains('@') || !profile.email_id.contains('.') {
+        return Err("Enter correct Email ID".to_string());
+    }
+    let principal_id = api::caller();
+
+    // Check if the caller is anonymous
+    if principal_id == Principal::anonymous() {
+        return Err("Anonymous principal not allowed to make calls.".to_string());
+    }
+
+    // Check if the user is already registered
+    let is_registered = with_state(|state| {
+        if !state.user_profile.contains_key(&principal_id) {
+            return Err("User not registered".to_string());
+        };
+        Ok(())
+    })
+    .is_err();
+
+    if !is_registered {
+        return Err("User doesn't exist".to_string());
+    }
+
+    // image upload
+    let image_id = upload_image(
+        asset_handler_canister_id,
+        ImageData {
+            content: profile.image_content,
+            name: profile.image_title.clone(),
+            content_type: profile.image_content_type.clone(),
+        },
+    )
+    .await
+    .map_err(|err| format!("Image upload failed: {}", err))?;
 
     with_state(|state| -> Result<(), String> {
-    // let mut analytics = state.analytics_content.borrow().get(&0).unwrap();
-    // analytics.members_count += 1;
-    let mut analytics = state.analytics_content.borrow().get(&0).unwrap();
-    analytics.members_count += 1;
-    // state.analytics_content.borrow_mut().get(&0).unwrap().members_count += 1;
-     state.analytics_content.insert(0, analytics);
-    // state.analytics_content.borrow_mut().get(&0).unwrap().members_count += 1;
-    //  state.analytics_content.insert(0, analytics);
-    state.user_profile.insert(principal_id, new_profile);
-    Ok(())
-
-})    
+        if let Some(existing_profile) = state.user_profile.get_mut(&principal_id) {
+            ic_cdk::println("profile is {:?}", profile);
+            existing_profile.email_id = profile.email_id.clone();
+            existing_profile.profile_img = image_id;
+            existing_profile.username = profile.username.clone();
+            existing_profile.description = profile.description.clone();
+            existing_profile.tag_defines = profile.tag_defines.clone();
+            existing_profile.contact_number = profile.contact_number.clone();
+            existing_profile.twitter_id = profile.twitter_id.clone();
+            existing_profile.telegram = profile.telegram.clone();
+            existing_profile.website = profile.website.clone();
+            Ok(())
+        } else {
+            Err("Failed to update profile".to_string())
+        }
+    })
 }
 
 #[query]
@@ -98,9 +160,9 @@ fn get_my_follower() -> Result<Vec<Principal>, String> {
     if principal_id == Principal::anonymous() {
         return Err("Anonymous user not allowed".to_string());
     }
-    let followers = with_state(|state| state.user_profile.get(&principal_id).clone()).expect("User not found");
+    let followers =
+        with_state(|state| state.user_profile.get(&principal_id).clone()).expect("User not found");
     Ok(followers.followers_list)
-
 }
 
 #[query]
@@ -108,11 +170,11 @@ fn get_my_following() -> Result<Vec<Principal>, String> {
     let principal_id = api::caller();
 
     if principal_id == Principal::anonymous() {
-        return Err(String::from("Anonymous user not allowed, try logging in")); 
+        return Err(String::from("Anonymous user not allowed, try logging in"));
     }
 
-    let following: UserProfile = with_state(|state| state.user_profile.get(&principal_id).clone())
-.expect("User not found");
+    let following: UserProfile =
+        with_state(|state| state.user_profile.get(&principal_id).clone()).expect("User not found");
     Ok(following.followings_list)
 }
 
@@ -127,20 +189,19 @@ async fn update_profile(profile: Profileinput) -> Result<(), String> {
 }
 
 #[update]
-async fn delete_profile() -> Result<(), String>{
+async fn delete_profile() -> Result<(), String> {
     with_state(|state| routes::delete_profile(state))
 }
 
-
 #[update]
-async fn follow_user(userid:Principal)->Result<(), String>{
+async fn follow_user(userid: Principal) -> Result<(), String> {
     let principal_id = api::caller();
 
     if !with_state(|state| state.user_profile.contains_key(&principal_id)) {
         return Err("User not registered".to_string());
     }
 
-    let getuser=with_state(|state| state.user_profile.get(&principal_id).unwrap().clone());
+    let getuser = with_state(|state| state.user_profile.get(&principal_id).unwrap().clone());
 
     if getuser.followers_list.contains(&principal_id) {
         return Err("You have already followed this user".to_string());
@@ -150,11 +211,8 @@ async fn follow_user(userid:Principal)->Result<(), String>{
     let mut updated_list = getuser.followers_list.clone();
     updated_list.push(principal_id);
 
-
-    
-    let update_user=UserProfile{
-
-        user_id:getuser.user_id,
+    let update_user = UserProfile {
+        user_id: getuser.user_id,
         email_id: getuser.email_id,
         profile_img: getuser.profile_img,
         username: getuser.username,
@@ -171,20 +229,16 @@ async fn follow_user(userid:Principal)->Result<(), String>{
         twitter_id: getuser.twitter_id,
         telegram: getuser.telegram,
         website: getuser.website,
-
     };
 
-
-    let getuser2=with_state(|state| state.user_profile.get(&userid).unwrap().clone());
+    let getuser2 = with_state(|state| state.user_profile.get(&userid).unwrap().clone());
 
     let updated_following_count = getuser2.followings_count + 1;
     let mut updated_list2 = getuser2.followings_list.clone();
     updated_list2.push(principal_id);
 
-
-
-    let updateuser2=UserProfile{
-        user_id:getuser2.user_id,
+    let updateuser2 = UserProfile {
+        user_id: getuser2.user_id,
         email_id: getuser2.email_id,
         profile_img: getuser2.profile_img,
         username: getuser2.username,
@@ -201,19 +255,16 @@ async fn follow_user(userid:Principal)->Result<(), String>{
         twitter_id: getuser2.twitter_id,
         telegram: getuser2.telegram,
         website: getuser2.website,
-
     };
 
-    with_state(|state|state.user_profile.insert(principal_id, update_user));
-    with_state(|state|state.user_profile.insert(userid, updateuser2));
-
-    
+    with_state(|state| state.user_profile.insert(principal_id, update_user));
+    with_state(|state| state.user_profile.insert(userid, updateuser2));
 
     Ok(())
 }
 
 #[update]
-pub async fn create_dao(canister_id: String, dao_detail: DaoInput) -> Result<String,String> {
+pub async fn create_dao(canister_id: String, dao_detail: DaoInput) -> Result<String, String> {
     let principal_id = api::caller();
     if principal_id == Principal::anonymous() {
         // trap("Anonymous principal not allowed to make calls.")
@@ -223,34 +274,33 @@ pub async fn create_dao(canister_id: String, dao_detail: DaoInput) -> Result<Str
     let mut updated_members = dao_detail.members.clone();
     updated_members.push(principal_id.clone());
 
-
-     // image upload
-     let image_id = upload_image(
+    // image upload
+    let image_id = upload_image(
         canister_id,
         ImageData {
             content: dao_detail.image_content,
             name: dao_detail.image_title.clone(),
             content_type: dao_detail.image_content_type.clone(),
         },
-    ).await.map_err(|err| format!("Image upload failed: {}", err))?;
+    )
+    .await
+    .map_err(|err| format!("Image upload failed: {}", err))?;
 
-
-    let update_dau_detail=DaoInput{
-        dao_name:dao_detail.dao_name.clone(),
-        purpose:dao_detail.purpose,
-        daotype:dao_detail.daotype,
-        link_of_document:dao_detail.link_of_document,
-        cool_down_period:dao_detail.cool_down_period,
-        members:updated_members,
-        tokenissuer:dao_detail.tokenissuer,
-        linksandsocials:dao_detail.linksandsocials,
-        required_votes:dao_detail.required_votes,
+    let update_dau_detail = DaoInput {
+        dao_name: dao_detail.dao_name.clone(),
+        purpose: dao_detail.purpose,
+        daotype: dao_detail.daotype,
+        link_of_document: dao_detail.link_of_document,
+        cool_down_period: dao_detail.cool_down_period,
+        members: updated_members,
+        tokenissuer: dao_detail.tokenissuer,
+        linksandsocials: dao_detail.linksandsocials,
+        required_votes: dao_detail.required_votes,
 
         image_id: Some(image_id.clone()),
         image_content: None,
         image_content_type: "".to_string(),
         image_title: "".to_string(),
-        
     };
 
     let dao_detail_bytes: Vec<u8> = match encode_one(&update_dau_detail) {
@@ -265,15 +315,13 @@ pub async fn create_dao(canister_id: String, dao_detail: DaoInput) -> Result<Str
 
     // let mut user_profile_detail =  with_state(|state| state.user_profile.get(&principal_id).unwrap().clone());
 
-    let  user_profile_detail =  with_state(|state| state.user_profile.get(&principal_id).clone());
+    let user_profile_detail = with_state(|state| state.user_profile.get(&principal_id).clone());
 
     let mut user_profile_detail = match user_profile_detail {
         Some(data) => data,
-        None => panic!("Error ho gya bhanu")
-    }; 
-    let arg = CreateCanisterArgument {
-        settings: None,
+        None => panic!("Error ho gya bhanu"),
     };
+    let arg = CreateCanisterArgument { settings: None };
     let (canister_id,) = match create_canister(arg).await {
         Ok(id) => id,
         Err((_, err_string)) => return Err(err_string),
@@ -289,15 +337,18 @@ pub async fn create_dao(canister_id: String, dao_detail: DaoInput) -> Result<Str
         dao_canister_id: canister_id_principal.to_string().clone(),
         dao_name: dao_detail.dao_name,
         image_id,
-        dao_id: canister_id_principal.clone()
+        dao_id: canister_id_principal.clone(),
     };
 
     with_state(|state| {
-        state.dao_details.insert(canister_id_principal.to_string().clone(), dao_details)
+        state
+            .dao_details
+            .insert(canister_id_principal.to_string().clone(), dao_details)
     });
 
-
-    user_profile_detail.dao_ids.push(canister_id_principal.to_string());
+    user_profile_detail
+        .dao_ids
+        .push(canister_id_principal.to_string());
 
     let new_profile = UserProfile {
         user_id: user_profile_detail.user_id,
@@ -308,7 +359,7 @@ pub async fn create_dao(canister_id: String, dao_detail: DaoInput) -> Result<Str
         post_count: user_profile_detail.post_count,
         post_id: user_profile_detail.post_id,
         followers_count: user_profile_detail.followers_count,
-        followers_list:user_profile_detail.followers_list,
+        followers_list: user_profile_detail.followers_list,
         followings_count: user_profile_detail.followings_count,
         followings_list: user_profile_detail.followings_list,
         description: user_profile_detail.description,
@@ -323,13 +374,14 @@ pub async fn create_dao(canister_id: String, dao_detail: DaoInput) -> Result<Str
         let mut analytics = state.analytics_content.borrow().get(&0).unwrap();
         analytics.dao_counts += 1;
         // state.analytics_content.borrow_mut().get(&0).unwrap().members_count += 1;
-         state.analytics_content.insert(0, analytics);
-        state.user_profile.insert(principal_id, new_profile)});
+        state.analytics_content.insert(0, analytics);
+        state.user_profile.insert(principal_id, new_profile)
+    });
     let arg1 = InstallCodeArgument {
-        mode: CanisterInstallMode::Install, 
-        canister_id: canister_id_principal, 
+        mode: CanisterInstallMode::Install,
+        canister_id: canister_id_principal,
         wasm_module: vec![],
-        arg: dao_detail_bytes, 
+        arg: dao_detail_bytes,
     };
     let installcode = install_code(arg1).await;
     println!("Canister ID: {:?}", canister_id);
@@ -365,13 +417,13 @@ async fn deposit_cycles(arg: CanisterIdRecord, cycles: u128) -> CallResult<()> {
 }
 
 async fn install_code(arg: InstallCodeArgument) -> CallResult<()> {
-   let wasm_base64: &str = "3831fb07143cd43c3c51f770342d2b7d0a594311529f5503587bf1544ccd44be";
+    let wasm_base64: &str = "3831fb07143cd43c3c51f770342d2b7d0a594311529f5503587bf1544ccd44be";
     let wasm_module_sample: Vec<u8> = base64::decode(wasm_base64).expect("Decoding failed");
 
     // let wasm_module_sample: Vec<u8> = include_bytes!("../../../../.dfx/local/canisters/dao_canister/dao_canister.wasm").to_vec();
-    
-    let cycles: u128 = 10_000_000_000; 
-    
+
+    let cycles: u128 = 10_000_000_000;
+
     let extended_arg = InstallCodeArgumentExtended {
         mode: arg.mode,
         canister_id: arg.canister_id,
@@ -379,14 +431,14 @@ async fn install_code(arg: InstallCodeArgument) -> CallResult<()> {
         arg: arg.arg,
         sender_canister_version: Some(canister_version()),
     };
-    
-   
+
     call_with_payment128(
         Principal::management_canister(),
         "install_code",
         (extended_arg,),
         cycles,
-    ).await
+    )
+    .await
 }
 
 // get dao details (intercanister)
@@ -400,15 +452,12 @@ async fn install_code(arg: InstallCodeArgument) -> CallResult<()> {
 //     let response:  CallResult<(ReturnResult,)>  =
 //     ic_cdk::call(Principal::from_text(dao_canister_id).unwrap(), "get_dao_detail", ()).await;
 
-
 //   let res0: Result<(ReturnResult,), (RejectionCode, String)> = response;
-
 
 //     ic_cdk::println!("response is  {:?}", res0);
 
 //     "sdfs".to_string()
 // }
-
 
 #[update]
 pub async fn get_dao_details(dao_canister_id: String) -> String {
@@ -424,8 +473,7 @@ pub async fn get_dao_details(dao_canister_id: String) -> String {
     //     }
     // };
 
-    let principal =  Principal::from_text(&dao_canister_id).unwrap();
-
+    let principal = Principal::from_text(&dao_canister_id).unwrap();
 
     ic_cdk::println!("principal id is {:?} ", &principal);
 
@@ -438,7 +486,11 @@ pub async fn get_dao_details(dao_canister_id: String) -> String {
             "DAO details fetched successfully".to_string()
         }
         Err((rejection_code, message)) => {
-            ic_cdk::println!("Call failed with code {:?} and message {:?}", rejection_code, message);
+            ic_cdk::println!(
+                "Call failed with code {:?} and message {:?}",
+                rejection_code,
+                message
+            );
             "Call failed".to_string()
         }
     }

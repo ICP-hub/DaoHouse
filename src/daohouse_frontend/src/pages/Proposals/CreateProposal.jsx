@@ -4,15 +4,28 @@ import createProposal from "../../../assets/proposal.gif"
 import ReactQuill from 'react-quill';
 import { quillFormats, quillModules } from '../../utils/quilConfig';
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
+import 'react-quill/dist/quill.bubble.css'
 
 
 function CreateProposal() {
     const [proposalType, setProposalType] = useState('Text');
-    const [proposalDescription, setProposalDescription] = useState('');
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [inputfieldsData, setInputFieldsData] = useState({
+        proposalRecipient: "",
+        proposalAmount: "",
+        proposalContract: "",
+        proposalMethod: "",
+        proposalArguments: "",
+        proposalGas: "",
+        proposalDeposit: "",
+        proposalAccountID: "",
+        proposalRole: "",
+        RemoveProposalAccountId: "",
+        RemoveProposalRole: "",
+        proposalDescription: "",
+    })
 
     const className = "CreateProposals";
-
     const proposalTypes = [
         "Text",
         "Transfer",
@@ -21,20 +34,29 @@ function CreateProposal() {
         "Remove Member"
     ];
 
+    const handleChange = (name, value) => {
+        setInputFieldsData(prevState => ({
+            ...prevState,
+            [name]: value,
+        }));
+    };
 
     const handleProposalTypeChange = (value) => {
         setProposalType(value);
         setDropdownOpen(!dropdownOpen)
     };
 
-    const handleProposalDescriptionChange = (value) => {
-        setProposalDescription(value);
-    };
-
     const handleSubmit = (event) => {
         event.preventDefault();
+        const payload = {
+            proposal_receiver_id: "dao ID",
+            created_by: "user",
+            proposal_amount: inputfieldsData.proposalAmount,
+            proposal_title: "dao title",
+            proposal_description: inputfieldsData.proposalDescription,
+        }
+        console.log(inputfieldsData, 'inputfieldsData')
     };
-
 
     const renderAdditionalFields = () => {
         switch (proposalType) {
@@ -42,7 +64,11 @@ function CreateProposal() {
                 return (
                     <div>
                         <label className="block mb-2 font-semibold text-xl">Recipient</label>
-                        <input type="text" placeholder="Specify Account if any" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent" /><br />
+                        <input type="text" placeholder="Specify Account if any" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+                            name="proposalRecipient"
+                            value={inputfieldsData.proposalRecipient}
+                            onChange={(e) => handleChange(e.target.name, e.target.value)}
+                        /><br />
                         <div className="flex flex-wrap flex-row w-full gap-4">
 
                             <div className="flex-1">
@@ -55,7 +81,11 @@ function CreateProposal() {
                             <div className="flex-1">
                                 <label className="block mb-2 font-semibold text-xl">Amount</label>
 
-                                <input type="number" placeholder="Write here number type input" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent" />
+                                <input type="number" placeholder="Write here number type input" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+                                    name="proposalAmount"
+                                    value={inputfieldsData.proposalAmount}
+                                    onChange={(e) => handleChange(e.target.name, e.target.value)}
+                                />
                             </div>
                         </div>
                     </div>
@@ -64,34 +94,70 @@ function CreateProposal() {
                 return (
                     <div>
                         <label className="block mb-2 font-semibold text-xl">Contract</label>
-                        <input type="text" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent" /><br />
+                        <input type="text" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent" name="proposalContract"
+                            value={inputfieldsData.proposalContract}
+                            onChange={(e) => handleChange(e.target.name, e.target.value)} /><br />
                         <label className="block mb-2 font-semibold text-xl">Method</label>
-                        <input type="text" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent" /><br />
+                        <input type="text" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent" name="proposalMethod"
+                            value={inputfieldsData.proposalMethod}
+                            onChange={(e) => handleChange(e.target.name, e.target.value)} /><br />
                         <label className="block mb-2 font-semibold text-xl">Arguments (JSON)</label>
-                        <input type="text" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent" /><br />
+                        <input type="text" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent" name="proposalArguments"
+                            value={inputfieldsData.proposalArguments}
+                            onChange={(e) => handleChange(e.target.name, e.target.value)} /><br />
                         <div className="flex flex-wrap flex-row w-full gap-4">
                             <div className="flex-1">
                                 <label className="block mb-2 font-semibold text-xl">Gas (Tgas)</label>
-                                <input type="text" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent" />
+                                <input type="text" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent" name="proposalGas"
+                                    value={inputfieldsData.proposalGas}
+                                    onChange={(e) => handleChange(e.target.name, e.target.value)} />
                             </div>
                             <div className="flex-1">
                                 <label className="block mb-2 font-semibold text-xl">Deposit</label>
-                                <input type="text" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent" />
+                                <input type="text" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent" name="proposalDeposit"
+                                    value={inputfieldsData.proposalDeposit}
+                                    onChange={(e) => handleChange(e.target.name, e.target.value)} />
                             </div>
                         </div>
                     </div>
                 );
             case 'Add Member':
-            case 'Remove Member':
                 return (
-                    <div className="flex flex-wrap flex-row w-full gap-4">
+                    <div className="flex md:flex-row flex-col flex-wrap flex-row w-full gap-4">
                         <div className="flex-1">
                             <label className="block mb-2 font-semibold text-xl">Account ID</label>
-                            <input type="text" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent" />
+                            <input type="text" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+                                name='proposalAccountID'
+                                value={inputfieldsData.proposalAccountID}
+                                onChange={(e) => handleChange(e.target.name, e.target.value)}
+                            />
                         </div>
                         <div className="flex-1">
                             <label className="block mb-2 font-semibold text-xl">Role</label>
-                            <input type="text" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent" />
+                            <input type="text" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+                                name='proposalRole'
+                                value={inputfieldsData.proposalRole}
+                                onChange={(e) => handleChange(e.target.name, e.target.value)} />
+                        </div>
+                    </div>
+                );
+            case 'Remove Member':
+                return (
+                    <div className="flex md:flex-row flex-col flex-wrap flex-row w-full gap-4">
+                        <div className="flex-1">
+                            <label className="block mb-2 font-semibold text-xl">Account ID</label>
+                            <input type="text" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+                                name='RemoveProposalAccountId'
+                                value={inputfieldsData.RemoveProposalAccountId}
+                                onChange={(e) => handleChange(e.target.name, e.target.value)}
+                            />
+                        </div>
+                        <div className="flex-1">
+                            <label className="block mb-2 font-semibold text-xl">Role</label>
+                            <input type="text" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+                                name='RemoveProposalRole'
+                                value={inputfieldsData.RemoveProposalRole}
+                                onChange={(e) => handleChange(e.target.name, e.target.value)} />
                         </div>
                     </div>
                 );
@@ -159,14 +225,16 @@ function CreateProposal() {
                     <div className='my-4'>
                         <h1 className="text-xl font-semibold mb-4">Proposal Description</h1>
                         <div className="mb-6 max-w-6xl mt-4 relative editor-container">
-                            <ReactQuill
-                                value={proposalDescription}
-                                onChange={handleProposalDescriptionChange}
-                                modules={quillModules}
-                                formats={quillFormats}
-                                placeholder='Write here...'
-                                className='proposal-editor rounded-xl'
-                            />
+                            <div className="proposal-content" >
+                                <ReactQuill
+                                    value={inputfieldsData.proposalDescription}
+                                    onChange={(value) => handleChange("proposalDescription", value)}
+                                    modules={quillModules}
+                                    formats={quillFormats}
+                                    placeholder='Write here...'
+                                    className='proposal-editor rounded-xl'
+                                />
+                            </div>
                         </div>
                     </div>
 
