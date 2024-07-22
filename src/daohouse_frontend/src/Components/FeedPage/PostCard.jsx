@@ -1,4 +1,4 @@
-
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import React, { useState, useEffect } from "react";
 import { IoLink } from "react-icons/io5";
 import { FaRegHeart } from "react-icons/fa6";
@@ -87,9 +87,13 @@ const PostCard = ({ posts,handleGetLikePost }) => {
 
         <div className={className + "__buttons mobile:flex hidden flex-row items-center tablet:justify-between tablet:gap-x-4 gap-x-2 big_phone:mt-8 mt-4"}>
           <button
-            onClick={getlike}
             className="flex flex-row tablet:gap-2 gap-1 items-center bg-[#0E3746] text-white tablet:text-base text-sm tablet:py-3 py-2 tablet:px-8 px-4 rounded-[2rem]">
-            <FaRegHeart />
+              {
+              posts?.is_liked == 1 ?
+                <FavoriteIcon onClick={getlike} className="w-5 h-5" />
+                :
+              <FaRegHeart onClick={getlike} className="w-5 h-5" />
+            }
             {posts.like_count}
           </button>
           <button
@@ -108,12 +112,12 @@ const PostCard = ({ posts,handleGetLikePost }) => {
         </div>
       </section>
 
-      <section className={className + "__leftSide tablet:w-2/5 big_phone:w-1/2 w-full h-full"}>
+      <section className={className + "__leftSide tablet:w-2/5 big_phone:w-1/2 w-full h-full flex justify-end item-end"}>
         {posts.post_img && (
           <img
             src={ImageUrl}
             alt="POST Media"
-            className="w-full h-full object-cover rounded-lg"
+            className="sm:max-w-[500px] sm:max-h-[200px] object-cover rounded-lg"
           />
         )}
       </section>
@@ -122,12 +126,17 @@ const PostCard = ({ posts,handleGetLikePost }) => {
         <div className="flex flex-row items-center justify-between gap-x-4">
           <button>
             <div className="flex gap-2">
-            <FaRegHeart className="text-[#0E3746] text-lg mt-1" onClick={getlike}/>
+            {
+              posts?.is_liked == 1 ?
+                <FavoriteIcon onClick={getlike} className="w-5 h-5" />
+                :
+              <FaRegHeart onClick={getlike} className="text-[#0E3746] text-lg mt-1"/>
+              }
             <div className="text-lg">
             {posts.like_count}
             </div>
             </div>
-          </button>
+          </button> 
           <button>
             <div className="flex gap-2">
             <MdOutlineInsertComment className="text-[#0E3746] text-lg mt-1"/>
