@@ -138,7 +138,7 @@ const Post = () => {
                         <img
                           src={`http://${canisterId}.localhost:4943/f/${selectedPost.user_image_id}`}
                           alt="ProfileImage"
-                          className="w-10 rounded-[50%]"
+                          className="w-10 h-10 rounded-full"
                         />
 
                         <p className="font-semibold text-lg">

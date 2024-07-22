@@ -3,7 +3,7 @@ use serde::{ Deserialize, Serialize };
 use ic_stable_structures::{ storable::Bound, Storable };
 use candid::{ Decode, Encode };
 use serde_bytes::{ self, ByteBuf };
-use std::borrow::Cow;
+use std::{borrow::Cow, default};
 
 pub type CanisterId = Principal;
 
@@ -568,6 +568,7 @@ pub struct PostInfo {
     pub comment_count: u32,
     pub user_image_id: String,
     pub comment_list: Vec<Comment>,
+    pub is_liked: u32,
 }
 
 
@@ -632,7 +633,7 @@ pub struct DaoResponse {
     pub group_name: Vec<String>,
 }
 
-#[derive(CandidType, Clone, Serialize, Debug, Deserialize)]
+#[derive(CandidType, Clone, Serialize, Debug, Deserialize, Default)]
 pub struct Analytics {
     pub members_count: u64,
     pub proposals_count: u64,

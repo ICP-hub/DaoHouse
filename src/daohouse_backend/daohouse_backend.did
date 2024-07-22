@@ -9,7 +9,6 @@ type DaoInput = record {
   purpose : text;
   required_votes : int8;
 
-
   // image
   image_content : blob;
   image_title : text;
@@ -37,6 +36,7 @@ type PostInfo = record {
   comment_list : vec Comment;
   post_created_at : nat64;
   user_image_id : text;
+  is_liked: nat32;
 
 };
 

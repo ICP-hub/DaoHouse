@@ -8,6 +8,7 @@ import Container from "../../Components/Container/Container";
 import Pagignation from "../../Components/pagignation/Pagignation";
 import NoPostProfile from "../../Components/Dao/NoPostProfile";
 import nodata from "../../../assets/nodata.png";
+import MuiSkeleton from "../../Components/Skeleton/MuiSkeleton";
 
 const FeedPage = () => {
   const [active, setActive] = useState({ all: true, latest: false });
@@ -19,6 +20,7 @@ const FeedPage = () => {
   const [totalItems, setTotalItems] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const className = "FeedPage";
+  const [loading, setLoading] = useState(false)
 
   const setAllActive = () => {
     setActive({ all: true, latest: false });
@@ -34,6 +36,7 @@ const FeedPage = () => {
 
   const getDetails = async () => {
     try {
+      setLoading(true)
       let response;
       const itemsPerPage = 4;
       const start = (currentPage - 1) * itemsPerPage;
@@ -57,6 +60,9 @@ const FeedPage = () => {
       }
     } catch (error) {
       console.log("Error fetching posts:", error);
+    }
+    finally {
+      setLoading(false)
     }
   };
 
@@ -136,17 +142,22 @@ const FeedPage = () => {
           "__postCards mobile:px-10 px-6 pb-10 bg-[#c8ced3] gap-8 flex flex-col"
         }>
         {
-          posts.length === 0 ?
-            <Container classes="w-full flex flex-col items-center justify-center p-2">
-              <img src={nodata} alt="No Data" className="mb-1 " />
-              <p className="text-center text-gray-700 text-2xl">
-                There are no post availabel yet!
-              </p>
-            </Container>
+          loading ?
+          <MuiSkeleton/>
             :
-            <Container>
-              {posts?.reverse().map((posts, i) => <PostCard handleGetLikePost={handleGetLikePost} posts={posts} key={i} />)}
-            </Container>
+            (
+              posts.length === 0 ?
+                <Container classes="w-full flex flex-col items-center justify-center p-2">
+                  <img src={nodata} alt="No Data" className="mb-1 " />
+                  <p className="text-center text-gray-700 text-2xl">
+                    There are no post availabel yet!
+                  </p>
+                </Container> 
+                :
+                <Container classes={'w-full'}>
+                  {posts?.reverse().map((posts, i) => <PostCard handleGetLikePost={handleGetLikePost} posts={posts} key={i} />)}
+                </Container>
+            )
         }
       </div>
 

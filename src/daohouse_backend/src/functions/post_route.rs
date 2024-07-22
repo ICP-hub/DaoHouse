@@ -108,6 +108,7 @@ async fn create_new_post(canister_id: String, post_details: PostInput) -> Result
         comment_count: 0,
         comment_list: Vec::new(),
         user_image_id: post_details.user_image_id,
+        is_liked: 0
     };
 
     let result = with_state(|state| {
@@ -212,6 +213,7 @@ async fn like_post(post_id: String) -> Result<String, String> {
         comment_count: getpost.comment_count.clone(),
         comment_list: getpost.comment_list.clone(),
         user_image_id: getpost.user_image_id.clone(),
+        is_liked: 1,
     };
     with_state(|state| state.post_detail.insert(new_post.post_id.clone(), new_post));
 
@@ -272,6 +274,7 @@ async fn comment_post(post_id: String, comment: String) -> Result<String, String
         comment_count: getpost.comment_count + 1,
         comment_list: updated_list,
         user_image_id: getpost.user_image_id.clone(),
+        is_liked: getpost.is_liked
     };
     with_state(|state| state.post_detail.insert(new_post.post_id.clone(), new_post));
 

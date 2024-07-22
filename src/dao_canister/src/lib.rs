@@ -10,7 +10,6 @@ use state_handler::State;
 mod memory;
 use memory::Memory; 
 mod functions;
-use std::collections::HashMap;
 // #[macro_use]
 extern crate ic_cdk_macros;
 use types::*;

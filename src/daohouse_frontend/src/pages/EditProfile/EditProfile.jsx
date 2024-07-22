@@ -23,14 +23,16 @@ import { toast } from "react-toastify";
 import data from "../../../../../canister_ids.json"
 import { useNavigate } from "react-router-dom";
 import Container from "../../Components/Container/Container";
+import CircularProgress from '@mui/material/CircularProgress';
 
-
-const EditProfile =  () => {
+const EditProfile = () => {
   const { userProfile, fetchUserProfile } = useUserProfile();
+  console.log(userProfile, 'userProfile')
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { backendActor, frontendCanisterId, identity,principal } = useAuth();
+  const { backendActor, frontendCanisterId, identity, principal } = useAuth();
+  const [loading, setLoading] = useState(false)
 
-  console.log({principal})
+  console.log({ principal })
   // const principalIdArray = Array.from(principal?._arr || []);
   // const princi = Buffer.from(principalIdArray).toString("base64");
   // console.log("principal value is ", princi)
@@ -89,12 +91,8 @@ const EditProfile =  () => {
   });
 
   const handleSaveChangesClick = async () => {
-      if (!profileData.email_id) {
-        toast.error("Email ID is required.");
-        return;
-      }
-      
-     
+  
+    setLoading(true)
     const profilePayload = {
       username: profileData.name,
       email_id: profileData.email_id,
@@ -118,10 +116,9 @@ const EditProfile =  () => {
       const response = await backendActor.update_profile(canisterId, profilePayload);
       console.log({ response })
       if (response.Err) {
-        // toast.error(`${response.Err}`);
-        // toast.error("a",response.Err);
+        toast.error(`${response.Err}`);
       } else {
-        toast.success("Profile updated successfully");
+        toast.success("Profile created successfully");
         setIsModalOpen(true);
       }
     } catch (error) {
@@ -129,6 +126,7 @@ const EditProfile =  () => {
     }
     finally {
       fetchUserProfile();
+      setLoading(false)
     }
   };
 
@@ -289,104 +287,102 @@ const EditProfile =  () => {
           <ProfileTitleDivider title="Edit Profile" />
         </Container>
       </div>
-      <Container> 
-      <div className={`relative ${isModalOpen ? "blur-sm" : ""}`}>
-        <div className="md:mt-12 mt-8 md:mx-24 mx-6 bg-[#F4F2EC] md:p-6 p-4 rounded-lg">
-          <div className="flex items-center gap-2">
-            <img
-              className="rounded-md lg:w-[105px] md:w-[85px] w-[69px] lg:mr-12 md:mr-4 mr-1 "
-              src={imageSrc}
-              alt="profile-pic"
-              style={{
-                boxShadow:
-                  "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
-              }}
-            />
-            <label className="bg-white md:text-[16px] text-[12px] text-[#05212C] gap-1 shadow-xl md:h-[50px] h-[40px] md:px-6 px-3 rounded-[27px] flex items-center cursor-pointer">
+      <Container>
+        <div className={`relative ${isModalOpen ? "blur-sm" : ""}`}>
+          <div className="md:mt-12 mt-8 md:mx-24 mx-6 bg-[#F4F2EC] md:p-6 p-4 rounded-lg">
+            <div className="flex items-center gap-2">
               <img
-                src={UploadIcon}
-                alt="edit"
-                className="md:mr-2 mr-1 md:h-4 md:w-4 w-3 h-3 edit-pen"
+                className="rounded-md lg:w-[105px] md:w-[85px] w-[69px] lg:mr-12 md:mr-4 mr-1 "
+                src={imageSrc}
+                alt="profile-pic"
+                style={{
+                  boxShadow:
+                    "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
+                }}
               />
-              <span className="text-[14px] lg:text-[16px]">
-                Upload New Photo
-              </span>
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleImageChange}
-              />
-            </label>
-            <button
-              onClick={handleRemoveImage}
-              className="text-[12px] md:text-[14px] lg:text-[16px] text-[#9F9F9F] shadow-xl md:h-[50px] h-[40px] md:px-6 px-4 rounded-[27px] border-solid border border-[#9F9F9F] flex items-center "
-            >
-              Remove<span className="hidden sm:inline-block ml-1">Photo</span>
-            </button>
-          </div>
-
-          <div className="lg:ml-40 md:ml-24 lg:mr-5 md:mt-12 mt-5">
-            <h3 className="text-[#05212C] text-[16px] md:text-[18px] lg:text-[24px] md:font-semibold font-medium ml-3">
-              About Me
-            </h3>
-            <div className="bg-[#FFFFFF] md:text-[16px] text-[12px] font-normal text-[#646464] py-3 md:px-5 pl-3 my-4 sm:w-[100%] rounded-lg">
-              <span className="text-[#05212C] md:mr-32 mr-4">Name</span>
-              <input
-                type="text"
-                name="name"
-                value={profileData.name}
-                onChange={handleInputChange}
-                placeholder="Username.user"
-                className="border-solid border border-[#DFE9EE] py-2 pl-4 md:w-[40%] w-[82%] rounded-[6px]"
-              />
-            </div>
-            <p className="lg:text-[20px] md:text-[16px] text-[14px] font-semibold text-[#05212C] md:ml-2 md:mb-3">
-              Description
-            </p>
-            <div className="bg-[#FFFFFF] md:text-[16px] text-[12px] font-normal text-[#646464] py-3 px-5 my-2 rounded-lg">
-              <textarea
-                name="description"
-                value={profileData.description}
-                onChange={handleInputChange}
-                className="w-full h-32 border border-gray-300 rounded-md"
-                placeholder="Describe yourself here..."
-              />
-            </div>
-            <p className="lg:text-[20px] md:text-[16px] text-[14px] font-semibold text-[#05212C] md:ml-2 md:mb-3 mt-6">
-              Tags That Defines You
-            </p>
-            <EditTags
-              editTags={profileData.tag_defines}
-              handleTagsChange={handleTagsChange}
-            />
-            <p className="lg:text-[20px] md:text-[16px] text-[14px] font-semibold text-[#05212C] ml-2 mb-3 mt-6">
-              Personal Links & Contact Info
-            </p>
-            <EditPersonalLinksAndContactInfo
-              profileData={profileData}
-              handleInputChange={handleInputChange}
-              handleSaveChangesClick={handleSaveChangesClick}
-              closeModal={closeModal}
-            />
-            <div className="hidden sm:flex justify-center gap-5 mt-8">
+              <label className="bg-white md:text-[16px] text-[12px] text-[#05212C] gap-1 shadow-xl md:h-[50px] h-[40px] md:px-6 px-3 rounded-[27px] flex items-center cursor-pointer">
+                <img
+                  src={UploadIcon}
+                  alt="edit"
+                  className="md:mr-2 mr-1 md:h-4 md:w-4 w-3 h-3 edit-pen"
+                />
+                <span className="text-[14px] lg:text-[16px]">
+                  Upload New Photo
+                </span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageChange}
+                />
+              </label>
               <button
-                onClick={handleDiscardClick}
-                className="py-2 px-9 border border-[#0E3746] hover:bg-[#0E3746] hover:text-white rounded-[27px] transition duration-200 ease-in-out">
-                Discard
-              </button>
-              <button
-                onClick={handleSaveChangesClick}
-                className="py-2 px-10 border border-[#0E3746] bg-[#0E3746] text-white  hover:bg-[#0E37464D] hover:border-[#0E37464D] rounded-[27px] transition duration-200 ease-in-out"
+                onClick={handleRemoveImage}
+                className="text-[12px] md:text-[14px] lg:text-[16px] text-[#9F9F9F] shadow-xl md:h-[50px] h-[40px] md:px-6 px-4 rounded-[27px] border-solid border border-[#9F9F9F] flex items-center "
               >
-                Save Changes
+                Remove<span className="hidden sm:inline-block ml-1">Photo</span>
               </button>
+            </div>
+
+            <div className="lg:ml-40 md:ml-24 lg:mr-5 md:mt-12 mt-5">
+              <h3 className="text-[#05212C] text-[16px] md:text-[18px] lg:text-[24px] md:font-semibold font-medium ml-3">
+                About Me
+              </h3>
+              <div className="bg-[#FFFFFF] md:text-[16px] text-[12px] font-normal text-[#646464] py-3 md:px-5 pl-3 my-4 sm:w-[100%] rounded-lg">
+                <span className="text-[#05212C] md:mr-32 mr-4">Name</span>
+                <input
+                  type="text"
+                  name="name"
+                  value={profileData.name}
+                  onChange={handleInputChange}
+                  placeholder="Username.user"
+                  className="border-solid border border-[#DFE9EE] py-2 pl-4 md:w-[40%] w-[82%] rounded-[6px]"
+                />
+              </div>
+              <p className="lg:text-[20px] md:text-[16px] text-[14px] font-semibold text-[#05212C] md:ml-2 md:mb-3">
+                Description
+              </p>
+              <div className="bg-[#FFFFFF] md:text-[16px] text-[12px] font-normal text-[#646464] py-3 px-5 my-2 rounded-lg">
+                <textarea
+                  name="description"
+                  value={profileData.description}
+                  onChange={handleInputChange}
+                  className="w-full h-32 border border-gray-300 rounded-md"
+                  placeholder="Describe yourself here..."
+                />
+              </div>
+              <p className="lg:text-[20px] md:text-[16px] text-[14px] font-semibold text-[#05212C] md:ml-2 md:mb-3 mt-6">
+                Tags That Defines You
+              </p>
+              <EditTags
+                editTags={profileData.tag_defines}
+                handleTagsChange={handleTagsChange}
+              />
+              <p className="lg:text-[20px] md:text-[16px] text-[14px] font-semibold text-[#05212C] ml-2 mb-3 mt-6">
+                Personal Links & Contact Info
+              </p>
+              <EditPersonalLinksAndContactInfo
+                profileData={profileData}
+                handleInputChange={handleInputChange}
+                handleSaveChangesClick={handleSaveChangesClick}
+                closeModal={closeModal}
+              />
+              <div className="hidden sm:flex justify-center gap-5 mt-8">
+                <button
+                  onClick={handleDiscardClick}
+                  className="py-2 px-9 border border-[#0E3746] hover:bg-[#0E3746] hover:text-white rounded-[27px] transition duration-200 ease-in-out">
+                  Discard
+                </button>
+                {
+                  loading ? <CircularProgress /> :
+                    <button onClick={handleSaveChangesClick}
+                      className="py-2 px-10 border border-[#0E3746] bg-[#0E3746] text-white  hover:bg-[#0E37464D] hover:border-[#0E37464D] rounded-[27px] transition duration-200 ease-in-out"> Save Changes </button>
+                }
+              </div>
             </div>
           </div>
         </div>
-      </div>
       </Container>
-      
       <SuccessModal isOpen={isModalOpen} onClose={closeModal} />
 
       {isModalOpen && (

@@ -21,9 +21,11 @@
     "@dfinity/assets": "^1.3.0",
     "@dfinity/auth-client": "^1.3.0",
     "@dfinity/principal": "^1.3.0",
-    "@emotion/react": "^11.11.4",
-    "@emotion/styled": "^11.11.5",
-    "@mui/material": "^5.15.18",
+    "@emotion/react": "^11.12.0",
+    "@emotion/styled": "^11.12.0",
+    "@fontsource/roboto": "^5.0.13",
+    "@mui/icons-material": "^5.16.4",
+    "@mui/material": "^5.16.4",
     "@mui/styled-engine-sc": "^6.0.0-alpha.18",
     "cargo": "^0.8.0",
     "i18next-browser-languagedetector": "^7.2.1",
@@ -40,7 +42,7 @@
     "react-router-dom": "^6.23.0",
     "react-table": "^7.8.0",
     "react-toastify": "^10.0.5",
-    "styled-components": "^6.1.11"
+    "styled-components": "^6.1.12"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.19",

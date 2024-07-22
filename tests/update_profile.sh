@@ -20,6 +20,7 @@ echo "ASSET_HANDLER_ID: $ASSET_HANDLER_ID"
       image_content = vec {200};
       image_title = \"bhanuprofile.png\";
       image_content_type = \"image/png\";
+      user_image_id = \"1\";
     }
   )")
 

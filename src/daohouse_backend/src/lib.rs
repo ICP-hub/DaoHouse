@@ -30,12 +30,14 @@ pub fn with_state<R>(f: impl FnOnce(&mut State) -> R) -> R {
 async fn init(args: PaymentRecipientAccount) {
     // async fn init() {
     ic_cdk::println!("values are {:?}", args.payment_recipient.to_string());
-    let analytics = Analytics {
-        dao_counts: 0,
-        members_count: 0,
-        post_count: 0,
-        proposals_count: 0,
-    };
+    // let analytics = Analytics {
+    //     dao_counts: 0,
+    //     members_count: 0,
+    //     post_count: 0,
+    //     proposals_count: 0,
+    // };
+    let analytics = Analytics::default();
+
 
     with_state(|state| {
 

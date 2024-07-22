@@ -1,1 +1,0 @@
-./assets_upload.sh

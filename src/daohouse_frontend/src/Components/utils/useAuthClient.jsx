@@ -4,6 +4,8 @@ import { createActor, idlFactory as BackendidlFactory } from "../../../../declar
 // import { Principal } from "@dfinity/candid/lib/cjs/idl";
 import { Principal } from "@dfinity/principal";
 const AuthContext = createContext();
+import {idlFactory as DaoFactory} from "../../../../declarations/dao_canister/index"
+import { HttpAgent, Actor } from "@dfinity/agent";
 
 export const useAuthClient = () => {
   const [authClient, setAuthClient] = useState(null);
@@ -45,6 +47,10 @@ export const useAuthClient = () => {
     return true;
   };
   
+
+  // to create actor for daoCanister
+
+
   // if (principal !== null) {
   // console.log("principal", Principal.valueToString(principal));
   //     setPrincipal(Principal.valueToString(principal));
@@ -151,6 +157,26 @@ export const useAuthClient = () => {
 
   }
 
+
+  // to create actor for daoCanister
+  const createDaoActor = (canisterId) => {
+    try {
+      const agent = new HttpAgent({identity});
+
+      if (process.env.DFX_NETWORK !== 'production') {
+        agent.fetchRootKey().catch(err => {
+          console.warn('Unable to fetch root key. Check to ensure that your local replica is running');
+          console.error(err);
+        });
+
+        return Actor.createActor(DaoFactory, { agent, canisterId });
+      }
+
+    } catch (err) {
+      console.log(err, "erro ho gya useAuthClient me")
+    }
+  }
+
   const disconnectPlug = async () => {
     if (window.ic?.plug) {
       try {
@@ -184,6 +210,7 @@ export const useAuthClient = () => {
     backendCanisterId,
     backendActor,
     stringPrincipal,
+    createDaoActor,
   };
 };
 
