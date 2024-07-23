@@ -526,7 +526,7 @@ pub struct Profileinput {
     pub image_content_type: String,
 }
 
-#[derive(Clone, CandidType, Serialize, Deserialize)]
+#[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct DaoInput {
     pub dao_name: String,
     pub purpose: String,
@@ -539,7 +539,8 @@ pub struct DaoInput {
     pub required_votes: i8,
 
     // image data
-    pub image_id: Option<String>,
+    // pub image_id: Option<String>,
+    pub image_id: String,
     pub image_content: Option<ByteBuf>,
     pub image_title: String,
     pub image_content_type: String,

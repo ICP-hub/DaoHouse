@@ -4,7 +4,7 @@ use std::borrow::{Borrow, BorrowMut};
 
 use crate::routes::upload_image;
 // <<<<<<< pratap
-use crate::types::{ Comment, PostInfo, PostInput };
+use crate::types::{Comment, PostInfo, PostInput};
 use crate::{
     with_state,
     Analytics,
@@ -13,11 +13,11 @@ use crate::{
     ImageData,
     Pagination,
     ReplyCommentData,
-// =======
-// use crate::types::{Comment, PostInfo, PostInput};
-// use crate::{
-//     with_state, Analytics, DaoDetails, GetAllPostsResponse, ImageData, Pagination, ReplyCommentData,
-// >>>>>>> main
+    // =======
+    // use crate::types::{Comment, PostInfo, PostInput};
+    // use crate::{
+    //     with_state, Analytics, DaoDetails, GetAllPostsResponse, ImageData, Pagination, ReplyCommentData,
+    // >>>>>>> main
 };
 use candid::Principal;
 use ic_cdk::api;
@@ -26,9 +26,9 @@ use ic_cdk::{query, update};
 use icrc_ledger_types::icrc1::account::Account;
 use icrc_ledger_types::icrc1::transfer::BlockIndex;
 // <<<<<<< pratap
-use icrc_ledger_types::icrc2::transfer_from::{ TransferFromArgs, TransferFromError };
-use sha2::{ Digest, Sha256 };
 use crate::guards::*;
+use icrc_ledger_types::icrc2::transfer_from::{TransferFromArgs, TransferFromError};
+use sha2::{Digest, Sha256};
 // =======
 // use icrc_ledger_types::icrc2::transfer_from::{TransferFromArgs, TransferFromError};
 // use sha2::{Digest, Sha256};
@@ -108,7 +108,7 @@ async fn create_new_post(canister_id: String, post_details: PostInput) -> Result
         comment_count: 0,
         comment_list: Vec::new(),
         user_image_id: post_details.user_image_id,
-        is_liked: 0
+        is_liked: 0,
     };
 
     let result = with_state(|state| {
@@ -180,7 +180,6 @@ fn get_all_posts(page_data: Pagination) -> GetAllPostsResponse {
         size: ending as u32,
         // all_posts,
         // "0".to_string()
-
     }
     // all_posts
     // (Vec::new(), 0.to_string())
@@ -274,7 +273,7 @@ async fn comment_post(post_id: String, comment: String) -> Result<String, String
         comment_count: getpost.comment_count + 1,
         comment_list: updated_list,
         user_image_id: getpost.user_image_id.clone(),
-        is_liked: getpost.is_liked
+        is_liked: getpost.is_liked,
     };
     with_state(|state| state.post_detail.insert(new_post.post_id.clone(), new_post));
 
@@ -284,19 +283,18 @@ async fn comment_post(post_id: String, comment: String) -> Result<String, String
 // reply comment
 #[update(guard = prevent_anonymous)]
 fn reply_comment(comment_data: ReplyCommentData) -> Result<String, String> {
-// <<<<<<< pratap
-    let post = with_state(|state| state.post_detail.get(&comment_data.post_id).clone()).expect(
-        "Post not found"
-    );
-// =======
-//     // let principal_id = api::caller();
-//     if api::caller() == Principal::anonymous() {
-//         return Err("Anonymous users not allowed".to_string());
-//     }
+    // <<<<<<< pratap
+    let post = with_state(|state| state.post_detail.get(&comment_data.post_id).clone())
+        .expect("Post not found");
+    // =======
+    //     // let principal_id = api::caller();
+    //     if api::caller() == Principal::anonymous() {
+    //         return Err("Anonymous users not allowed".to_string());
+    //     }
 
-//     let post = with_state(|state| state.post_detail.get(&comment_data.post_id).clone())
-//         .expect("Post not found");
-// >>>>>>> main
+    //     let post = with_state(|state| state.post_detail.get(&comment_data.post_id).clone())
+    //         .expect("Post not found");
+    // >>>>>>> main
 
     let mut updated_comment_list = post.comment_list.clone();
 
@@ -332,8 +330,15 @@ fn get_latest_post(page_data: Pagination) -> GetAllPostsResponse {
     let mut posts = Vec::new();
 
     with_state(|state| {
-        for (_k, v) in state.post_detail.iter() {
-            posts.push(v.clone());
+        for v in state.post_detail.iter() {
+            let mut post = v.1;
+
+            if post.like_id_list.contains(&api::caller()) {
+                post.is_liked = 1;
+            } else {
+                post.is_liked = 0;
+            }
+            posts.push(post.clone());
         }
     });
 
@@ -368,54 +373,94 @@ fn get_latest_post(page_data: Pagination) -> GetAllPostsResponse {
 fn get_my_post(page_data: Pagination) -> Result<GetAllPostsResponse, String> {
     let principal_id = api::caller();
 
-    let mut posts: Vec<PostInfo> = Vec::new();
+    // let mut posts: Vec<PostInfo> = Vec::new();
 
-    with_state(|state| {
-        for v in state.post_detail.iter() {
-            if v.1.principal_id == principal_id {
-                posts.push(v.1.clone());
-            }
-        }
+    // with_state(|state| {
+    //     for v in state.post_detail.iter() {
+
+    //         let mut post = v.1;
+
+    //         if post.like_id_list.contains(&api::caller()) {
+    //             post.is_liked = 1;
+    //         } else {
+    //             post.is_liked = 0;
+    //         }
+    //         // posts.push(post.clone());
+
+    //         if post.principal_id == principal_id {
+    //             posts.push(post.clone());
+    //         }
+    //     }
+    // });
+    let posts: Vec<PostInfo> = with_state(|state| {
+        state
+            .post_detail
+            .iter()
+            .filter_map(|(_, post)| {
+                let mut post = post.clone();
+                post.is_liked = if post.like_id_list.contains(&principal_id) {
+                    1
+                } else {
+                    0
+                };
+
+                if post.principal_id == principal_id {
+                    Some(post)
+                } else {
+                    None
+                }
+            })
+            .collect()
     });
 
-    let ending = posts.len();
-    if ending == 0 {
-        return Ok(GetAllPostsResponse {
-            posts: posts,
-            size: 0 as u32,
-            // all_posts,
-            // "0".to_string()
-        });
+    let total_posts = posts.len() as u32;
+    if total_posts == 0 {
+        return Ok(GetAllPostsResponse { posts, size: 0 });
     }
 
     let start = page_data.start as usize;
     let end = page_data.end as usize;
 
-    if start < ending {
-        let end = end.min(ending);
-        return Ok(GetAllPostsResponse {
-            posts: posts[start..end].to_vec(),
-            size: ending as u32,
-        });
-        // all_posts[start..end].to_vec(), ending.to_string());
-    }
+    let paginated_posts = if start < posts.len() {
+        let end = end.min(posts.len());
+        posts[start..end].to_vec()
+    } else {
+        Vec::new()
+    };
 
     Ok(GetAllPostsResponse {
-        posts: posts,
-        size: ending as u32,
-        // all_posts,
-        // "0".to_string()
+        posts: paginated_posts,
+        size: total_posts,
     })
+
+    // let ending = posts.len();
+    // if ending == 0 {
+    //     return Ok(GetAllPostsResponse {
+    //         posts: posts,
+    //         size: 0 as u32,
+    //         // all_posts,
+    //         // "0".to_string()
+    //     });
+    // }
 
     // let start = page_data.start as usize;
     // let end = page_data.end as usize;
 
     // if start < ending {
     //     let end = end.min(ending);
-    //     return Ok(posts[start..end].to_vec());
+    //     return Ok(GetAllPostsResponse {
+    //         posts: posts[start..end].to_vec(),
+    //         size: ending as u32,
+    //     });
+    //     // all_posts[start..end].to_vec(), ending.to_string());
     // }
-    // Ok(Vec::new())
-    // Ok(posts)
+
+    // Ok(GetAllPostsResponse {
+    //     posts: posts,
+    //     size: ending as u32,
+    //     // all_posts,
+    //     // "0".to_string()
+    // })
 }
 
 #[query]

@@ -1,28 +1,23 @@
 use std::borrow::Borrow;
 
-use crate::routes::upload_image;
-use crate::types::{ DaoInput, Profileinput, UserProfile };
-use crate::{ routes, with_state, DaoDetails, DaoResponse, ImageData };
-use ic_cdk::{ query, update };
-use crate::types::{
-    CreateCanisterArgument,
-    CanisterInstallMode,
-    CanisterIdRecord,
-    CreateCanisterArgumentExtended,
-    InstallCodeArgument,
-    InstallCodeArgumentExtended,
-};
-use crate::api::call::{ call_with_payment128, CallResult };
+use crate::api::call::{call_with_payment128, CallResult};
 use crate::api::canister_version;
-use ic_cdk::api;
-use candid::{ Principal, encode_one };
-use ic_cdk::println;
 use crate::guards::*;
+use crate::routes::upload_image;
+use crate::types::{
+    CanisterIdRecord, CanisterInstallMode, CreateCanisterArgument, CreateCanisterArgumentExtended,
+    InstallCodeArgument, InstallCodeArgumentExtended,
+};
+use crate::types::{DaoInput, Profileinput, UserProfile};
+use crate::{routes, with_state, DaoDetails, DaoResponse, ImageData};
+use candid::{encode_one, Principal};
+use ic_cdk::api;
+use ic_cdk::println;
+use ic_cdk::{query, update};
 // use ic_cdk::trap;
 
 #[update]
-async fn create_profile(
-    // asset_handler_canister_id: String,
+async fn create_profile(// asset_handler_canister_id: String,
     // profile: Profileinput
 ) -> Result<(), String> {
     // Validate email format
@@ -77,24 +72,21 @@ async fn create_profile(
 
     // with_state(|state| routes::create_new_profile(state, profile.clone()))
 
-    with_state(
-        |state| -> Result<(), String> {
-            let mut analytics = state.analytics_content.borrow().get(&0).unwrap();
-            analytics.members_count += 1;
-            state.analytics_content.insert(0, analytics);
-            state.user_profile.insert(principal_id, new_profile);
-            Ok(())
-        }
-    )
+    with_state(|state| -> Result<(), String> {
+        let mut analytics = state.analytics_content.borrow().get(&0).unwrap();
+        analytics.members_count += 1;
+        state.analytics_content.insert(0, analytics);
+        state.user_profile.insert(principal_id, new_profile);
+        Ok(())
+    })
 }
 
 #[query(guard = prevent_anonymous)]
 fn get_my_follower() -> Result<Vec<Principal>, String> {
     // let principal_id = api::caller();
 
-    let followers = with_state(|state| state.user_profile.get(&api::caller()).clone()).expect(
-        "User not found"
-    );
+    let followers =
+        with_state(|state| state.user_profile.get(&api::caller()).clone()).expect("User not found");
     Ok(followers.followers_list)
 }
 
@@ -102,9 +94,8 @@ fn get_my_follower() -> Result<Vec<Principal>, String> {
 fn get_my_following() -> Result<Vec<Principal>, String> {
     // let principal_id = api::caller();
 
-    let following: UserProfile = with_state(|state|
-        state.user_profile.get(&api::caller()).clone()
-    ).expect("User not found");
+    let following: UserProfile =
+        with_state(|state| state.user_profile.get(&api::caller()).clone()).expect("User not found");
     Ok(following.followings_list)
 }
 
@@ -116,7 +107,7 @@ async fn get_user_profile() -> Result<UserProfile, String> {
 #[update(guard = prevent_anonymous)]
 async fn update_profile(
     asset_handler_canister_id: String,
-    profile: Profileinput
+    profile: Profileinput,
 ) -> Result<(), String> {
     if !profile.email_id.contains('@') || !profile.email_id.contains('.') {
         return Err("Enter correct Email ID".to_string());
@@ -130,7 +121,8 @@ async fn update_profile(
             return Err("User is not registered".to_string());
         }
         Ok(())
-    }).is_err();
+    })
+    .is_err();
 
     if is_registered {
         return Err("User dosen't exist ".to_string());
@@ -150,11 +142,16 @@ async fn update_profile(
     let mut image_id: String = profile.profile_img.to_string();
 
     if profile.image_title != "na".to_string() {
-        image_id = upload_image(asset_handler_canister_id, ImageData {
-            content: profile.image_content,
-            name: profile.image_title.clone(),
-            content_type: profile.image_content_type.clone(),
-        }).await.map_err(|err| format!("Image upload failed: {}", err))?;
+        image_id = upload_image(
+            asset_handler_canister_id,
+            ImageData {
+                content: profile.image_content,
+                name: profile.image_title.clone(),
+                content_type: profile.image_content_type.clone(),
+            },
+        )
+        .await
+        .map_err(|err| format!("Image upload failed: {}", err))?;
     }
 
     // image upload
@@ -258,10 +255,13 @@ async fn follow_user(userid: Principal) -> Result<(), String> {
 
 #[update(guard = prevent_anonymous)]
 pub async fn create_dao(canister_id: String, dao_detail: DaoInput) -> Result<String, String> {
+    ic_cdk::println!("value is {:?}", dao_detail);
     let principal_id = api::caller();
     if principal_id == Principal::anonymous() {
         // trap("Anonymous principal not allowed to make calls.")
-        return Err("Anonymous principal not allowed to make calls.".to_string());
+        return Err("Anonymo
+        us principal not allowed to make calls."
+            .to_string());
     }
 
     // add cycles from user
@@ -272,11 +272,39 @@ pub async fn create_dao(canister_id: String, dao_detail: DaoInput) -> Result<Str
     updated_members.push(principal_id.clone());
 
     // image upload
-    let image_id = upload_image(canister_id, ImageData {
-        content: dao_detail.image_content,
-        name: dao_detail.image_title.clone(),
-        content_type: dao_detail.image_content_type.clone(),
-    }).await.map_err(|err| format!("Image upload failed: {}", err))?;
+
+    let image_id: Result<String, String> = upload_image(
+        canister_id,
+        ImageData {
+            content: dao_detail.image_content,
+            name: dao_detail.image_title,
+            content_type: dao_detail.image_content_type,
+        },
+    )
+    .await;
+
+    let mut id = String::new();
+    let image_create_res: bool = (match image_id {
+        Ok(value) => {
+            id = value;
+            Ok(())
+        }
+        Err(er) => {
+            ic_cdk::println!("error {}", er.to_string());
+            Err(())
+        }
+    })
+    .is_err();
+
+    if image_create_res {
+        return Err("Image upload failed".to_string());
+    }
+
+    // let image_id = upload_image(canister_id, ImageData {
+    //     content: dao_detail.image_content,
+    //     name: dao_detail.image_title.clone(),
+    //     content_type: dao_detail.image_content_type.clone(),
+    // }).await.map_err(|err| format!("Image upload failed: {}", err))?;
 
     let update_dau_detail = DaoInput {
         dao_name: dao_detail.dao_name.clone(),
@@ -289,10 +317,11 @@ pub async fn create_dao(canister_id: String, dao_detail: DaoInput) -> Result<Str
         linksandsocials: dao_detail.linksandsocials,
         required_votes: dao_detail.required_votes,
 
-        image_id: Some(image_id.clone()),
+        image_id: id.clone(),
         image_content: None,
         image_content_type: "".to_string(),
         image_title: "".to_string(),
+        
     };
 
     let dao_detail_bytes: Vec<u8> = match encode_one(&update_dau_detail) {
@@ -315,9 +344,7 @@ pub async fn create_dao(canister_id: String, dao_detail: DaoInput) -> Result<Str
         Some(data) => data,
         None => panic!("User profile doesn't exist !"),
     };
-    let arg = CreateCanisterArgument {
-        settings: None,
-    };
+    let arg = CreateCanisterArgument { settings: None };
     let (canister_id,) = match create_canister(arg).await {
         Ok(id) => id,
         Err((_, err_string)) => {
@@ -334,15 +361,19 @@ pub async fn create_dao(canister_id: String, dao_detail: DaoInput) -> Result<Str
     let dao_details: DaoDetails = DaoDetails {
         dao_canister_id: canister_id_principal.to_string().clone(),
         dao_name: dao_detail.dao_name,
-        image_id,
+        image_id: id,
         dao_id: canister_id_principal.clone(),
     };
 
     with_state(|state| {
-        state.dao_details.insert(canister_id_principal.to_string().clone(), dao_details)
+        state
+            .dao_details
+            .insert(canister_id_principal.to_string().clone(), dao_details)
     });
 
-    user_profile_detail.dao_ids.push(canister_id_principal.to_string());
+    user_profile_detail
+        .dao_ids
+        .push(canister_id_principal.to_string());
 
     // let new_profile = UserProfile {
     //     user_id: user_profile_detail.user_id,
@@ -382,8 +413,7 @@ pub async fn create_dao(canister_id: String, dao_detail: DaoInput) -> Result<Str
 }
 
 async fn create_canister(
-    arg: CreateCanisterArgument
-    // cycles: u128,
+    arg: CreateCanisterArgument, // cycles: u128,
 ) -> CallResult<(CanisterIdRecord,)> {
     let extended_arg = CreateCanisterArgumentExtended {
         settings: arg.settings,
@@ -394,22 +424,30 @@ async fn create_canister(
         Principal::management_canister(),
         "create_canister",
         (extended_arg,),
-        cycles
-    ).await
+        cycles,
+    )
+    .await
 }
 
 async fn deposit_cycles(arg: CanisterIdRecord, cycles: u128) -> CallResult<()> {
-    call_with_payment128(Principal::management_canister(), "deposit_cycles", (arg,), cycles).await
+    call_with_payment128(
+        Principal::management_canister(),
+        "deposit_cycles",
+        (arg,),
+        cycles,
+    )
+    .await
 }
 
 async fn install_code(arg: InstallCodeArgument) -> CallResult<()> {
     // let wasm_base64: &str = "3831fb07143cd43c3c51f770342d2b7d0a594311529f5503587bf1544ccd44be";
     // let wasm_module_sample: Vec<u8> = base64::decode(wasm_base64).expect("Decoding failed");
 
-        // let wasm_module_sample: Vec<u8> = include_bytes!("/run/media/wantedbear/Files/job/active-projects/DaoHouse/target/wasm32-unknown-unknown/debug/dao_canister.wasm");
-        // let wasm_module_sample: Vec<u8> = include_bytes!("../../../../target/wasm32-unknown-unknown/debug/dao_canister.wasm").to_vec();
+    // let wasm_module_sample: Vec<u8> = include_bytes!("/run/media/wantedbear/Files/job/active-projects/DaoHouse/target/wasm32-unknown-unknown/debug/dao_canister.wasm");
+    // let wasm_module_sample: Vec<u8> = include_bytes!("../../../../target/wasm32-unknown-unknown/debug/dao_canister.wasm").to_vec();
 
-    let wasm_module_sample: Vec<u8> = include_bytes!("../../../../.dfx/local/canisters/dao_canister/dao_canister.wasm").to_vec();
+    let wasm_module_sample: Vec<u8> =
+        include_bytes!("../../../../.dfx/local/canisters/dao_canister/dao_canister.wasm").to_vec();
 
     let cycles: u128 = 10_000_000_000;
 
@@ -425,8 +463,9 @@ async fn install_code(arg: InstallCodeArgument) -> CallResult<()> {
         Principal::management_canister(),
         "install_code",
         (extended_arg,),
-        cycles
-    ).await
+        cycles,
+    )
+    .await
 }
 
 // get dao details (intercanister)

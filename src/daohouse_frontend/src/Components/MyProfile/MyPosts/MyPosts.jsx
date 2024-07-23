@@ -9,6 +9,7 @@ import { useAuth } from "../../utils/useAuthClient";
 import Pagination from "../../pagignation/Pagignation";
 import MuiSkeleton from "../../Skeleton/MuiSkeleton";
 
+
 const MyPosts = () => {
   const { backendActor } = useAuth();
   const [hoverIndex, setHoverIndex] = useState(null);

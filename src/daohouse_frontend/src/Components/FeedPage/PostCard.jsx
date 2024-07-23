@@ -26,6 +26,10 @@ const convertTimestampToDateString = (timestamp) => {
   return `${month} ${day}`;
 };
 import { toast } from "react-toastify";
+// <<<<<<< prabhjot
+import CircularProgress from '@mui/material/CircularProgress';
+import { Style } from "@mui/icons-material";
+// >>>>>>> main
 
 const PostCard = ({ posts,handleGetLikePost }) => {
   const [formattedDate, setFormattedDate] = useState('');
@@ -34,6 +38,12 @@ const PostCard = ({ posts,handleGetLikePost }) => {
   const canisterId = process.env.CANISTER_ID_IC_ASSET_HANDLER;
   const ImageUrl = `http://${canisterId}.localhost:4943/f/${posts?.post_img}`  
   const userImage = `http://${canisterId}.localhost:4943/f/${posts?.user_image_id}`  
+// <<<<<<< prabhjot
+  const [loading, setLoading] = useState(false);
+  
+  const username = posts?.username;
+  console.log("--name-",username);
+// >>>>>>> main
 
   const getlike = async () => {
     try {
@@ -65,7 +75,8 @@ const PostCard = ({ posts,handleGetLikePost }) => {
         "w-full flex big_phone:flex-row flex-col items-start big_phone:gap-12 gap-4 bg-white big_phone:p-8 p-6 rounded-lg justify-between mobile:mt-0 mt-4 my-9"
       }
     >
-      <section className={className + "__rightSide h-full tablet:w-3/5 big_phone:w-1/2 flex flex-col gap-y-4 justify-between"}>
+      <section className={className + "__rightSide h-full tablet:w-3/5 big_phone:w-1/2 flex flex-col gap-y-4 justify-between lg:h-auto" 
+        } >
         <div className="flex flex-row items-center justify-between">
           <section className={className + "__userData flex flex-row items-center gap-2"}>
             <img
@@ -73,10 +84,10 @@ const PostCard = ({ posts,handleGetLikePost }) => {
               alt="userImage"
               className="rounded-[50%] w-10 h-10"
             />
-            <p className="font-semibold">{posts.username}</p>
+            <p className="font-semibold ml-3">{username}</p>
           </section>
 
-          <section className={className + "__time text-slate-500 mobile:text-base text-sm"}>
+          <section className={className + "__time text-slate-500  mobile:text-base text-sm ml-[200px] "}>
             {formattedDate}
           </section>
 
@@ -87,7 +98,7 @@ const PostCard = ({ posts,handleGetLikePost }) => {
 
         <div className={className + "__buttons mobile:flex hidden flex-row items-center tablet:justify-between tablet:gap-x-4 gap-x-2 big_phone:mt-8 mt-4"}>
           <button
-            className="flex flex-row tablet:gap-2 gap-1 items-center bg-[#0E3746] text-white tablet:text-base text-sm tablet:py-3 py-2 tablet:px-8 px-4 rounded-[2rem]">
+            className="flex flex-row tablet:gap-2 gap-1 items-center bg-[#0E3746] text-white tablet:text-base text-sm tablet:py-3 py-2 tablet:px-8 px-4 rounded-[2rem] lg:px-11">
               {
               posts?.is_liked == 1 ?
                 <FavoriteIcon onClick={getlike} className="w-5 h-5" />
@@ -97,7 +108,7 @@ const PostCard = ({ posts,handleGetLikePost }) => {
             {posts.like_count}
           </button>
           <button
-            className="flex flex-row tablet:gap-2 gap-1 items-center bg-[#0E3746] text-white tablet:text-base text-sm tablet:py-3 py-2 tablet:px-8 px-4 rounded-[2rem]">
+            className="flex flex-row tablet:gap-2 gap-1 items-center bg-[#0E3746] text-white tablet:text-base text-sm tablet:py-3 py-2 tablet:px-8 px-4 rounded-[2rem] lg:px-11">
             <MdOutlineInsertComment />
             {posts.comment_count}
           </button>
@@ -112,18 +123,18 @@ const PostCard = ({ posts,handleGetLikePost }) => {
         </div>
       </section>
 
-      <section className={className + "__leftSide tablet:w-2/5 big_phone:w-1/2 w-full h-full flex justify-end item-end"}>
+      <section className={className + "__leftSide tablet:w-2/5 big_phone:w-1/2 w-full h-full flex lg:justify-end item-end md:justify-end item-end"}>
         {posts.post_img && (
           <img
             src={ImageUrl}
             alt="POST Media"
-            className="sm:max-w-[500px] sm:max-h-[200px] object-cover rounded-lg"
+            className="lg:w-[400px] lg:h-[490px]  sm:max-w-[500px] sm:max-h-[200px] object-cover rounded-lg"
           />
         )}
       </section>
 
       <section className={className + "__buttons w-full mobile:hidden flex flex-row items-center justify-between"}>
-        <div className="flex flex-row items-center justify-between gap-x-4">
+        <div className="flex flex-row items-center justify-between gap-x-4 ">
           <button>
             <div className="flex gap-2">
             {

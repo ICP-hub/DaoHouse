@@ -51,11 +51,12 @@ pub struct Dao{
     pub required_votes:i8,
     pub groups_count:u64,
     pub group_name:Vec<String>,
-
+    pub image_id: String,
     pub members: Vec<Principal>,
+    pub members_count: u32,
 }
 
-#[derive(Clone,CandidType,Serialize,Deserialize)]
+#[derive(Clone,CandidType,Serialize,Deserialize, Debug)]
 pub struct DaoInput{
     pub dao_name:String,
     pub purpose:String,
@@ -66,6 +67,7 @@ pub struct DaoInput{
     pub tokenissuer:String,
     pub linksandsocials:Vec<String>,
     pub required_votes:i8,
+    pub image_id: String,
 
 }
 

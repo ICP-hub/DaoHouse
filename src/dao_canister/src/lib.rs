@@ -27,6 +27,9 @@ pub fn with_state<R>(f: impl FnOnce(&mut State) -> R) -> R {
 
 #[init]
 async fn init(dao_input: DaoInput) { 
+
+    ic_cdk::println!("data is {:?}", dao_input);
+
     let principal_id = api::caller();
     let new_dao = Dao {
         dao_id: principal_id,
@@ -41,6 +44,9 @@ async fn init(dao_input: DaoInput) {
         groups_count: 1,
         required_votes: dao_input.required_votes,
         members: dao_input.members.clone(),
+        image_id: dao_input.image_id,
+        members_count: dao_input.members.len() as u32
+
     };
 
     let permission=Votingandpermissions{

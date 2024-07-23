@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import logo from "../../../assets/WhiteLogo.png";
-import twitter from "../../../assets/twitter.png";
+import tw from "../../../assets/tw.png";
 import telegram from "../../../assets/telegram.png";
 import linkedin from "../../../assets/linkedin.png";
 import discord from "../../../assets/discord.png";
@@ -47,7 +47,7 @@ const Footer = () => {
           </div>
           <div className="flex justify-center mb-4 gap-4">
             <img
-              src={twitter}
+              src={tw}
               alt="Twitter"
               className="small_phone:w-8 w-6 small_phone:h-8 h-6 object-contain"
             />

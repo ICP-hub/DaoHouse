@@ -10,7 +10,9 @@ type Dao = record {
   cool_down_period : text;
   purpose : text;
   required_votes : int8;
+  image_id: text;
   members: vec principal;
+  members_count: nat32;
 };
 type DaoInput = record {
   members : vec principal;
@@ -22,6 +24,7 @@ type DaoInput = record {
   cool_down_period : text;
   purpose : text;
   required_votes : int8;
+  image_id: text;
 };
 type GroupList = record { users : vec principal };
 type ProposalInput = record {
