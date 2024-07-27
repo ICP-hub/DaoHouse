@@ -26,7 +26,7 @@ const Navbar = () => {
     { label: "Home", route: "/" },
     { label: "Social Feed", route: "/social-feed" },
     { label: "DAOs", route: "/dao" },
-    { label: "Proposals", route: "/proposals" },
+    // { label: "Proposals", route: "/proposals" },
   ];
 
   useEffect(() => {

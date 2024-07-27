@@ -20,7 +20,7 @@ import Lottie from "react-lottie";
 import { AssetManager } from "@dfinity/assets";
 import { HttpAgent } from "@dfinity/agent";
 import { toast } from "react-toastify";
-import data from "../../../../../canister_ids.json"
+ import data from "../../../../../canister_ids.json"
 import { useNavigate } from "react-router-dom";
 import Container from "../../Components/Container/Container";
 import CircularProgress from '@mui/material/CircularProgress';
@@ -347,7 +347,7 @@ const EditProfile = () => {
                   name="description"
                   value={profileData.description}
                   onChange={handleInputChange}
-                  className="w-full h-32 border border-gray-300 rounded-md"
+                  className="w-full h-32 border border-gray-300 px-3 py-2 rounded-md"
                   placeholder="Describe yourself here..."
                 />
               </div>

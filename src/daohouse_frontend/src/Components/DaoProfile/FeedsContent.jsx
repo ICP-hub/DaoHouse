@@ -1,5 +1,10 @@
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { useAuth } from "../utils/useAuthClient";
+import { useUserProfile } from "../../context/UserProfileContext";
+import { useEffect, useState } from "react";
+import MyProfileImage from "../../../assets/MyProfile-img.png";
+
 
 const FeedsContent = () => {
   const toolbarModules = {
@@ -14,6 +19,39 @@ const FeedsContent = () => {
       ["undo", "redo"],
     ],
   };
+
+  const { backendActor, frontendCanisterId, identity } = useAuth();
+const { userProfile, fetchUserProfile } = useUserProfile();
+const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
+const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
+const [imageSrc, setImageSrc] = useState(
+  userProfile?.profile_img
+  ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${userProfile.profile_img}`
+  : MyProfileImage
+);
+  const [data, setdata] = useState({});
+  const email = data?.email_id;
+  const name = data?.username;
+
+  const getdata = async () => {
+    try {
+      const response = await backendActor.get_user_profile();
+      setdata(response.Ok || {})
+    } catch (error) {
+      console.error("Error :", error);
+    }
+  }
+
+  useEffect(() => {
+    getdata();
+
+  }, [backendActor])
+
+  useEffect(() => {
+    setImageSrc(userProfile?.profile_img
+      ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${userProfile.profile_img}`
+      : MyProfileImage)
+  }, [userProfile?.profile_img])
 
   const handleImageUpload = () => {
     console.log("Image upload triggered");
@@ -46,10 +84,10 @@ const FeedsContent = () => {
           <div className="mobile:w-[69px] mobile:h-[40px] bg-[#C2C2C2] rounded"></div>
           <div>
             <span className="md:text-[20px] text-[18px] font-normal text-[#05212C]">
-              Username.user,
+              {name},
             </span>
             <span className="md:text-16px] text-[12px]  font-normal text-[#6C6C6C] ml-2">
-              gmail@gmail.xyz
+              {email}
             </span>
           </div>
         </div>

@@ -30,6 +30,8 @@ impl State {
                 members: Vec::new(),
                 image_id: "1".to_string(),
                 members_count: 0,
+                followers: Vec::new(),
+                members_permissions: Vec::new()
             },
 
             permision: Votingandpermissions {

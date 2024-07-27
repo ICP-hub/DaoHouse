@@ -1,75 +1,96 @@
 type Dao = record {
+  members : vec principal;
   dao_id : principal;
   linksandsocials : vec text;
   daotype : text;
   dao_name : text;
+  image_id : text;
   groups_count : nat64;
+  members_permissions : vec text;
   link_of_document : text;
+  members_count : nat32;
+  followers : vec principal;
   tokenissuer : text;
   group_name : vec text;
   cool_down_period : text;
   purpose : text;
   required_votes : int8;
-  image_id: text;
-  members: vec principal;
-  members_count: nat32;
 };
 type DaoInput = record {
   members : vec principal;
   linksandsocials : vec text;
   daotype : text;
   dao_name : text;
+  image_id : text;
+  members_permissions : vec text;
   link_of_document : text;
+  followers : vec principal;
   tokenissuer : text;
   cool_down_period : text;
   purpose : text;
   required_votes : int8;
-  image_id: text;
 };
 type GroupList = record { users : vec principal };
 type ProposalInput = record {
-  proposal_receiver_id : text;
-  created_by : text;
-  proposal_amount : text;
   proposal_title : text;
   proposal_description : text;
+  required_votes : nat32;
+};
+type ProposalState = variant {
+  Open;
+  Executing;
+  Rejected;
+  Succeeded;
+  Accepted;
+  Expired;
 };
 type Proposals = record {
   share_count : nat64;
-  proposal_expired_at : text;
-  proposal_submitted_at : text;
-  proposal_receiver_id : text;
+  proposal_expired_at : nat64;
+  proposal_submitted_at : nat64;
   proposal_approved_votes : nat64;
   created_by : principal;
-  proposal_amount : text;
   proposal_rejected_votes : nat64;
   proposal_title : text;
-  rejected_votes_list : vec text;
+  rejected_votes_list : vec principal;
   proposal_description : text;
   proposal_id : text;
-  proposal_status : text;
-  approved_votes_list : vec text;
+  proposal_status : ProposalState;
+  approved_votes_list : vec principal;
   comments : nat64;
   comments_list : vec text;
-  required_votes : nat64;
+  required_votes : nat32;
 };
-
-
-
-type Result = variant { Ok : GroupList; Err : text };
-type ProposalResponse = variant {Ok: vec Proposals; Err: text };
-type JoinDaoResponse = variant { Ok: text; Err: text};
-
+type Result = variant { Ok : text; Err : text };
+type Result_1 = variant { Ok : GroupList; Err : text };
+type Result_2 = variant { Ok : vec Proposals; Err : text };
+type Result_3 = variant { Ok; Err : text };
+type UpdateDaoSettings = record {
+  members : vec principal;
+  linksandsocials : vec text;
+  daotype : text;
+  dao_name : text;
+  link_of_document : text;
+  followers : vec principal;
+  purpose : text;
+};
+type VoteParam = variant { No; Yes };
 service : (DaoInput) -> {
   add_member_to_group : (text, principal) -> (text);
+  change_proposal_state : (text, ProposalState) -> (Result);
+  comment_on_proposal : (text, text) -> (Result);
   create_proposal : (text, ProposalInput) -> (text);
+  follow_dao : () -> (Result);
+  get_all_proposals : () -> (vec Proposals) query;
   get_dao_detail : () -> (Dao) query;
-  get_members_of_group : (text) -> (Result) query;
+  get_dao_followers : () -> (vec principal) query;
+  get_dao_members : () -> (vec principal) query;
+  get_members_of_group : (text) -> (Result_1) query;
+  get_my_proposal : () -> (Result_2);
   get_proposal_by_id : (text) -> (Proposals) query;
+  join_dao : () -> (Result);
+  refresh_proposals : () -> (Result_3);
   remove_member_from_group : (text, principal) -> (text);
-  get_all_proposals: () -> (vec Proposals) query;
-  get_my_proposals: () -> (ProposalResponse) query;
-  join_dao: () -> (JoinDaoResponse); 
-  get_dao_members: () -> (vec principal) query;
-  // testing: (text) -> (text);
+  update_dao_settings : (UpdateDaoSettings) -> (Result);
+  vote : (text, VoteParam) -> (Result);
 }

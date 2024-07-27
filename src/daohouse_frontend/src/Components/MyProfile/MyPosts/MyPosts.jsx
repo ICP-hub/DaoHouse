@@ -73,13 +73,17 @@ const MyPosts = () => {
                       setReadMoreIndex(null);
                     }}
                   >
+
                     <Link to={`/post/${post.post_id}`} onClick={() => setSelectedPost(post)}>
-                    <img
-                        src={`http://${canisterId}.localhost:4943/f/${post.post_img}`}
-                        alt="Post"
-                        className="postImage w-full rounded-md object-cover"
-                      />
+                      <div className="h-64 w-full relative">
+                        <img
+                          src={`http://${canisterId}.localhost:4943/f/${post.post_img}`}
+                          alt="Post"
+                          className="postImage w-full h-full rounded object-cover"
+                        />
+                      </div>
                     </Link>
+
     
                     <div
                       style={{ opacity: hoverIndex === index ? 1 : 0 }}

@@ -1,18 +1,4 @@
-# 
-dfx stop
-dfx start --clean --background
-
-dfx generate
-
-dfx identity new minter --storage-mode=plaintext  || true
-dfx identity new reciever --storage-mode=plaintext  || true
-dfx identity new testing --storage-mode=plaintext  || true
-
-
-
-# dfx identity use default
-dfx canister create dao_canister --network ic
-dfx build dao_canister --network ic
+set -e
 
 MINTER=$(dfx --identity default identity get-principal)
 DEFAULT=$(dfx --identity default identity get-principal)
@@ -64,7 +50,7 @@ dfx deploy dao_canister --argument '(record{
 
 dfx deploy daohouse_backend --argument "(record { payment_recipient = principal \"${RECIEVER}\"; })" --network ic
 dfx deploy ic_asset_handler --network ic
-./main_asset.sh
+./assets_upload.sh
 dfx deploy internet_identity --network ic
 dfx deploy daohouse_frontend --network ic
 

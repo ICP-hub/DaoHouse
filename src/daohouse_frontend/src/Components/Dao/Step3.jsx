@@ -4,63 +4,72 @@ import { FaSquarePlus } from "react-icons/fa6";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import { Principal } from "@dfinity/principal";
-
+import CircularProgress from '@mui/material/CircularProgress';
 
 const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref }) => {
+
   const [count, setCount] = useState(1);
-  const [showMemberNameInput, setShowMemberNameInput] = useState(false);
-  const [showCouncilNameInput, setShowCouncilNameInput] = useState(false);
+  const [showMemberNameInput, setShowMemberNameInput] = useState(true);
+  const [loadingNext, setLoadingNext] = useState(false);
+  // const [showCouncilNameInput, setShowCouncilNameInput] = useState(false);
   const [groupNameInputIndex, setGropuNameInputIndex] = useState(null);
   const [addMemberIndex, setAddMemberIndex] = useState(null);
-
+  const [loadingBack, setLoadingBack] = useState(false);
 
   const [list, setList] = useState([
-    { name: "Council", members: ["qnrhg-uveun-uk5ve-46qq6-eeqio-rnh2l-f6mvk-hbhan-vccrc-wdmbn-fqe",] },
+    { name: "Council", members: [] },
     { name: "All", index: 0 },
   ]);
 
   const className = "DAO__Step3";
-
   function handleSaveAndNext() {
     setData((prev) => ({
       ...prev,
       step3: [...list],
     }));
-
     setActiveStep(3);
 
-    try {
-      document.querySelector('.CreateDAO__steps').scrollTo({
-        left: Step4Ref.current.offsetLeft - 50,
-        behavior: "smooth",
-      });
-    } catch (err) {
-      console.log("The Scroll Error says: ", err.message);
-    }
+
+
+
+    // try {
+    //   document.querySelector('.CreateDAO__steps').scrollTo({
+    //     left: Step4Ref.current.offsetLeft - 50,
+    //     behavior: "smooth",
+    //   });
+    // } catch (err) {
+    //   console.log("The Scroll Error says: ", err.message);
+    // }
+    // setLoadingNext(false);
   }
+
+
 
   function handleBack() {
     setActiveStep(1);
-
-    try {
-      document.querySelector('.CreateDAO__steps').scrollTo({
-        left: 0,
-        behavior: "smooth",
-      });
-    } catch (err) {
-      console.log("The Scroll Error says: ", err.message);
-    }
   }
+  // function handleBack() {
+  //   setActiveStep(1);
+
+  //   try {
+  //     document.querySelector('.CreateDAO__steps').scrollTo({
+  //       left: 0,
+  //       behavior: "smooth",
+  //     });
+  //   } catch (err) {
+  //     console.log("The Scroll Error says: ", err.message);
+  //   }
+  // }
 
   const handleGroupAdding = () => {
     const updateGroups = [
       ...list,
       { name: `Group ${count}`, index: count, members: [] },
+      // { name: 'mem' },
     ];
     setCount(count + 1);
     setList(updateGroups);
   };
-
   const deleteGroup = (index) => {
     const updatedGroups = list.filter((item) => {
       return item.index !== index;
@@ -69,11 +78,34 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref }) => {
     setList(updatedGroups);
     console.log(updatedGroups);
   };
-
-  const handleMemberAdding = () => {
-    setShowMemberNameInput(true);
+  const handleMemberAdding1 = (name, event) => {
+    const a = setShowCouncilNameInput(true);
+    const updateGroups = [
+      ...list,
+      { name: `Group ${count}`, index: count, members: { a } },
+    ];
+    setCount(count + 1);
+    setList(updateGroups);
+    if (event.key === "Enter") {
+      const updatedList = [...list]; // Create a copy of the list
+      console.log("--upp--", updatedList)
+      const councilIndex = updatedList.findIndex(
+        (item) => item.name === "Council"
+      );
+      console.log("--index--", councilIndex)
+      if (councilIndex !== -1) {
+        // If "Council" object exists in the list
+        updatedList[councilIndex].members = [
+          ...updatedList[councilIndex].members,
+          name,
+        ];
+        setList(updatedList);
+        setShowCouncilNameInput(false);
+      } else {
+        Alert.alert("Error", "Council group not found in the list");
+      }
+    }
   };
-
   const openMemberNames = (index) => {
     setAddMemberIndex(index);
   };
@@ -95,13 +127,15 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref }) => {
     setShowCouncilNameInput(true);
   };
 
+
   const handleCouncilMemberName = (name, event) => {
     if (event.key === "Enter") {
       const updatedList = [...list]; // Create a copy of the list
+      console.log("--u--", updatedList)
       const councilIndex = updatedList.findIndex(
         (item) => item.name === "Council"
       );
-
+      console.log("--index--", councilIndex)
       if (councilIndex !== -1) {
         // If "Council" object exists in the list
         updatedList[councilIndex].members = [
@@ -114,6 +148,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref }) => {
         Alert.alert("Error", "Council group not found in the list");
       }
     }
+
   };
 
   const handleRemoveMember = (objIndex, memberName) => {
@@ -132,6 +167,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref }) => {
 
   const handleShowGroupNameInput = (index) => {
     setGropuNameInputIndex(index);
+
   };
 
   const handleGroupNameInput = (groupName, event) => {
@@ -150,7 +186,39 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref }) => {
       setList(updatedList);
       setGropuNameInputIndex(null);
     }
+
   };
+
+
+  const [showCouncilNameInput, setShowCouncilNameInput] = useState(false);
+  const [memberName, setMemberName] = useState('');
+
+  // const handleCouncilMemAdding = () => {
+  //   setShowCouncilNameInput(true);
+  // };
+
+  // const handleCouncilMemberName = (name, e) => {
+  //   if (e.key === 'Enter') {
+  //     // Add member name logic here
+  //     setShowCouncilNameInput(false);
+  //   }
+  // };
+
+
+  // const councilMembers = list.find(item => item.name === "Council")?.members || [];
+
+  const [councilMembers, setCouncilMembers] = useState([]);
+
+  useEffect(() => {
+    const members = list.find(item => item.name === "Council")?.members || [];
+    setCouncilMembers(members);
+  }, [list]);
+
+  const handleDeleteMember = (index) => {
+    setCouncilMembers(councilMembers.filter((_, i) => i !== index));
+    console.log("--h", councilMembers)
+  };
+
 
   return (
     <React.Fragment>
@@ -163,7 +231,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref }) => {
         {/**Texts */}
         <div className="flex flex-row items-start justify-between">
           <section className="w-11/12 flex flex-col gap-y-2">
-            <h2 className="font-semibold">Add Groups & Members</h2>
+            <h2 className="font-semibold">Add Members</h2>
             <p className="big_phone:text-base mobile:text-sm text-xs">
               You can add members and assign them various roles as per your
               decisions and also Add members to your DAO for providing them
@@ -171,13 +239,13 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref }) => {
             </p>
           </section>
 
-          {/**Button to add Groups */}
+          {/**Button to add Groups 
           <button
             onClick={handleGroupAdding}
             className="bg-white w-10 h-10 m-2 text-lg flex items-center justify-center rounded-[50%]"
           >
             <FaPlus />
-          </button>
+          </button>*/}
         </div>
 
         {/**Council */}
@@ -187,7 +255,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref }) => {
               <section className="w-full py-2 mobile:px-8 p-2 pl-4 flex flex-row items-center justify-between border-b-2 border-[#b4b4b4]">
                 <h2 className="font-semibold mobile:text-base text-sm">Council</h2>
 
-                {/**Council Add Member button */}
+                {/** Council Add Member button */}
                 <button
                   onClick={handleCouncilMemAdding}
                   className="flex flex-row items-center gap-1 text-[#229ED9] bg-white mobile:p-2 p-1 rounded-md"
@@ -196,7 +264,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref }) => {
                 </button>
               </section>
 
-              {/**Show Council members or take input */}
+              {/** updateShow Council members or take input */}
               <section className="py-4 mobile:px-8 p-2 pl-4 transition">
                 {showCouncilNameInput ? (
                   <input
@@ -204,22 +272,30 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref }) => {
                     name="memberName"
                     className="mobile:p-2 p-1 mobile:text-base text-sm rounded-md border border-slate-500"
                     placeholder="Enter Member Name"
-                    onKeyDown={(e) =>
-                      handleCouncilMemberName(e.target.value, e)
-                    }
+                    onKeyDown={(e) => handleCouncilMemberName(e.target.value, e)}
                     onBlur={(e) => {
                       if (!e.target.value) setShowCouncilNameInput(false);
                     }}
                   />
-                ) : (
-                  list
-                    .find((item) => item.name === "Council")
-                    .members.map((name, userIndex) => (
-                      <p key={userIndex} className="mobile:text-base text-sm">{name}</p>
-                    ))
-                )}
+                ) : null}
               </section>
+              {councilMembers.map((name, userIndex) => (
+                <section className="w-full py-2 p-2 pl-4 flex flex-col items-center justify-between bg-white mb-4">
+
+                  <div key={userIndex} className="w-full flex flex-row items-center justify-between mb-2">
+                    <p className="font-semibold mobile:text-base text-sm pl-4 bg-white border-black">{name}</p>
+                    <div className="flex flex-row small_phone:gap-4 gap-2">
+                      <button onClick={() => handleDeleteMember(userIndex, name)}>
+                        <MdOutlineDeleteOutline className="text-red-500 mobile:text-2xl text-lg " />
+                      </button>
+                    </div>
+                  </div>
+
+                </section>
+              ))}
+
             </React.Fragment>
+
           }
         </div>
 
@@ -229,13 +305,13 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref }) => {
           {list.slice(1).map((item, index) => (
             <div
               key={index}
-              className={`flex flex-col bg-white rounded-lg ${addMemberIndex === item.index || item.name == "All"
+              className={`flex flex-col bg-white rounded-lg ${addMemberIndex === item.index || item.name == "Allsss"
                 ? ""
                 : "cursor-pointer transition"
                 }`}
               onClick={() => item.name !== "All" && openMemberNames(item.index)}
             >
-              {/**The section that appears */}
+              {/**The section that appears 
               <section
                 key={index}
                 className={`w-full py-2 p-2 pl-4 flex ${addMemberIndex === item.index
@@ -243,7 +319,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref }) => {
                   : "rounded-lg"
                   } items-center justify-between`}
               >
-                {/**Group Name */}
+             
                 {groupNameInputIndex == item.index ? (
                   <input
                     type="text"
@@ -265,7 +341,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref }) => {
                 )}
 
                 <div className={className + "__buttons flex flex-row small_phone:gap-4 gap-2"}>
-                  {/**Add member button...All group can't add members in it */}
+            
                   {item.name !== "All" && (
                     <button
                       onClick={() => handleMemberAdding(item.index)}
@@ -275,14 +351,14 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref }) => {
                     </button>
                   )}
 
-                  {/**Delete the Group */}
+              
                   <button onClick={() => deleteGroup(item.index)}>
                     <MdOutlineDeleteOutline className="text-red-500 mobile:text-2xl text-lg" />
                   </button>
                 </div>
-              </section>
+              </section> */}
 
-              {/**The section that is hidden and open-ups with members names */}
+              {/**   The section that is hidden and open-ups with members names*/}
               {addMemberIndex === item.index && (
                 <section className="p-4 gap-2 flex flex-col items-start">
                   {showMemberNameInput ? (
@@ -304,7 +380,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref }) => {
                         key={userIndex}
                         className="oneUser flex flex-row mobile:gap-8 gap-4 w-full items-center"
                       >
-                        {/**MemberName */}
+                        MemberName
                         <p className="text-slate-500 mobile:text-base text-sm mobile:w-[25%] w-[40%] whitespace-nowrap text-ellipsis overflow-hidden">
                           {memberName}
                         </p>
@@ -339,6 +415,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref }) => {
         >
           <FaArrowLeftLong /> Back
         </button>
+
         <button
           type="submit"
           onClick={handleSaveAndNext}
@@ -346,7 +423,10 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref }) => {
         >
           Save & Next <FaArrowRightLong />
         </button>
+
       </div>
+
+
     </React.Fragment>
   );
 };

@@ -45,7 +45,7 @@ fn create_file(
     //     // created_at: Nat::from(now_ms),
     // };
 
-    if let Some(content) = input.content {
+    if let content = input.content {
         if let Some(checksum) = input.crc32 {
             if crc32(&content) != checksum {
                 ic_cdk::trap("crc32 checksum mismatch");

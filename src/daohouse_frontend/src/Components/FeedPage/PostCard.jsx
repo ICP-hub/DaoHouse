@@ -26,40 +26,32 @@ const convertTimestampToDateString = (timestamp) => {
   return `${month} ${day}`;
 };
 import { toast } from "react-toastify";
-// <<<<<<< prabhjot
-import CircularProgress from '@mui/material/CircularProgress';
-import { Style } from "@mui/icons-material";
-// >>>>>>> main
 
-const PostCard = ({ posts,handleGetLikePost }) => {
+const PostCard = ({ posts, handleGetLikePost }) => {
   const [formattedDate, setFormattedDate] = useState('');
   const className = "postCard";
   const { backendActor } = useAuth();
   const canisterId = process.env.CANISTER_ID_IC_ASSET_HANDLER;
-  const ImageUrl = `http://${canisterId}.localhost:4943/f/${posts?.post_img}`  
-  const userImage = `http://${canisterId}.localhost:4943/f/${posts?.user_image_id}`  
-// <<<<<<< prabhjot
-  const [loading, setLoading] = useState(false);
-  
-  const username = posts?.username;
-  console.log("--name-",username);
-// >>>>>>> main
+
+  const ImageUrl = 'https://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${process.env.DFX_NETWORK == "ic" ? "raw.icp0.io" : "localhost:4943"}/f/${posts?.post_img}`';
+
+  const userImage = `https://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${process.env.DFX_NETWORK == "ic" ? "raw.icp0.io" : "localhost:4943"}/f/${posts?.user_image_id}`;
 
   const getlike = async () => {
     try {
       const response = await backendActor.like_post(posts.post_id);
       handleGetLikePost(response);
       console.log(response)
-      if(response?.Ok){
+      if (response?.Ok) {
         toast.success("post like successfully")
-      }else if(response?.Err){
+      } else if (response?.Err) {
         toast.warning('you already like this post')
       }
     } catch (error) {
       console.error("Error fetching like:", error);
     }
   };
-  
+
   useEffect(() => {
     if (posts && posts.post_created_at) {
       const formatted = convertTimestampToDateString(BigInt(posts.post_created_at));
@@ -72,43 +64,42 @@ const PostCard = ({ posts,handleGetLikePost }) => {
       className={
         className +
         " " +
-        "w-full flex big_phone:flex-row flex-col items-start big_phone:gap-12 gap-4 bg-white big_phone:p-8 p-6 rounded-lg justify-between mobile:mt-0 mt-4 my-9"
+        "w-full parent-row flex big_phone:flex-row flex-col items-start big_phone:gap-12 gap-4 bg-white big_phone:p-8 p-6 rounded-lg justify-between mobile:mt-0 mt-4 my-9"
       }
     >
-      <section className={className + "__rightSide h-full tablet:w-3/5 big_phone:w-1/2 flex flex-col gap-y-4 justify-between lg:h-auto" 
-        } >
+      <section className={className + "__rightSide h-full w-[100%] md:w-[45%] lg:w-[50%]  flex flex-col gap-y-4 justify-between"}>
         <div className="flex flex-row items-center justify-between">
           <section className={className + "__userData flex flex-row items-center gap-2"}>
             <img
-              src={userImage}            
+              src={userImage}
               alt="userImage"
               className="rounded-[50%] w-10 h-10"
             />
-            <p className="font-semibold ml-3">{username}</p>
+            <p className="font-semibold">{posts.username}</p>
           </section>
 
-          <section className={className + "__time text-slate-500  mobile:text-base text-sm ml-[200px] "}>
+          <section className={className + "__time text-slate-500 mobile:text-base text-sm"}>
             {formattedDate}
           </section>
 
         </div>
         <div>
-          <p className="h-full mobile:text-base text-sm">{posts.post_description}</p>
+          <p className="h-full mobile:text-base text-sm w-full break-words">{posts.post_description}</p>
         </div>
 
-        <div className={className + "__buttons mobile:flex hidden flex-row items-center tablet:justify-between tablet:gap-x-4 gap-x-2 big_phone:mt-8 mt-4"}>
+        <div className={className + "__buttons mobile:flex hidden flex-row items-center tablet:justify-between tablet:gap-x-4 gap-x-2 big_phone:mt-8 mt-4 desktop-button"}>
           <button
-            className="flex flex-row tablet:gap-2 gap-1 items-center bg-[#0E3746] text-white tablet:text-base text-sm tablet:py-3 py-2 tablet:px-8 px-4 rounded-[2rem] lg:px-11">
-              {
+            className="flex flex-row tablet:gap-2 gap-1 items-center bg-[#0E3746] text-white tablet:text-base text-sm tablet:py-3 py-2 tablet:px-8 px-4 rounded-[2rem]">
+            {
               posts?.is_liked == 1 ?
                 <FavoriteIcon onClick={getlike} className="w-5 h-5" />
                 :
-              <FaRegHeart onClick={getlike} className="w-5 h-5" />
+                <FaRegHeart onClick={getlike} className="w-5 h-5" />
             }
             {posts.like_count}
           </button>
           <button
-            className="flex flex-row tablet:gap-2 gap-1 items-center bg-[#0E3746] text-white tablet:text-base text-sm tablet:py-3 py-2 tablet:px-8 px-4 rounded-[2rem] lg:px-11">
+            className="flex flex-row tablet:gap-2 gap-1 items-center bg-[#0E3746] text-white tablet:text-base text-sm tablet:py-3 py-2 tablet:px-8 px-4 rounded-[2rem]">
             <MdOutlineInsertComment />
             {posts.comment_count}
           </button>
@@ -123,49 +114,51 @@ const PostCard = ({ posts,handleGetLikePost }) => {
         </div>
       </section>
 
-      <section className={className + "__leftSide tablet:w-2/5 big_phone:w-1/2 w-full h-full flex lg:justify-end item-end md:justify-end item-end"}>
+      <section className={className + "__leftSide w-[100%] md:w-[50%] h-full flex justify-end item-end image-section"}>
         {posts.post_img && (
+          <section className="relative w-full h-64 ">
           <img
-            src={ImageUrl}
-            alt="POST Media"
-            className="lg:w-[400px] lg:h-[490px]  sm:max-w-[500px] sm:max-h-[200px] object-cover rounded-lg"
+            src={`http://${canisterId}.localhost:4943/f/${posts.post_img}`}
+            alt="PostMedia"
+            className="w-full h-full object-cover rounded-md"
           />
+        
+      </section>
         )}
       </section>
 
-      <section className={className + "__buttons w-full mobile:hidden flex flex-row items-center justify-between"}>
-        <div className="flex flex-row items-center justify-between gap-x-4 ">
+      <section className={className + "__buttons w-full flex flex-row items-center justify-between mobile-buttons"}>
+        <div className="flex flex-row items-center justify-between gap-x-4">
           <button>
             <div className="flex gap-2">
-            {
-              posts?.is_liked == 1 ?
-                <FavoriteIcon onClick={getlike} className="w-5 h-5" />
-                :
-              <FaRegHeart onClick={getlike} className="text-[#0E3746] text-lg mt-1"/>
+              {
+                posts?.is_liked == 1 ?
+                  <FavoriteIcon onClick={getlike} className="w-5 h-5" />
+                  :
+                  <FaRegHeart onClick={getlike} className="text-[#0E3746] text-lg mt-1" />
               }
-            <div className="text-lg">
-            {posts.like_count}
-            </div>
-            </div>
-          </button> 
-          <button>
-            <div className="flex gap-2">
-            <MdOutlineInsertComment className="text-[#0E3746] text-lg mt-1"/>
-            <div className="text-lg">
-            {posts.comment_count}
-            </div>
+              <div className="text-lg">
+                {posts.like_count}
+              </div>
             </div>
           </button>
           <button>
-          <div className="flex gap-2">
-            <PiTelegramLogoBold className="text-[#0E3746] text-lg mt-1"/>
+            <div className="flex gap-2">
+              <MdOutlineInsertComment className="text-[#0E3746] text-lg mt-1" />
+              <div className="text-lg">
+                {posts.comment_count}
+              </div>
             </div>
+          </button>
+          <button>
+            <div className="flex gap-2">
+              <PiTelegramLogoBold className="text-[#0E3746] text-lg mt-1" />
+            </div>
+          </button>
+          <button className="m-0">
+            <IoLink className="text-lg" />
           </button>
         </div>
-
-        <button className="m-0">
-          <IoLink className="text-lg" />
-        </button>
       </section>
     </div>
   );

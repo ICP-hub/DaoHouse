@@ -11,12 +11,9 @@ const Step4 = ({ data, setData, setActiveStep }) => {
   });
   const className = "DAO__Step4";
 
-  {
-    /**Mind blowing */
-  }
   function theList() {
     const list = groups.reduce((acc, group) => {
-      const flag = group == "Council" ? true : false;
+      const flag = group === "Council";
 
       acc[group] = {
         ChangeDAOConfig: flag,
@@ -56,8 +53,11 @@ const Step4 = ({ data, setData, setActiveStep }) => {
       ...prev,
       step4: inputData,
     }));
-
     setActiveStep(4);
+  }
+
+  function handleBack() {
+    setActiveStep(2);
   }
 
   function toggleCheckbox(step, groupName, permissionName) {
@@ -72,46 +72,31 @@ const Step4 = ({ data, setData, setActiveStep }) => {
       },
     };
 
-    // Update the state
     setInputData(updatedInputData);
   }
 
   return (
     <React.Fragment>
       <div
-        className={
-          className +
-          "__form w-full bg-[#F4F2EC] big_phone:p-10 small_phone:p-4 p-2 big_phone:mx-4 mx-0 rounded-lg flex flex-col gap-4"
-        }
+        className={`${className}__form w-full bg-[#F4F2EC] big_phone:p-10 small_phone:p-4 p-2 big_phone:mx-4 mx-0 rounded-lg flex flex-col gap-4`}
       >
-        <ul
-          className={
-            className + "__steps flex flex-row mobile:gap-8 gap-6 px-4"
-          }
-        >
+        <ul className={`${className}__steps flex flex-row mobile:gap-8 gap-6 px-4`}>
           <li
-            className={`list-disc mobile:text-lg text-sm font-semibold ${
-              activeStage == 0 ? "" : "opacity-50"
-            }`}
+            className={`list-disc mobile:text-lg text-sm font-semibold ${activeStage === 0 ? "" : "opacity-50"}`}
           >
             Proposal Creation
           </li>
           <li
-            className={`list-disc mobile:text-lg text-sm font-semibold ${
-              activeStage == 1 ? "" : "opacity-50"
-            }`}
+            className={`list-disc mobile:text-lg text-sm font-semibold ${activeStage === 1 ? "" : "opacity-50"}`}
           >
             Voting Permission
           </li>
         </ul>
 
         <section>
-          <p className="font-semibold mobile:text-base text-sm">
-            Select Rights
-          </p>
+          <p className="font-semibold mobile:text-base text-sm">Select Rights</p>
           <p className="text-slate-500 mobile:text-base text-xs">
-            Decide what permissions you want to give to DAO groups for creating
-            things. You can adjust this later in settings.
+            Decide what permissions you want to give to DAO groups for creating things. You can adjust this later in settings.
           </p>
         </section>
 
@@ -133,7 +118,6 @@ const Step4 = ({ data, setData, setActiveStep }) => {
                   ))}
                 </tr>
               </thead>
-
               <tbody>
                 {permissionList.map((permissionName, permissionIndex) => (
                   <tr
@@ -143,35 +127,24 @@ const Step4 = ({ data, setData, setActiveStep }) => {
                     <td className="big_phone:w-2/5 font-semibold list-disc big_phone:p-4 py-4 p-2 big_phone:text-base text-sm">
                       {permissionName}
                     </td>
-
-                    {Object.keys(inputData.proposal).map(
-                      (groupName, groupIndex) => (
-                        <td>
-                          <div className="flex justify-center">
-                            <input
-                              key={groupIndex}
-                              type="checkbox"
-                              className="cursor-pointer"
-                              checked={
-                                inputData["proposal"][groupName][permissionName]
-                              }
-                              onChange={() =>
-                                toggleCheckbox(
-                                  "proposal",
-                                  groupName,
-                                  permissionName
-                                )
-                              }
-                            />
-                          </div>
-                        </td>
-                      )
-                    )}
+                    {Object.keys(inputData.proposal).map((groupName, groupIndex) => (
+                      <td key={groupIndex}>
+                        <div className="flex justify-center">
+                          <input
+                            type="checkbox"
+                            className="cursor-pointer"
+                            checked={inputData["proposal"][groupName][permissionName]}
+                            onChange={() =>
+                              toggleCheckbox("proposal", groupName, permissionName)
+                            }
+                          />
+                        </div>
+                      </td>
+                    ))}
                   </tr>
                 ))}
               </tbody>
             </table>
-
             <section className="flex w-full justify-end items-center">
               <button
                 type="submit"
@@ -202,7 +175,6 @@ const Step4 = ({ data, setData, setActiveStep }) => {
                   ))}
                 </tr>
               </thead>
-
               <tbody>
                 {permissionList.map((permissionName, permissionIndex) => (
                   <tr
@@ -212,35 +184,24 @@ const Step4 = ({ data, setData, setActiveStep }) => {
                     <td className="big_phone:w-2/5 font-semibold list-disc big_phone:p-4 py-4 p-2 big_phone:text-base text-sm">
                       {permissionName}
                     </td>
-
-                    {Object.keys(inputData.voting).map(
-                      (groupName, groupIndex) => (
-                        <td>
-                          <div className="flex justify-center">
-                            <input
-                              key={groupIndex}
-                              type="checkbox"
-                              className="cursor-pointer"
-                              checked={
-                                inputData["voting"][groupName][permissionName]
-                              }
-                              onChange={() =>
-                                toggleCheckbox(
-                                  "voting",
-                                  groupName,
-                                  permissionName
-                                )
-                              }
-                            />
-                          </div>
-                        </td>
-                      )
-                    )}
+                    {Object.keys(inputData.voting).map((groupName, groupIndex) => (
+                      <td key={groupIndex}>
+                        <div className="flex justify-center">
+                          <input
+                            type="checkbox"
+                            className="cursor-pointer"
+                            checked={inputData["voting"][groupName][permissionName]}
+                            onChange={() =>
+                              toggleCheckbox("voting", groupName, permissionName)
+                            }
+                          />
+                        </div>
+                      </td>
+                    ))}
                   </tr>
                 ))}
               </tbody>
             </table>
-
             <section className="flex w-full justify-end items-center">
               <button
                 type="submit"
@@ -253,15 +214,9 @@ const Step4 = ({ data, setData, setActiveStep }) => {
           </React.Fragment>
         )}
       </div>
-
-      <div
-        className={
-          className +
-          "__submitButton w-full flex flex-row items-center mobile:justify-end justify-between"
-        }
-      >
+      <div className={`${className}__submitButton w-full flex flex-row items-center mobile:justify-end justify-between`}>
         <button
-          onClick={() => setActiveStep(2)}
+          onClick={handleBack}
           className="flex mobile:m-4 my-4 flex-row items-center gap-2 border border-[#0E3746] hover:bg-[#0E3746] text-[#0E3746] hover:text-white mobile:text-base text-sm transition px-4 py-2 rounded-[2rem]"
         >
           <FaArrowLeftLong /> Back
@@ -269,10 +224,9 @@ const Step4 = ({ data, setData, setActiveStep }) => {
         <button
           type="submit"
           onClick={handleSaveAndNext}
-          disabled={activeStage == 0 ? true : false}
-          className={`flex mobile:m-4 my-4 flex-row items-center gap-2 bg-[#0E3746] px-4 py-2 rounded-[2rem] text-white mobile:text-base text-sm ${
-            activeStage == 0 ? "opacity-50" : "opacity-100"
-          }`}
+          disabled={activeStage === 0}
+          className={`flex mobile:m-4 my-4 flex-row items-center gap-2 bg-[#0E3746] px-4 py-2 rounded-[2rem] text-white mobile:text-base text-sm ${activeStage === 0 ? "opacity-50" : "opacity-100"
+            }`}
         >
           Save & Next <FaArrowRightLong />
         </button>

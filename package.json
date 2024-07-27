@@ -27,6 +27,7 @@
     "@mui/icons-material": "^5.16.4",
     "@mui/material": "^5.16.4",
     "@mui/styled-engine-sc": "^6.0.0-alpha.18",
+    "agent": "^0.2.1",
     "cargo": "^0.8.0",
     "i18next-browser-languagedetector": "^7.2.1",
     "i18next-http-backend": "^2.5.1",

@@ -2,21 +2,22 @@ use std::borrow::Borrow;
 
 use crate::api::call::{call_with_payment128, CallResult};
 use crate::api::canister_version;
-use crate::guards::*;
 use crate::routes::upload_image;
 use crate::types::{
     CanisterIdRecord, CanisterInstallMode, CreateCanisterArgument, CreateCanisterArgumentExtended,
     InstallCodeArgument, InstallCodeArgumentExtended,
 };
 use crate::types::{DaoInput, Profileinput, UserProfile};
+use crate::{guards::*, DaoCanisterInput};
 use crate::{routes, with_state, DaoDetails, DaoResponse, ImageData};
 use candid::{encode_one, Principal};
 use ic_cdk::api;
 use ic_cdk::println;
 use ic_cdk::{query, update};
+use serde_bytes::ByteBuf;
 // use ic_cdk::trap;
 
-#[update]
+#[update(guard=prevent_anonymous)]
 async fn create_profile(// asset_handler_canister_id: String,
     // profile: Profileinput
 ) -> Result<(), String> {
@@ -257,12 +258,12 @@ async fn follow_user(userid: Principal) -> Result<(), String> {
 pub async fn create_dao(canister_id: String, dao_detail: DaoInput) -> Result<String, String> {
     ic_cdk::println!("value is {:?}", dao_detail);
     let principal_id = api::caller();
-    if principal_id == Principal::anonymous() {
-        // trap("Anonymous principal not allowed to make calls.")
-        return Err("Anonymo
-        us principal not allowed to make calls."
-            .to_string());
-    }
+    // if principal_id == Principal::anonymous() {
+    //     // trap("Anonymous principal not allowed to make calls.")
+    //     return Err("Anonymo
+    //     us principal not allowed to make calls."
+    //         .to_string());
+    // }
 
     // add cycles from user
 
@@ -306,7 +307,7 @@ pub async fn create_dao(canister_id: String, dao_detail: DaoInput) -> Result<Str
     //     content_type: dao_detail.image_content_type.clone(),
     // }).await.map_err(|err| format!("Image upload failed: {}", err))?;
 
-    let update_dau_detail = DaoInput {
+    let update_dau_detail = DaoCanisterInput {
         dao_name: dao_detail.dao_name.clone(),
         purpose: dao_detail.purpose,
         daotype: dao_detail.daotype,
@@ -316,12 +317,9 @@ pub async fn create_dao(canister_id: String, dao_detail: DaoInput) -> Result<Str
         tokenissuer: dao_detail.tokenissuer,
         linksandsocials: dao_detail.linksandsocials,
         required_votes: dao_detail.required_votes,
-
+        followers: vec![api::caller()],
         image_id: id.clone(),
-        image_content: None,
-        image_content_type: "".to_string(),
-        image_title: "".to_string(),
-        
+        members_permissions: dao_detail.members_permissions,
     };
 
     let dao_detail_bytes: Vec<u8> = match encode_one(&update_dau_detail) {
@@ -443,7 +441,6 @@ async fn install_code(arg: InstallCodeArgument) -> CallResult<()> {
     // let wasm_base64: &str = "3831fb07143cd43c3c51f770342d2b7d0a594311529f5503587bf1544ccd44be";
     // let wasm_module_sample: Vec<u8> = base64::decode(wasm_base64).expect("Decoding failed");
 
-    // let wasm_module_sample: Vec<u8> = include_bytes!("/run/media/wantedbear/Files/job/active-projects/DaoHouse/target/wasm32-unknown-unknown/debug/dao_canister.wasm");
     // let wasm_module_sample: Vec<u8> = include_bytes!("../../../../target/wasm32-unknown-unknown/debug/dao_canister.wasm").to_vec();
 
     let wasm_module_sample: Vec<u8> =

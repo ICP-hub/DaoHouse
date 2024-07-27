@@ -6,7 +6,10 @@ import { IoPersonOutline } from "react-icons/io5";
 import { MdOutlineVerifiedUser } from "react-icons/md";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 
+
 const Step5 = ({ setData, setActiveStep }) => {
+  const [loadingNext, setLoadingNext] = useState(false);
+
   const [quorum, setQuorum] = useState([
     { name: "Council", index: 0, vote: 0 },
     { name: "Group 1", index: 1, vote: 0 },
@@ -27,7 +30,6 @@ const Step5 = ({ setData, setActiveStep }) => {
       ...prevData,
       step5: quorum,
     }));
-
     setActiveStep(5);
   }
 
@@ -125,13 +127,18 @@ const Step5 = ({ setData, setActiveStep }) => {
           >
             <FaArrowLeftLong /> Back
           </button>
-          <button
-            type="submit"
-            onClick={handleSaveAndNext}
-            className="flex mobile:m-4 my-4 flex-row items-center gap-2 bg-[#0E3746] px-4 py-2 rounded-[2rem] text-white mobile:text-base text-sm"
-          >
-            Save & Next <FaArrowRightLong />
-          </button>
+
+          {loadingNext ? (
+            <CircularProgress className="m-4 my-4" />
+          ) : (
+            <button
+              type="submit"
+              onClick={handleSaveAndNext}
+              className="flex mobile:m-4 my-4 flex-row items-center gap-2 bg-[#0E3746] px-4 py-2 rounded-[2rem] text-white mobile:text-base text-sm"
+            >
+              Save & Next <FaArrowRightLong />
+            </button>
+          )}
         </div>
       </div>
     </React.Fragment>

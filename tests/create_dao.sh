@@ -26,6 +26,10 @@ for ((i = 1; i <= COUNT; i++)); do
       image_content = vec {10};
       image_title = "sample.jpg";
       image_content_type = "image/jpg";
+        members_permissions=vec{
+        "mai hi permission hai";
+    };
+      
     }
   )')
 

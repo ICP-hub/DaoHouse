@@ -35,10 +35,7 @@ const CreateDao = () => {
       console.log(element)
       Principal.fromText(element);
     });
-
-
-
-    // let val = step3.members.map(member => Principal.fromText(member))
+   // let val = step3.members.map(member => Principal.fromText(member))
     console.log("val is ", x)
     const daoPayload = {
       dao_name: step1.DAOIdentifier || '',
@@ -54,15 +51,10 @@ const CreateDao = () => {
       image_content: step6.image_content || '',
       image_title: step6.image_title || '',
       image_content_type: step6.image_content_type || '',
-
-
-
-
+      image_id:'12',
     };
-
     console.log("integration",daoPayload);
     const canisterId = process.env.CANISTER_ID_IC_ASSET_HANDLER;
-
     try {
       console.log("canister id of asset ", canisterId);
       const response = await backendActor.create_dao(canisterId, daoPayload);
@@ -73,7 +65,6 @@ const CreateDao = () => {
         toast.error(`${response.Err}`);
       } else {
         toast.success("Dao created successfully");
-
       }
     } catch (error) {
       console.error("Error creating Dao:", error);
@@ -81,9 +72,7 @@ const CreateDao = () => {
   };
 
   const Step1Ref = useRef(null);
-
   const Step4Ref = useRef(null);
-
   const Form = () => {
     switch (activeStep) {
       case 0:

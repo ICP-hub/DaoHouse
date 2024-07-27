@@ -39,7 +39,7 @@ const App = () => {
           <Route path="/*" element={<Error404 />} />
           <Route path="/" element={<Dashboard />} />
           <Route path="/social-feed" element={<FeedPage />} />
-          <Route path="/proposals" element={<Proposals />} />
+          {/* <Route path="/proposals" element={<Proposals />} /> */}
           <Route path="/create-proposal" element={<CreateProposal />} />
           <Route path="/dao" element={<Dao />} />
           <Route path="/dao/create-dao" element={<CreateDao />} />

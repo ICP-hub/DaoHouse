@@ -1,193 +1,155 @@
 import React, { useState } from 'react';
-import proposals from "../../../assets/proposals.png"
-import createProposal from "../../../assets/proposal.gif"
+import proposals from "../../../assets/proposals.png";
+import createProposal from "../../../assets/proposal.gif";
 import ReactQuill from 'react-quill';
 import { quillFormats, quillModules } from '../../utils/quilConfig';
-import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
 import Container from '../../Components/Container/Container';
-
+import { useAuth } from '../../Components/utils/useAuthClient';
+import { toast } from 'react-toastify';
 
 function CreateProposal() {
-    const [proposalType, setProposalType] = useState('Text');
+    const [proposalTitle, setProposalTitle] = useState('');
     const [proposalDescription, setProposalDescription] = useState('');
-    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [requiredVotes, setRequiredVotes] = useState('');
+    const [loading, setLoading] = useState(false);
+    const { createDaoActor, backendActor } = useAuth();
 
     const className = "CreateProposals";
 
-    const proposalTypes = [
-        "Text",
-        "Transfer",
-        "Function Call",
-        "Add Member",
-        "Remove Member"
-    ];
-
-
-    const handleProposalTypeChange = (value) => {
-        setProposalType(value);
-        setDropdownOpen(!dropdownOpen)
+    const handleProposalTitleChange = (event) => {
+        setProposalTitle(event.target.value);
     };
 
     const handleProposalDescriptionChange = (value) => {
         setProposalDescription(value);
     };
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
+    const handleRequiredVotesChange = (event) => {
+        setRequiredVotes(event.target.value);
     };
 
 
-    const renderAdditionalFields = () => {
-        switch (proposalType) {
-            case 'Transfer':
-                return (
-                    <div>
-                        <label className="block mb-2 font-semibold text-xl">Recipient</label>
-                        <input type="text" placeholder="Specify Account if any" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent" /><br />
-                        <div className="flex flex-wrap flex-row w-full gap-4">
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        setLoading(true);
+    
+        try {
+            const proposalData = {
+                proposal_title: proposalTitle,
+                proposal_description: proposalDescription,
+                required_votes: parseInt(requiredVotes, 10),
+            };
+    
+            console.log("Proposal Data:", proposalData);
+            console.log("Backend ID:", process.env.CANISTER_ID_DAOHOUSE_BACKEND);
+    
+            // Validate proposal data before sending
+            if (!proposalTitle || !proposalDescription || isNaN(requiredVotes)) {
+                throw new Error("Invalid proposal data");
+            }
+    
+            // Fetch all DAOs and get the DAO Canister
+            const pagination = { start: 0, end: 10 };
+            const response = await backendActor.get_all_dao(pagination);
+    
+            await Promise.all(response.map(async (data) => {
+                const daoCanister = createDaoActor(data.dao_canister_id);
+                console.log("DAO Canister ID:", data.dao_canister_id);
+                await daoCanister.create_proposal(process.env.CANISTER_ID_DAOHOUSE_BACKEND, proposalData);
+            }));
+            console.log("Proposal created successfully");
 
-                            <div className="flex-1">
-
-                                <label className="block mb-2 font-semibold text-xl">Token</label>
-                                <select className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent">
-                                    {/* Options for token */}
-                                </select>
-                            </div>
-                            <div className="flex-1">
-                                <label className="block mb-2 font-semibold text-xl">Amount</label>
-
-                                <input type="number" placeholder="Write here number type input" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent" />
-                            </div>
-                        </div>
-                    </div>
-                );
-            case 'Function Call':
-                return (
-                    <div>
-                        <label className="block mb-2 font-semibold text-xl">Contract</label>
-                        <input type="text" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent" /><br />
-                        <label className="block mb-2 font-semibold text-xl">Method</label>
-                        <input type="text" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent" /><br />
-                        <label className="block mb-2 font-semibold text-xl">Arguments (JSON)</label>
-                        <input type="text" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent" /><br />
-                        <div className="flex flex-wrap flex-row w-full gap-4">
-                            <div className="flex-1">
-                                <label className="block mb-2 font-semibold text-xl">Gas (Tgas)</label>
-                                <input type="text" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent" />
-                            </div>
-                            <div className="flex-1">
-                                <label className="block mb-2 font-semibold text-xl">Deposit</label>
-                                <input type="text" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent" />
-                            </div>
-                        </div>
-                    </div>
-                );
-            case 'Add Member':
-            case 'Remove Member':
-                return (
-                    <div className="flex flex-wrap flex-row w-full gap-4">
-                        <div className="flex-1">
-                            <label className="block mb-2 font-semibold text-xl">Account ID</label>
-                            <input type="text" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent" />
-                        </div>
-                        <div className="flex-1">
-                            <label className="block mb-2 font-semibold text-xl">Role</label>
-                            <input type="text" className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent" />
-                        </div>
-                    </div>
-                );
-            default:
-                return null;
+            // Display success message and clear form fields
+            toast.success("Proposal created successfully!");
+            setProposalTitle('');
+            setProposalDescription('');
+            setRequiredVotes('');
+    
+        } catch (error) {
+            console.error("Error creating proposal:", error);
+            toast.error("Error creating proposal: " + error.message);
+        } finally {
+            setLoading(false);
         }
     };
+    
 
     return (
         <div className="bg-zinc-200 w-full">
             <div style={{
-                    backgroundImage: `url("${proposals}")`,
-                    backgroundRepeat: "no-repeat",
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                }}>
+                backgroundImage: `url("${proposals}")`,
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+            }}>
                 <Container classes={`${className}__filter w-full h-[25vh] p-20 flex flex-col items-start justify-center`}>
-                <h1 className="text-[40px] p-2 text-white border-b-2 border-white">Proposals</h1>
+                    <h1 className="text-[40px] p-2 text-white border-b-2 border-white">Proposals</h1>
                 </Container>
             </div>
 
             <div className='bg-[#c8ced3]'>
-            <Container classes={`${className}__label  relative py-8 px-10 flex gap-2 flex-col w-full justify-between items-center`}>
-                <p className="text-[40px] text-black px-8 mr-auto flex flex-row justify-start items-center gap-4">
-                    Create Proposal
-                    <div className="flex flex-col items-start">
-                        <div className="w-32 border-t-2 border-black"></div>
-                        <div className="w-14 mt-2 border-t-2 border-black"></div>
-                    </div>
-                </p>
-
-                <div className="mx-auto bg-[#F4F2EC] p-6 m-6 rounded-lg shadow w-full">
-                    <h1 className="text-xl font-semibold mb-4">Proposal Type</h1>
-                    <div className="mb-6 max-w-6xl relative">
-                        <div
-                            className="mt-1 block bg-transparent w-full rounded-xl  pl-3 pr-10 py-3 text-base border border-[#aba9a5] border-opacity-30 focus:outline-none focus:ring-indigo-500 focus:border-[#aba9a5] sm:text-sm rounded-md cursor-pointer flex items-center justify-between"
-                            onClick={() => setDropdownOpen(!dropdownOpen)}
-                        >
-                            {proposalType || "Select Type here"}
-                            <span className="ml-2">
-                                {dropdownOpen ? <BsChevronUp color='#7a7976' /> : <BsChevronDown color='#7a7976' />}
-                            </span>
+                <Container classes={`${className}__label relative py-8 px-10 flex gap-2 flex-col w-full justify-between items-center`}>
+                    <p className="text-[40px] text-black px-8 mr-auto flex flex-row justify-start items-center gap-4">
+                        Create Proposal
+                        <div className="flex flex-col items-start">
+                            <div className="w-32 border-t-2 border-black"></div>
+                            <div className="w-14 mt-2 border-t-2 border-black"></div>
                         </div>
-                        {dropdownOpen && (
-                            <div className="absolute mt-1 w-full rounded-md bg-[#AAC8D6]  shadow-lg z-10">
-                                <div className="flex gap-4  p-2">
-                                    {proposalTypes.map((type) => (
-                                        <button
-                                            key={type}
-                                            onClick={() => handleProposalTypeChange(type)}
-                                            className={`px-2 py-1 flex-1 rounded border-white border-2  ${proposalType === type ? 'bg-[#DFE9EE] text-[#229ED9] font-medium' : 'bg-[#AAC8D6] text-white bg-transparent'}`}
-                                        >
-                                            {type}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                    </div>
+                    </p>
 
-                    <div className='max-w-6xl'>
-                        {renderAdditionalFields()}
-                    </div>
-
-                    <div className='my-4'>
-                        <h1 className="text-xl font-semibold mb-4">Proposal Description</h1>
-                        <div className="mb-6 max-w-6xl mt-4 relative editor-container">
-                            <ReactQuill
-                                value={proposalDescription}
-                                onChange={handleProposalDescriptionChange}
-                                modules={quillModules}
-                                formats={quillFormats}
-                                placeholder='Write here...'
-                                className='proposal-editor rounded-xl'
+                    <div className="mx-auto bg-[#F4F2EC] p-6 m-6 rounded-lg shadow w-full">
+                        <div className="mb-6 max-w-6xl relative">
+                            <label className="block mb-2 font-semibold text-xl">Proposal Title</label>
+                            <input 
+                                type="text" 
+                                value={proposalTitle} 
+                                onChange={handleProposalTitleChange} 
+                                placeholder="Enter proposal title" 
+                                className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent" 
                             />
                         </div>
+
+                        <div className='max-w-6xl'>
+                            <h1 className="text-xl font-semibold mb-4">Proposal Description</h1>
+                            <div className="mb-6 max-w-6xl mt-4 relative editor-container">
+                                <ReactQuill
+                                    value={proposalDescription}
+                                    onChange={handleProposalDescriptionChange}
+                                    modules={quillModules}
+                                    formats={quillFormats}
+                                    placeholder='Write here...'
+                                    className='proposal-editor rounded-xl'
+                                />
+                            </div>
+                        </div>
+
+                        <div className="mb-6 max-w-6xl relative">
+                            <label className="block mb-2 font-semibold text-xl">Required Votes</label>
+                            <input 
+                                type="number" 
+                                value={requiredVotes} 
+                                onChange={handleRequiredVotesChange} 
+                                placeholder="Enter required votes" 
+                                className="w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent" 
+                            />
+                        </div>
+
+                        <div className="flex justify-center my-8">
+                            <button
+                                className="bg-[#0E3746] hover:bg-[#819499] text-white font-normal text-center rounded-full text-[16px] py-2 px-6 rounded focus:outline-none focus:shadow-outline"
+                                type="submit"
+                                onClick={handleSubmit}
+                                disabled={loading}
+                            >
+                                Submit
+                            </button>
+                        </div>
                     </div>
 
-
-
-                    <div className="flex justify-center my-8">
-                        <button
-                            className="bg-[#0E3746] hover:bg-[#819499] text-white font-normal text-center rounded-full text-[16px] py-2 px-6 rounded focus:outline-none focus:shadow-outline"
-                            type="submit"
-                            onClick={handleSubmit}
-                        >
-                            Submit
-                        </button>
+                    <div className="absolute right-10 top-10">
+                        <img src={createProposal} alt="Illustration" className="w-[350px] h-[350px]" />
                     </div>
-                </div>
-                <div className="absolute right-10 top-10">
-                    <img src={createProposal} alt="Illustration" className="w-[350px] h-[350px]" />
-                </div>
-
-            </Container>
+                </Container>
             </div>
         </div>
     );

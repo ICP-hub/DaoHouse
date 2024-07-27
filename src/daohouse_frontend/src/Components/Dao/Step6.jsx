@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { FiUpload } from "react-icons/fi";
 import defaultImage from "../../../assets/defaultImage.png";
+import CircularProgress from '@mui/material/CircularProgress';
 
-const Step6 = ({ data, setData, setActiveStep ,handleDaoClick }) => {
+const Step6 = ({ data, setData, setActiveStep, handleDaoClick }) => {
   const [file, setFile] = useState(null);
   const [fileURL, setFileURL] = useState(defaultImage);
   const [shouldCreateDAO, setShouldCreateDAO] = useState(false);
+  const [loadingNext, setLoadingNext] = useState(false);
   const className = "DAO__Step6";
 
   const handleFileInput = async (event) => {
@@ -23,29 +25,37 @@ const Step6 = ({ data, setData, setActiveStep ,handleDaoClick }) => {
   };
 
   const createDAO = async () => {
-    if (file) {
-      const fileContent = await readFileContent(file);
-      setData((prevData) => ({
-        ...prevData,
-        step6: {
-          imageURI: fileURL,
-          image_content: new Uint8Array(fileContent),
-          image_content_type: file.type,
-          image_title: file.name,
-        },
-      }));
-    } else {
-      setData((prevData) => ({
-        ...prevData,
-        step6: {
-          imageURI: defaultImage,
-          image_content: undefined,
-          image_content_type: undefined,
-          image_title: undefined,
-        },
-      }));
-    }
-    setShouldCreateDAO(true);
+    setLoadingNext(true);
+    setTimeout(async () => {
+      if (file) {
+        const fileContent = await readFileContent(file);
+        setData((prevData) => ({
+          ...prevData,
+          step6: {
+            imageURI: fileURL,
+            image_content: new Uint8Array(fileContent),
+            image_content_type: file.type,
+            image_title: file.name,
+            image_id: '12',
+          },
+        }));
+      } else {
+        setData((prevData) => ({
+          ...prevData,
+          step6: {
+            imageURI: defaultImage,
+            image_content: undefined,
+            image_content_type: undefined,
+            image_title: undefined,
+            image_id: '12',
+          },
+        }));
+      }
+      setLoadingNext(false);
+      setShouldCreateDAO(true);
+    }, 2000);
+
+
   };
 
   const readFileContent = (file) => {
@@ -64,7 +74,7 @@ const Step6 = ({ data, setData, setActiveStep ,handleDaoClick }) => {
     }
   }, [data, shouldCreateDAO, handleDaoClick]);
 
-  console.log("data of all steps: ",data)
+  console.log("data of all steps: ", data)
   return (
     <React.Fragment>
       <div
@@ -104,19 +114,27 @@ const Step6 = ({ data, setData, setActiveStep ,handleDaoClick }) => {
           "__submitButton w-full flex flex-row items-center mobile:justify-end justify-between"
         }
       >
+
+
         <button
           onClick={() => setActiveStep(4)}
           className="flex mobile:m-4 my-4 flex-row items-center gap-2 border border-[#0E3746] hover:bg-[#0E3746] text-[#0E3746] hover:text-white mobile:text-base text-sm transition px-4 py-2 rounded-[2rem]"
         >
           <FaArrowLeftLong /> Back
         </button>
-        <button
-          type="submit"
-          onClick={createDAO}
-          className="flex mobile:m-4 my-4 flex-row items-center gap-2 bg-[#0E3746] px-4 py-2 rounded-[2rem] text-white mobile:text-base text-sm"
-        >
-          Create DAO
-        </button>
+
+
+        {loadingNext ? (
+          <CircularProgress className="m-4 my-4" />
+        ) : (
+          <button
+            type="submit"
+            onClick={createDAO}
+            className="flex mobile:m-4 my-4 flex-row items-center gap-2 bg-[#0E3746] px-4 py-2 rounded-[2rem] text-white mobile:text-base text-sm"
+          >
+            Create DAO
+          </button>
+        )}
       </div>
     </React.Fragment>
   );

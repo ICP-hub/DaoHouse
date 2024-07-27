@@ -24,10 +24,12 @@ import { useAuth, useAuthClient } from "../../Components/utils/useAuthClient";
 const MyProfile = ({ childComponent }) => {
   const { backendActor, frontendCanisterId, identity } = useAuth();
   const { userProfile, fetchUserProfile } = useUserProfile();
+  const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
+  const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
   const [imageSrc, setImageSrc] = useState(
     userProfile?.profile_img
-      ? `http://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.localhost:4943/f/${userProfile.profile_img}`
-      : MyProfileImage
+    ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${userProfile.profile_img}`
+    : MyProfileImage
   );
   const [activeTab, setActiveTab] = useState(0);
   const navigate = useNavigate();
@@ -35,7 +37,7 @@ const MyProfile = ({ childComponent }) => {
   const tabButtonsStyle =
     "my-1 big_phone:text-base mobile:text-md text-sm flex flex-row items-center gap-2 hover:text-white";
 
-  // Animation options for the big circle
+  // Animation optioJuly 24ns for the big circle
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -91,7 +93,7 @@ const MyProfile = ({ childComponent }) => {
 
   useEffect(() => {
     setImageSrc(userProfile?.profile_img
-      ? `http://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.localhost:4943/f/${userProfile.profile_img}`
+      ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${userProfile.profile_img}`
       : MyProfileImage)
   }, [userProfile?.profile_img])
   // Main return statement
@@ -238,17 +240,21 @@ const MyProfile = ({ childComponent }) => {
             {/* Profile picture and details */}
             <div className="flex md:justify-between justify-around w-full gap-2 z-50 relative">
               <div className="flex items-start md:-ml-[10%] tablet:ml-[-90px]  relative">
-                <div>
+
+                <div
+                  className="fixed-image-container w-[130px] h-[120px] rounded-md overflow-hidden"
+                  style={{
+                    boxShadow:
+                      "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
+                  }}
+                >
                   <img
-                    className="rounded-tablet tablet:w-full md:w-[90px] max-h-[120px] max-w-[130px]  min-w-[60px] mt-[-20px] rounded-md z-50"
+                    className="w-full h-full object-cover"
                     src={imageSrc}
                     alt="profile-pic"
-                    style={{
-                      boxShadow:
-                        "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
-                    }}
                   />
                 </div>
+
                 <div className="ml-5">
                   <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C]">
                     {name || "Username.user"}{" "}

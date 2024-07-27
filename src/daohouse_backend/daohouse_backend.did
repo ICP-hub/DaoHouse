@@ -1,83 +1,89 @@
+type Analytics = record {
+  dao_counts : nat64;
+  proposals_count : nat64;
+  post_count : nat64;
+  members_count : nat64;
+};
+type Comment = record {
+  author_principal : principal;
+  replies : vec text;
+  comment_text : text;
+  comment_id : opt text;
+};
+type DaoDetails = record {
+  dao_id : principal;
+  dao_name : text;
+  image_id : text;
+  dao_canister_id : text;
+};
 type DaoInput = record {
   members : vec principal;
+  image_title : text;
   linksandsocials : vec text;
   daotype : text;
+  image_content : blob;
   dao_name : text;
+  image_id : text;
+  members_permissions : vec text;
   link_of_document : text;
+  image_content_type : text;
   tokenissuer : text;
   cool_down_period : text;
   purpose : text;
   required_votes : int8;
-
-  // image
-  image_id: text;
-  image_content : blob;
-  image_title : text;
-  image_content_type : text;
-
 };
-
-type Comment = record {
-  author_principal : principal;
-  comment_text : text;
-  replies : vec text;
-  comment_id : opt text;
-};
-
+type GetAllPostsResponse = record { size : nat32; posts : vec PostInfo };
+type ImageData = record { content : blob; name : text; content_type : text };
+type Pagination = record { end : nat32; start : nat32 };
+type PaymentRecipientAccount = record { payment_recipient : principal };
 type PostInfo = record {
-  username : text;
   post_img : text;
   post_id : text;
+  username : text;
   comment_count : nat32;
-  // post_title : text;
   like_count : nat32;
   like_id_list : vec principal;
   post_description : text;
-  // comment_list : vec text;
+  is_liked : nat32;
+  user_image_id : text;
+  principal_id : principal;
   comment_list : vec Comment;
   post_created_at : nat64;
-  user_image_id : text;
-  is_liked: nat32;
-
 };
-
 type PostInput = record {
+  image_title : text;
   username : text;
-  post_img : text;
-  //  post_title : text;
+  image_content : blob;
   post_description : text;
   user_image_id : text;
-
-  // image
-  image_content : blob;
-  image_title : text;
   image_content_type : text;
 };
 type Profileinput = record {
+  image_title : text;
   username : text;
   twitter_id : text;
+  image_content : blob;
   description : text;
   website : text;
   contact_number : text;
+  image_content_type : text;
   email_id : text;
   profile_img : text;
   telegram : text;
   tag_defines : vec text;
-  user_image_id : text;
-
-  // image
-  image_content : blob;
-  image_title : text;
-  image_content_type : text;
-
 };
-
+type ReplyCommentData = record {
+  post_id : text;
+  comment : text;
+  comment_id : text;
+};
 type Result = variant { Ok : text; Err : text };
 type Result_1 = variant { Ok; Err : text };
-type Result_2 = variant { Ok : PostInfo; Err : text };
-type Result_3 = variant { Ok : UserProfile; Err : text };
-type Result_4 = variant { Ok : vec record { text; PostInfo }; Err : text };
-type Result_5 = variant { Ok : vec principal; Err : text };
+type Result_2 = variant { Ok : Analytics; Err : text };
+type Result_3 = variant { Ok : vec principal; Err : text };
+type Result_4 = variant { Ok : GetAllPostsResponse; Err : text };
+type Result_5 = variant { Ok : PostInfo; Err : text };
+type Result_6 = variant { Ok : UserProfile; Err : text };
 type UserProfile = record {
   post_id : vec text;
   username : text;
@@ -97,88 +103,30 @@ type UserProfile = record {
   tag_defines : vec text;
   followings_list : vec principal;
 };
-
-type CommentInfo = record {
-  comment_id : text;
-  comment : text;
-  post_id : text;
-};
-
-type DaoDetails = record {
-  dao_id : principal;
-  dao_name : text;
-  image_id : text;
-  dao_canister_id : text;
-};
-
-type AnalyticsResponse = variant { Ok : Analytics; Err : text };
-
-type Analytics = record {
-  members_count : nat64;
-  proposals_count : nat64;
-  dao_counts : nat64;
-  post_count : nat64;
-};
-
-type Pagination = record {
-  start : nat32;
-  end : nat32;
-};
-
-type UserResponse = variant {
-  Ok : text;
-  Err : text;
-};
-
-type PaymentResponse = variant {
-  Ok : nat64;
-  Err : text;
-};
-
-type InitArgs = record {
-  payment_recipient : principal;
-};
-
-type PostSize = nat32;
-
-type GetAllPostsResult = record {
-  posts : vec PostInfo;
-  size : PostSize;
-};
-
-type ImageParams = record {
-  content : opt blob;
-  name : text;
-  content_type : text;
-};
-
-service : (InitArgs) -> {
-  update_profile : (text, Profileinput) -> (Result_1);
+service : (PaymentRecipientAccount) -> {
+  check_user_existance : () -> (Result) query;
   comment_post : (text, text) -> (Result);
   create_dao : (text, DaoInput) -> (Result);
   create_new_post : (text, PostInput) -> (Result);
-  check_user_existance : () -> (UserResponse) query;
   create_profile : () -> (Result_1);
   delete_profile : () -> (Result_1);
   follow_user : (principal) -> (Result_1);
-  get_all_posts : (Pagination) -> (GetAllPostsResult) query;
-
-  get_post_byid : (text) -> (Result_2) query;
-  get_user_profile : () -> (Result_3) query;
-  like_post : (text) -> (Result);
-
-  get_my_post : (Pagination) -> (variant { Ok : GetAllPostsResult; Err : text }) query;
-
-  reply_comment : (CommentInfo) -> (Result);
-  get_my_follower : () -> (Result_5);
-  get_my_following : () -> (Result_5);
-  get_all_dao : (Pagination) -> (vec DaoDetails);
-  get_dao_details : (text) -> (text);
-  get_analytics : () -> (AnalyticsResponse) query;
+  get_all_dao : (Pagination) -> (vec DaoDetails) query;
+  get_all_posts : (Pagination) -> (GetAllPostsResponse) query;
+  get_analytics : () -> (Result_2) query;
   get_caller : () -> (principal) query;
-  get_canister_id : () -> (text) query;
+  get_cycles : () -> (nat64) query;
+  get_dao_details : (text) -> (text);
+  get_latest_post : (Pagination) -> (GetAllPostsResponse) query;
+  get_my_follower : () -> (Result_3) query;
+  get_my_following : () -> (Result_3) query;
+  get_my_post : (Pagination) -> (Result_4) query;
+  get_post_byid : (text) -> (Result_5) query;
+  get_user_profile : () -> (Result_6) query;
+  like_post : (text) -> (Result);
   make_payment : (nat64, principal) -> (text);
-  get_latest_post : (Pagination) -> (GetAllPostsResult) query;
+  reply_comment : (ReplyCommentData) -> (Result);
+  update_profile : (text, Profileinput) -> (Result_1);
   update_proposal_count : () -> (text);
-  upload_image : (text, ImageParams) -> (variant {Ok: text; Err: text});
-};
+  upload_image : (text, ImageData) -> (Result);
+}

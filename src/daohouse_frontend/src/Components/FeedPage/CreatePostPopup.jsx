@@ -12,22 +12,30 @@ import { useUserProfile } from "../../context/UserProfileContext";
 import MyProfileImage from "../../../assets/MyProfile-img.png";
 import CircularProgress from '@mui/material/CircularProgress';
 
-const CreatePostPopup = ({ onClose , handleGetResponse}) => {
+const CreatePostPopup = ({ onClose, handleGetResponse }) => {
   const [showDescription, setShowDescription] = useState(false);
   const [description, setDescription] = useState("");
   const [showConfirmation, setShowConfirmation] = useState(false);
   const { userProfile, fetchUserProfile } = useUserProfile();
   const [loading, setLoading] = useState(false)
+  const isnetwork  = process.env.DFX_NETWORK
+  
+  console.log('isNetwork ',isnetwork);
 
   const [imageData, setImageData] = useState({
     base64: "",
     image_content: [],
     image_title: "",
     image_content_type: "",
-    post_image : ''
+    post_image: ''
   });
+// <<<<<<< prabhjot
+//   const [userImage, setUserImage] = useState(userProfile?.profile_img
+//     ? `http://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.localhost:4943/f/${userProfile.profile_img}`
+// =======
   const [userImage, setUserImage] = useState( userProfile?.profile_img
-    ? `http://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.localhost:4943/f/${userProfile.profile_img}`
+    ? `http://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${process.env.DFX_NETWORK == "ic" ? "raw.icp0.io" : "localhost:4943"}/f/${userProfile.profile_img}`
+
     : avtarProfileIcon)
 
   const { handleFileUpload } = constant();
@@ -39,12 +47,12 @@ const CreatePostPopup = ({ onClose , handleGetResponse}) => {
     const userImageId = localStorage.getItem('userImageId')
     const postPayload = {
       username:  userProfile?.username || "",
-      post_img: imageData?.post_image ? imageData?.post_image  : MyProfileImage,
+      post_img: imageData?.post_image ? imageData?.post_image : MyProfileImage,
       post_description: description || "",
       image_content: imageData.image_content || "",
       image_title: imageData.image_title || "",
       image_content_type: imageData.image_content_type || "",
-      user_image_id  : userImageId ? userImageId : " ",
+      user_image_id : userImageId ? userImageId : " ",
     };
 
     try {
@@ -123,6 +131,7 @@ const CreatePostPopup = ({ onClose , handleGetResponse}) => {
     button.style.opacity = "1";
   }
 
+
   return (
     <div
       className="create-post-popup fixed z-50 inset-0 overflow-y-auto"
@@ -164,32 +173,32 @@ const CreatePostPopup = ({ onClose , handleGetResponse}) => {
                       />
 
                       <p className="md:text-[14px] text-[10px] text-[#05212C] font-medium">
-                        nzbdchsvvksckshcbkjscb kc
+                        {userProfile.username || "user"}
                       </p>
                     </span>
                     {
-                    loading ? <CircularProgress /> 
-                    : 
-                    <button
-                      className="flex items-center justify-center md:w-24 w-18 md:gap-4 gap-2 mt-2 bg-[#0E3746] text-white md:text-[16px] text-[14px] md:px-4 px-3 py-2 font-semibold rounded-[10px]"
-                      style={{ boxShadow: "0px 3px 6px 0px #00000026" }}
-                      onClick={() => {
-                        const postButton =
-                          document.getElementById("postButton");
-                        if (postButton) {
-                          postButton.addEventListener(
-                            "click",
-                            handleCreatePost(postButton)
-                          );
-                        }
-                      }}
-                      id="postButton"
-                    >
-                      <span>Post</span>
-                      <span>
-                        <FaArrowRightLong />
-                      </span>
-                    </button>
+                      loading ? <CircularProgress />
+                        :
+                        <button
+                          className="flex items-center justify-center md:w-24 w-18 md:gap-4 gap-2 mt-2 bg-[#0E3746] text-white md:text-[16px] text-[14px] md:px-4 px-3 py-2 font-semibold rounded-[10px]"
+                          style={{ boxShadow: "0px 3px 6px 0px #00000026" }}
+                          onClick={() => {
+                            const postButton =
+                              document.getElementById("postButton");
+                            if (postButton) {
+                              postButton.addEventListener(
+                                "click",
+                                handleCreatePost(postButton)
+                              );
+                            }
+                          }}
+                          id="postButton"
+                        >
+                          <span>Post</span>
+                          <span>
+                            <FaArrowRightLong />
+                          </span>
+                        </button>
                     }
                   </div>
 

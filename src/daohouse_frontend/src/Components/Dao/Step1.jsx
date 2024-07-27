@@ -1,35 +1,45 @@
 import React, { useState } from "react";
 import { FaArrowRightLong } from "react-icons/fa6";
+import { toast } from "react-toastify";
+
 
 const Step1 = ({ setData, setActiveStep }) => {
+  const [loading, setLoading] = useState(false);
   const [inputData, setInputData] = useState({
     DAOIdentifier: "",
     Purpose: "",
     DAOType: "",
-    exisitingToken: false,
-    tokenName: "",
-    tokenSymbol: "",
+    // exisitingToken: false,
+    // tokenName: "",
+    // tokenSymbol: "",
     initialTokenSupply: 0,
   });
 
   const className = "DAO__Step1";
 
-  function handleSaveAndNext() {
+  async function handleSaveAndNext() {
     if (
       inputData.DAOIdentifier === "" ||
       inputData.tokenName === "" ||
       inputData.tokenSymbol === ""
     ) {
-      alert("Empty fields are not allowed");
+      toast.error("Empty fields are not allowed");
       return;
     }
 
-    setData((prevData) => ({
-      ...prevData,
-      step1: { ...inputData },
-    }));
+    try {
+      setData((prevData) => ({
+        ...prevData,
+        step1: { ...inputData },
+      }));
 
-    setActiveStep(1);
+      // Simulate an async operation like an API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      setActiveStep(1);
+    } catch (error) {
+      console.error("Error saving data:", error);
+    }
   }
 
   function handleChange(e) {
@@ -95,7 +105,7 @@ const Step1 = ({ setData, setActiveStep }) => {
           className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm"
         />
 
-        {/** DAO Token */}
+        {/** DAO Token 
         <div className="flex mobile:flex-row flex-col mobile:gap-4 gap-2 mobile:items-center items-start">
           <p htmlFor="type" className="font-semibold mobile:text-base text-sm">
             DAO Token*
@@ -150,10 +160,10 @@ const Step1 = ({ setData, setActiveStep }) => {
               className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm"
             />
           </div>
-        </div>
+        </div>*/}
 
         {/** Initial Token Supply */}
-        <label htmlFor="initialTokenSupply" className="font-semibold mobile:text-base text-sm">
+       {/** <label htmlFor="initialTokenSupply" className="font-semibold mobile:text-base text-sm">
           Initial Token Supply
         </label>
         <input
@@ -163,7 +173,7 @@ const Step1 = ({ setData, setActiveStep }) => {
           name="initialTokenSupply"
           placeholder="Enter number of tokens to be minted"
           className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm"
-        />
+        />*/} 
       </div>
 
       <div
@@ -172,13 +182,15 @@ const Step1 = ({ setData, setActiveStep }) => {
           "__submitButton w-full flex flex-row items-center justify-end"
         }
       >
-        <button
-          type="submit"
-          onClick={handleSaveAndNext}
-          className="flex mobile:m-4 my-4 flex-row items-center gap-2 bg-[#0E3746] px-4 py-2 rounded-[2rem] text-white mobile:text-base text-sm"
-        >
-          Save & Next <FaArrowRightLong />
-        </button>
+        
+          <button
+            type="submit"
+            onClick={handleSaveAndNext}
+            className="flex mobile:m-4 my-4 flex-row items-center gap-2 bg-[#0E3746] px-4 py-2 rounded-[2rem] text-white mobile:text-base text-sm"
+          >
+            Save & Next <FaArrowRightLong />
+          </button>
+        
       </div>
     </React.Fragment>
   );

@@ -97,3 +97,36 @@ body {
 .editor-container {
   position: relative;
 }
+
+.mobile-buttons{
+  display: none !important;
+}
+
+@media (max-width : 639px) {
+  .desktop-button{
+    display: none !important;
+  }
+  .mobile-buttons{
+    display: block !important;
+  }
+}
+
+@media (min-width : 640px) and (max-width : 800px){
+  .parent-row{
+    display: flex;
+    flex-direction: row;
+  }
+  .image-w{
+    width: 100%;
+    height: 100%;
+    min-height: 160px;
+  }
+}
+
+@media (max-width : 800px) {
+  .image-section{
+    display: flex;
+    justify-content: start;
+    margin-left: 10px;
+  }
+}

@@ -6,18 +6,7 @@ use crate::routes::upload_image;
 // <<<<<<< pratap
 use crate::types::{Comment, PostInfo, PostInput};
 use crate::{
-    with_state,
-    Analytics,
-    DaoDetails,
-    GetAllPostsResponse,
-    ImageData,
-    Pagination,
-    ReplyCommentData,
-    // =======
-    // use crate::types::{Comment, PostInfo, PostInput};
-    // use crate::{
-    //     with_state, Analytics, DaoDetails, GetAllPostsResponse, ImageData, Pagination, ReplyCommentData,
-    // >>>>>>> main
+    with_state, Analytics, DaoDetails, GetAllPostsResponse, ImageData, Pagination, ReplyCommentData,
 };
 use candid::Principal;
 use ic_cdk::api;
@@ -29,11 +18,6 @@ use icrc_ledger_types::icrc1::transfer::BlockIndex;
 use crate::guards::*;
 use icrc_ledger_types::icrc2::transfer_from::{TransferFromArgs, TransferFromError};
 use sha2::{Digest, Sha256};
-// =======
-// use icrc_ledger_types::icrc2::transfer_from::{TransferFromArgs, TransferFromError};
-// use sha2::{Digest, Sha256};
-// // use uuid::Uuid;
-// >>>>>>> main
 
 #[update(guard = prevent_anonymous)]
 async fn create_new_post(canister_id: String, post_details: PostInput) -> Result<String, String> {

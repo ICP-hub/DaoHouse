@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Lottie from "react-lottie";
 import BigCircleComponent from "../../../Components/Ellipse-Animation/BigCircle/BigCircleComponent";
@@ -13,6 +13,7 @@ import MyProfileRectangle from "../../../../assets/MyProfileRectangle.png";
 import { BsPlusLg } from "react-icons/bs";
 import TableComponent from "../../../Components/Proposals/MyProposals/TableComponent";
 import Container from "../../../Components/Container/Container";
+
 
 
 const MyProposals = () => {

@@ -1,5 +1,5 @@
 mod types;
-use ic_cdk::{api, init, export_candid};
+use ic_cdk::{api, export_candid, init};
 use std::{cell::RefCell, fs::Permissions};
 pub mod proposal_route;
 // use crate::api::call::CallResult;
@@ -8,12 +8,13 @@ pub mod proposal_route;
 mod state_handler;
 use state_handler::State;
 mod memory;
-use memory::Memory; 
+use memory::Memory;
 mod functions;
+mod guards;
 // #[macro_use]
 extern crate ic_cdk_macros;
-use types::*;
 use candid::Principal;
+use types::*;
 
 thread_local! {
     static STATE: RefCell<State> = RefCell::new(State::new());
@@ -23,12 +24,9 @@ pub fn with_state<R>(f: impl FnOnce(&mut State) -> R) -> R {
     STATE.with(|cell| f(&mut cell.borrow_mut()))
 }
 
-
-
 #[init]
-async fn init(dao_input: DaoInput) { 
-
-    ic_cdk::println!("data is {:?}", dao_input);
+async fn init(dao_input: DaoInput) {
+    // ic_cdk::println!("data is {:?}", dao_input);
 
     let principal_id = api::caller();
     let new_dao = Dao {
@@ -45,11 +43,12 @@ async fn init(dao_input: DaoInput) {
         required_votes: dao_input.required_votes,
         members: dao_input.members.clone(),
         image_id: dao_input.image_id,
-        members_count: dao_input.members.len() as u32
-
+        members_count: dao_input.members.len() as u32,
+        followers: dao_input.followers,
+        members_permissions: dao_input.members_permissions,
     };
 
-    let permission=Votingandpermissions{
+    let permission = Votingandpermissions {
         changedao_config: "council".to_string(),
         changedao_policy: "council".to_string(),
         bounty: "council".to_string(),
@@ -62,7 +61,7 @@ async fn init(dao_input: DaoInput) {
         upgradeself: "council".to_string(),
         upgraderemote: "council".to_string(),
         setvotetoken: "council".to_string(),
-        votingpermision: "council".to_string(),   
+        votingpermision: "council".to_string(),
     };
 
     let council_list = GroupList {
@@ -75,10 +74,6 @@ async fn init(dao_input: DaoInput) {
         state.groups.insert("council".to_string(), council_list);
     });
 }
-
-
-
-
 
 // #[pre_upgrade]
 // fn pre_upgrade() {
