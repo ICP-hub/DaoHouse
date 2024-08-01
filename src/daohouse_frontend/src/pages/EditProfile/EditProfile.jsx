@@ -147,14 +147,17 @@ const EditProfile = () => {
       }));
     }
   };
-
   const handleRemoveImage = () => {
     setProfileData((prevData) => ({
       ...prevData,
-      profile_img: MyProfileImage,
+      profile_img: "", // Set to empty or default if necessary
+      image_content: [], // Clear the image content
+      image_title: "",
+      image_content_type: "",
     }));
+    setImageSrc(MyProfileImage); // Update the image source to default
   };
-
+  
   const defaultOptions = {
     loop: true,
     autoplay: true,

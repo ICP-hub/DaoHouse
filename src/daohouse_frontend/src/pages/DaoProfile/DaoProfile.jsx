@@ -114,7 +114,7 @@ const DaoProfile = () => {
     return <div>No DAO details available</div>;
   }
 
-  // Animation options for the big circle
+  // Animation options
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -125,7 +125,6 @@ const DaoProfile = () => {
     },
   };
 
-  // Animation options for the small circle
   const defaultOptions2 = {
     loop: true,
     autoplay: true,
@@ -136,7 +135,6 @@ const DaoProfile = () => {
     },
   };
 
-  // Animation options for the medium circle
   const defaultOptions3 = {
     loop: true,
     autoplay: true,
@@ -167,7 +165,6 @@ const DaoProfile = () => {
             <div className="relative tablet:w-[96px] tablet:h-[96px] md:w-[88.19px] md:h-[88.19px] w-[65px] h-[65px]">
               <BigCircleComponent imgSrc={BigCircle} />
             </div>
-
             {/* Big circle animation */}
             <div className="absolute inset-0 flex items-center justify-center z-20">
               <div className="tablet:w-[112px] tablet:h-[112px] md:w-[104px] md:h-[104px] w-[75px] h-[75px]">
@@ -183,7 +180,6 @@ const DaoProfile = () => {
             <div className="relative tablet:w-[43px] tablet:h-[43px] md:w-[33.3px] md:h-[33.3px] w-[21.19px] h-[21.19px]">
               <SmallCircleComponent imgSrc={SmallestCircle} />
             </div>
-
             {/* Small circle animation */}
             <div className="absolute inset-0 flex items-center justify-center z-20">
               <div className="tablet:w-[47px] tablet:h-[47px] md:w-[37.3px] md:h-[37.3px] w-[23.19px] h-[23.19px]">
@@ -200,7 +196,6 @@ const DaoProfile = () => {
             <div className="relative tablet:w-[52px] tablet:h-[52px] md:w-[43.25px] md:h-[43.25px] w-[29.28px] h-[29.28px]">
               <MediumCircleComponent imgSrc={MediumCircle} />
             </div>
-
             {/* Medium circle animation */}
             <div className="absolute inset-0 flex items-center justify-center z-20">
               <div className="tablet:w-[60px] tablet:h-[60px] md:w-[47.25px] md:h-[47.25px] w-[33.28px] h-[33.28px]">
@@ -213,92 +208,78 @@ const DaoProfile = () => {
           </div>
         </div>
       </div>
-      <div className={"bg-[#F7F7F7] " + className + "__bottomComponent py-10 flex flex-col md:pl-32 pl-10"}>
-        <div className="relative max-w-6xl w-full mx-auto bg-white rounded-md p-6 shadow-lg flex flex-col md:flex-row gap-6">
-          <div className="flex flex-col md:w-1/4 gap-6 items-center justify-center">
-            <img
-              src={MyProfileImage}
-              className="md:w-[150px] w-[120px] rounded-full"
-              alt="Profile"
-            />
-            <h2 className="text-2xl font-bold">{dao.name}</h2>
-            <p className="text-sm text-gray-500">{dao.description}</p>
+      <div className={"bg-[#F7F7F7] " + className + "__bottomComponent py-10 flex flex-col"}>
+        <Container>
+          <div className={className + "__content md:flex justify-between mb-6"}>
+            <div className="md:w-[40%]">
+              <div className="text-center md:text-start">
+                <img
+                  className="md:w-40 w-32 h-32 md:h-40 rounded-full object-cover border-2 border-[#005DA6]"
+                  src={MyProfileImage}
+                  alt="Profile"
+                />
+              </div>
+            </div>
+            <div className="md:w-[60%] md:px-6 md:pt-4">
+              <h1 className="text-3xl font-bold text-blue-700">{dao.name}</h1>
+              <p className="mt-2 text-gray-600">{dao.description}</p>
+              <div className="flex gap-2 mt-4">
+                <button
+                  onClick={toggleFollow}
+                  className={`py-2 px-4 rounded ${
+                    isFollowing
+                      ? "bg-red-500 text-white"
+                      : "bg-blue-500 text-white"
+                  }`}
+                >
+                  {isFollowing ? "Unfollow" : "Follow"}
+                </button>
+                <button className="py-2 px-4 bg-gray-300 rounded">Join</button>
+              </div>
+            </div>
+          </div>
+
+          <div className={className + "__navigation flex justify-around bg-white py-4"}>
             <button
-              onClick={toggleFollow}
-              className={`py-2 px-4 rounded-full text-white ${
-                isFollowing ? "bg-red-500" : "bg-blue-500"
-              }`}
+              className={`px-4 py-2 ${activeLink === "proposals" ? "border-b-2 border-blue-700" : ""}`}
+              onClick={() => handleClick("proposals")}
             >
-              {isFollowing ? "Unfollow" : "Follow"}
+              Proposals
             </button>
-            <p className="text-sm text-gray-500">{followersCount} Followers</p>
+            <button
+              className={`px-4 py-2 ${activeLink === "feeds" ? "border-b-2 border-blue-700" : ""}`}
+              onClick={() => handleClick("feeds")}
+            >
+              Feeds
+            </button>
+            <button
+              className={`px-4 py-2 ${activeLink === "members" ? "border-b-2 border-blue-700" : ""}`}
+              onClick={() => handleClick("members")}
+            >
+              Members
+            </button>
+            <button
+              className={`px-4 py-2 ${activeLink === "followers" ? "border-b-2 border-blue-700" : ""}`}
+              onClick={() => handleClick("followers")}
+            >
+              Followers
+            </button>
+            <button
+              className={`px-4 py-2 ${activeLink === "funds" ? "border-b-2 border-blue-700" : ""}`}
+              onClick={() => handleClick("funds")}
+            >
+              Funds
+            </button>
           </div>
-          <div className="flex flex-col w-full gap-6">
-            <Container>
-              <div className="flex justify-around">
-                <button
-                  onClick={() => handleClick("proposals")}
-                  className={`py-2 px-4 rounded-lg ${
-                    activeLink === "proposals"
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200"
-                  }`}
-                >
-                  Proposals
-                </button>
-                <button
-                  onClick={() => handleClick("feeds")}
-                  className={`py-2 px-4 rounded-lg ${
-                    activeLink === "feeds" ? "bg-blue-500 text-white" : "bg-gray-200"
-                  }`}
-                >
-                  Feeds
-                </button>
-                <button
-                  onClick={() => handleClick("members")}
-                  className={`py-2 px-4 rounded-lg ${
-                    activeLink === "members" ? "bg-blue-500 text-white" : "bg-gray-200"
-                  }`}
-                >
-                  Members
-                </button>
-                <button
-                  onClick={() => handleClick("followers")}
-                  className={`py-2 px-4 rounded-lg ${
-                    activeLink === "followers" ? "bg-blue-500 text-white" : "bg-gray-200"
-                  }`}
-                >
-                  Followers
-                </button>
-                <button
-                  onClick={() => handleClick("funds")}
-                  className={`py-2 px-4 rounded-lg ${
-                    activeLink === "funds" ? "bg-blue-500 text-white" : "bg-gray-200"
-                  }`}
-                >
-                  Funds
-                </button>
-                <button
-                  onClick={() => handleClick("settings")}
-                  className={`py-2 px-4 rounded-lg ${
-                    activeLink === "settings" ? "bg-blue-500 text-white" : "bg-gray-200"
-                  }`}
-                >
-                  Settings
-                </button>
-              </div>
-              <div className="mt-6">
-                {activeLink === "proposals" && <ProposalsContent proposals={proposals} />}
-                {activeLink === "feeds" && <FeedsContent />}
-                {activeLink === "members" && <Members />}
-                {activeLink === "followers" && <FollowersContent />}
-                {activeLink === "funds" && <FundsContent />}
-                {activeLink === "settings" && <DaoSettings />}
-              </div>
-            </Container>
-          </div>
-        </div>
+
+          {activeLink === "proposals" && <ProposalsContent proposals={proposals} />}
+          {activeLink === "feeds" && <FeedsContent />}
+          {activeLink === "members" && <Members />}
+          {activeLink === "followers" && <FollowersContent followersCount={followersCount} />}
+          {activeLink === "funds" && <FundsContent />}
+        </Container>
       </div>
+      <DaoSettings />
     </div>
   );
 };
