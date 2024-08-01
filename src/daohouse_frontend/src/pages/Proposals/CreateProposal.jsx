@@ -6,6 +6,7 @@ import { quillFormats, quillModules } from '../../utils/quilConfig';
 import Container from '../../Components/Container/Container';
 import { useAuth } from '../../Components/utils/useAuthClient';
 import { toast } from 'react-toastify';
+import { CircularProgress } from '@mui/material';
 
 function CreateProposal() {
     const [proposalTitle, setProposalTitle] = useState('');
@@ -46,6 +47,7 @@ function CreateProposal() {
             if (!proposalTitle || !proposalDescription || isNaN(requiredVotes) || !proposalType) {
                 throw new Error("Please fill all the fields and choose a proposal type.");
             }
+            setLoading(true);
             const strippedDescription = stripHtmlTags(proposalDescription);
             const proposalData = {
                 proposal_title: proposalTitle,
@@ -159,6 +161,8 @@ function CreateProposal() {
                         </div>
 
                         <div className="flex justify-center my-8">
+                        {
+                            loading ? <CircularProgress /> :
                             <button
                                 className="bg-[#0E3746] hover:bg-[#819499] text-white font-normal text-center rounded-full text-[16px] py-2 px-6 rounded focus:outline-none focus:shadow-outline"
                                 type="submit"
@@ -167,6 +171,7 @@ function CreateProposal() {
                             >
                                 Submit
                             </button>
+                        }
                         </div>
                     </div>
 

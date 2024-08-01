@@ -307,15 +307,16 @@ export default function Card({ proposal, resData, proposals }) {
 
         <div className="p-4">
           <div className="flex flex-col right-card flex-1 relative">
-            <div className="flex items-center justify-start ">
-              <div className="font-bold text-xl text-[#229ED9]  mb-2 p-2 hidden md:block">
-                Transfer
-              </div>
-              <span className="border-r-2 h-6 border-[#229ED9] mx-2 hidden md:block" />
-              <div className="font-semibold md:text-[16px] text-[14px] text-[#229ED9] mb-2 p-2 ">
-                Proposal ID: #{proposal?.proposal_id}
-              </div>
+          <div className="flex items-center justify-start">
+            <div className="font-bold text-xl text-[#229ED9] mb-2 p-2 hidden md:block">
+              Transfer
             </div>
+            <span className="border-r-2 h-6 border-[#229ED9] mx-2 hidden md:block" />
+            <div className="font-semibold md:text-[16px] text-[14px] text-[#229ED9] mb-2 p-2 truncate ... w-60 md:w-150 lg:w-full">
+              Proposal ID: #{proposal?.proposal_id}
+            </div>
+          </div>
+
 
             {proposal?.proposal_description && (
               <div

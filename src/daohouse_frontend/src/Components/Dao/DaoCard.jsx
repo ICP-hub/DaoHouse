@@ -58,7 +58,7 @@ const DaoCard = ({ name, funds, members, groups, proposals, image_id, daoCaniste
   const toggleFollow = async () => {
     try {
       if (!userProfile) return;
-
+      setIsFollowing(!isFollowing);
       const response = isFollowing
         ? await daoCanister.unfollow_dao()
         : await daoCanister.follow_dao();
@@ -66,9 +66,9 @@ const DaoCard = ({ name, funds, members, groups, proposals, image_id, daoCaniste
       if (response?.Ok) {
         const updatedFollowers = await daoCanister.get_dao_followers();
         setFollowersCount(updatedFollowers.length);
-        setIsFollowing(!isFollowing);
         toast.success(isFollowing ? "Successfully unfollowed" : "Successfully followed");
       } else if (response?.Err) {
+        setIsFollowing(!isFollowing);
         toast.error(response.Err);
       }
     } catch (error) {

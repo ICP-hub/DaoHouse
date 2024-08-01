@@ -17,6 +17,7 @@ const FeedPage = () => {
   const [posts, setPosts] = useState([]);
   const [uplodedPost, setUplodedPost] = useState('')
   const [getLike, setGetLike] = useState(null)
+  const [isLiked, setIsLiked] = useState(false)
   const { backendActor } = useAuth();
   const [totalItems, setTotalItems] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -74,6 +75,7 @@ const FeedPage = () => {
   }
 
   const handleGetLikePost = (response) => {
+    s
     setGetLike(response)
   }
 

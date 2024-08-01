@@ -13,7 +13,7 @@ const ProposalsContent = (proposals) => {
 
 
   return (
-    <div className="mt-6">
+    <div className="mt-6 mb-6">
       <div className="flex items-center justify-between">
         <h1 className="lg:text-[24px] md:text-[18px] text-[16px] font-bold">
           Proposals
@@ -64,7 +64,7 @@ const ProposalsContent = (proposals) => {
           </span>
         </div>
         <div className="w-full border-t py-6 px-4  border-[#0000004D] rounded-[10px] mb-4">
-          <div className="bg-white rounded">
+          <div className="bg-transparent rounded flex flex-col gap-8">
 
 
             {allProposals && allProposals.map((proposal, index) => (
@@ -74,7 +74,7 @@ const ProposalsContent = (proposals) => {
         </div>
       </div>
 
-      <div className="bg-white md:hidden rounded-[10px] mt-4 mb-8 ">
+      <div className="bg-white md:hidden rounded-[10px] mt-4 mb-8 flex flex-col gap-8">
 
 
         {allProposals && allProposals.map((proposal, index) => (

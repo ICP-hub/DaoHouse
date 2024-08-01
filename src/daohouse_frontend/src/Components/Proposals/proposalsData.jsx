@@ -94,7 +94,7 @@ export const proposalsArray = [
 
 export const sectionsData = [
   // { title: 'Transfer', input1: "Amount", input2: "Receiver" },
-  { title: 'Cast Vote', input1: "In Favour", input2: "Against" }
+  // { title: 'Cast Vote', input1: "In Favour", input2: "Against" }
 ];
 
 

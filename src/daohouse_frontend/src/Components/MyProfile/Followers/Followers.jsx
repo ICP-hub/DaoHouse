@@ -2,6 +2,7 @@ import React, { useState ,useEffect} from "react";
 import { RxArrowTopRight } from "react-icons/rx";
 import follower from "../../../../assets/followerImage.png";
 import { useAuth } from "../../utils/useAuthClient";
+import avatar from "../../../../assets/avatar.png"
 
 import MuiSkeleton from "../../Skeleton/MuiSkeleton";
 
@@ -11,22 +12,26 @@ const Followers = () => {
   const className = "Followers";
   const[loading,setLoading] = useState(false);
  //Api integration
- const[data,setdata] = useState({});
- console.log("--followers detail-",data);
+ const[data,setdata] = useState([]);
+//  console.log("--followers detail-",data);
  const getdata = async () => {
   try {
     setLoading(true);
     const response = await backendActor.get_my_follower();
-    console.log("followers api:",response)
-    setdata(response.Ok || {})
-    
+    console.log("followers api:", response);
+    if (Array.isArray(response.Ok)) {
+      setdata(response.Ok);
+    } else {
+      setdata([]);
+    }
   } catch (error) {
     console.error("Error :", error);
+    setdata([]);
+  } finally {
+    setLoading(false);
   }
-  finally{
-    setLoading(false)
-  }
-}
+};
+
 
 useEffect(() => {
   getdata();
@@ -43,37 +48,40 @@ useEffect(() => {
       {loading ? (
         <MuiSkeleton />
       ) : (
-        <div className="flex gap-5">
+        <div className="flex gap-5 md:w-[50%]">
           <div className="flex flex-1 flex-col gap-4 bg-[#F4F2EC] p-4 rounded-[10px] overflow-y-auto max-h-[300px]">
-            {followersList.map(({ userName, key, image }) => (
+            {data.map((principal, index) => (
               <div
-                key={key}
+                key={index}
                 className="w-full flex flex-row items-center justify-between"
               >
                 <div className="flex flex-row tablet:gap-4 gap-2 items-center">
                   <section className="border border-cyan-200 rounded-[50%]">
                     <img
-                      src={image}
-                      alt="Follower"
+                      src={avatar}
+                      alt="avatar"
                       className="tablet:min-w-12 min-w-8 h-full object-contain border border-4 border-white rounded-[50%]"
                     />
                   </section>
   
                   <section className="flex flex-col items-start">
-                    <p className="tablet:text-lg text-sm">{userName}</p>
+                    <p className="tablet:text-lg text-sm">
+                      {principal.toString().slice(0, 37) + "..."}
+                    </p>
                     <p className="text-slate-500 tablet:text-sm text-xs">
-                      {userName}
+                      {principal.toString().slice(0, 47) + "..."}
                     </p>
                   </section>
+
                 </div>
   
-                <button className="border border-cyan-500 tablet:px-4 px-2 py-1 tablet:text-sm text-xs rounded-2xl text-cyan-500">
+                {/* <button className="border border-cyan-500 tablet:px-4 px-2 py-1 tablet:text-sm text-xs rounded-2xl text-cyan-500">
                   Remove
-                </button>
+                </button> */}
               </div>
             ))}
           </div>
-          <div className="w-[40%] p-3 bg-[#F4F2EC] rounded-[10px] overflow-y-auto max-h-[300px] hidden md:block">
+          {/* <div className="w-[40%] p-3 bg-[#F4F2EC] rounded-[10px] overflow-y-auto max-h-[300px] hidden md:block">
             <h1 className="text-[#05212C] text-[20px] font-bold">More People</h1>
             <div className="w-full bg-[#0000004D] h-[1px] my-3"></div>
             <div>
@@ -99,10 +107,10 @@ useEffect(() => {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
       )}
-      <div className="mt-4 md:hidden">
+      {/* <div className="mt-4 md:hidden">
         <h1 className="text-[#05212C] text-[16px] font-bold ml-2">More People</h1>
         <div className="w-full bg-[#0000004D] h-[2px] mb-4 mt-2"></div>
         <div className="flex gap-3 overflow-x-auto max-w-full">
@@ -121,7 +129,7 @@ useEffect(() => {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
     </div>
   </div>
   
@@ -129,59 +137,3 @@ useEffect(() => {
 };
 
 export default Followers;
-
-const followersList = [
-  {
-    key: 1,
-    userName: "Username.user",
-    image: follower,
-  },
-  {
-    key: 2,
-    userName: "Username.user",
-    image: follower,
-  },
-  {
-    key: 3,
-    userName: "Username.user",
-    image: follower,
-  },
-  {
-    key: 4,
-    userName: "Username.user",
-    image: follower,
-  },
-];
-
-const morePeopleList = [
-  {
-    key: 1,
-    image: follower,
-    userName: "Kai Parker",
-    gmail: "Gmail@gmail.com",
-  },
-  {
-    key: 2,
-    image: follower,
-    userName: "Kai Parker",
-    gmail: "Gmail@gmail.com",
-  },
-  {
-    key: 3,
-    image: follower,
-    userName: "Kai Parker",
-    gmail: "Gmail@gmail.com",
-  },
-  {
-    key: 4,
-    image: follower,
-    userName: "Kai Parker",
-    gmail: "Gmail@gmail.com",
-  },
-  {
-    key: 5,
-    image: follower,
-    userName: "Kai Parker",
-    gmail: "Gmail@gmail.com",
-  },
-];
