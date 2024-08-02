@@ -148,9 +148,13 @@ const EditProfile = () => {
   };
 
   const handleRemoveImage = () => {
+    setImageSrc(MyProfileImage); // Reset the image source
     setProfileData((prevData) => ({
       ...prevData,
-      profile_img: MyProfileImage,
+      profile_img: MyProfileImage, // Reset the profile image data
+      image_content: [], // Clear image content
+      image_title: "",
+      image_content_type: "",
     }));
   };
 
@@ -300,8 +304,7 @@ const EditProfile = () => {
               </label>
               <button
                 onClick={handleRemoveImage}
-                className="text-[12px] md:text-[14px] lg:text-[16px] text-[#9F9F9F] shadow-xl md:h-[50px] h-[40px] md:px-6 px-4 rounded-[27px] border-solid border border-[#9F9F9F] flex items-center "
-              >
+                className="text-[12px] md:text-[14px] lg:text-[16px] text-[#9F9F9F] shadow-xl md:h-[50px] h-[40px] md:px-6 px-4 rounded-[27px] border-solid border border-[#9F9F9F] flex items-center ml-4 px-4 py-2 bg-grey-500 text-black rounded hover:bg-red-100"    >
                 Remove<span className="hidden sm:inline-block ml-1">Photo</span>
               </button>
             </div>

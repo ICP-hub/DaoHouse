@@ -27,7 +27,7 @@ const LoginModal = ({ isOpen, onClose, onLogin, onLoginPlug }) => {
     <>
       {isOpen && (
         <div className="fixed min-w-[361px] top-0 left-0 w-full h-full bg-black bg-opacity-40 flex justify-center items-center z-[100]">
-          <div className="fixed inset-0 flex items-center justify-center bg-[#1d2026bf] bg-opacity-75">
+          <div className="fixed inset-0 flex items-center justify-center bg-[#1d2026bf] bg-opacity-50 backdrop-blur-md">
             <div className="bg-[#AAC8D6] p-4 rounded-lg shadow-lg w-80 h-75 max-h-[100vh] overflow-y-auto">
               <div className="flex justify-center items-center mb-3 border-b-2 border-white relative">
                 <span className="text-[#0E3746] font-medium">Connect With</span>
