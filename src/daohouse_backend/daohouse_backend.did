@@ -124,6 +124,7 @@ service : (PaymentRecipientAccount) -> {
   get_my_post : (Pagination) -> (Result_4) query;
   get_post_byid : (text) -> (Result_5) query;
   get_profile_by_id : (principal) -> (Result_6);
+  get_trusted_origins : () -> (vec text);
   get_user_profile : () -> (Result_6) query;
   get_wasm : () -> (Result_7) query;
   is_user_registered : (principal) -> (bool);

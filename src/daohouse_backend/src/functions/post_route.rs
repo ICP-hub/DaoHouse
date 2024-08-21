@@ -612,6 +612,18 @@ fn search_dao(dao_name: String) -> Vec<DaoDetails> {
     })
 }
 
+#[update]
+fn get_trusted_origins() -> Vec<String> {
+    vec![
+        String::from("http://127.0.0.1:4943"),
+        String::from("http://localhost:4943"),
+        String::from("https://fkqof-vqaaa-aaaak-qirwq-cai.icp0.io"),
+        String::from("http://localhost:3000"),
+        String::from("http://127.0.0.1:4943/?canisterId=bd3sg-teaaa-aaaaa-qaaba-cai"),
+        String::from("http://bd3sg-teaaa-aaaaa-qaaba-cai.localhost:4943"),
+    ]
+}
+
 // #[update]
 // async fn dao_create(canister_id: String, dao_detail: DaoInput) -> Result<String, String> {
 //     let principal_id = api::caller();
