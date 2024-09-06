@@ -299,20 +299,27 @@ pub async fn create_dao(dao_detail: DaoInput) -> Result<String, String> {
     user_profile_detail.dao_ids.push(dao_canister_id);
 
     // adding ledger canister in newly created DAO canister
-    let response_inter_canister = call_inter_canister::<LedgerCanisterId, String>(
+    // let response_inter_canister = call_inter_canister::<LedgerCanisterId, ()>(
+    //     "add_ledger_canister_id",
+    //     LedgerCanisterId {
+    //         id: ledger_canister_id,
+    //     },
+    //     dao_canister_id,
+    // )
+    // .await.unwrap();
+
+    match call_inter_canister::<LedgerCanisterId, ()>(
         "add_ledger_canister_id",
         LedgerCanisterId {
             id: ledger_canister_id,
         },
         dao_canister_id,
     )
-    .await;
-
-    let _re = match response_inter_canister {
-        Ok(val) => Ok(val),
-
+    .await
+    {
+        Ok(()) => {}
         Err(err) => {
-            // delete created canisters
+            //   delete created canisters
             let _ = reverse_canister_creation(CanisterIdRecord {
                 canister_id: dao_canister_id,
             })
@@ -323,10 +330,9 @@ pub async fn create_dao(dao_detail: DaoInput) -> Result<String, String> {
             })
             .await;
 
-            Err(format!("{}{}", crate::utils::INTER_CANISTER_FAILED, err))
+            return Err(format!("{}{}", crate::utils::INTER_CANISTER_FAILED, err));
         }
     }
-    .map_err(|err| format!("Error {} ", err));
 
     // updating analytics
     with_state(|state| {
@@ -605,7 +611,7 @@ pub async fn create_ledger(
         max_memo_length: None,
     });
 
-    ic_cdk::println!("ledger canister args are {:?}", ledger_args);
+    // ic_cdk::println!("ledger canister args are {:?}", ledger_args);
 
     create_ledger_canister(ledger_args).await
 
