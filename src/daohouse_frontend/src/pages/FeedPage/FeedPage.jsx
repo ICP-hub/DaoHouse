@@ -405,7 +405,7 @@ const FeedPage = () => {
   };
 
   return (
-    <div className={className + " " + "w-full"}>
+    <div className={className + " " + "w-full mt-[90px]"}>
       {showPopup && (
         <div className="fixed inset-0 bg-black opacity-40 z-40"></div>
       )}
@@ -421,7 +421,7 @@ const FeedPage = () => {
 
           
         </Container>
-      </div>
+      </div> 
 
       <div className={"bg-[#c8ced3]"}>
         <Container classes={`__label  small_phone:py-8 py-5 mobile:px-10 px-5 flex flex-col-reverse gap-4 lg:flex-row w-full justify-between items-start lg:items-center ${className}`}>

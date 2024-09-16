@@ -121,17 +121,68 @@ const MyProfile = ({ childComponent }) => {
   }, [activeTab, following]); // Updated to include following
 
   return (
-    <div className={`${className} bg-zinc-200 w-full   relative`}>
-      <div
-        style={{
-          backgroundImage: `linear-gradient(90deg, rgba(11, 17, 32, 0.85) 0%, rgba(11, 17, 32, 0) 100%),url("${MyProfileRectangle}")`,
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <Container classes={` ${className} __topComponent w-full lg:h-[25vh]  h-[18vh] md:p-20 pt-6 pl-2 flex flex-col items-start md:justify-center relative`}>
-        
+    <div className={className + " bg-zinc-200 w-full relative"}>
+      {/* Background image container */}
+      <div style={{
+        backgroundImage: `url("${MyProfileRectangle}")`,
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}>
+        <Container classes={` ${className} __topComponent w-full lg:h-[25vh] h-[18vh] md:p-20 pt-6 pl-2 flex flex-col items-start md:justify-center relative`}>
+          <div className="absolute z-22 top-0 left-0 w-full h-full overflow-x-hidden">
+            {/* Big circle image */}
+            <div className="absolute md:right-[3.7%] -right-[3.7%] top-1/2 -translate-y-1/2">
+              <div className="relative tablet:w-[96px] tablet:h-[96px] md:w-[88.19px] md:h-[88.19px] w-[65px] h-[65px]">
+                <BigCircleComponent imgSrc={BigCircle} />
+              </div>
+
+              {/* Big circle animation */}
+              <div className="absolute inset-0 flex items-center justify-center z-20">
+                <div className="tablet:w-[112px] tablet:h-[112px] md:w-[104px] md:h-[104px] w-[75px] h-[75px]">
+                  <Lottie
+                    options={defaultOptions}
+                    style={{ width: "100%", height: "100%" }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="absolute right-[25%] -translate-y-full top-[30%]">
+              <div className="relative tablet:w-[43px] tablet:h-[43px] md:w-[33.3px] md:h-[33.3px] w-[21.19px] h-[21.19px]">
+                {/* Smallest circle image */}
+
+                <SmallCircleComponent imgSrc={SmallestCircle} />
+              </div>
+
+              {/* Small circle animation */}
+              <div className="absolute inset-0 flex items-center justify-center z-20">
+                <div className="tablet:w-[47px] tablet:h-[47px] md:w-[37.3px] md:h-[37.3px] w-[23.19px] h-[23.19px]">
+                  <Lottie
+                    options={defaultOptions2}
+                    style={{ width: "100%", height: "100%" }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Medium circle image */}
+            <div className="absolute right-[45%] -translate-y-full top-[95%]">
+              <div className="relative tablet:w-[52px] tablet:h-[52px] md:w-[43.25px] md:h-[43.25px] w-[29.28px] h-[29.28px] ">
+                <MediumCircleComponent imgSrc={MediumCircle} />
+              </div>
+
+              {/* Medium circle animation */}
+              <div className="absolute inset-0 flex items-center justify-center z-20">
+                <div className="tablet:w-[60px] tablet:h-[60px] md:w-[47.25px] md:h-[47.25px] w-[33.28px] h-[33.28px]">
+                  <Lottie
+                    options={defaultOptions3}
+                    style={{ width: "100%", height: "100%" }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         <ProfileTitleDivider title="My Profile" />
         </Container>
       </div>
@@ -139,9 +190,9 @@ const MyProfile = ({ childComponent }) => {
         <Container classes={`__mainComponent big_phone:py-8 big_phone:pb-20 py-7  md:px-8 flex md:flex-row gap-2 flex-col w-full user-container`}>
           <div className={`${className}__mainComponent__leftSide md:mx-0 mx-5  lg:px-20 flex flex-col tablet:items-start justify-center md:h-[580px] lg:w-[280px] translate-y-[50px]  lg:h-[620px] md:px-14 rounded-[10px] bg-[#0E3746] text-white text-opacity-50 font-normal md:mt-[-65px] mt-[-45px] z-20`}>
             <div className="flex md:flex-col flex-row items-start md:justify-center justify-around gap-y-6     py-50 md:py-90 lg:text-base md:text-sm text-nowrap">
-         {/* <Link to="/my-profile" onClick={() => setActiveTab(0)}>
+         <Link to="/my-profile" onClick={() => setActiveTab(0)}>
               <p className={`${tabButtonsStyle} ${activeTab === 0 ? "text-white" : ""}`}>My Profile{activeTab === 0 ? <FaArrowRightLong className="md:inline hidden" /> : ""}</p> 
-              </Link> */}    
+              </Link> 
               <Link to="/my-profile/posts" onClick={() => setActiveTab(1)}>
                 <p className={`${tabButtonsStyle} ${activeTab === 1 ? "text-white" : ""}`}>Submitted Proposals {activeTab === 1 ? <FaArrowRightLong className="md:inline hidden" /> : ""}</p>
               </Link>

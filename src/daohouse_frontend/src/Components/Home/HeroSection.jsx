@@ -21,7 +21,7 @@ const HeroSection = () => {
 
   return (
     <Container>
-      <div className="flex justify-center">
+      <div className="flex justify-center mt-[96px]">
       <img
     src={HeroGif}
     alt="hero section gradient"

@@ -347,7 +347,7 @@ const Navbar = () => {
 
   return (
     <nav>
-      <div className="bg-white shadow-lg shadow-slate-900/20 lg:fixed md:h-[90px] w-full z-50 mobile:sticky mobile:top-0">
+      <div className="bg-white shadow-lg shadow-slate-900/20 shadow-b-2 fixed h-[90px] w-full z-50 ">
 
         <Container>
           <div className="tablet:px-20 small_phone:px-8 px-4 small_phone:py-5 py-3 flex justify-between items-center w-full">

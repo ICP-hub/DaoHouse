@@ -245,7 +245,7 @@ const DaoProfile = () => {
 
 
   return (
-    <div className={className + " bg-zinc-200 w-full relative"}>
+    <div className={className + " bg-zinc-200 w-full relative mt-[90px]"}>
       <div
         className={
           className +
