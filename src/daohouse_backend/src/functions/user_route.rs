@@ -264,7 +264,7 @@ pub async fn create_dao(dao_detail: DaoInput) -> Result<String, String> {
         .map_err(|err| format!("{} {}", crate::utils::CREATE_DAO_CANISTER_FAIL, err))?;
 
     // to create ledger canister
-    let ledger_canister_id = create_new_ledger_canister(dao_detail.clone()).await;
+    let ledger_canister_id = create_new_ledger_canister(dao_detail.clone(), dao_canister_id).await;
 
     let res = match ledger_canister_id {
         Ok(val) => Ok(val),
@@ -551,20 +551,23 @@ pub async fn create_ledger(
     total_tokens: Nat,
     token_name: String,
     token_symbol: String,
-    members: Vec<Principal>,
+    // members: Vec<Principal>,
+    dao_canister_id: Principal,
 ) -> Result<Principal, String> {
-    let tokens_per_user = total_tokens / members.len();
+    // LOGIC FOR DIVISION OF TOKENS AMOUNG MEMBERS
 
-    let mut accounts: Vec<(Account, Nat)> = vec![];
+    // let tokens_per_user = total_tokens / members.len();
 
-    for acc in members.iter() {
-        let account = Account {
-            owner: acc.to_owned(),
-            subaccount: None,
-        };
+    // let mut accounts: Vec<(Account, Nat)> = vec![];
 
-        accounts.push((account, tokens_per_user.clone()))
-    }
+    // for acc in members.iter() {
+    //     let account = Account {
+    //         owner: acc.to_owned(),
+    //         subaccount: None,
+    //     };
+
+    //     accounts.push((account, tokens_per_user.clone()))
+    // }
 
     let ledger_args = LedgerArg::Init(InitArgs {
         token_name: token_name,
@@ -575,7 +578,13 @@ pub async fn create_ledger(
         },
         transfer_fee: Nat::from(0 as u32),
         metadata: vec![],
-        initial_balances: accounts,
+        initial_balances: vec![(
+            Account {
+                owner: dao_canister_id,
+                subaccount: None,
+            },
+            total_tokens,
+        )],
         // initial_balances: vec![
         //     // (
         //     //     Account {

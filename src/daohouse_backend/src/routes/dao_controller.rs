@@ -209,13 +209,14 @@ pub async fn create_dao_canister(dao_detail: crate::DaoInput) -> Result<Principa
 }
 
 // create ledger canister
-pub async fn create_new_ledger_canister(dao_detail: crate::DaoInput) -> Result<Principal, String> {
+pub async fn create_new_ledger_canister(dao_detail: crate::DaoInput, dao_canister_id: Principal) -> Result<Principal, String> {
     create_ledger(
         // canister_id_principal.to_string().clone(), // TODO : add dao canister as controller
         Nat::from(dao_detail.token_supply),
         dao_detail.token_name,
         dao_detail.token_symbol,
-        dao_detail.members,
+        dao_canister_id
+        // dao_detail.members,
     )
     .await
     .map_err(|er| format!("Error while creating ledger canister {}", String::from(er)))
