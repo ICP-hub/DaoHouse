@@ -56,6 +56,7 @@ pub async fn create_proposal_controller(
         principal_of_action: proposal.principal_of_action.unwrap_or(api::caller()),
         likes: 0,
         group_to_join: proposal.group_to_join,
+        new_dao_name : proposal.new_dao_name,
     };
 
     // to record proposals on Parent canister

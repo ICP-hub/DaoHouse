@@ -1,5 +1,5 @@
 use crate::{
-    guards::*, AddMemberArgs, DaoGroup, LedgerCanisterId, ProposalInput, UpdateDaoSettings,
+    guards::*, AddMemberArgs,RemoveMemberArgs, DaoGroup, LedgerCanisterId, ProposalInput, UpdateDaoSettings, ChnageDaoConfig
 };
 use crate::{with_state, ProposalType};
 use candid::Principal;
@@ -30,6 +30,7 @@ async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, 
         proposal_title: String::from(crate::utils::TITLE_ADD_MEMBER),
         proposal_type: ProposalType::AddMemberProposal,
         group_to_join: Some(args.group_name),
+        new_dao_name: None
     };
 
     crate::proposal_route::create_proposal_controller(
@@ -39,6 +40,40 @@ async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, 
     .await;
 
     Ok(String::from(crate::utils::REQUEST_ADD_MEMBER))
+}
+
+#[update]
+async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<String, String> {
+    check_user_and_member_in_group(&args.group_name, args.action_member)?;
+
+    let proposal = ProposalInput {
+        principal_of_action: Some(args.action_member),
+        proposal_description: args.description,
+        proposal_title: String::from(crate::utils::TITLE_REMOVE_MEMBER),
+        proposal_type: ProposalType::RemoveMemberPrposal,
+        group_to_join: Some(args.group_name),
+        new_dao_name: None
+    };
+
+    crate::proposal_route::create_proposal_controller(
+    with_state(|state| state.dao.daohouse_canister_id),proposal,).await;
+    Ok(String::from(crate::utils::TITLE_DELETE_MEMBER))
+}
+
+#[update]
+async fn proposal_to_chnage_dao_config(args: ChnageDaoConfig)->Result<String, String>{
+    guard_check_members()?;
+    let proposal = ProposalInput {
+        principal_of_action: Some(args.action_member),
+        proposal_description: args.description,
+        proposal_title: String::from(crate::utils::TITLE_CHANGE_DAO_CONFIG),
+        proposal_type: ProposalType::ChangeDaoConfig,
+        new_dao_name: Some(args.new_dao_name),
+        group_to_join: None,
+    };
+    crate::proposal_route::create_proposal_controller(
+    with_state(|state| state.dao.daohouse_canister_id),proposal,).await;
+    Ok(String::from(crate::utils::MESSAGE_CHANGE_DAO_CONFIG))
 }
 
 // #[update]
@@ -128,6 +163,7 @@ async fn ask_to_join_dao(daohouse_backend_id: Principal) -> Result<String, Strin
         proposal_title: String::from(crate::utils::TITLE_ADD_MEMBER),
         proposal_type: crate::ProposalType::AddMemberProposal,
         principal_of_action: Some(api::caller()),
+        new_dao_name: None
     };
 
     Ok(crate::proposal_route::create_proposal_controller(daohouse_backend_id, proposal).await)

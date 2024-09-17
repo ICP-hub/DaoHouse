@@ -4,6 +4,11 @@ type AddMemberArgs = record {
   group_name : text;
   new_member : principal;
 };
+type ChnageDaoConfig = record {
+  new_dao_name : text;
+  description : text;
+  action_member : principal;
+};
 type Comment = record {
   created_at : nat64;
   author_principal : principal;
@@ -66,6 +71,7 @@ type LedgerCanisterId = record { id : principal };
 type Pagination = record { end : nat32; start : nat32 };
 type ProposalInput = record {
   principal_of_action : opt principal;
+  new_dao_name : opt text;
   proposal_title : text;
   proposal_description : text;
   group_to_join : opt text;
@@ -85,13 +91,22 @@ type ProposalState = variant {
 };
 type ProposalType = variant {
   AddMemberProposal;
-  VotingProposal;
+  ChangeDaoConfig;
+  BountyDone;
+  UpgradeRemote;
+  Polls;
+  ChnageDaoPolicy;
+  Bounty;
+  Transfer;
   RemoveMemberPrposal;
+  FunctionCall;
+  UpdateSelf;
 };
 type Proposals = record {
   principal_of_action : principal;
   share_count : nat64;
   proposal_expired_at : nat64;
+  new_dao_name : opt text;
   proposal_submitted_at : nat64;
   proposal_approved_votes : nat64;
   created_by : principal;
@@ -108,6 +123,11 @@ type Proposals = record {
   comments_list : vec Comment;
   proposal_type : ProposalType;
   required_votes : nat32;
+};
+type RemoveMemberArgs = record {
+  description : text;
+  action_member : principal;
+  group_name : text;
 };
 type ReplyCommentArgs = record {
   comment : text;
@@ -154,6 +174,8 @@ service : (DaoInput) -> {
   icrc_transfer : (TokenTransferArgs) -> (Result_4);
   proposal_refresh : () -> (Result_1);
   proposal_to_add_member_to_group : (AddMemberArgs) -> (Result_1);
+  proposal_to_chnage_dao_config : (ChnageDaoConfig) -> (Result_1);
+  proposal_to_remove_member_to_group : (RemoveMemberArgs) -> (Result_1);
   reply_comment : (ReplyCommentArgs) -> (Result_1);
   search_proposal : (text) -> (vec Proposals) query;
   unfollow_dao : () -> (Result_1);
