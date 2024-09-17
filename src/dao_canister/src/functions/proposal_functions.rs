@@ -1,8 +1,8 @@
 use crate::proposal_route::check_proposal_state;
 use crate::types::{Dao, Proposals};
 use crate::{
-    guards::*, AccountBalance, Comment, DaoGroup, Pagination, ProposalStakes,
-    ReplyCommentArgs, TokenTransferArgs,
+    guards::*, AccountBalance, Comment, DaoGroup, Pagination, ProposalStakes, ReplyCommentArgs,
+    TokenTransferArgs,
 };
 use crate::{with_state, ProposalState, VoteParam};
 use ic_cdk::api;
@@ -97,7 +97,7 @@ fn change_proposal_state(
             state.proposals.insert(proposal_id, pro.to_owned());
             Ok(format!("State changed to {:?} ", pro.proposal_status))
         }
-        None => Err(String::from("Proposal does not exist.")),
+        None => Err(String::from(crate::utils::WARNING_NO_PROPOSAL)),
     })
 }
 
@@ -118,9 +118,9 @@ async fn comment_on_proposal(comment: String, proposal_id: String) -> Result<Str
             });
             pro.comments += 1;
             state.proposals.insert(proposal_id, pro.to_owned());
-            Ok(String::from("Comment was sucessfully added"))
+            Ok(String::from(crate::utils::SUCCESS_COMMENT))
         }
-        None => Err(String::from("Proposal does not exist.")),
+        None => Err(String::from(crate::utils::WARNING_NO_PROPOSAL)),
     })
 }
 
@@ -128,11 +128,7 @@ async fn comment_on_proposal(comment: String, proposal_id: String) -> Result<Str
 async fn reply_comment(args: ReplyCommentArgs) -> Result<String, String> {
     let proposal = match with_state(|state| state.proposals.get(&args.proposal_id)) {
         Some(val) => val,
-        None => {
-            return Err(String::from(
-                "No proposal associated with the following proposal ID",
-            ))
-        }
+        None => return Err(String::from(crate::utils::WARNING_NO_PROPOSAL)),
     };
 
     let mut updated_comment_list = proposal.comments_list.clone();
@@ -156,7 +152,7 @@ async fn reply_comment(args: ReplyCommentArgs) -> Result<String, String> {
             .insert(updated_proposal.proposal_id.clone(), updated_proposal)
     });
 
-    Ok(String::from("Successfully commented on post"))
+    Ok(String::from(crate::utils::SUCCESS_COMMENT))
 }
 
 // #[update(guard=prevent_anonymous)]
@@ -232,9 +228,7 @@ fn proposal_refresh() -> Result<String, String> {
 //     })
 // }
 
-#[update]
-// only members
-// prevent anonymous
+#[update(guard=prevent_anonymous)]
 // TODO: SAVE THE TRANSFERED TOKES TO PARTICULAR CANISTER AND REVERT IT BACK WHEN COMPLETED
 async fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> {
     // to check if user has already voted
@@ -245,14 +239,12 @@ async fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> 
     // user balance validation
     let balance = icrc_get_balance(principal_id)
         .await
-        .map_err(|err| format!("Error while fetching user balance {}", err))?;
+        .map_err(|err| format!("{} {}", crate::utils::WARNING_FAILED_BALANCE, err))?;
 
     let min_vote_req = with_state(|state| state.dao.tokens_required_to_vote);
 
     if balance < min_vote_req {
-        return Err(String::from(
-            "User token balance is less then the required threshold",
-        ));
+        return Err(String::from(crate::utils::WARNING_LESS_BALANCE));
     } else {
         // frontend need to approve
         // transfer of tokens
@@ -261,9 +253,13 @@ async fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> 
             to: ic_cdk::api::id(),
             tokens: min_vote_req as u64,
         };
-        icrc_transfer(token_transfer_args)
-            .await
-            .map_err(|err| format!("Error in transfer of tokens: {}", String::from(err)))?;
+        icrc_transfer(token_transfer_args).await.map_err(|err| {
+            format!(
+                "{} {}",
+                String::from(crate::utils::WARNING_FAILED_TRANSFER),
+                String::from(err)
+            )
+        })?;
 
         // storing staked tokens
         with_state(|state| {
@@ -290,16 +286,16 @@ async fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> 
                     pro.proposal_approved_votes += 1;
 
                     state.proposals.insert(proposal_id, pro.to_owned());
-                    Ok(String::from("Successfully voted in favour of Proposal."))
+                    Ok(String::from(crate::utils::SUCCESS_VOTED_WITH))
                 } else {
                     pro.rejected_votes_list.push(principal_id);
                     pro.proposal_rejected_votes += 1;
 
                     state.proposals.insert(proposal_id, pro.to_owned());
-                    Ok(String::from("Successfully voted against the proposal."))
+                    Ok(String::from(crate::utils::SUCCESS_VOTED_AGAINST))
                 }
             }
-            None => Err(String::from("Proposal ID is invalid !")),
+            None => Err(String::from(crate::utils::WARNING_NO_PROPOSAL)),
         })
     }
 

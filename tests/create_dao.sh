@@ -17,7 +17,7 @@ for ((i = 1; i <= COUNT; i++)); do
       link_of_document = "https://example.com/charter.pdf";
       cool_down_period = 7;
       token_name = "DRAGONBALLZ";
-      token_supply = 1000;
+      token_supply = 400;
       token_symbol = "GOKU";
       members = vec{
         principal "m2zqz-pr5r2-ozayk-w5trf-mt6mw-7vuys-mitrw-4qdpb-dm5p7-77ey6-fae";
@@ -63,3 +63,5 @@ for ((i = 1; i <= COUNT; i++)); do
 
   echo "$dao_test"
 done
+
+
