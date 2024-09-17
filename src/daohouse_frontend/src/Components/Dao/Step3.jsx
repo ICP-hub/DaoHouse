@@ -473,11 +473,11 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
                 {addMemberIndex === item.index && (
                   <section className="p-4 gap-2 flex flex-col items-start">
                     {showMemberNameInput ? (
-                      <div className="flex flex-row gap-2 items-center">
+                      <div className="flex flex-col sm:flex-row gap-2 items-center w-full">
                         <input
                           type="text"
                           // className="mobile:p-2 p-1 mobile:text-base text-sm rounded-md border border-slate-500"
-                          className="w-full sm:w-auto md:w-[500px] big_phone:w-[560px] tablet:w-[650px]  laptop:w-[900px] desktop:w-[1096px] h-[48px] sm:h-[40px] md:h-[48px] p-2 text-sm sm:text-base rounded-md border border-slate-500"
+                          className="w-full sm:w-auto md:w-[1500px] h-[48px] sm:h-[40px] md:h-[48px] p-2 text-sm sm:text-base rounded-md border border-slate-500"
                           placeholder="Enter Member Principal Id"
                           onChange={(e) => setMemberName(e.target.value)}
                         // onKeyDown={(e) => handleNameEnter(e.target.value, e)}

@@ -35,11 +35,9 @@ const CreateDao = () => {
   });
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      setShowLoginModal(true);
-    }
-    setShowLoginModal(false)
+    setShowLoginModal(!isAuthenticated);
   }, [isAuthenticated]);
+  
 
   const handleLogin = async () => {
     setLoading(true);
@@ -136,32 +134,46 @@ const CreateDao = () => {
     });
   
     const principalMembers = Array.from(allMembers).map(member => Principal.fromText(member));
+
+    console.log(step2);
+    console.log(data.dao_groups);
+    
+    
   
     const daoPayload = {
-      dao_name: step1.DAOIdentifier || '',
-      purpose: step1.Purpose || '',
-      daotype: step1.DAOType || '',
-      link_of_document: '',
-      cool_down_period: step2.setUpPeriod || 1,
-      members: principalMembers || [],
-      members_permissions: councilArray || [],
-      tokenissuer: step1.tokenissuer || '',
-      token_name: step1.tokenName || '',
-      token_symbol: step1.tokenSymbol || '',
-      tokens_required_to_vote: step1.tokensRequiredToVote || 1,
-      linksandsocials: [],
-      required_votes: 10,
-      image_content: step6.image_content ? step6.image_content : [],
-      image_title: step6.image_title || '',
-      image_content_type: step6.image_content_type || '',
-      image_id: '12',
-      dao_groups: step4.groups || [],
-      total_tokens: 1000,
+      dao_name: step1.DAOIdentifier || "my dao hai",
+      purpose:  step1.Purpose || "my proposal hai",
+      daotype: "just proposal type bro",
+      link_of_document: "my link.org",
+      cool_down_period: step1.SetUpPeriod || 3,
+      members: principalMembers || [Principal.fromText("aaaaa-aa")],
+      members_permissions: councilArray || ["just", "pesmi"],
+      token_name: step2.TokenName ||"GOLD Token",
+      token_symbol: step2.TokenSymbol || "TKN",
+      tokens_required_to_vote: 12,
+      linksandsocials: ["just send f"],
+      required_votes: 9,
+      image_content: step6.image_content ? Array.from(new Uint8Array(step6.image_content)) : 
+      Array.from(new Uint8Array()),
+      image_title: step6.image_title || "this is just my title",
+      image_content_type: step6.image_content_type || "just image content bro",
+      image_id: "12",
+      dao_groups: data.dao_groups,
+      // [{
+      //   group_members: [Principal.fromText("aaaaa-aa")],
+      //   quorem: 5,
+      //   group_name: "just testing name yar",
+      //   group_permissions: ["meri marji"]
+      // }],
+      token_supply: Number(step2.TokenSupply) || 4,
     };
+
+    console.log(daoPayload);
+    
   
 
     try {
-      const response = await backendActor.create_dao(process.env.CANISTER_ID_IC_ASSET_HANDLER, daoPayload);
+      const response = await backendActor.create_dao(daoPayload);
       console.log("response",response);
       
       if (response.Err) {

@@ -299,20 +299,18 @@ pub async fn create_dao(dao_detail: DaoInput) -> Result<String, String> {
     user_profile_detail.dao_ids.push(dao_canister_id);
 
     // adding ledger canister in newly created DAO canister
-    let response_inter_canister = call_inter_canister::<LedgerCanisterId, String>(
+    match call_inter_canister::<LedgerCanisterId, ()>(
         "add_ledger_canister_id",
         LedgerCanisterId {
             id: ledger_canister_id,
         },
         dao_canister_id,
     )
-    .await;
-
-    let _re = match response_inter_canister {
-        Ok(val) => Ok(val),
-
+    .await
+    {
+        Ok(()) => {}
         Err(err) => {
-            // delete created canisters
+            //   delete created canisters
             let _ = reverse_canister_creation(CanisterIdRecord {
                 canister_id: dao_canister_id,
             })
@@ -323,10 +321,9 @@ pub async fn create_dao(dao_detail: DaoInput) -> Result<String, String> {
             })
             .await;
 
-            Err(format!("{}{}", crate::utils::INTER_CANISTER_FAILED, err))
+            return Err(format!("{}{}", crate::utils::INTER_CANISTER_FAILED, err));
         }
     }
-    .map_err(|err| format!("Error {} ", err));
 
     // updating analytics
     with_state(|state| {
@@ -687,7 +684,6 @@ fn get_canister_meta_data() -> Result<CanisterData, String> {
 //     // Ok("()".to_string())
 // }
 
-
 #[query(guard = prevent_anonymous)]
 async fn check_profile_existence() -> Result<(), String> {
     let principal_id = api::caller();
@@ -698,5 +694,5 @@ async fn check_profile_existence() -> Result<(), String> {
             return Err(crate::utils::USER_REGISTERED.to_string());
         }
     }
-    Ok(()) 
+    Ok(())
 }

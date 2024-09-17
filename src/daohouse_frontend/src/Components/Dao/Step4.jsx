@@ -3,6 +3,7 @@ import "./Step4.scss";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import { getTruePermissions } from "./Getpermission";
 import Container from "../Container/Container";
+import { Principal } from "@dfinity/principal";
 
 
 const Step4 = ({ data, setData, setActiveStep }) => {
@@ -137,8 +138,9 @@ const Step4 = ({ data, setData, setActiveStep }) => {
     const filteredPermissions = filterPermissions(inputData);
 
     const daoGroups = data.step3.groups.map(group => ({
+      group_members: group.members.map(member => Principal.fromText(member)),
+      quorem: 5,
       group_name: group.name,
-      group_members: group.members,
       group_permissions: filteredPermissions.proposal[group.name] || [],
     }));
 
