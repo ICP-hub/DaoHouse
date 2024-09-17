@@ -10,7 +10,7 @@ const ProfileTitleDivider = ({ title }) => {
         " flex justify-between items-center md:gap-4 gap-0 my-profile p-3"
       }
     >
-      <h1 className="lg:text-[40px] md:text-[32px] text-[24px] font-mulish p-2 text-white transform translate-y-[40px]">
+      <h1 className="lg:text-[40px] md:text-[32px] text-[24px] font-mulish p-2 text-white transform translate-y-[-20px]">
         Profile
       </h1>
       <div className="flex flex-col items-start">
