@@ -1,0 +1,50 @@
+name: CI-DAOHouse
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  example-job:
+    runs-on: ubuntu-latest 
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Install dfx
+      uses: dfinity/setup-dfx@main
+    - name: Confirm successful installation
+      run: dfx --version
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup
+      run: |
+          if [ -n "${{ matrix.dfx-json-dfx-version }}" ]; then
+            echo "{\"dfx\": \"${{ matrix.dfx-json-dfx-version }}\"}" > dfx.json
+          elif [ -n "${{ matrix.dfx-json-no-dfx-version }}" ]; then
+            echo "{}" > dfx.json
+          fi
+          rustup target add wasm32-unknown-unknown
+
+    - name: Starting DFX instance
+      run: |
+        dfx start --clean --background
+    - name: Creating Canisters
+      run: |
+        dfx canister create dao_canister
+        dfx canister create ic_asset_handler
+        dfx canister create daohouse_backend
+        dfx canister create icrc1_ledger_canister
+
+    - name: Building Canisters
+      run: |
+        dfx build icrc1_ledger_canister
+        dfx build dao_canister
+        dfx build ic_asset_handler
+        dfx build daohouse_backend
+
