@@ -170,7 +170,7 @@ chmod 777 ./assets_upload.sh
 
 
 
-#  dfx deploy internet_identity
+ dfx deploy internet_identity
 #  dfx deploy daohouse_frontend
 
 # dfx deploy

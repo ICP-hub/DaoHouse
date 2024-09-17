@@ -69,9 +69,9 @@ const LoginModal = ({ isOpen, onClose, onLogin, onLoginPlug, onLoginNFID }) => {
   return (
     <>
       {isOpen && (
-        <div className="fixed inset-0 flex justify-center items-center z-[100]">
-          <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-[150]">
-            <div className="bg-[#AAC8D6] p-4 rounded-lg shadow-lg w-80 h-75 max-h-[100vh] overflow-y-auto z-[200]">
+        <div className="fixed inset-0 flex justify-center items-center z-[10000]">
+          <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-[15000]">
+            <div className="bg-[#AAC8D6] p-4 rounded-lg shadow-lg w-80 h-75 max-h-[100vh] overflow-y-auto z-[20000]">
               <div className="flex justify-center items-center mb-3 border-b-2 border-white relative">
                 <span className="text-[#0E3746] font-medium">Connect With</span>
                 <button onClick={onClose} className="absolute right-0 text-gray-400 hover:text-gray-600">

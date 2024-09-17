@@ -32,7 +32,7 @@ const Pagination = ({ totalItems, currentPage, setCurrentPage , costomClass}) =>
             </div>
 
             <div className="flex justify-center mb-5 text-xl">
-                    {currentPage} of {totalItems}
+              {currentPage} of {totalItems}
             </div>
         </div>
     );

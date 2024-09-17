@@ -3,6 +3,7 @@ import "./Step4.scss";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import { getTruePermissions } from "./Getpermission";
 import Container from "../Container/Container";
+import { Principal } from "@dfinity/principal";
 
 
 const Step4 = ({ data, setData, setActiveStep }) => {
@@ -30,52 +31,53 @@ const Step4 = ({ data, setData, setActiveStep }) => {
       updatedGroups.unshift("Council");
     }
     setGroups(updatedGroups);
-
+  
     setInputData(prevData => {
       const updatedInputData = { ...prevData };
-
+  
       updatedGroups.forEach(group => {
         if (!updatedInputData.proposal[group]) {
-          updatedInputData.proposal[group] = defaultPermissions();
+          updatedInputData.proposal[group] = defaultPermissions(group);
         }
         if (!updatedInputData.voting[group]) {
-          updatedInputData.voting[group] = defaultPermissions();
+          updatedInputData.voting[group] = defaultPermissions(group);
         }
       });
-
+  
       Object.keys(updatedInputData.proposal).forEach(group => {
         if (!updatedGroups.includes(group)) {
           delete updatedInputData.proposal[group];
           delete updatedInputData.voting[group];
         }
       });
-
+  
       return updatedInputData;
     });
-  }, [data.step3.groups, data.step3.council]);
+  }, [data.step3.groups, data.step3.council]);  
 
 
-  const defaultPermissions = () => ({
-    ChangeDAOConfig: false,
-    ChangeDAOPolicy: false,
-    Transfer: false,
-    Polls: false,
-    AddMembers: false,
-    FunctionCalls: false,
-    UpgradeSelf: false,
-    UpgradeRemote: false,
-    setVoteToken: false,
+  const defaultPermissions = (groupName) => ({
+    ChangeDAOConfig: groupName === "Council" ? true : false,
+    ChangeDAOPolicy: groupName === "Council" ? true : false,
+    Transfer: groupName === "Council" ? true : false,
+    Polls: groupName === "Council" ? true : false,
+    AddMembers: groupName === "Council" ? true : false,
+    FunctionCalls: groupName === "Council" ? true : false,
+    UpgradeSelf: groupName === "Council" ? true : false,
+    UpgradeRemote: groupName === "Council" ? true : false,
+    setVoteToken: groupName === "Council" ? true : false,
   });
+  
 
   const permissionList = [
     "ChangeDAOConfig",
     "ChangeDAOPolicy",
     "Transfer",
-    "Polls",
+    // "Polls",
     "AddMembers",
-    "FunctionCalls",
-    "UpgradeSelf",
-    "UpgradeRemote",
+    // "FunctionCalls",
+    // "UpgradeSelf",
+    // "UpgradeRemote",
     "setVoteToken",
   ];
 
@@ -83,7 +85,7 @@ const Step4 = ({ data, setData, setActiveStep }) => {
   const initializePermissions = () => {
     const permissions = {};
     groups.forEach(group => {
-      permissions[group] = defaultPermissions();
+      permissions[group] = defaultPermissions(group);
     });
     return permissions;
   };
@@ -136,8 +138,9 @@ const Step4 = ({ data, setData, setActiveStep }) => {
     const filteredPermissions = filterPermissions(inputData);
 
     const daoGroups = data.step3.groups.map(group => ({
+      group_members: group.members.map(member => Principal.fromText(member)),
+      quorem: 5,
       group_name: group.name,
-      group_members: group.members,
       group_permissions: filteredPermissions.proposal[group.name] || [],
     }));
 

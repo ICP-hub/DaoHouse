@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { FaPlus } from "react-icons/fa6";
+// import { FaPlus } from "react-icons/fa6";
+import { HiPlus } from "react-icons/hi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import { Principal } from "@dfinity/principal";
 import { toast } from "react-toastify";
 import { useAuth } from "../../Components/utils/useAuthClient";
 import Container from "../Container/Container";
+import EditPen from "../../../assets/edit_pen.png";
+import { RiGroupFill } from "react-icons/ri";
 
 const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
   const [count, setCount] = useState(1);
   const [showMemberNameInput, setShowMemberNameInput] = useState(false);
   const [addMemberIndex, setAddMemberIndex] = useState(null);
   const [groupNameInputIndex, setGroupNameInputIndex] = useState(null);
+  const [updatedGroupName, setUpdatedGroupName] = useState("");
   const [memberName, setMemberName] = useState("");
   const { backendActor } = useAuth();
 
@@ -21,67 +25,67 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
 
   const className = "DAO__Step3";
 
-      useEffect(() => {
-        // Retrieve data from local storage
-        const savedData = localStorage.getItem('step3Data');
-        if (savedData) {
-          setList(JSON.parse(savedData));
-        }
-      }, []);
+  useEffect(() => {
+    // Retrieve data from local storage
+    const savedData = localStorage.getItem('step3Data');
+    if (savedData) {
+      setList(JSON.parse(savedData));
+    }
+  }, []);
 
 
-      const getUniqueMembers = () => {
-        const allMembers = new Set();
-      
-        // Add council members
-        const council = list.find(group => group.name === "Council");
-        if (council) {
-          council.members.forEach(member => allMembers.add(member));
-        }
-      
-        // Add group members
-        list.filter(group => group.name !== "Council").forEach(group => {
-          group.members.forEach(member => allMembers.add(member));
-        });
+  const getUniqueMembers = () => {
+    const allMembers = new Set();
 
-        console.log(Array.from(allMembers));
-        
-      
-        // Convert Set to array
-        return Array.from(allMembers);
-      };
-      
-      const handleSaveAndNext = () => {
-        // Validation: Ensure at least one member in Council
-        const council = list.find(group => group.name === "Council");
-        if (!council || council.members.length === 0) {
-            toast.error("Please add at least one member to the Council.");
-            return;
-        }
-    
-        // Validation: Ensure all groups have at least one member
-        const invalidGroup = list.slice(1).find(group => group.members.length === 0);
-        if (invalidGroup) {
-            toast.error(`Please add at least one member to ${invalidGroup.name}.`);
-            return;
-        }
-    
-        // Save data to local storage
-        localStorage.setItem('step3Data', JSON.stringify(list));
-    
-        // Set data and move to the next step
-        const uniqueMembers = getUniqueMembers();
-        setData(prev => ({
-            ...prev,
-            step3: {
-                groups: list.slice(1) || [],  // Default to empty array if list is undefined
-                council: council.members || [],
-                members: uniqueMembers || []  // Default to empty array if uniqueMembers is undefined
-            },
-        }));
-        setActiveStep(3);
-    };
-    
+    // Add council members
+    const council = list.find(group => group.name === "Council");
+    if (council) {
+      council.members.forEach(member => allMembers.add(member));
+    }
+
+    // Add group members
+    list.filter(group => group.name !== "Council").forEach(group => {
+      group.members.forEach(member => allMembers.add(member));
+    });
+
+    console.log(Array.from(allMembers));
+
+
+    // Convert Set to array
+    return Array.from(allMembers);
+  };
+
+  const handleSaveAndNext = () => {
+    // Validation: Ensure at least one member in Council
+    const council = list.find(group => group.name === "Council");
+    // if (!council || council.members.length === 0) {
+    //   toast.error("Please add at least one member to the Council.");
+    //   return;
+    // }
+
+    // Validation: Ensure all groups have at least one member
+    const invalidGroup = list.slice(1).find(group => group.members.length === 0);
+    // if (invalidGroup) {
+    //   toast.error(`Please add at least one member to ${invalidGroup.name}.`);
+    //   return;
+    // }
+
+    // Save data to local storage
+    localStorage.setItem('step3Data', JSON.stringify(list));
+
+    // Set data and move to the next step
+    const uniqueMembers = getUniqueMembers();
+    setData(prev => ({
+      ...prev,
+      step3: {
+        groups: list.slice(1) || [],  // Default to empty array if list is undefined
+        council: council.members || [],
+        members: uniqueMembers || []  // Default to empty array if uniqueMembers is undefined
+      },
+    }));
+    setActiveStep(3);
+  };
+
 
 
   function handleBack() {
@@ -146,7 +150,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
     }
     setShowMemberNameInput(true);
   };
-  
+
   const handleAddMember = async () => {
     if (memberName.trim() !== "") {
       try {
@@ -177,7 +181,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
       }
     }
   };
-  
+
 
   // const handleRemoveMember = (groupIndex, memberName) => {
   //   setList(prevList =>
@@ -209,7 +213,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
       })
     );
   };
-  
+
 
   const openMemberNames = (index) => {
     setAddMemberIndex(index);
@@ -220,7 +224,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
   };
 
   const handleGroupNameInput = (groupName, event) => {
-    if (event.key === "Enter") {
+    // if (event.key === "Enter") {
       setList(prevList =>
         prevList.map(item => {
           if (item.index === groupNameInputIndex) {
@@ -230,8 +234,22 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
         })
       );
       setGroupNameInputIndex(null);
-    }
+    // }
   };
+
+  const handleUpdateGroupName = () => {
+    setList(prevList =>
+      prevList.map(item => {
+        if (item.index === groupNameInputIndex) {
+          return { ...item, name: updatedGroupName };
+        }
+        return item;
+      })
+    );
+    setGroupNameInputIndex(null);
+    setUpdatedGroupName(""); // Clear the input state
+  };
+  
 
   const councilMembers = list.find(group => group.name === "Council")?.members || [];
 
@@ -239,7 +257,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
   //   console.log("Current council members:", councilMembers);
   // }, [councilMembers]);
   useEffect(() => {
- 
+
 
     // const savedData = localStorage.getItem('step3Data');
     // if (savedData) {
@@ -250,7 +268,12 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
     console.log("Current council members:", councilMembers);
   }, [councilMembers]);
 
-
+  const handleEditGroup = (index) => {
+    setGroupNameInputIndex(index);
+    const groupName = list.find(item => item.index === index)?.name || "";
+    setUpdatedGroupName(groupName); // Set the current name to the input state
+  };
+  
   return (
     <React.Fragment>
       <Container>
@@ -259,14 +282,24 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
             <section className="w-11/12 flex flex-col gap-y-2">
               <h2 className="font-semibold">Add Members</h2>
               <p className="big_phone:text-base mobile:text-sm text-xs">
-                You can add members and assign them various roles as per your decisions and also add members to your DAO for providing them specific roles in the future.
+                You can add members and assign them various roles as per your decisions and also add members to<br />
+                your DAO for providing them specific roles in the future.
               </p>
             </section>
-            <button
+            {/* <button
               onClick={handleGroupAdding}
               className="bg-white w-10 h-10 m-2 text-lg flex items-center justify-center rounded-[50%]"
             >
               <FaPlus />
+            </button> */}
+
+            <button
+              onClick={handleGroupAdding}
+              className="bg-white  lg:mr-7 md:w-[200px] md:h-[50px] small_phone:gap-2 gap-1  small_phone:  mobile:px-5 p-2 small_phone:text-base text-sm shadow-xl flex items-center rounded-full hover:bg-[#ececec] hover:scale-105 transition">
+              <span className="flex"><HiPlus /></span>
+              <span className="flex lg:hidden items-center"><RiGroupFill /></span>
+              <span className=" hidden lg:flex">Create</span>
+              <span className=""> Group</span>
             </button>
           </div>
 
@@ -303,51 +336,68 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
             ))}
           </div> */}
 
-<div className="bg-[#E9EAEA] rounded-lg">
-  <section className="w-full py-2 mobile:px-8 p-2 pl-4 flex flex-row items-center justify-between border-b-2 border-[#b4b4b4]">
-    <h2 className="font-semibold mobile:text-base text-sm">Council</h2>
-    <button
-      onClick={() => handleMemberAdding(null)}
-      className="flex flex-row items-center gap-1 text-[#229ED9] bg-white mobile:p-2 p-1 rounded-md"
-    >
-      Add Member
-    </button>
-  </section>
-  <section className="py-4 mobile:px-8 p-2 pl-4 transition">
-    {showMemberNameInput && addMemberIndex === 'council' ? (
-      <div className="flex flex-row gap-2 items-center">
-      <input
-        type="text"
-        className="mobile:p-2 p-1 mobile:text-base text-sm rounded-md border border-slate-500"
-        placeholder="Enter Member Principal Id"
-        value={memberName}
-        onChange={(e) => setMemberName(e.target.value)}
-      />
-      <button
-        onClick={handleAddMember}
-        className="bg-[#229ED9] text-white p-2 rounded-md"
-      >
-        Add
-      </button>
-    </div>
-    ) : null}
-  </section>
-  {councilMembers.map((name, index) => (
-    <section key={index} className="w-full py-2 p-2 pl-4 flex flex-col items-center justify-between bg-white mb-4">
-      <div className="w-full flex flex-row items-center justify-between mb-2">
-        <p className="font-semibold mobile:text-base text-sm pl-4 bg-white border-black">{name}</p>
-        <button onClick={() => handleRemoveMember('council', name)}>
-          <MdOutlineDeleteOutline className="text-red-500 mobile:text-2xl text-lg" />
-        </button>
-      </div>
-    </section>
-  ))}
-</div>
+          <div className="bg-[#E9EAEA] rounded-lg">
+            <section className="w-full py-2 mobile:px-8 p-2 pl-4 flex flex-row items-center justify-between border-b-2 border-[#b4b4b4]">
+              <h2 className="font-semibold mobile:text-base text-sm">Council</h2>
+              <button
+                onClick={() => handleMemberAdding(null)}
+                className="flex flex-row items-center gap-1 text-[#229ED9] bg-white mobile:p-2 p-1 rounded-md"
+              >
+                Add Member
+              </button>
+            </section>
+            <section className="py-4 mobile:px-8 p-2 pl-4 transition">
+              {showMemberNameInput && addMemberIndex === 'council' ? (
+                //   <div className="flex flex-row gap-2 items-center">
+                //   <input
+                //     type="text"
+                //     className="lg:w-[849px] h-[48px] mobile:p-2 p-1 mobile:text-base text-sm rounded-md border border-slate-500"
+                //     placeholder="Enter Member Principal Id"
+                //     value={memberName}
+                //     onChange={(e) => setMemberName(e.target.value)}
+                //   />
+                //   <button
+                //     onClick={handleAddMember}
+                //     className="bg-black lg:w-[155px] h-[48px]  text-white p-2 rounded-md"
+                //   >
+                //     Add
+                //   </button>
+                // </div>
+
+                <div className="flex flex-col sm:flex-row gap-2 items-center w-full">
+                  <input
+                    type="text"
+                    className="w-full sm:w-auto md:w-[1500px] h-[48px] sm:h-[40px] md:h-[48px] p-2 text-sm sm:text-base rounded-md border border-slate-500"
+                    placeholder="Enter Member Principal Id"
+                    value={memberName}
+                    onChange={(e) => setMemberName(e.target.value)}
+                  />
+                  <button
+                    onClick={handleAddMember}
+                    className="w-full sm:w-auto lg:w-[155px] h-[48px] sm:h-[40px] md:h-[48px]  bg-black text-white p-2 rounded-md"
+                  >
+                    Add
+                  </button>
+                </div>
+
+              ) : null}
+            </section>
+            {councilMembers.map((name, index) => (
+              <section key={index} className="w-full py-2 p-2 pl-4 flex flex-col items-center justify-between bg-white mb-4">
+                <div className="w-full flex flex-row items-center justify-between mb-2">
+                  <p className="font-semibold mobile:text-base text-sm pl-4 bg-white border-black">{name}</p>
+                  <button onClick={() => handleRemoveMember('council', name)}>
+                    <MdOutlineDeleteOutline className="text-red-500 mobile:text-2xl text-lg" />
+                  </button>
+                </div>
+              </section>
+            ))}
+          </div>
 
 
-            {/* Groups */}
+          {/* Groups */}
           <div className="DAO__Step3__container w-full flex flex-col gap-2">
-            {list.slice(1).map((item, index) => (
+          {list.filter(group => group.name !== "Council").map((item, index) => (
               <div
                 key={index}
                 className={`flex flex-col bg-white rounded-lg ${addMemberIndex === item.index ? "" : "cursor-pointer transition"}`}
@@ -355,46 +405,87 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
               >
                 <section className={`w-full py-2 p-2 pl-4 flex ${addMemberIndex === item.index ? "border-b-2 border-[#b4b4b4]" : "rounded-lg"} items-center justify-between`}>
                   {groupNameInputIndex === item.index ? (
+                    <div className="flex items-center gap-2">
                     <input
                       type="text"
-                      className="p-1 rounded-md border border-slate-500 text-sm"
+                      className="p-1 w-24 md:w-60 rounded-md border border-slate-500 text-sm"
                       placeholder="Group Name"
-                      onKeyDown={(e) => handleGroupNameInput(e.target.value, e)}
+                      value={updatedGroupName}
+                      onChange={(e) => setUpdatedGroupName(e.target.value)}
                     />
-                  ) : (
-                    <p
-                      className="font-semibold py-1 cursor-pointer mobile:text-base text-sm"
-                      onDoubleClick={() => handleShowGroupNameInput(item.index)}
+                    <button
+                      onClick={handleUpdateGroupName}
+                      className="text-blue-500 truncate ... w-30 bg-slate-200 p-1 rounded-md"
                     >
-                      {item.name}
-                    </p>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-5 h-5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M20 6L9 17l-5-5" />
+                      </svg>
+                    </button>
+                  </div>
+                  ) : (
+                    // <p
+                    //   className="font-semibold py-1 cursor-pointer mobile:text-base text-sm"
+                    //   onDoubleClick={() => handleShowGroupNameInput(item.index)}
+                    // >
+                    //   {item.name}
+                    // </p>
+                    <div className="flex items-center gap-2">
+                      <p
+                        className="font-semibold py-1 cursor-pointer mobile:text-base text-sm"
+                        onDoubleClick={() => handleShowGroupNameInput(item.index)}
+                      >
+                        {item.name}
+                      </p>
+                      <button
+                        onClick={() => handleEditGroup(item.index)}
+                        className="text-blue-500 truncate ... w-30"
+                      >
+                        <img
+                          src={EditPen}
+                          alt="edit"
+                          className="tablet:mr-2 h-4 w-4 edit-pen"
+                        />
+                      </button>
+                    </div>
+
                   )}
                   <div className="flex flex-row small_phone:gap-4 gap-2">
                     <button
                       onClick={() => handleMemberAdding(item.index)}
-                      className="flex flex-row items-center gap-1 text-[#229ED9] bg-slate-200 mobile:p-2 p-1 rounded-md"
+                      className="flex flex-row items-center gap-1 text-[#229ED9] bg-slate-200 mobile:p-1 p-1 rounded-md"
                     >
                       Add Member
                     </button>
                     <button onClick={() => deleteGroup(item.index)}>
-                      <MdOutlineDeleteOutline className="text-red-500 mobile:text-2xl text-lg" />
+                      <MdOutlineDeleteOutline className="text-red-500 mr-1 md:mr-7 mobile:text-2xl text-lg" />
                     </button>
                   </div>
                 </section>
                 {addMemberIndex === item.index && (
                   <section className="p-4 gap-2 flex flex-col items-start">
                     {showMemberNameInput ? (
-                      <div className="flex flex-row gap-2 items-center">
+                      <div className="flex flex-col sm:flex-row gap-2 items-center w-full">
                         <input
                           type="text"
-                          className="mobile:p-2 p-1 mobile:text-base text-sm rounded-md border border-slate-500"
+                          // className="mobile:p-2 p-1 mobile:text-base text-sm rounded-md border border-slate-500"
+                          className="w-full sm:w-auto md:w-[1500px] h-[48px] sm:h-[40px] md:h-[48px] p-2 text-sm sm:text-base rounded-md border border-slate-500"
                           placeholder="Enter Member Principal Id"
                           onChange={(e) => setMemberName(e.target.value)}
-                          // onKeyDown={(e) => handleNameEnter(e.target.value, e)}
+                        // onKeyDown={(e) => handleNameEnter(e.target.value, e)}
                         />
                         <button
                           onClick={handleAddMember}
-                          className="bg-[#229ED9] text-white p-2 rounded-md"
+                          // className="bg-[#229ED9] text-white p-2 rounded-md"
+                          className="w-full sm:w-auto md:w-[100px] lg:w-[155px] h-[48px] sm:h-[40px] md:h-[48px]  bg-black text-white p-2 rounded-md"
                         >
                           Add
                         </button>
@@ -415,27 +506,27 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
           </div>
 
           <div
-        className={
-          className +
-          "__submitButton w-full flex flex-row items-center mobile:justify-end justify-between"
-        }
-      >
-        <button
-          onClick={handleBack}
-          className="flex mobile:m-4 my-4 flex-row items-center gap-2 border border-[#0E3746] hover:bg-[#0E3746] text-[#0E3746] hover:text-white mobile:text-base text-sm transition px-4 py-2 rounded-[2rem]"
-        >
-          <FaArrowLeftLong /> Back
-        </button>
+            className={
+              className +
+              "__submitButton w-full flex flex-row items-center mobile:justify-end justify-between"
+            }
+          >
+            <button
+              onClick={handleBack}
+              className="flex mobile:m-4 my-4 flex-row items-center gap-2 border border-[#0E3746] hover:bg-[#0E3746] text-[#0E3746] hover:text-white mobile:text-base text-sm transition px-4 py-2 rounded-[2rem]"
+            >
+              <FaArrowLeftLong /> Back
+            </button>
 
-        <button
-          type="submit"
-          onClick={handleSaveAndNext}
-          className="flex mobile:m-4 my-4 flex-row items-center gap-2 bg-[#0E3746] px-4 py-2 rounded-[2rem] text-white mobile:text-base text-sm"
-        >
-          Save & Next <FaArrowRightLong />
-        </button>
+            <button
+              type="submit"
+              onClick={handleSaveAndNext}
+              className="flex mobile:m-4 my-4 flex-row items-center gap-2 bg-[#0E3746] px-4 py-2 rounded-[2rem] text-white mobile:text-base text-sm"
+            >
+              Save & Next <FaArrowRightLong />
+            </button>
 
-      </div>
+          </div>
         </div>
       </Container>
     </React.Fragment>

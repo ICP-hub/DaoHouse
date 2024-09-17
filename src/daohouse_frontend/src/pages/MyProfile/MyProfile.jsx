@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaArrowRightLong } from "react-icons/fa6";
 
 import EditPen from "../../../assets/edit_pen.png";
-import MyProfileImage from "../../../assets/Avatar.png"; // Default profile image
+import MyProfileImage from "../../../assets/Avatar.png";
 import BigCircle from "../../../assets/BigCircle.png";
 import MediumCircle from "../../../assets/MediumCircle.png";
 import SmallestCircle from "../../../assets/SmallestCircle.png";
@@ -121,7 +121,7 @@ const MyProfile = ({ childComponent }) => {
   }, [activeTab, following]); // Updated to include following
 
   return (
-    <div className={`${className} bg-zinc-200 w-full relative`}>
+    <div className={`${className} bg-zinc-200 w-full  relative`}>
       <div
         style={{
           backgroundImage: `url("${MyProfileRectangle}")`,
@@ -167,9 +167,9 @@ const MyProfile = ({ childComponent }) => {
         </Container>
       </div>
       <div className={`bg-[#c8ced3]`}>
-        <Container classes={`__mainComponent big_phone:py-8 big_phone:pb-20 py-7 md:px-8 flex md:flex-row gap-2 flex-col w-full user-container`}>
-          <div className={`${className}__mainComponent__leftSide md:mx-0 mx-5 lg:px-20 flex flex-col tablet:items-start justify-center md:h-[580px] lg:w-[280px] lg:h-[762px] md:px-14 rounded-[10px] bg-[#0E3746] text-white text-opacity-50 font-normal md:mt-[-65px] mt-[-45px] z-20`}>
-            <div className="flex md:flex-col flex-row items-start md:justify-center justify-around gap-y-6 py-50 md:py-90 lg:text-base md:text-sm text-nowrap">
+        <Container classes={`__mainComponent big_phone:py-8 big_phone:pb-20 py-7  md:px-8 flex md:flex-row gap-2 flex-col w-full user-container`}>
+          <div className={`${className}__mainComponent__leftSide md:mx-0 mx-5  lg:px-20 flex flex-col tablet:items-start justify-center md:h-[580px] lg:w-[280px]  translate-y-[-30px] lg:h-[870px] md:px-14 rounded-[10px] bg-[#0E3746] text-white text-opacity-50 font-normal md:mt-[-65px] mt-[-45px] z-20`}>
+            <div className="flex md:flex-col flex-row items-start md:justify-center justify-around gap-y-6 translate-y-[-33px]  py-50 md:py-90 lg:text-base md:text-sm text-nowrap">
               <Link to="/my-profile" onClick={() => setActiveTab(0)}>
                 <p className={`${tabButtonsStyle} ${activeTab === 0 ? "text-white" : ""}`}>My Profile{activeTab === 0 ? <FaArrowRightLong className="md:inline hidden" /> : ""}</p>
               </Link>
@@ -185,23 +185,25 @@ const MyProfile = ({ childComponent }) => {
             </div>
           </div>
           <div className={`${className}__rightSide w-full`}>
-            <div className="flex md:justify-between justify-around w-full gap-2 z-50 relative">
+            <div className="flex md:justify-between justify-around w-full gap-2 relative">
               <div className="flex items-start md:-ml-[10%] tablet:ml-[-90px] relative">
-                <div
-                  className="fixed-image-container w-[130px] h-[120px] rounded-md overflow-hidden"
-                  style={{
-                    boxShadow: "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
-                  }}
-                >
-                  <img
-                    className="w-full h-full object-cover"
-                    src={imageSrc} // Dynamically set to user's profile image or default
-                    alt="profile-pic"
-                    onError={handleImageError} // Handle image loading errors
-                  />
-                </div>
-                <div className="ml-5">
-                  <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C]">
+              <div
+  className="fixed-image-container w-[175px] h-[165px] rounded-md overflow-hidden z-50"
+  style={{
+    boxShadow: "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
+    transform: "translateY(-75px) translateX(-136px)" // Adjust values as needed
+  }}
+>
+  <img
+    className="w-full h-full object-cover"
+    src={imageSrc} // Dynamically set to user's profile image or default
+    alt="profile-pic"
+    onError={handleImageError} // Handle image loading errors
+  />
+</div>
+
+                <div className="mr-20 translate-x-[-37px] ">
+                  <h2 className="   tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C]">
                     {name || "Username.user"}{" "}
                   </h2>
                   <p className="md:text-[14px] text-[10px] tablet:text-[16px] font-normal text-left text-[#646464]">

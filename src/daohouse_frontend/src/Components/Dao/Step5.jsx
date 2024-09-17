@@ -6,11 +6,17 @@ import { IoPersonOutline } from "react-icons/io5";
 import { MdOutlineVerifiedUser } from "react-icons/md";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import Container from "../Container/Container";
+import ViewModal from "./ViewModal";
 
 
-
-const Step5 = ({ setData, setActiveStep }) => {
+const Step5 = ({ setData, setActiveStep,data }) => {
+  console.log("step5",data)
   const [loadingNext, setLoadingNext] = useState(false);
+
+  const [isModalOpen,setIsModalOpen]=useState(false)
+  
+  const user =data.step3.members
+  console.log(user)
  
   // const [quorum, setQuorum] = useState([
   //   { name: "Council", index: 0, vote: 50 },
@@ -46,7 +52,18 @@ const Step5 = ({ setData, setActiveStep }) => {
   useEffect(() => {
     // Save quorum data to local storage whenever it changes
     localStorage.setItem('step5Quorum', JSON.stringify(quorum));
-  }, [quorum]);
+  }, [quorum]); 
+
+
+   function handleViewClickModal (){
+    setIsModalOpen(true)
+
+   
+  }
+
+  function handleOnClose(){
+    setIsModalOpen(false)
+  }
   return (
     <React.Fragment>
     <Container>
@@ -82,7 +99,7 @@ const Step5 = ({ setData, setActiveStep }) => {
 
               <p className="w-1/3 flex flex-row gap-4">
                 <span>{index}</span>
-                <button className="text-cyan-800 bg-slate-200 px-5 py-1 rounded-md">
+                <button onClick={handleViewClickModal} className="text-cyan-800 bg-slate-200 px-5 py-1 rounded-md">
                   View
                 </button>
               </p>
@@ -156,7 +173,9 @@ const Step5 = ({ setData, setActiveStep }) => {
           )}
         </div>
       </div>
+
       </Container>
+      <ViewModal open={isModalOpen } onClose={handleOnClose} users={user}/>
     </React.Fragment>
   );
 };
@@ -181,7 +200,7 @@ const RangeInput = ({ index, handleVoteChange }) => {
       type="range"
       min={0}
       max={100}
-      className="mobile:w-10/12 mobile:h-[8px] h-[5px] custom-range"
+      className="mobile:w-10/12 mobile:h-[8px] h-[5px] custom-range border-2 border-[#061c24]"
       step={1}
       value={value}
       onChange={handleChange}

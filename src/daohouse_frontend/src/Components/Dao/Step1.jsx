@@ -8,13 +8,16 @@ const Step1 = ({ setData, setActiveStep, data }) => {
     DAOIdentifier: "",
     Purpose: "",
     DAOType: "",
-    tokenName: "",
-    tokenSymbol: "",
-    tokenissuer: '',
-    tokens_required_to_vote: 1,
+    SetUpPeriod: data?.step1?.setUpPeriod || 3,
+    Tokensupply: "",
+    // tokenName: "",
+    // tokenSymbol: "",
+    // tokenissuer: '',
+    // tokens_required_to_vote: 1,
   });
 
   const className = "DAO__Step1";
+
 
   useEffect(() => {
     const savedData = localStorage.getItem("step1Data");
@@ -25,10 +28,12 @@ const Step1 = ({ setData, setActiveStep, data }) => {
         DAOIdentifier: data.DAOIdentifier || "",
         Purpose: data.Purpose || "",
         DAOType: data.DAOType || "",
-        tokenName: data.tokenName || "",
-        tokenSymbol: data.tokenSymbol || "",
-        tokenissuer: '',
-        tokens_required_to_vote: data.tokens_required_to_vote || 1,
+        SetUpPeriod: data?.step1?.setUpPeriod || 3,
+        // Tokensupply: data.Tokensupply || "", 
+        // tokenName: data.tokenName || "",
+        // tokenSymbol: data.tokenSymbol || "",
+        // tokenissuer: '',
+        // tokens_required_to_vote: data.tokens_required_to_vote || 1,
       });
     }
   }, [data]);
@@ -39,9 +44,9 @@ const Step1 = ({ setData, setActiveStep, data }) => {
 
   async function handleSaveAndNext() {
     if (
-      inputData.DAOIdentifier === "" ||
-      inputData.tokenName === "" ||
-      inputData.tokenSymbol === "" 
+      inputData.DAOIdentifier === ""
+      // inputData.tokenName === "" ||
+      // inputData.tokenSymbol === ""
     ) {
       toast.error("Empty fields are not allowed");
       return;
@@ -69,6 +74,13 @@ const Step1 = ({ setData, setActiveStep, data }) => {
 
     console.log(inputData);
   }
+  function changePeriod(value) {
+    // Convert the value to a number, ensure it's non-negative, and append "days"
+    const numberValue = Math.max(parseInt(value, 10) || 1, 0);
+    setInputData({
+      setUpPeriod: numberValue,
+    });
+  }
 
   return (
     <React.Fragment>
@@ -85,6 +97,7 @@ const Step1 = ({ setData, setActiveStep, data }) => {
             className="font-semibold mobile:text-base text-sm"
           >
             DAO Identifier
+            {/* <span className="text-red-500">*</span> */}
           </label>
           <input
             type="text"
@@ -102,6 +115,7 @@ const Step1 = ({ setData, setActiveStep, data }) => {
             className="font-semibold mobile:text-base text-sm"
           >
             Purpose of DAO
+            {/* <span className="text-red-500">*</span> */}
           </label>
           <textarea
             type="text"
@@ -113,11 +127,12 @@ const Step1 = ({ setData, setActiveStep, data }) => {
           />
 
           {/** DAO Type */}
-          <label
+          {/* <label
             htmlFor="type"
             className="font-semibold mobile:text-base text-sm"
           >
             DAO Type
+           
           </label>
           <input
             onChange={handleChange}
@@ -125,17 +140,36 @@ const Step1 = ({ setData, setActiveStep, data }) => {
             value={inputData.DAOType}
             name="DAOType"
             className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm"
+          /> */}
+
+          {/* setUp Period */}
+          <label
+            htmlFor="type"
+            className="font-semibold mobile:text-base text-sm"
+          >
+           
+            Setup Period(in days)
+            {/* <span className="text-red-500">*</span> */}
+          </label>
+          <input
+            type="number"
+            value={inputData.SetUpPeriod}
+            onChange={(e) => changePeriod(e.target.value)}
+            name="SetUpPeriod"
+            className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm"
           />
 
+
+
           {/** DAO Token */}
-          <div className="flex mobile:flex-row flex-col mobile:gap-4 gap-2 mobile:items-center items-start">
+          {/* <div className="flex mobile:flex-row flex-col mobile:gap-4 gap-2 mobile:items-center items-start">
             <p
               htmlFor="type"
               className="font-semibold mobile:text-base text-sm"
             >
               DAO Token*
             </p>
-
+            
             <div className="flex flex-row gap-2">
               <button
                 className={
@@ -146,15 +180,15 @@ const Step1 = ({ setData, setActiveStep, data }) => {
                 New Token
               </button>
             </div>
-          </div>
+          </div> */}
 
-          <div className="flex mobile:flex-row flex-col mobile:gap-4 gap-2">
+          {/* <div className="flex mobile:flex-row flex-col mobile:gap-4 gap-2">
             <div className="flex flex-col mobile:w-1/2 mobile:gap-4 gap-2">
               <label
                 htmlFor="tokenName"
                 className="font-semibold mobile:text-base text-xs"
               >
-                Token Name
+                Token Name<span className="text-red-500">*</span>
               </label>
 
               <input
@@ -171,7 +205,7 @@ const Step1 = ({ setData, setActiveStep, data }) => {
                 htmlFor="tokenSymbol"
                 className="font-semibold mobile:text-base text-xs"
               >
-                Token Symbol
+                Token Symbol<span className="text-red-500">*</span>
               </label>
 
               <input
@@ -183,9 +217,11 @@ const Step1 = ({ setData, setActiveStep, data }) => {
                 className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm"
               />
             </div>
-          </div>
+          </div> */}
 
-          <label htmlFor="tokens_required_to_vote">Tokens Required to Vote:</label>
+          {/* <label className="font-semibold" htmlFor="tokens_required_to_vote">Tokens Required to Vote:
+          <span className="text-red-500">*</span>
+          </label>
           <input
             type="number"
             id="tokens_required_to_vote"
@@ -194,7 +230,7 @@ const Step1 = ({ setData, setActiveStep, data }) => {
             onChange={handleChange}
             required
             className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm"
-          />
+          /> */}
         </div>
 
         <div

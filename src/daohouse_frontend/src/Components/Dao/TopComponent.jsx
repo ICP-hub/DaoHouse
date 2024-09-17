@@ -1,6 +1,6 @@
 import React from 'react'
 // import daobg from "../../../assets/daobg.png";
-import daobg from "../../../assets/daoBg.png";
+import daobg1 from "../../../assets/daobg1.png";
 import Container from '../Container/Container';
 
 const TopComponent = ({ showButtons, showAll, setShowAll }) => {
@@ -9,7 +9,7 @@ const TopComponent = ({ showButtons, showAll, setShowAll }) => {
     return (
         <div
             style={{
-                backgroundImage: `url("${daobg}")`,
+                backgroundImage: `url("${daobg1}")`,
                 backgroundRepeat: "no-repeat",
                 backgroundSize: "cover",
                 backgroundPosition: "center",
@@ -20,18 +20,18 @@ const TopComponent = ({ showButtons, showAll, setShowAll }) => {
                 {showButtons &&
                     <div
                         className={
-                            className + "__buttons flex flex-row border-t-2 border-white"
+                            className + "__buttons flex flex-row rounded-full"
                         }
                     >
                         <button
-                            className={`px-6 py-2 mobile:text-lg text-sm text-white ${!showAll ? "" : "shadow-lg font-semibold"
+                            className={`px-4 py-0 mobile:text-lg text-sm text-white ${!showAll ? "" : "font-semibold bg-white bg-opacity-30 rounded-full"
                                 }`}
                             onClick={() => setShowAll(true)}
                         >
                             All
                         </button>
                         <button
-                            className={`px-6 py-2 mobile:text-lg text-sm text-white ${showAll ? "" : "shadow-lg font-semibold"
+                            className={`px-4 py-0 mobile:text-lg text-sm text-white ${showAll ? "" : "font-semibold bg-white bg-opacity-30 rounded-full"
                                 }`}
                             onClick={() => setShowAll(false)}
                         >

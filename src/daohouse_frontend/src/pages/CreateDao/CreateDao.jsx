@@ -12,12 +12,17 @@ import { useAuth } from "../../Components/utils/useAuthClient";
 import { Principal } from "@dfinity/principal";
 import { toast } from "react-toastify";
 import Container from "../../Components/Container/Container";
+import LoginModal from "../../Components/Auth/LoginModal";
+import { useNavigate } from "react-router-dom";
 
 const CreateDao = () => {
   const className = "CreateDAO";
   const [activeStep, setActiveStep] = useState(0);
-  const { backendActor, frontendCanisterId, identity } = useAuth();
+  const { backendActor, isAuthenticated, login, signInNFID } = useAuth();
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [loadingNext, setLoadingNext] = useState(false)
+  const navigate = useNavigate();
   const [data, setData] = useState({
     step1: {},
     step2: {},
@@ -28,6 +33,43 @@ const CreateDao = () => {
       imageURI: "",
     },
   });
+
+  useEffect(() => {
+    setShowLoginModal(!isAuthenticated);
+  }, [isAuthenticated]);
+  
+
+  const handleLogin = async () => {
+    setLoading(true);
+    try {
+      await login("Icp");
+      window.location.reload(); // Reload after successful login
+    } catch (error) {
+      console.error('Login failed:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleNFIDLogin = async () => {
+    setLoading(true);
+    try {
+      await signInNFID();
+      window.location.reload(); // Reload after successful NFID login
+    } catch (error) {
+      console.error('NFID login failed:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleModalClose = () => {
+    setShowLoginModal(false);
+    if (!isAuthenticated) {
+      navigate("/"); // Redirect to home page if not authenticated
+    }
+  };
+
 
   useEffect(() => {
     return () => {
@@ -92,34 +134,52 @@ const CreateDao = () => {
     });
   
     const principalMembers = Array.from(allMembers).map(member => Principal.fromText(member));
+
+    console.log(step2);
+    console.log(data.dao_groups);
+    
+    
   
     const daoPayload = {
-      dao_name: step1.DAOIdentifier || '',
-      purpose: step1.Purpose || '',
-      daotype: step1.DAOType || '',
-      link_of_document: '',
-      cool_down_period: step2.setUpPeriod || 1,
-      members: principalMembers || [],
-      members_permissions: councilArray || [],
-      tokenissuer: step1.tokenissuer || '',
-      token_name: step1.tokenName || '',
-      token_symbol: step1.tokenSymbol || '',
-      tokens_required_to_vote: step1.tokensRequiredToVote || 1,
-      linksandsocials: [],
-      required_votes: 10,
-      image_content: step6.image_content || '',
-      image_title: step6.image_title || '',
-      image_content_type: step6.image_content_type || '',
-      image_id: '12',
-      dao_groups: step4.groups || [],
-      total_tokens: 1000,
+      dao_name: step1.DAOIdentifier || "my dao hai",
+      purpose:  step1.Purpose || "my proposal hai",
+      daotype: "just proposal type bro",
+      link_of_document: "my link.org",
+      cool_down_period: step1.SetUpPeriod || 3,
+      members: principalMembers || [Principal.fromText("aaaaa-aa")],
+      members_permissions: councilArray || ["just", "pesmi"],
+      token_name: step2.TokenName ||"GOLD Token",
+      token_symbol: step2.TokenSymbol || "TKN",
+      tokens_required_to_vote: 12,
+      linksandsocials: ["just send f"],
+      required_votes: 9,
+      image_content: step6.image_content ? Array.from(new Uint8Array(step6.image_content)) : 
+      Array.from(new Uint8Array()),
+      image_title: step6.image_title || "this is just my title",
+      image_content_type: step6.image_content_type || "just image content bro",
+      image_id: "12",
+      dao_groups: data.dao_groups,
+      // [{
+      //   group_members: [Principal.fromText("aaaaa-aa")],
+      //   quorem: 5,
+      //   group_name: "just testing name yar",
+      //   group_permissions: ["meri marji"]
+      // }],
+      token_supply: Number(step2.TokenSupply) || 4,
     };
+
+    console.log(daoPayload);
+    
   
 
     try {
-      const response = await backendActor.create_dao(process.env.CANISTER_ID_IC_ASSET_HANDLER, daoPayload);
+      const response = await backendActor.create_dao(daoPayload);
+      console.log("response",response);
+      
       if (response.Err) {
         toast.error(`${response.Err}`);
+        toast.error(`Failed to create Dao`);
+        setLoadingNext(false)
       } else {
         setLoadingNext(false);
         toast.success("DAO created successfully");
@@ -157,7 +217,7 @@ const CreateDao = () => {
       case 3:
         return <Step4 data={data} setData={setData} setActiveStep={setActiveStep} />;
       case 4:
-        return <Step5 data={data.step5} setData={setData} setActiveStep={setActiveStep} />;
+        return <Step5 data={data} setData={setData} setActiveStep={setActiveStep} />;
       case 5:
         return <Step6 data={data} setData={setData} setActiveStep={setActiveStep} handleDaoClick={handleDaoClick} loadingNext={loadingNext} setLoadingNext={setLoadingNext} />;
       default:
@@ -180,6 +240,8 @@ const CreateDao = () => {
             </div>
           </div>
         </Container>
+        {showLoginModal && <LoginModal isOpen={showLoginModal} onClose={handleModalClose} onLogin={handleLogin} 
+          onNFIDLogin={handleNFIDLogin} loading={loading} />}
         <Container>
           <div className={className + "__steps overflow-x-scroll mobile:py-4 py-2 mobile:gap-20 gap-6 flex flex-row w-full mobile:items-center justify-between"}>
             {steps.map(({ step, name }, index) => (

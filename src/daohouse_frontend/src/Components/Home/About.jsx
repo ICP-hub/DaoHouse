@@ -24,7 +24,7 @@ const About = () => {
   };
 
   return (
-    <div className="bg-[#05212C] ">
+    <div className="bg-[#05212C]">
       <Container classes={'relative flex justify-center items-center py-8'}>
         <div className="absolute pointer-events-none select-none xl:left-[40%] 2xl:left-[40%] lg:left-[35%] md:left-[35%] left-0 md:top-0 top-[18%] mt-8">
           <div>
@@ -44,6 +44,7 @@ const About = () => {
           </div>
         </div>
 
+        {/* Image for larger screens */}
         <div className="w-[100vw] hidden md:block my-8">
           <img
             src={about}
@@ -53,15 +54,16 @@ const About = () => {
         </div>
 
         <div className="md:w-60% w-full lg:p-8 text-white lg:mx-16 md:mx-4 mx-10 flex flex-col items-center relative z-10">
-          <div className="lg:px-8 md:px-8 md:ml-0 relative z-50 md:z-0 mb-2">
+          <div className="lg:px-8 md:px-8 md:ml-0 relative z-50 md:z-0 mb-2 text-center md:text-left">
             <h2 className="text-about-heading font-mulish font-normal text-[16px] md:text-[16px] lg:text-[16px] leading-tight mt-4 mb-1">
               About Platform
             </h2>
-            <p className="text-about-subheading font-mulish font-medium text-[32px] lg:text-[40px] leading-tight mt-1">
+            <p className="text-about-subheading font-mulish font-medium text-[20px] small_phone:text-[32px] lg:text-[40px] leading-tight mt-1 whitespace-nowrap">
               Unlocking Collective Intelligence
             </p>
           </div>
 
+          {/* Image for smaller screens */}
           <div className="w-[50vw] md:hidden my-4 relative z-10">
             <img
               src={about}
@@ -70,7 +72,7 @@ const About = () => {
             />
           </div>
 
-          <div className="flex flex-col items-start gap-4 md:w-[480px] lg:w-[620px] font-mulish font-normal text-[12px] md:text-[14px] lg:text-[16px] md:px-8 md:pb-8 md:mx-0 md:my-4 lg:mr-6 relative z-10">
+          <div className="flex flex-col items-center md:items-start gap-4 md:w-[480px] lg:w-[620px] font-mulish font-normal text-[12px] md:text-[14px] lg:text-[16px] md:px-8 md:pb-8 md:mx-0 md:my-4 lg:mr-6 relative z-10 text-center md:text-left">
             <p className="pr-4">
               At our platform, decentralized autonomous organization meets
               cutting-edge technology to revolutionize the way communities govern

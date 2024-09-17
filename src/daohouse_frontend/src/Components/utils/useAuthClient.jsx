@@ -248,13 +248,17 @@ export const useAuthClient = (options = defaultOptions) => {
     console.log("Canister Array:", canisterArray);
   
     try {
+      const identity = nfid.getIdentity();
+      console.log(identity);
       const delegationResult = await nfid.getDelegation({ targets: canisterArray, maxTimeToLive: BigInt(8) * BigInt(3_600_000_000_000) });
       console.log("Delegation Result:", delegationResult);
   
       const theUserPrincipal = Principal.from(delegationResult.getPrincipal()).toText();
       console.log("The User principal:", theUserPrincipal);
-  
-      const identity = delegationResult.getIdentity();
+      
+      const isLogin = await nfid.getDelegationType();
+      console.log(isLogin,'Delegation type');
+      // const identity = delegationResult.getIdentity();
       const agent = new HttpAgent({ identity });
       console.log("HttpAgent created with identity:", identity);
   

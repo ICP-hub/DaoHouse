@@ -1,425 +1,228 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import avatar from "../../../assets/avatar.png";
 import { CircularProgressBar } from "./CircularProgressBar";
-import SmallCard from "./SmallCard";
-import { buttons, sectionsData } from "./proposalsData";
-import { CircularProgressBarMobile } from "./CircularProgressBarMobile";
+import Lottie from "react-lottie";
 import ProgressAnimation from "./MyProposals/proposal-cards-animations/progress-animation.json";
 import ApprovedAnimation from "./MyProposals/proposal-cards-animations/approved-animation.json";
 import RejectedAnimation from "./MyProposals/proposal-cards-animations/rejected-animation.json";
-import Lottie from "react-lottie";
 import { Principal } from "@dfinity/principal";
+import ViewModal from "../Dao/ViewModal";
 
+export default function Card({ proposal }) {
 
+  const [isModalOpen,setIsModalOpen]=useState(false)
 
-export default function Card({ proposal, resData, proposals }) {
-  console.log("proposal data ", proposal)
   const a = proposal?.proposal_description;
 
-  const bigIntValue10 = BigInt(proposal?.proposal_approved_votes || 0);
-  const approvedProposals = Number(bigIntValue10);
+  const approvedProposals = Number(BigInt(proposal?.proposal_approved_votes || 0));
+  const rejectedvoters = Number(BigInt(proposal?.proposal_rejected_votes || 0));
+  const status = proposal?.proposal_status
+  ? Object.keys(proposal.proposal_status)[0] || "No Status"
+  : "No Status";
 
-  const bigIntValue1 = BigInt(proposal?.proposal_rejected_votes || 0);
-  const rejectedvoters = Number(bigIntValue1);
-  const stsatus = proposal?.proposal_status;
- 
-  console.log(`Proposal Description: ${a}, Approved Proposals: ${approvedProposals}, Rejected Voters: ${rejectedvoters}, Status: ${status}`);
+  const sharecount = Number(BigInt(proposal?.share_count || 0));
+  const requiredVotes = Number(BigInt(proposal?.required_votes || 0))
+  const votecount = Number(BigInt(0));
+  const commentcount = Number(BigInt(proposal?.comments || 0));
 
+  // Convert BigInt timestamps to dates
+  const submittedOn = new Date(Number(proposal?.proposal_submitted_at) / 1_000_000); // Convert nanoseconds to milliseconds
+  const expiresOn = new Date(Number(proposal?.proposal_expired_at) / 1_000_000);
 
-  const bigIntValue2 = BigInt(proposal?.share_count || 0);
-  const sharecount = Number(bigIntValue2);
- 
-  const bigIntValue3 = BigInt(proposal?.required_votes
-    || 0);
-  const votecount = Number(bigIntValue3);
+  // Format the dates to be human-readable
+  const formattedSubmittedOn = submittedOn.toLocaleString();
+  const formattedExpiresOn = expiresOn.toLocaleString();
 
-  const bigIntValue4 = BigInt(proposal?.comments || 0);
-  const commentcount = Number(bigIntValue4);
+  // Function to split date and time
+  const splitDateTime = (dateTimeString) => {
+    const [date, time] = dateTimeString.split(", ");
+    return { date, time };
+  };
 
-  console.log(`share:${sharecount},comment:${commentcount},vote:${votecount}`)
-    // Animation options for the progress 
-    const defaultOptions = {
-      loop: true,
-      autoplay: true,
-      animationData: ProgressAnimation,
-      rendererSettings: {
-        preserveAspectRatio: "xMidYMid slice",
-        id: "lottie-bigCircle",
-      },
-    };
-  const buttons = [
-    {
-      icon: (
-        <svg
-          width="16"
-          height="15"
-          viewBox="0 0 16 15"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M3.11111 9.22293H12.8889V8.34456H3.11111V9.22293ZM3.11111 6.58781H12.8889V5.70943H3.11111V6.58781ZM3.11111 3.95269H12.8889V3.07431H3.11111V3.95269ZM16 15L13.2649 12.2972H1.43556C1.02667 12.2972 0.685333 12.162 0.411556 11.8914C0.137778 11.6209 0.000592593 11.2833 0 10.8787V1.41857C0 1.01452 0.137185 0.677227 0.411556 0.406687C0.685926 0.136148 1.02726 0.000585583 1.43556 0H14.5644C14.9733 0 15.3147 0.135562 15.5884 0.406687C15.8622 0.677812 15.9994 1.01511 16 1.41857V15ZM1.43556 11.4189H13.6444L15.1111 12.8629V1.41857C15.1111 1.28389 15.0542 1.16004 14.9404 1.04702C14.8267 0.934005 14.7013 0.877789 14.5644 0.878374H1.43556C1.29926 0.878374 1.17393 0.93459 1.05956 1.04702C0.945185 1.15945 0.888296 1.2833 0.888889 1.41857V10.8787C0.888889 11.0134 0.945778 11.1372 1.05956 11.2502C1.17333 11.3632 1.29867 11.4195 1.43556 11.4189Z"
-            fill="black"
-          />
-        </svg>
-      ),
-      text: commentcount,
-    },
-    {
-      icon: (
-        <svg
-          width="17"
-          height="17"
-          viewBox="0 0 17 17"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M16 1L1 5.85294L6.73529 8.5L12.9118 4.08824L8.5 10.2647L11.1471 16L16 1Z"
-            stroke="black"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
-      text: sharecount
-    },
-    {
-      icon: (
-        <svg
-          width="12"
-          height="15"
-          viewBox="0 0 12 15"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M10.1104 15H1.88964C1.38848 15 0.907841 14.8012 0.553464 14.4473C0.199087 14.0935 0 13.6135 0 13.1131V12.4889C0 9.49331 2.69161 7.05469 6 7.05469C9.30839 7.05469 12 9.4918 12 12.4889V13.1131C12 13.6135 11.8009 14.0935 11.4465 14.4473C11.0922 14.8012 10.6115 15 10.1104 15ZM6 7.81096C3.10809 7.81096 0.755858 9.90918 0.755858 12.4904V13.1146C0.755858 13.4149 0.87531 13.7028 1.08794 13.9152C1.30056 14.1275 1.58895 14.2468 1.88964 14.2468H10.1104C10.4111 14.2468 10.6994 14.1275 10.9121 13.9152C11.1247 13.7028 11.2441 13.4149 11.2441 13.1146V12.4889C11.2441 9.90918 8.89191 7.81096 6 7.81096ZM6 5.92332C5.41335 5.92347 4.83983 5.7499 4.35198 5.42455C3.86413 5.09921 3.48385 4.63672 3.25925 4.09556C3.03464 3.5544 2.9758 2.95889 3.09016 2.38433C3.20451 1.80978 3.48694 1.28199 3.90171 0.867718C4.31648 0.453447 4.84497 0.171301 5.42033 0.056964C5.9957 -0.0573734 6.5921 0.0012332 7.1341 0.225372C7.67611 0.449511 8.13938 0.829113 8.46532 1.31617C8.79126 1.80323 8.96523 2.37587 8.96523 2.96166C8.96463 3.74683 8.65206 4.49967 8.09612 5.05494C7.54018 5.61021 6.78631 5.92252 6 5.92332ZM6 0.755511C5.56281 0.755362 5.1354 0.884686 4.77183 1.12713C4.40826 1.36957 4.12487 1.71423 3.9575 2.11752C3.79012 2.52081 3.74629 2.96461 3.83155 3.39277C3.9168 3.82094 4.12731 4.21424 4.43645 4.52293C4.74559 4.83162 5.13946 5.04182 5.56826 5.12695C5.99705 5.21208 6.44149 5.16831 6.84537 5.00118C7.24925 4.83405 7.59442 4.55107 7.83721 4.18803C8.08001 3.82499 8.20952 3.39821 8.20937 2.96166C8.20877 2.37674 7.97581 1.81594 7.5616 1.40234C7.14739 0.988736 6.58578 0.75611 6 0.755511Z"
-            fill="black"
-          />
-        </svg>
-      ),
-      text: votecount,
-    },
-  ];
+  const { date: submittedDate, time: submittedTime } = splitDateTime(formattedSubmittedOn);
+  const { date: expiresDate, time: expiresTime } = splitDateTime(formattedExpiresOn);
 
+  // Custom date formatting
+  const formatDate = (date) => {
+    return new Intl.DateTimeFormat('en-US', {
+      year: '2-digit',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(date);
+  };
 
-  const gridItems = [
-    {
-      label: "Submitted On:", value: proposal?.
-        proposal_submitted_at, time: "5:32:11"
-    },
-    {
-      label: "Expires On:", value: proposal?.proposal_expired_at
-      , time: "5:32:11"
-    },
-    // { label: "Votes Required:", value: proposal?.required_votes }
-  ];
+  // Custom time formatting
+  const formatTime = (date) => {
+    return new Intl.DateTimeFormat('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true,
+    }).format(date);
+  };
 
-  // console.log("-----g",gridItems)
-  // Animation options for the approved
-
-
-
-
-
-
+  const submittedOnDate = formatDate(submittedOn);
+  const submittedOnTime = formatTime(submittedOn);
+  const expiresOnDate = formatDate(expiresOn);
+  const expiresOnTime = formatTime(expiresOn);
 
   const principalString = proposal?.created_by
     ? Principal.fromUint8Array(new Uint8Array(proposal.created_by)).toText()
     : "Unknown";
-  console.log("////////////", principalString)
-  const defaultOptions2 = {
+
+    const getTimeRemaining = (expiryDate) => {
+      const now = new Date();
+      const timeDiff = expiryDate - now;
+  
+      if (timeDiff <= 0) return "00d 00h 00m 00s left";
+  
+      const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+  
+      return `${days}d ${hours}h ${minutes}m ${seconds}s left`;
+    };
+
+    const [timeRemaining, setTimeRemaining] = useState(getTimeRemaining(expiresOn));
+
+    useEffect(() => {
+      const intervalId = setInterval(() => {
+        setTimeRemaining(getTimeRemaining(expiresOn));
+      }, 1000);
+  
+      return () => clearInterval(intervalId);
+    }, [expiresOn]);
+
+  function handleOnClose(){
+    setIsModalOpen(false)
+  }
+
+  const handleVotesClick = () => {
+    setIsModalOpen(true)
+  }
+
+  const defaultOptions = {
     loop: true,
     autoplay: true,
-    animationData: ApprovedAnimation,
+    animationData: ProgressAnimation,
     rendererSettings: {
       preserveAspectRatio: "xMidYMid slice",
-      id: "lottie-smallCircle",
+      id: "lottie-bigCircle",
     },
   };
-  // Animation options for the rejected
-  const defaultOptions3 = {
-    loop: true,
-    autoplay: true,
-    animationData: RejectedAnimation,
-    rendererSettings: {
-      preserveAspectRatio: "xMidYMid slice",
-      id: "lottie-mediumCircle",
-    },
-  };
+
   return (
-    <div className="rounded-l-lg rounded-t-lg w-full  shadow-md flex">
-      <div className="w-full">
-
-        <div className="bg-[#000000] flex items-center justify-between w-full rounded-t-lg">
-          <div className="flex p-3 ">
-            <img src={avatar} alt="user photo" className="rounded-full mr-4" />
-
-            <div className="flex flex-col border-red-900">
-              <h4 className="text-[20px] font-semibold text-white border-green-900">
-                {principalString}
-              </h4>
-
-            </div>
-          </div>
-
-          <div className="p-3 mx-4 md:block hidden">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <CircularProgressBar percentage={25} color="#4CAF50" />;
-                <span className="text-base text-white">
-                  {approvedProposals} votes
-
-                </span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <CircularProgressBar percentage={1} color="red" />;
-                <span className="text-base text-white">{rejectedvoters} votes</span>
-              </div>
-            </div>
-            <div className="mt-1 "></div>
-          </div>
-
+        <div className="bg-white rounded-xl shadow-md flex flex-col md:flex-row">
+      {/* Left Section */}
+      <div className="w-full md:w-1/4 flex flex-col items-center bg-[#0E3746] px-4 py-8 md:py-12 rounded-xl md:rounded-lg md:rounded-r-none">
+        <img src={avatar} alt="user avatar" className="w-16 h-16 rounded-full mb-4" />
+        <h4 className="text-white text-xl font-semibold">{principalString}</h4>
+        <div>
           <div
-            className={`w-fit  ${proposal?.status === "Rejected"
-              ? "bg-[#D85032]"
-              : proposal.status === "Approved"
-                ? "bg-[#4FB565]"
-                : proposal.status === "In Progress"
-                  ? "bg-[#4993B0]"
-                  : ""
-              } ml-auto text-white text-xs font-semibold rounded-full my-4 mx-4 pr-3 pl-7 py-1 inline-block md:hidden relative`}
+            className={`mt-2 px-4 py-1 rounded-full text-white text-sm font-semibold ${
+              status === "Approved" ? "bg-[#4CAF50]" : status === "Rejected" ? "bg-red-500" : "bg-[#4993B0]"
+            }`}
           >
-            {" "}
-            <span
-              className={`absolute  ${proposal.status === "Rejected"
-                ? "  w-[35%] h-[35%] -left-[0%] -top-[10%]"
-                : proposal.status === "Approved"
-                  ? " w-[60%] h-[60%] -left-[14%] -top-[65%]"
-                  : proposal.status === "In Progress"
-                    ? " w-[100%] h-[100%] -left-[33%] -top-[150%]"
-                    : ""
-                } `}
-            >
-              <div
-                id="lottie-container"
-                style={{ width: "100%", height: "auto" }}
-              >
-                {proposal.status === "In Progress" && (
-                  <Lottie
-                    options={defaultOptions}
-                    style={{ width: "100%", height: "100%" }}
-                  />
-                )}
-                {proposal.status === "Approved" && (
-                  <Lottie
-                    options={defaultOptions2}
-                    style={{ width: "100%", height: "100%" }}
-                  />
-                )}
-                {proposal.status === "Rejected" && (
-                  <Lottie
-                    options={defaultOptions3}
-                    style={{ width: "100%", height: "100%" }}
-                  />
-                )}
-              </div>
-            </span>
-            {proposal.status}
+            {status}
           </div>
         </div>
-        <div className="md:flex gap-4 text-xs py-2 px-6  bg-[#AAC8D6] rounded-b-lg hidden">
-          {gridItems.map((item, index) => (
-            <div
-              key={index}
-              className="text-[16px] text-black py-2 rounded-md text-nowrap"
-            >
-              <span className="font-bold text-[12px] text-nowrap	">
-                {" "}
-                • {item.label}
-              </span>
-              <br />
-              <div className="text-nowrap	py-1 text-[16px] mx-2">
-                <span className=" text-[16px]"> {item.value}</span>
-
-                {item.time && (
-                  <span className="text-[#55646b] mx-1 text-[12px]">
-                    {" "}
-                    {item.time}
-                  </span>
-                )}
-              </div>
-            </div>
-          ))}
-          <div
-            className={`w-fit  ${proposal.status === "Rejected"
-              ? "bg-[#D85032]"
-              : proposal.status === "Approved"
-                ? "bg-[#4FB565]"
-                : proposal.status === "In Progress"
-                  ? "bg-[#4993B0]"
-                  : ""
-              } ml-auto text-white text-xs font-semibold rounded-full my-4 mx-4 px-4 py-2 inline-block relative`}
-          >
-            {" "}
-            <span className="text-[#34342a] text-[16px] ml-4">
-              <span
-                className={`absolute  ${proposal.status === "Rejected"
-                  ? "  w-[35%] h-[35%] -left-[0%] top-[2%]"
-                  : proposal.status === "Approved"
-                    ? " w-[60%] h-[60%] -left-[14%] -top-[40%]"
-                    : proposal.status === "In Progress"
-                      ? " w-[100%] h-[100%] -left-[35%] -top-[105%]"
-                      : ""
-                  } `}
-              >
-                <div
-                  id="lottie-container"
-                  style={{ width: "100%", height: "auto" }}
-                >
-                  {proposal.status === "In Progress" && (
-                    <Lottie
-                      options={defaultOptions}
-                      style={{ width: "100%", height: "100%" }}
-                    />
-                  )}
-                  {proposal.status === "Approved" && (
-                    <Lottie
-                      options={defaultOptions2}
-                      style={{ width: "100%", height: "100%" }}
-                    />
-                  )}
-                  {proposal.status === "Rejected" && (
-                    <Lottie
-                      options={defaultOptions3}
-                      style={{ width: "100%", height: "100%" }}
-                    />
-                  )}
-                </div>
-              </span>
-            </span>{" "}
-            {proposal.status}
+        <div className="flex gap-4 mt-4">
+          <div className="flex flex-col justify-center">
+            <CircularProgressBar percentage={approvedProposals} color="#4CAF50" />
+            <span className="text-white mt-2 text-center">{approvedProposals} votes</span>
           </div>
-        </div>
-
-        <div className="p-4">
-          <div className="flex flex-col right-card flex-1 relative">
-            <div className="flex items-center justify-start">
-              <div className="font-bold text-xl text-[#229ED9] mb-2 p-2 hidden md:block">
-                Transfer
-              </div>
-              <span className="border-r-2 h-6 border-[#229ED9] mx-2 hidden md:block" />
-              <div className="font-semibold md:text-[16px] text-[14px] text-[#229ED9] mb-2 p-2 truncate ... w-60 md:w-150 lg:w-full">
-                Proposal ID: #{proposal?.proposal_id}
-              </div>
-            </div>
-
-
-            {proposal?.proposal_description && (
-              <div
-                className="mx-4 text-black text-[12px] md:text-[16px] font-normal my-3"
-                dangerouslySetInnerHTML={{ __html: proposal?.proposal_description }}
-              />
-            )}
-
-            <div className="md:flex justify-start items-center gap-2 hidden">
-              {sectionsData.map((section, index) => (
-                <SmallCard
-                  key={index}
-                  title={section.title}
-                  input1={section.input1}
-                  input2={section.input2}
-                />
-              ))}
-            </div>
-            {/**  <div className="flex justify-start items-center gap-2 md:hidden">
-              {sectionsData.slice(0, 1).map((section, index) => (
-                <SmallCard
-                  key={index}
-                  title={section.title}
-                  input1={section.input1}
-                  input2={section.input2}
-                />
-              ))}
-            </div>*/}
-            <div className="md:mt-4 mt-2 absolute right-4 text-right md:text-sm text-[10px] text-white bg-[#4993B0] w-fit px-2 py-1 rounded-2xl">
-              {resData?.proposal_expired_at}
-            </div>
-          </div>
-
-          <div className="flex gap-2 text-xs py-2 px-2 rounded-b-lg flex-wrap md:hidden">
-            {gridItems.map((item, index) => (
-              <div
-                key={index}
-                className="text-black py-2 rounded-md text-nowrap"
-              >
-                <span className="font-bold text-[12px] text-nowrap	">
-                  {" "}
-                  • {item.label}
-                </span>
-                <br />
-                <div className="text-nowrap	py-1 text-[16px] mx-2">
-                  <span className=" text-[12px]"> {item.value}</span>
-
-                  {item.time && (
-                    <span className="text-[#55646b] mx-1 text-[10px]">
-                      {" "}
-                      {item.time}
-                    </span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="p-2 md:hidden">
-            <div className="flex items-center space-x-8">
-              <div className="flex items-center space-x-3">
-                <CircularProgressBarMobile percentage={25} color="#4CAF50" />
-                <span className="text-base text-black">{approvedProposals} votes</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <CircularProgressBarMobile percentage={1} color="red" />
-                <span className="text-base text-black">{rejectedvoters} votes</span>
-              </div>
-            </div>
-            <div className="mt-1 "></div>
-          </div>
-
-          {/** <div className="flex justify-start items-center gap-2 md:hidden">
-            {sectionsData.slice(1, 2).map((section, index) => (
-              <SmallCard
-                key={index}
-                title={section.title}
-                input1={section.input1}
-                input2={section.input2}
-              />
-            ))}
-          </div>*/}
-
-
-          <div className="dark:border-zinc-700 py-2 flex md:justify-start justify-around gap-4 text-zinc-500 dark:text-zinc-400">
-            {buttons.map((button, index) => (
-              <React.Fragment key={index}>
-                <button className="flex flex-col sm:flex-row items-center justify-center sm:space-x-2 md:mx-4">
-                  {button.icon}
-                  <span className="text-black text-[14px]">{button.text}</span>
-                </button>
-                {index !== buttons.length - 1 && (
-                  <span className="border-r h-6 border-black mx-2 hidden md:block" />
-                )}
-              </React.Fragment>
-            ))}
+          <div className="flex flex-col items-center">
+            <CircularProgressBar percentage={rejectedvoters} color="red" />
+            <span className="text-white mt-2 text-center">{rejectedvoters} votes</span>
           </div>
         </div>
       </div>
+
+      {/* Right Section */}
+      <div className="w-full md:w-3/4 px-4 py-8 xl:ml-8">
+      <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-4 gap-4">
+        <div className="max-w-full lg:max-w-full">
+          <h4 className="text-xl font-bold text-[#0E3746] overflow-hidden text-ellipsis whitespace-nowrap">
+            Transfer | <span className="md:text-[1rem] text-[1rem]">Proposal ID: #{proposal?.proposal_id}</span>
+          </h4>
+        </div>
+      
+
+
+
+          <div className="py-1 px-4 rounded-full bg-[#4993B0] text-white font-semibold">
+            {timeRemaining}
+          </div>
+        </div>
+
+        <p className="text-gray-900 mb-4">{proposal?.proposal_description}</p>
+
+        <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-8">
+          <div className="flex md:flex-col items-start">
+            <span className="font-semibold text-gray-900">• Submitted On: </span>
+            <span className="text-md ml-2">{submittedOnDate} <span className="text-xs text-gray-400">{submittedOnTime}</span></span>
+          </div>
+          <div className="flex md:flex-col items-start">
+            <span className="font-semibold text-gray-900">• Expires On: </span>
+            <span className="text-md ml-2">{expiresOnDate} <span className="text-xs text-gray-400">{expiresOnTime}</span></span>
+          </div>
+          <div className="flex md:flex-col items-start">
+            <span className="font-semibold text-gray-900">• Votes Required: </span>
+            <span className="text-md ml-2">{requiredVotes}</span>
+          </div>
+        </div>
+
+        {/* Cast Vote Section */}
+        <div className="bg-sky-200 w-full md:w-96 p-4 rounded-md mt-6">
+          <h1 className="text-lg font-semibold mb-2">Cast Vote</h1>
+          <form className="flex flex-col md:flex-row items-start md:items-center">
+            <div className="flex items-center space-x-4 mr-0 md:mr-4 mb-4 md:mb-0">
+              <label className="text-md text-[#0E3746] flex items-center">
+                <input type="radio" name="vote" value="In Favor" className="mr-2" />
+                In Favor
+              </label>
+              <label className="text-md text-[#0E3746] flex-col items-center">
+                <input type="radio" name="vote" value="Against" className="mr-2" />
+                Against
+              </label>
+            </div>
+            <button
+              type="submit"
+              className="bg-[#0E3746] hover:bg-[#051c24] text-white py-1 px-4 rounded-full transition-colors duration-300"
+            >
+              Submit
+            </button>
+          </form>
+        </div>
+
+        <div className="flex justify-evenly md:justify-start mt-8 space-x-4">
+          <button className="flex flex-col items-center text-gray-600 md:flex-row md:items-center">
+            <svg className="mb-1" width="16" height="15" viewBox="0 0 16 15">
+              <path d="M3.11111 9.22293H12.8889V8.34456H3.11111V9.22293ZM3.11111 6.58781H12.8889V5.70943H3.11111V6.58781ZM3.11111 3.95269H12.8889V3.07431H3.11111V3.95269ZM16 15L13.2649 12.2972H1.43556C1.02667 12.2972 0.685333 12.162 0.411556 11.8914C0.137778 11.6209 0.000592593 11.2833 0 10.8787V1.41857C0 1.01452 0.137185 0.677227 0.411556 0.406687C0.685926 0.136148 1.02726 0.000585583 1.43556 0H14.5644C14.9733 0 15.3147 0.135562 15.5884 0.406687C15.8622 0.677812 15.9994 1.01511 16 1.41857V15ZM1.43556 11.4189H13.6444L15.1111 12.8629V1.41857C15.1111 1.28389 15.0542 1.16004 14.9404 1.04702C14.8267 0.934005 14.7013 0.877789 14.5644 0.878374H1.43556C1.29926 0.878374 1.17393 0.93459 1.05956 1.04702C0.945185 1.15945 0.888296 1.2833 0.888889 1.41857V10.8787C0.888889 11.0134 0.945778 11.1372 1.05956 11.2502C1.17333 11.3632 1.29867 11.4195 1.43556 11.4189Z" fill="black" />
+            </svg>
+            <span className="md:ml-2">{commentcount} Comments</span>
+          </button>
+
+          <button className="flex flex-col items-center text-gray-600 md:flex-row md:items-center">
+            <svg className="mb-1" width="17" height="17" viewBox="0 0 17 17">
+              <path d="M16 1L1 5.85294L6.73529 8.5L12.9118 4.08824L8.5 10.2647L11.1471 16L16 1Z" stroke="black" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <span className="md:ml-2">{sharecount} Shares</span>
+          </button>
+
+          <button className="flex flex-col items-center text-gray-600 md:flex-row md:items-center" onClick={handleVotesClick}>
+            <svg className="mb-1" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"/>
+              <path d="M19.07 18.93C17.66 17.52 15.48 16.5 12 16.5s-5.66 1.02-7.07 2.43A2 2 0 0 0 6.34 22h11.32a2 2 0 0 0 1.41-3.07z"/>
+            </svg>
+            <span className="md:ml-2">{votecount} Votes</span>
+          </button>
+        </div>
+
+      </div>
+      <ViewModal open={isModalOpen } onClose={handleOnClose}/>
     </div>
   );
-
-
-
 }
-
-
 

@@ -22,12 +22,13 @@ const Decentralization = () => {
         </div>
 
         <div className="w-full laptop:px-20 tablet:px-16 mobile:px-20 px-10 flex flex-col big_phone:flex-row justify-between items-center">
-          <div className="w-full big_phone:w-1/2 md:pr-4 gap-6 flex flex-col items-start">
-            <h2 className="big_phone:text-[32px] mobile:text-3xl text-2xl font-medium text-white">
+          {/* Text Section */}
+          <div className="w-full big_phone:w-1/2 md:pr-4 gap-6 flex flex-col items-center big_phone:items-start">
+            <h2 className="big_phone:text-[32px] mobile:text-3xl text-2xl font-medium text-white text-center big_phone:text-left">
               Bringing Decentralization to Life: Empowering Communities through
               Seamless DAO Management
             </h2>
-            <p className="mobile:text-1xl text-sm text-white">
+            <p className="mobile:text-1xl text-sm text-white text-center big_phone:text-left">
               Our platform provides the tools and infrastructure needed to
               establish and manage your own decentralized autonomous
               organizations.
@@ -36,11 +37,11 @@ const Decentralization = () => {
             <button 
               onClick={handleJoinDaoClick}
               className="mobile:px-8 px-6 mobile:py-3 py-2 mobile:text-base text-sm bg-white text-black font-normal rounded-[27.5px] shadow-md hover:bg-gray-200 hover:text-blue-900">
-
               Join DAO
             </button>
           </div>
 
+          {/* Image Section */}
           <div className="w-full big_phone:w-1/2 big_phone:h-full h-42 flex justify-center items-center rounded-full">
             <img
               src={decentralize}

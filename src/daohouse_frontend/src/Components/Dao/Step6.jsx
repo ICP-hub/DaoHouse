@@ -1,15 +1,22 @@
 import React, { useEffect, useState } from "react";
+import { Principal } from "@dfinity/principal";
+import { createActor } from "../../../../declarations/icp_ledger_canister"; // Adjust the path to the actual location of the `createActor` function
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { FiUpload } from "react-icons/fi";
 import defaultImage from "../../../assets/defaultImage.png";
 import CircularProgress from '@mui/material/CircularProgress';
 import { toast } from 'react-toastify';
 import Container from "../Container/Container";
+import { useAuth } from "../utils/useAuthClient";
+import PaymentModal from "./PaymentModal";
 
 const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setLoadingNext }) => {
   const [file, setFile] = useState(null);
+  const { identity, stringPrincipal, backendActor } = useAuth()
   const [fileURL, setFileURL] = useState(defaultImage);
   const [shouldCreateDAO, setShouldCreateDAO] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loadingPayment, setLoadingPayment] = useState(false);
   // const [loadingNext, setLoadingNext] = useState(false);
   const className = "DAO__Step6";
 
@@ -31,13 +38,205 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
     }
   };
 
+  // const host = "http://127.0.0.1:40335"
+
+  // temp
+  const LEDGER_CANISTER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai";
+   const createTokenActor = async (canisterId) => {
+
+    //     console.log("identity : ",identity)
+    // const authClient = await AuthClient.create();
+    // const identity = await authClient.getIdentity();
+    // console.log("identity : ", identity);
+    // const principal = identity.getPrincipal();
+    // console.log("ankur :", principal.toText());
+
+    // const authClient = window.auth.client;
+
+
+    const tokenActorrr = createActor(Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"), { agentOptions: { identity } });
+    
+
+    // const agent = new HttpAgent({
+    //   identity,
+    //   host,
+    // });
+    // let tokenActor = Actor.createActor(ledgerIDL, {
+    //   agent,
+    //   canisterId,
+    // });
+
+    // return tokenActor
+    return tokenActorrr
+
+  };
+
+  const fetchMetadataAndBalance = async (tokenActor, ownerPrincipal) => {
+    console.log(tokenActor, ownerPrincipal.toText());
+    try {
+      const [metadata, balance] = await Promise.all([
+        tokenActor.icrc1_metadata(),
+        tokenActor.icrc1_balance_of({
+          owner: ownerPrincipal,
+          subaccount: [],
+        }),
+      ]);
+      console.log("Fetched metadata:", metadata);
+      return { metadata, balance };
+    } catch (err) {
+      console.error("Error fetching metadata and balance:", err);
+      throw err;
+    }
+  };
+
+  // aafter payment
+  const afterPaymentApprove = async (sendableAmount) => {
+    console.log("total amout ", sendableAmount)
+    console.log("after payment ")
+    console.log(backendActor)
+
+
+    try {
+      const res = await backendActor.make_payment(sendableAmount, Principal.fromText(stringPrincipal));
+      console.log(res,"asdjshjkhfksdhflksdhflkshdflkhdslk");
+      // console.log("resok",res?.Ok)
+    
+      if (res.Ok) {
+        toast.success("Payment successful!");
+        setIsModalOpen(false); // Close the modal on successful payment
+        handleDaoClick(); // Navigate to the next step
+      } else {
+        console.log(res);
+        toast.error("Payment failed. Please try again.");
+      }
+    } finally {
+      setLoadingPayment(false); // End loading state after payment is processed
+    }
+  }
+
+
+  // for payment
+
+  const formatTokenMetaData = (arr) => {
+    const resultObject = {};
+    arr.forEach((item) => {
+      const key = item[0];
+      const value = item[1][Object.keys(item[1])[0]]; // Extracting the value from the nested object
+      resultObject[key] = value;
+    });
+    return resultObject;
+  };
+
+  const transferApprove = async (
+    currentBalance,
+    currentMetaData,
+    tokenActor
+  ) => {
+    try {
+      const decimals = parseInt(currentMetaData["icrc1:decimals"], 10);
+      // const sendableAmount = parseInt(
+      //   (0.1111) * Math.pow(10, decimals),
+      //   10
+      // );
+      const sendableAmount = parseInt(
+        10000
+      );
+      console.log("sendable amount console ", sendableAmount);
+      console.log("current balance console ", currentBalance);
+
+    const backendCanisterId = process.env.CANISTER_ID_DAOHOUSE_BACKEND;
+
+      if (currentBalance > sendableAmount) {
+   
+        let transaction = {
+          from_subaccount: [],
+          spender: {
+            owner: Principal.fromText(backendCanisterId),
+            subaccount: [],
+          },
+          amount: Number(sendableAmount) + Number(currentMetaData["icrc1:fee"]),
+          expected_allowance: [],
+          expires_at: [],
+          fee: [currentMetaData["icrc1:fee"]],
+          memo: [],
+          created_at_time: [],
+        };
+        console.log("transaction ", transaction);
+        console.log("Token Actor ICRC2 APPROVE", tokenActor.icrc2_approve);
+        const approveRes = await tokenActor.icrc2_approve(transaction);
+        console.log("Payment Approve Response ", approveRes);
+        if (approveRes.Err) {
+          const errorMessage = `Insufficient funds. Balance: ${approveRes.Err.InsufficientFunds.balance}`;
+          toast.error(errorMessage);
+          return;
+        } else {
+          afterPaymentApprove(sendableAmount)
+          // afterPaymentApprove(
+          //   parseInt(approveRes?.Ok).toString(),
+          //   sendableAmount,
+          //   currentBalance
+          // );
+        }
+      } else {
+        console.log("Insufficient Balance to purchase");
+        toast.error(
+          `Insufficient balance. Balance : ${currentBalance / 10 ** 8}`
+        );
+        setLoadingPayment(false)
+      }
+    } catch (err) {
+      console.error("Error in transfer approve", err);
+    } finally {
+    }
+  };
+  async function paymentTest() {
+    console.log("owner principal is ", stringPrincipal);
+    console.log("printing payment");
+  
+    const backendCanisterId = process.env.CANISTER_ID_DAOHOUSE_BACKEND;
+    try{
+      setLoadingPayment(true);
+    const actor = await createTokenActor(Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"));
+  
+    console.log("backend canister id: ", backendCanisterId);
+    console.log("actor is ", actor);
+  
+    const name = await actor.icrc1_name();
+    console.log("balance is ", name);
+  
+    const { metadata, balance } = await fetchMetadataAndBalance(actor, Principal.fromText(stringPrincipal));
+  
+    const formattedMetadata = formatTokenMetaData(metadata);
+    const parsedBalance = parseInt(balance, 10);
+    console.log("Balance:", parsedBalance);
+  
+    // Proceed with transfer approval and payment
+    await transferApprove(parsedBalance, formattedMetadata, actor);
+    } catch (err) {
+      toast.error("Payment failed. Please try again.");
+      setLoadingPayment(false);
+    }
+  }
+
   const createDAO = async () => {
     if (!file) {
       toast.error("Please insert an image");
       return;
     }
-
+  
     setLoadingNext(true);
+  
+    // Trigger payment first
+    try {
+      setIsModalOpen(true);
+      // await paymentTest(); // Assume paymentTest will throw an error if payment fails
+    } catch (error) {
+      toast.error("Payment failed. Please try again.");
+      setLoadingNext(false);
+      return;
+    }
+    
+    if (!loadingPayment) {
     setTimeout(async () => {
       if (file) {
         const fileContent = await readFileContent(file);
@@ -63,10 +262,27 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
           },
         }));
       }
-      // setLoadingNext(false);
-      setShouldCreateDAO(true);
+      if(isModalOpen) {
+        setShouldCreateDAO(true);
+      }
+      // handleDaoClick();
     }, 2000);
+  }
   };
+
+  const handleCancel = () => {
+    setLoadingPayment(false); 
+    setIsModalOpen(false); 
+    setLoadingNext(false);
+    setShouldCreateDAO(false);
+  };
+
+  useEffect(() => {
+    if (loadingPayment) {
+      setIsModalOpen(true);
+    }
+  }, [loadingPayment]);
+  
 
   const readFileContent = (file) => {
     return new Promise((resolve, reject) => {
@@ -175,8 +391,18 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
       </div>
     </div>
     </Container>
+    <PaymentModal
+         data={data}
+        open={isModalOpen}
+        onClose={handleCancel}
+        onPay={async () => {
+          await paymentTest();
+        }}
+        loading={loadingPayment}
+      />
     </React.Fragment>
   );
 };
 
 export default Step6;
+

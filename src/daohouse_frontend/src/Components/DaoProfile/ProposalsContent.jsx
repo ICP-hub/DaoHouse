@@ -6,7 +6,7 @@ import { useAuth } from "../../Components/utils/useAuthClient";
 import { useParams } from "react-router-dom";
 import nodata from "../../../assets/nodata.png";
 
-const ProposalsContent = ({ proposals, isMember }) => {
+const ProposalsContent = ({ proposals, isMember, showActions=true }) => {
   const { backendActor, createDaoActor } = useAuth();
   const { daoCanisterId } = useParams();
   const [searchTerm, setSearchTerm] = useState("");
@@ -44,11 +44,11 @@ const ProposalsContent = ({ proposals, isMember }) => {
 
   return (
     <div className="mt-6 mb-6">
+       {isMember && showActions && (
       <div className="flex items-center justify-between">
         <h1 className="lg:text-[24px] md:text-[18px] text-[16px] font-bold">
           Proposals
         </h1>
-        {isMember && (
         <Link
           to="/create-proposal"
           className="flex justify-center items-center text-[16px] relative lg:w-[220px] lg:h-[50px] md:w-[185px] md:h-[46px] w-[30px] h-[30px] bg-white rounded-full"
@@ -62,9 +62,11 @@ const ProposalsContent = ({ proposals, isMember }) => {
           </span>
           <span className="ml-6 hidden md:block">Create Proposals</span>
         </Link>
-        )}
+        
       </div>
-      <div className="bg-[#F4F2EC] pt-3 pb-8 mt-4 mb-8 rounded-[10px] hidden md:block">
+    )}
+      <div className={`${showActions ? "bg-[#F4F2EC] pt-3 pb-8 mt-4 mb-8 rounded-[10px] hidden md:block" : ""} `}>
+      {showActions && (
         <div className="flex justify-between items-center px-6 mb-3">
           <span className="text-[20px] text-[#05212C] font-semibold">All</span>
           <span className="flex">
@@ -80,7 +82,8 @@ const ProposalsContent = ({ proposals, isMember }) => {
             </div>
           </span>
         </div>
-        <div className="w-full border-t py-6 px-4 border-[#0000004D] rounded-[10px] mb-4">
+      )}
+        <div className={`${showActions ? "w-full border-t py-6 px-4 border-[#0000004D] rounded-[10px] mb-4" : ""}`}>
           <div className="bg-transparent rounded flex flex-col gap-8">
             {displayedProposals.length === 0 ? (
               <p className="text-center font-black">
@@ -94,19 +97,6 @@ const ProposalsContent = ({ proposals, isMember }) => {
             )}
           </div>
         </div>
-      </div>
-
-      <div className="bg-white md:hidden rounded-[10px] mt-4 mb-8 flex flex-col gap-8">
-        {displayedProposals.length === 0 ? (
-          <p className="text-center font-black">
-                    <img src={nodata} alt="No Data" className="mb-1 mx-auto block " />
-            {/* No proposal found */}
-            </p>
-        ) : (
-          displayedProposals.map((proposal, index) => (
-            <Card key={index} proposal={proposal} />
-          ))
-        )}
       </div>
     </div>
   );

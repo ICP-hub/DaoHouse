@@ -299,15 +299,18 @@ pub async fn create_dao(dao_detail: DaoInput) -> Result<String, String> {
     user_profile_detail.dao_ids.push(dao_canister_id);
 
     // adding ledger canister in newly created DAO canister
-    // let response_inter_canister = call_inter_canister::<LedgerCanisterId, ()>(
-    //     "add_ledger_canister_id",
-    //     LedgerCanisterId {
-    //         id: ledger_canister_id,
-    //     },
-    //     dao_canister_id,
-    // )
-    // .await.unwrap();
+// <<<<<<< pratap
+//     // let response_inter_canister = call_inter_canister::<LedgerCanisterId, ()>(
+//     //     "add_ledger_canister_id",
+//     //     LedgerCanisterId {
+//     //         id: ledger_canister_id,
+//     //     },
+//     //     dao_canister_id,
+//     // )
+//     // .await.unwrap();
 
+// =======
+// >>>>>>> impl/backend
     match call_inter_canister::<LedgerCanisterId, ()>(
         "add_ledger_canister_id",
         LedgerCanisterId {
@@ -701,3 +704,16 @@ fn get_canister_meta_data() -> Result<CanisterData, String> {
 
 //     // Ok("()".to_string())
 // }
+
+#[query(guard = prevent_anonymous)]
+async fn check_profile_existence() -> Result<(), String> {
+    let principal_id = api::caller();
+    let profile = with_state(|state| state.user_profile.get(&principal_id));
+
+    if let Some(user_profile) = profile {
+        if !user_profile.email_id.trim().is_empty() {
+            return Err(crate::utils::USER_REGISTERED.to_string());
+        }
+    }
+    Ok(())
+}

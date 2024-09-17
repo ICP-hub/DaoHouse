@@ -30,14 +30,14 @@ const EditTags = ({ editTags, handleTagsChange }) => {
 
   return (
     <div className="bg-[#FFFFFF] md:text-[16px] text-[12px] font-normal text-[#646464] md:py-3 md:px-5 p-3 my-2 rounded-lg">
-      <div className="flex flex-wrap items-center gap-2 mb-4">
+      <div className="flex flex-wrap items-center gap-2 mb-6">
         {defaultTags.map((tag) => (
           <button
             key={tag}
             className={`py-2 px-4 rounded-full transition-colors shadow-md ${
               tags.includes(tag)
                 ? "bg-blue-500 text-white"
-                : "bg-gray-200 text-gray-600"
+                : "bg-gray-300 text-gray-600"
             }`
             
           }
@@ -47,25 +47,7 @@ const EditTags = ({ editTags, handleTagsChange }) => {
           </button>
         ))}
       </div>
-      <div className="flex flex-wrap items-center">
-        {tags.map((tag, index) => (
-          <span
-            key={index}
-            className="md:mr-3 mr-2 my-2 py-2 md:pl-12 pl-6 rounded-full bg-[#DFE9EE] font-normal text-[#05212C] flex items-center justify-between"
-            style={{
-              boxShadow:
-                "0px 0.46px 2.56px 0px #00000003, 0px 2.04px 5.3px 0px #00000005, 0px 5px 10.56px 0px #00000006, 0px 9.63px 20.7px 0px #00000008, 0px 16.2px 38.07px 0px #0000000A, 0px 25px 65px 0px #0000000D",
-            }}
-          >
-            {tag}
-            <img
-              src={Xtag}
-              alt="cross-icon"
-              className="md:ml-8 ml-3 md:mr-4 mr-3 cursor-pointer"
-              onClick={() => toggleTagSelection(tag)}
-            />
-          </span>
-        ))}
+      <div className="flex flex-wrap items-center mb-4">
         <div className="flex items-center gap-2">
           <input
             type="text"
@@ -82,6 +64,26 @@ const EditTags = ({ editTags, handleTagsChange }) => {
             Add
           </button>
         </div>
+      </div>
+      <div  className="flex flex-wrap items-center">
+      {tags.map((tag, index) => (
+          <span
+            key={index}
+            className="md:mr-3 mr-2 my-2 py-2 md:pl-4 pl-2 rounded-full bg-[#DFE9EE] font-normal text-[#05212C] flex items-center justify-between"
+            style={{
+              boxShadow:
+                "0px 0.46px 2.56px 0px #00000003, 0px 2.04px 5.3px 0px #00000005, 0px 5px 10.56px 0px #00000006, 0px 9.63px 20.7px 0px #00000008, 0px 16.2px 38.07px 0px #0000000A, 0px 25px 65px 0px #0000000D",
+            }}
+          >
+            {tag}
+            <img
+              src={Xtag}
+              alt="cross-icon"
+              className="md:ml-4 ml-3 md:mr-4 mr-3 cursor-pointer bg-rounded rounded-xl p-[2px] bg-zinc-300"
+              onClick={() => toggleTagSelection(tag)}
+            />
+          </span>
+        ))}
       </div>
     </div>
   );
