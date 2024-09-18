@@ -20,13 +20,13 @@ pub enum ProposalType {
     RemoveMemberPrposal,
     ChangeDaoConfig,
     ChnageDaoPolicy,
-    Bounty,
+    BountyRaised,
     BountyDone,
     Polls,
     UpgradeRemote,
     UpdateSelf,
     FunctionCall,
-    Transfer,
+    TokenTransfer,
 }
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
@@ -89,8 +89,13 @@ pub struct ProposalInput {
     pub group_to_join: Option<String>,
     pub proposal_type: ProposalType,
     pub principal_of_action: Option<Principal>, // principal id of user who is to be added, removed, transfered funds
-    pub new_dao_name : Option<String>
-    // pub proposal_expired_at: u64,
+    pub new_dao_name : Option<String>,
+    pub dao_purpose : Option<String>,
+    pub tokens: Option<u64>,
+    pub from: Option<Principal>,
+    pub proposal_created_at: Option<u64>,
+    pub proposal_expired_at: Option<u64>,
+    pub bounty_task : Option<String>,
     // pub proposal_amount:String,
     // pub proposal_receiver_id:String,
     // pub created_by: Principal,
@@ -223,6 +228,42 @@ pub struct ChnageDaoConfig {
     pub new_dao_name: String,
     pub action_member: Principal,
     pub description: String,
+}
+
+#[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
+pub struct ChangeDaoPolicy{
+    pub action_member: Principal,
+    pub description: String,
+    pub dao_purpose : String
+}
+
+#[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
+pub struct TokenTransferPolicy{
+    pub action_member: Principal,
+    pub description: String,
+    pub tokens: u64,
+    pub from: Principal,
+}
+
+#[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
+pub struct BountyRaised{
+    pub action_member: Principal,
+    pub description: String,
+    pub tokens: u64,
+    pub bounty_task : String,
+    pub proposal_created_at: u64,
+    pub proposal_expired_at: u64,
+}
+
+#[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
+pub struct BountyDone{
+    pub action_member: Principal,
+    pub description: String,
+    pub tokens: u64,
+    pub bounty_task : String,
+    pub from: Principal,
+    pub proposal_created_at: u64,
+    pub proposal_expired_at: u64,
 }
 
 // #[derive(Clone, CandidType, Serialize, Deserialize)]

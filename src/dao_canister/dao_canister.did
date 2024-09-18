@@ -4,6 +4,28 @@ type AddMemberArgs = record {
   group_name : text;
   new_member : principal;
 };
+type BountyDone = record {
+  proposal_expired_at : nat64;
+  from : principal;
+  description : text;
+  tokens : nat64;
+  action_member : principal;
+  proposal_created_at : nat64;
+  bounty_task : text;
+};
+type BountyRaised = record {
+  proposal_expired_at : nat64;
+  description : text;
+  tokens : nat64;
+  action_member : principal;
+  proposal_created_at : nat64;
+  bounty_task : text;
+};
+type ChangeDaoPolicy = record {
+  description : text;
+  action_member : principal;
+  dao_purpose : text;
+};
 type ChnageDaoConfig = record {
   new_dao_name : text;
   description : text;
@@ -71,11 +93,17 @@ type LedgerCanisterId = record { id : principal };
 type Pagination = record { end : nat32; start : nat32 };
 type ProposalInput = record {
   principal_of_action : opt principal;
+  proposal_expired_at : opt nat64;
   new_dao_name : opt text;
+  from : opt principal;
   proposal_title : text;
   proposal_description : text;
+  tokens : opt nat64;
+  proposal_created_at : opt nat64;
+  dao_purpose : opt text;
   group_to_join : opt text;
   proposal_type : ProposalType;
+  bounty_task : opt text;
 };
 type ProposalStakes = record {
   proposal_id : text;
@@ -95,9 +123,9 @@ type ProposalType = variant {
   BountyDone;
   UpgradeRemote;
   Polls;
+  TokenTransfer;
   ChnageDaoPolicy;
-  Bounty;
-  Transfer;
+  BountyRaised;
   RemoveMemberPrposal;
   FunctionCall;
   UpdateSelf;
@@ -144,6 +172,12 @@ type TokenTransferArgs = record {
   from : principal;
   tokens : nat64;
 };
+type TokenTransferPolicy = record {
+  from : principal;
+  description : text;
+  tokens : nat64;
+  action_member : principal;
+};
 type UpdateDaoSettings = record {
   members : vec principal;
   linksandsocials : vec text;
@@ -174,8 +208,12 @@ service : (DaoInput) -> {
   icrc_transfer : (TokenTransferArgs) -> (Result_4);
   proposal_refresh : () -> (Result_1);
   proposal_to_add_member_to_group : (AddMemberArgs) -> (Result_1);
+  proposal_to_bounty_done : (BountyDone) -> (Result_1);
+  proposal_to_bounty_raised : (BountyRaised) -> (Result_1);
+  proposal_to_change_dao_policy : (ChangeDaoPolicy) -> (Result_1);
   proposal_to_chnage_dao_config : (ChnageDaoConfig) -> (Result_1);
   proposal_to_remove_member_to_group : (RemoveMemberArgs) -> (Result_1);
+  proposal_to_transfer_token : (TokenTransferPolicy) -> (Result_1);
   reply_comment : (ReplyCommentArgs) -> (Result_1);
   search_proposal : (text) -> (vec Proposals) query;
   unfollow_dao : () -> (Result_1);
