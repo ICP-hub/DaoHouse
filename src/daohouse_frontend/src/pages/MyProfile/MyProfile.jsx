@@ -210,7 +210,7 @@ const MyProfile = ({ childComponent }) => {
     "
               >
                  <Link to="/my-profile" onClick={() => setActiveTab(0)}>
-                      <p className={`${tabButtonsStyle} ${activeTab === 0 ? "text-white translate-x-[40px]" : ""}`}> 
+                      <p className={`${tabButtonsStyle} ${activeTab === 0 ? "text-white " : ""}`}> 
                          <img  src={add_reaction} alt="MyProfile" className="inline mr-2 w-4 h-4" />
                          My Profile
                          {activeTab === 0 ? <FaArrowRightLong className="md:inline hidden" /> : ""}</p> 
