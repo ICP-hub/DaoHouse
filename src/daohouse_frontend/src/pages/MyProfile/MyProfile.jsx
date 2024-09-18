@@ -604,13 +604,13 @@ const MyProfile = ({ childComponent }) => {
   {/* Dark gray base line */}
  
   {/* Thicker line to overlap and change width */}
-  <div className="absolute bottom-0 flex justify-center left-0  w-[300px] h-[1px] translate-y-[-53px] bg-gray-500 transition-all duration-300 hover:w-[50px]"></div>
+  <div className="absolute bottom-0 flex justify-center left-0  w-[380px] h-[1px] translate-y-[-53px] bg-gray-500 transition-all duration-300 hover:w-[50px]"></div>
 
   {/* First tab */}
 
   <Link to="/my-profile/posts" onClick={() => setActiveTab(1)}>
     <p className={`${tabButtonsStyle} ${activeTab === 1 ? "text-hex text-[14px] border-b-0.8 border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
-    Proposals
+   Submitted Proposals
       {activeTab === 1 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
       {/* Tab underlining effect */}
       <span className={`${activeTab === 1 ? "absolute w-full h-[4px] bg-black  text-[14px] left-0 bottom-0 -z-10" : "hover:w-full hover:h-[4px] hover:bg-black left-0 bottom-0 -z-10 transition-all duration-300"}`}></span>
