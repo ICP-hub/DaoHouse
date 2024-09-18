@@ -210,7 +210,7 @@ const Dao = () => {
                     name={daos.dao_name || 'No Name'}
                     followers={daos.followers_count || '0'}
                     members={daos.members_count ? Number(BigInt(daos.members_count)) : '0'}
-                    // groups={daos.groups_count ? Number(BigInt(daos.groups_count)) : 'No Groups'}
+                    groups={daos.groups_count ? Number(BigInt(daos.groups_count)) : 'No Groups'}
                     proposals={daos.proposals_count || '0'}
                     image_id={daos.image_id || 'No Image'}
                     daoCanister={daos.daoCanister}
@@ -239,7 +239,7 @@ const Dao = () => {
                   name={a.name}
                   funds={a.funds}
                   members={a.members}
-                  // groups={a.groups}
+                  groups={a.groups}
                   proposals={a.proposals}
                   daoCanister={a.daoCanister}
                   daoCanisterId={daoCanisterId}
