@@ -333,9 +333,7 @@ const MyProfile = ({ childComponent }) => {
         font-mulish font-bold text-[16px] leading-[20px] text-left 
       "
             >
-             <Link to="/my-profile" onClick={() => setActiveTab(0)}>
-                    <p className={`${tabButtonsStyle} ${activeTab === 0 ? "text-black" : ""}`}>My Profile{activeTab === 0 ? <FaArrowRightLong className="md:inline hidden" /> : ""}</p> 
-                    </Link> 
+             
               <Link to="/my-profile/posts" onClick={() => setActiveTab(1)}>
                 <p className={`${tabButtonsStyle} ${activeTab === 1 ? "text-black" : ""}`}>
                
