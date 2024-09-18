@@ -8,15 +8,19 @@ import { useAuth } from '../../Components/utils/useAuthClient';
 import { toast } from 'react-toastify';
 import { CircularProgress } from '@mui/material';
 import { useNavigate, useParams } from "react-router-dom";
+import { Principal } from "@dfinity/principal";
 
 function CreateProposal() {
     const navigate = useNavigate();
     const [proposalTitle, setProposalTitle] = useState('');
     const [proposalDescription, setProposalDescription] = useState('');
     const [requiredVotes, setRequiredVotes] = useState('');
-    const [proposalType, setProposalType] = useState(''); // Default value changed to empty string
+    const [proposalType, setProposalType] = useState(''); 
+ 
     const [loading, setLoading] = useState(false);
-   const { createDaoActor, backendActor } = useAuth();
+   const { createDaoActor, backendActor ,stringPrincipal  } = useAuth();
+  console.log("dfjsdljflksdf",stringPrincipal);
+  
     
    const { daoCanisterId } = useParams();
     useEffect(() => {
@@ -31,7 +35,7 @@ function CreateProposal() {
     const handleProposalDescriptionChange = (value) => {
         setProposalDescription(value);
     };
-
+   ; 
 
 //     const handleRequiredVotesChange = (event) => {
 //         const value = event.target.value;
@@ -54,39 +58,40 @@ function CreateProposal() {
     
         try {
             // Validate proposal data before sending
-            const votes = parseInt(requiredVotes, 10);
-            if (!proposalTitle || !proposalDescription || isNaN(votes) || !proposalType || votes < 0) {
+            // const votes = parseInt(requiredVotes, 10);
+            if (!proposalTitle || !proposalDescription  || !proposalType ) {
                 throw new Error("Please fill all the fields with valid data and choose a proposal type.");
             }
             
             const strippedDescription = stripHtmlTags(proposalDescription);
             const proposalData = {
+                // principal_of_action : Principal.fromText(stringPrincipal).toText(),
+                principal_of_action : stringPrincipal ? [Principal.fromText(stringPrincipal)] : [],
                 proposal_title: proposalTitle,
                 proposal_description: strippedDescription,
-                required_votes: parseInt(requiredVotes, 10),
+                // required_votes: parseInt(requiredVotes, 10),
                 proposal_type: { [proposalType]: null },
+                group_to_join : [],
             };
     
-            console.log("Proposal Data:", proposalData);
-            console.log("Backend ID:", process.env.CANISTER_ID_DAOHOUSE_BACKEND);
-    
-            // Fetch all DAOs and get the DAO Canister
+            console.log("Proposal Data:", proposalData);    
             const pagination = { start: 0, end: 10 };
             const response = await backendActor.get_all_dao(pagination);
     
             await Promise.all(response.map(async (data) => {
+                console.log("data",data);
+                
                 const daoCanister = createDaoActor(data.dao_canister_id);
                 console.log("DAO Canister ID:", data.dao_canister_id);
-                await daoCanister.create_proposal(process.env.CANISTER_ID_DAOHOUSE_BACKEND, proposalData);
+                const backendPrincipal = Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND)
+                await daoCanister.create_proposal_controller(backendPrincipal, proposalData);
             }));
-            
-            console.log("Proposal created successfully");
-            
+                        
             // Display success message and clear form fields
             toast.success("Proposal created successfully!");
             setProposalTitle('');
             setProposalDescription('');
-            setRequiredVotes('');
+            // setRequiredVotes('');
             setProposalType('');
            
         } catch (error) {
@@ -98,7 +103,59 @@ function CreateProposal() {
     };
     
 
-
+    // const handleSubmit = async (event) => {
+    //     event.preventDefault();
+    //     setLoading(true);
+    
+    //     try {
+    //         // Validate proposal data before sending
+    //         if (!proposalTitle || !proposalDescription || !proposalType) {
+    //             throw new Error("Please fill all the fields with valid data and choose a proposal type.");
+    //         }
+    
+          
+    //         const proposalData = {
+    //             principal_of_action :aaaaa-aa,
+    //             proposal_title: proposalTitle,
+    //             proposal_description: strippedDescription,
+    //             proposal_type: { [proposalType]: null },
+    //         };
+    
+    //         console.log("Proposal Data:", proposalData);
+    //         console.log("Backend ID:", process.env.CANISTER_ID_DAOHOUSE_BACKEND);
+    
+    //         // Fetch all DAOs and get the DAO Canister
+    //         const pagination = { start: 0, end: 10 };
+    //         const response = await backendActor.get_all_dao(pagination);
+    
+    //         await Promise.all(response.map(async (data) => {
+    //             console.log("data", data);
+    
+    //             const daoCanister = createDaoActor(data.dao_canister_id);
+    //             console.log("DAO Canister ID:", data.dao_canister_id);
+    
+    //             // Convert the string canister ID to a valid Principal object
+    //             const backendPrincipal = Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND);
+                
+    //             // Pass the Principal object instead of the string
+    //             await daoCanister.create_proposal_controller(backendPrincipal, proposalData);
+    //         }));
+    
+    //         console.log("Proposal created successfully");
+    
+    //         // Display success message and clear form fields
+    //         toast.success("Proposal created successfully!");
+    //         setProposalTitle('');
+    //         setProposalDescription('');
+    //         setProposalType('');
+    
+    //     } catch (error) {
+    //         console.error("Error creating proposal:", error);
+    //         toast.error(error.message || "Error creating proposal. Please try again.");
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
     return (
      
         <div className="bg-zinc-200 w-full">
@@ -170,6 +227,7 @@ function CreateProposal() {
                                 <option value="">Select Proposal Type</option>
                                 <option value="VotingProposal">Voting Proposal</option>
                                 <option value="RemoveMemberProposal">Remove Member Proposal</option>
+                                <option value="AddMemberProposal">Add Member Proposal</option>
                             </select>
                         </div>
 
