@@ -18,7 +18,15 @@ pub enum ProposalState {
 pub enum ProposalType {
     AddMemberProposal,
     RemoveMemberPrposal,
-    VotingProposal,
+    ChangeDaoConfig,
+    ChnageDaoPolicy,
+    Bounty,
+    BountyDone,
+    Polls,
+    UpgradeRemote,
+    UpdateSelf,
+    FunctionCall,
+    Transfer,
 }
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
@@ -59,6 +67,7 @@ pub struct Proposals {
     pub share_count: u64,
     pub principal_of_action: Principal, // principal id of user who is to be added, removed, transfered funds
     pub group_to_join: Option<String>,
+    pub new_dao_name : Option<String>
 }
 
 // for proposal comments
@@ -80,11 +89,11 @@ pub struct ProposalInput {
     pub group_to_join: Option<String>,
     pub proposal_type: ProposalType,
     pub principal_of_action: Option<Principal>, // principal id of user who is to be added, removed, transfered funds
-
-                                                // pub proposal_expired_at: u64,
-                                                // pub proposal_amount:String,
-                                                // pub proposal_receiver_id:String,
-                                                // pub created_by: Principal,
+    pub new_dao_name : Option<String>
+    // pub proposal_expired_at: u64,
+    // pub proposal_amount:String,
+    // pub proposal_receiver_id:String,
+    // pub created_by: Principal,
 }
 
 // #[derive(Clone, CandidType, Serialize, Deserialize)]
@@ -201,6 +210,21 @@ pub struct AddMemberArgs {
     // pub daohouse_canister: Principal,
     pub description: String,
 }
+
+#[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
+pub struct RemoveMemberArgs {
+    pub group_name: String,
+    pub action_member: Principal,
+    pub description: String,
+}
+
+#[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
+pub struct ChnageDaoConfig {
+    pub new_dao_name: String,
+    pub action_member: Principal,
+    pub description: String,
+}
+
 // #[derive(Clone, CandidType, Serialize, Deserialize)]
 // pub struct GroupList {
 //     pub users: Vec<Principal>,

@@ -72,8 +72,16 @@ type Profileinput = record {
 };
 type ProposalType = variant {
   AddMemberProposal;
-  VotingProposal;
+  ChangeDaoConfig;
+  BountyDone;
+  UpgradeRemote;
+  Polls;
+  ChnageDaoPolicy;
+  Bounty;
+  Transfer;
   RemoveMemberPrposal;
+  FunctionCall;
+  UpdateSelf;
 };
 type ProposalValueStore = record {
   title : text;

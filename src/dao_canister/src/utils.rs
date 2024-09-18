@@ -1,5 +1,6 @@
 // DAO permissions
 pub const PERMISSION_ADD_MEMBER_TO_GROUP: &str = "add_member";
+
 pub const PERMISSION_CHANGE_DAO_CONFIG: &str = "ChangeDAOConfig";
 
 // Essential members 
@@ -7,6 +8,8 @@ pub const COUNCIL_GROUP_NAME: &str = "council";
 
 // General responses / errors / warninigs
 pub const TITLE_ADD_MEMBER: &str = "Add new memeber";
+pub const TITLE_REMOVE_MEMBER: &str = "Remove group memeber";
+pub const TITLE_CHANGE_DAO_CONFIG : &str = "Chnage dao config";
 pub const REQUEST_ADD_MEMBER: &str = "Proposal successfully created !.";
 pub const NOTFOUND_GROUP: &str = "No groups found with the given name";
 pub const WARNING_ALREADY_FOLLOW_DAO: &str = "You are already following this DAO";
@@ -22,3 +25,6 @@ pub const WARNING_ANONYMOUS_CALL: &str = "Anonymous principal not allowed !";
 pub const WARNING_INTER_CANISTER: &str = "Intercanister call failed";
 pub const WARNING_DONT_FOLLOW: &str = "You don't follow";
 pub const SUCCESS_DAO_UPDATED: &str = "DAO successfully updated";
+pub const TITLE_DELETE_MEMBER : &str = "Delete member Proposal successfully created !.";
+pub const WARNING_NO_MEMBER_IN_GROUP: &str = "You are not part of the group";
+pub const MESSAGE_CHANGE_DAO_CONFIG : &str = "Chnage dao config proposal created successfully ";
