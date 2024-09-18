@@ -1,6 +1,6 @@
 import React, { useState ,useEffect } from 'react';
 import proposals from "../../../assets/proposals.png";
-import createProposal from "../../../assets/proposal.gif";
+import createProposalNew from "../../../assets/createProposalNew.png";
 import ReactQuill from 'react-quill';
 import { quillFormats, quillModules } from '../../utils/quilConfig';
 import Container from '../../Components/Container/Container';
@@ -35,15 +35,6 @@ function CreateProposal() {
     const handleProposalDescriptionChange = (value) => {
         setProposalDescription(value);
     };
-   ; 
-
-//     const handleRequiredVotesChange = (event) => {
-//         const value = event.target.value;
-//         // Allow any non-negative integer including zero
-//         if (value === '' || (Number.isInteger(parseFloat(value)) && parseFloat(value) >= 0)) {
-//             setRequiredVotes(value);
-//         }
-//     };
 
     const handleProposalTypeChange = (event) => {
         setProposalType(event.target.value);
@@ -68,6 +59,7 @@ function CreateProposal() {
                 // principal_of_action : Principal.fromText(stringPrincipal).toText(),
                 principal_of_action : stringPrincipal ? [Principal.fromText(stringPrincipal)] : [],
                 proposal_title: proposalTitle,
+                new_dao_name: [],
                 proposal_description: strippedDescription,
                 // required_votes: parseInt(requiredVotes, 10),
                 proposal_type: { [proposalType]: null },
@@ -170,7 +162,7 @@ function CreateProposal() {
                 </Container>
             </div>
 
-            <div className='bg-[#c8ced3]'>
+            <div className='bg-[#F5F5F5]'>
                 <Container classes={`${className}__label relative py-8 px-10 flex gap-2 flex-col w-full justify-between items-center`}>
                     <p className="md:text-[40px] text-[30px] text-black px-8 mr-auto flex flex-row justify-start items-center gap-4 ">
                         Create Proposal  
@@ -179,75 +171,78 @@ function CreateProposal() {
                             <div className="w-14 mt-2 border-t-2 border-black"></div>
                         </div>
                     </p>
+                    <div className=" bg-[#F4F2EC] p-6 m-6 rounded-lg shadow w-full ">
+                        <div className='flex justify-start gap-6 rounded-md p-4'>
+                            <div className='flex flex-col w-[800px]'>
+                                <div className="max-w-6xl relative">
+                                    <label className="block mb-2 font-semibold text-xl">Proposal Title</label>
+                                    <input
+                                        type="text"
+                                        value={proposalTitle}
+                                        onChange={handleProposalTitleChange}
+                                        placeholder="Enter proposal title"
+                                        className=" w-full max-w-[800px] px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+                                    />
+                                </div>
 
-                    <div className="mx-auto bg-[#F4F2EC] p-6 m-6 rounded-lg shadow w-full ">
-                        <div className="mb-6 max-w-6xl relative">
-                            <label className="block mb-2 font-semibold text-xl">Proposal Title</label>
-                            <input
-                                type="text"
-                                value={proposalTitle}
-                                onChange={handleProposalTitleChange}
-                                placeholder="Enter proposal title"
-                                className=" w-full max-w-[800px] px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                            />
-                        </div>
+                                <div className='max-w-6xl'>
+                                    <h1 className="text-xl font-semibold mb-4">Proposal Description</h1>
+                                    <div className="mb-6 max-w-6xl mt-4 relative">
+                                        <textarea
+                                            value={proposalDescription}
+                                            onChange={e => setProposalDescription(e.target.value)} // Update handler to set state
+                                            placeholder='Write here...'
+                                            className='w-full max-w-[800px] px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent'
+                                            rows="10" // You can adjust the number of rows
+                                        />
+                                    </div>
+                                </div>
 
-                        <div className='max-w-6xl'>
-                            <h1 className="text-xl font-semibold mb-4">Proposal Description</h1>
-                            <div className="mb-6 max-w-6xl mt-4 relative editor-container">
-                                <ReactQuill
-                                    value={proposalDescription}
-                                    onChange={handleProposalDescriptionChange}
-                                    modules={quillModules}
-                                    formats={quillFormats}
-                                    placeholder='Write here...'
-                                    className='proposal-editor rounded-xl w-full max-w-[800px]'
-                                />
+
+                                {/* <div className="mb-6 max-w-6xl relative">
+                                    <label className="block mb-2 font-semibold text-xl">Required Votes</label>
+                                    <input
+                                        type="number"
+                                        value={requiredVotes}
+                                        onChange={handleRequiredVotesChange}
+                                        placeholder="Enter required votes"
+                                        className="w-full max-w-[800px] px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+                                    />
+                                </div> */}
+
+                                <div className="mb-6 max-w-6xl relative">
+                                    <label className="block mb-2 font-semibold text-xl">Proposal Type</label>
+                                    <select
+                                        value={proposalType}
+                                        onChange={handleProposalTypeChange}
+                                        className="w-full max-w-[800px] px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+                                    >
+                                        <option value="">Select Proposal Type</option>
+                                        <option value="VotingProposal">Voting Proposal</option>
+                                        <option value="RemoveMemberProposal">Remove Member Proposal</option>
+                                        <option value="AddMemberProposal">Add Member Proposal</option>
+                                    </select>
+                                </div>
+
+                                <div className="flex justify-center my-8">
+                                {
+                                    loading ? <CircularProgress /> :
+                                    <button
+                                        className="bg-[#0E3746] hover:bg-[#819499] text-white font-normal text-center rounded-full text-[16px] py-2 px-6 rounded focus:outline-none focus:shadow-outline"
+                                        type="submit"
+                                        onClick={handleSubmit}
+                                        disabled={loading}
+                                    >
+                                        Submit
+                                    </button>
+                                }
+                                </div>
+                            </div>
+                            
+                            <div className="md:flex self-start hidden">
+                                <img src={createProposalNew} alt="Illustration" className="w-[350px] h-[350px]" />
                             </div>
                         </div>
-
-                        {/* <div className="mb-6 max-w-6xl relative">
-                            <label className="block mb-2 font-semibold text-xl">Required Votes</label>
-                            <input
-                                type="number"
-                                value={requiredVotes}
-                                onChange={handleRequiredVotesChange}
-                                placeholder="Enter required votes"
-                                className="w-full max-w-[800px] px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                            />
-                        </div> */}
-
-                        <div className="mb-6 max-w-6xl relative">
-                            <label className="block mb-2 font-semibold text-xl">Proposal Type</label>
-                            <select
-                                value={proposalType}
-                                onChange={handleProposalTypeChange}
-                                className="w-full max-w-[800px] px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                            >
-                                <option value="">Select Proposal Type</option>
-                                <option value="VotingProposal">Voting Proposal</option>
-                                <option value="RemoveMemberProposal">Remove Member Proposal</option>
-                                <option value="AddMemberProposal">Add Member Proposal</option>
-                            </select>
-                        </div>
-
-                        <div className="flex justify-center my-8">
-                        {
-                            loading ? <CircularProgress /> :
-                            <button
-                                className="bg-[#0E3746] hover:bg-[#819499] text-white font-normal text-center rounded-full text-[16px] py-2 px-6 rounded focus:outline-none focus:shadow-outline"
-                                type="submit"
-                                onClick={handleSubmit}
-                                disabled={loading}
-                            >
-                                Submit
-                            </button>
-                        }
-                        </div>
-                    </div>
-
-                    <div className="absolute right-10 top-10 hidden md:block">
-                        <img src={createProposal} alt="Illustration" className="w-[350px] h-[350px]" />
                     </div>
                 </Container>
             </div>

@@ -9,11 +9,12 @@ import { Principal } from "@dfinity/principal";
 import ViewModal from "../Dao/ViewModal";
 
 export default function Card({ proposal }) {
+  
 
   const [isModalOpen,setIsModalOpen]=useState(false)
 
   const a = proposal?.proposal_description;
-
+  const principalOfAction = proposal.principal_of_action.toText()
   const approvedProposals = Number(BigInt(proposal?.proposal_approved_votes || 0));
   const rejectedvoters = Number(BigInt(proposal?.proposal_rejected_votes || 0));
   const status = proposal?.proposal_status
@@ -117,7 +118,7 @@ export default function Card({ proposal }) {
       {/* Left Section */}
       <div className="w-full md:w-1/4 flex flex-col items-center bg-[#0E3746] px-4 py-8 md:py-12 rounded-xl md:rounded-lg md:rounded-r-none">
         <img src={avatar} alt="user avatar" className="w-16 h-16 rounded-full mb-4" />
-        <h4 className="text-white text-xl font-semibold">{principalString}</h4>
+        <h4 className="text-white text-xl font-semibold truncate ... w-40">{principalOfAction}</h4>
         <div>
           <div
             className={`mt-2 px-4 py-1 rounded-full text-white text-sm font-semibold ${
