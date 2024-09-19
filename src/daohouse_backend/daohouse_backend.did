@@ -137,6 +137,7 @@ service : (InitialArgs) -> {
   get_canister_meta_data : () -> (Result_3) query;
   get_cycles : () -> (nat64) query;
   get_latest_proposals : (Pagination) -> (vec ProposalValueStore) query;
+  get_my_proposals : (Pagination) -> (vec ProposalValueStore) query;
   get_profile_by_id : (principal) -> (Result_4);
   get_proposals : (Pagination) -> (vec ProposalValueStore) query;
   get_user_profile : () -> (Result_4) query;
