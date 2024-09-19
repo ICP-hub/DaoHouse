@@ -133,7 +133,7 @@ const Dao = () => {
   const noDaoFound = searchTerm && fetchedDAOs.length === 0;
 
   return (
-    <div className="bg-zinc-200 ">
+    <div className="bg-zinc-200 relative mt-[-90px]">
       <TopComponent showAll={showAll} setShowAll={setShowAll} showButtons={true} />
       <div className={"bg-gray"}>
         <Container classes={`__label small_phone:py-8 py-5 mobile:px-10 px-5 flex flex-row w-full justify-between items-center`}>
@@ -211,7 +211,7 @@ const Dao = () => {
                     name={daos.dao_name || 'No Name'}
                     followers={daos.followers_count || '0'}
                     members={daos.members_count ? Number(BigInt(daos.members_count)) : '0'}
-                    // groups={daos.groups_count ? Number(BigInt(daos.groups_count)) : 'No Groups'}
+                    groups={daos.groups_count ? Number(BigInt(daos.groups_count)) : 'No Groups'}
                     proposals={daos.proposals_count || '0'}
                     image_id={daos.image_id || 'No Image'}
                     daoCanister={daos.daoCanister}
@@ -240,7 +240,7 @@ const Dao = () => {
                   name={a.name}
                   funds={a.funds}
                   members={a.members}
-                  // groups={a.groups}
+                  groups={a.groups}
                   proposals={a.proposals}
                   daoCanister={a.daoCanister}
                   daoCanisterId={daoCanisterId}

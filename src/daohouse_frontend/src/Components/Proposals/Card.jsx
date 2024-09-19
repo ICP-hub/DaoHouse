@@ -9,18 +9,20 @@ import { Principal } from "@dfinity/principal";
 import ViewModal from "../Dao/ViewModal";
 import { useNavigate } from "react-router-dom";
 
-export default function Card({ proposal, showActions, isProposalDetails }) {
-
-  console.log(proposal.dao_canister_id);
-  const proposalId = proposal.proposal_id
-  const daoCanisterId = proposal.dao_canister_id;
+export default function Card({ proposal, voteApi }) {
   
 
-  const [isModalOpen,setIsModalOpen]=useState(false)
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [voteStatus, setVoteStatus] = useState(""); // Track user vote (Yes/No)
+  const [approvedVotes, setApprovedVotes] = useState(proposal?.proposal_approved_votes || 0);
+  const [rejectedVotes, setRejectedVotes] = useState(proposal?.proposal_rejected_votes || 0);
+  const [voteCount, setVoteCount] = useState(approvedVotes + rejectedVotes);
+  const [timeRemaining, setTimeRemaining] = useState("");
   const navigate = useNavigate()
 
   const a = proposal?.proposal_description;
-
+  const principalOfAction = proposal.principal_of_action.toText()
   const approvedProposals = Number(BigInt(proposal?.proposal_approved_votes || 0));
   const rejectedvoters = Number(BigInt(proposal?.proposal_rejected_votes || 0));
   const status = proposal?.proposal_status
@@ -77,33 +79,56 @@ export default function Card({ proposal, showActions, isProposalDetails }) {
     ? Principal.fromUint8Array(new Uint8Array(proposal.created_by)).toText()
     : "Unknown";
 
-    const getTimeRemaining = (expiryDate) => {
-      const now = new Date();
-      const timeDiff = expiryDate - now;
-  
-      if (timeDiff <= 0) return "00d 00h 00m 00s left";
-  
-      const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
-  
-      return `${days}d ${hours}h ${minutes}m ${seconds}s left`;
-    };
 
-    const [timeRemaining, setTimeRemaining] = useState(getTimeRemaining(expiresOn));
 
     useEffect(() => {
       const intervalId = setInterval(() => {
-        setTimeRemaining(getTimeRemaining(expiresOn));
+        const now = new Date();
+        const timeDiff = new Date(Number(proposal?.proposal_expired_at) / 1_000_000) - now;
+        if (timeDiff <= 0) {
+          clearInterval(intervalId);
+          setTimeRemaining("Voting closed");
+        } else {
+          const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+          setTimeRemaining(`${days}d ${hours}h ${minutes}m ${seconds}s left`);
+        }
       }, 1000);
-  
       return () => clearInterval(intervalId);
-    }, [expiresOn]);
+    }, [proposal]);
 
   function handleOnClose(){
     setIsModalOpen(false)
   }
+
+  const handleVoteSubmit = async (e) => {
+    e.preventDefault();
+    if (!voteStatus) return;
+
+    console.log("Hello");
+    
+
+    try {
+      const voteParam = voteStatus === "In Favor" ? { Yes: null } : { No: null };
+      const result = await voteApi.vote(proposal.proposal_id, voteParam);
+
+      if (result?.Ok) {
+        // Update the vote counts locally based on the user vote
+        if (voteStatus === "In Favor") {
+          setApprovedVotes((prev) => prev + 1);
+        } else {
+          setRejectedVotes((prev) => prev + 1);
+        }
+        setVoteCount((prev) => prev + 1);
+      } else {
+        console.error("Error voting:", result.Err);
+      }
+    } catch (error) {
+      console.error("Error submitting vote:", error);
+    }
+  };
 
   const handleViewMore = () => {
     navigate(`/social-feed/proposal/${proposalId}/dao/${daoCanisterId}`)
@@ -123,14 +148,19 @@ export default function Card({ proposal, showActions, isProposalDetails }) {
     },
   };
 
-  {
-    return (
-      <div className={`bg-white font-mulish ${isProposalDetails ? "rounded-t-xl": "rounded-xl" } shadow-md flex flex-col md:flex-col`}>
-        {/* Top Section */}
-        <div className="w-full flex justify-between items-center bg-[#0E3746] px-[20px] md:px-12 py-6  rounded-t-lg rounded-b-none">
-          <div className="flex gap-[12px] md:gap-8 justify-center items-center">
-            <img src={avatar} alt="user avatar" className="w-8 h-8 md:w-16 md:h-16 rounded-full" />
-            <h4 className="text-white text-sm md:text-xl font-semibold">{principalString}</h4>
+  return (
+        <div className="bg-white rounded-xl shadow-md flex flex-col md:flex-row">
+      {/* Left Section */}
+      <div className="w-full md:w-1/4 flex flex-col items-center bg-[#0E3746] px-4 py-8 md:py-12 rounded-xl md:rounded-lg md:rounded-r-none">
+        <img src={avatar} alt="user avatar" className="w-16 h-16 rounded-full mb-4" />
+        <h4 className="text-white text-xl font-semibold truncate ... w-40">{principalOfAction}</h4>
+        <div>
+          <div
+            className={`mt-2 px-4 py-1 rounded-full text-white text-sm font-semibold ${
+              status === "Approved" ? "bg-[#4CAF50]" : status === "Rejected" ? "bg-red-500" : "bg-[#4993B0]"
+            }`}
+          >
+            {status}
           </div>
           <div className="flex gap-4">
             <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
@@ -216,29 +246,39 @@ export default function Card({ proposal, showActions, isProposalDetails }) {
 
         
             {/* Cast Vote Section */}
-              {showActions && (
-                <div className="bg-sky-200 w-full md:w-[312px] px-3 py-5 rounded-md max-w-[312px]">
-                  <h1 className="text-lg font-semibold mb-2">Cast Vote</h1>
-                  <form className="flex flex-col md:flex-row items-start md:items-center">
-                    <div className="flex items-center space-x-4 mr-0 md:mr-4 mb-4 md:mb-0">
-                      <label className="text-md text-[#0E3746] flex items-center">
-                        <input type="radio" name="vote" value="In Favor" className="mr-2" />
-                        In Favor
-                      </label>
-                      <label className="text-md text-[#0E3746] flex-col items-center">
-                        <input type="radio" name="vote" value="Against" className="mr-2" />
-                        Against
-                      </label>
-                    </div>
-                    <button
-                      type="submit"
-                      className="bg-[#0E3746] hover:bg-[#051c24] text-white py-1 px-4 rounded-full transition-colors duration-300"
-                    >
-                      Submit
-                    </button>
-                  </form>
+            <div className="bg-sky-200 w-full md:w-96 p-4 rounded-md mt-6">
+              <h1 className="text-lg font-semibold mb-2">Cast Vote</h1>
+              <form className="flex flex-col md:flex-row items-start md:items-center" onSubmit={handleVoteSubmit}>
+                <div className="flex items-center space-x-4 mr-0 md:mr-4 mb-4 md:mb-0">
+                  <label className="text-md text-[#0E3746] flex items-center">
+                    <input
+                      type="radio"
+                      name="vote"
+                      value="In Favor"
+                      className="mr-2"
+                      onChange={() => setVoteStatus("In Favor")}
+                    />
+                    In Favor
+                  </label>
+                  <label className="text-md text-[#0E3746] flex-col items-center">
+                    <input
+                      type="radio"
+                      name="vote"
+                      value="Against"
+                      className="mr-2"
+                      onChange={() => setVoteStatus("Against")}
+                    />
+                    Against
+                  </label>
                 </div>
-              )}
+                <button
+                  type="submit"
+                  className="bg-[#0E3746] hover:bg-[#051c24] text-white py-1 px-4 rounded-full transition-colors duration-300"
+                >
+                  Submit
+                </button>
+              </form>
+            </div>
             </div>
             {!showActions && (
             <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer">
@@ -248,8 +288,7 @@ export default function Card({ proposal, showActions, isProposalDetails }) {
 
         
       <ViewModal open={isModalOpen } onClose={handleOnClose}/>
-          </div>
-        </div>
-    );
-  }
+
+    </div>
+  );
 }
