@@ -5,6 +5,7 @@ use crate::{
 use crate::{with_state, ProposalType};
 use candid::Principal;
 use ic_cdk::api;
+use ic_cdk::api::call::{CallResult, RejectionCode};
 use ic_cdk::{query, update};
 
 #[query]
@@ -282,7 +283,10 @@ async fn proposal_to_bounty_done(args: BountyDone)-> Result<String, String>{
 #[update (guard = prevent_anonymous)]
 async fn ask_to_join_dao(daohouse_backend_id: Principal) -> Result<String, String> {
     crate::guards::guard_check_if_proposal_exists(api::caller(), ProposalType::AddMemberProposal)?;
-
+    
+    let principal_id = api::caller();
+    let dao_id = ic_cdk::api::id();
+    
     let proposal = ProposalInput {
         proposal_description: String::from(crate::utils::REQUEST_JOIN_DAO),
         group_to_join: None,
@@ -296,6 +300,28 @@ async fn ask_to_join_dao(daohouse_backend_id: Principal) -> Result<String, Strin
         proposal_created_at: None,
         proposal_expired_at: None,
         bounty_task : None,
+    };
+
+    let response: CallResult<(Result<(), String>,)> = ic_cdk::call(
+        daohouse_backend_id,
+        "store_join_dao",
+        (dao_id, principal_id),
+    ).await;
+
+    match response {
+        Ok((Ok(()),)) => (),
+        Ok((Err(err),)) => return Err(err),
+        Err((code, message)) => {
+            let err_msg = match code {
+                RejectionCode::NoError => "NoError".to_string(),
+                RejectionCode::SysFatal => "SysFatal".to_string(),
+                RejectionCode::SysTransient => "SysTransient".to_string(),
+                RejectionCode::DestinationInvalid => "DestinationInvalid".to_string(),
+                RejectionCode::CanisterReject => "CanisterReject".to_string(),
+                _ => format!("Unknown rejection code: {:?}: {}", code, message),
+            };
+            return Err(err_msg);
+        }
     };
 
     Ok(crate::proposal_route::create_proposal_controller(daohouse_backend_id, proposal).await)
@@ -312,19 +338,49 @@ fn get_dao_followers() -> Vec<Principal> {
 }
 
 #[update(guard=prevent_anonymous)]
-fn follow_dao() -> Result<String, String> {
+pub async fn follow_dao(daohouse_backend_id: Principal) -> Result<String, String> {
     let principal_id = api::caller();
+    let dao_id = ic_cdk::api::id();
+
+    let already_following = with_state(|state| {
+        let dao = &state.dao;
+        dao.followers.contains(&principal_id)
+    });
+
+    if already_following {
+        return Err(String::from(crate::utils::WARNING_ALREADY_FOLLOW_DAO));
+    }
+    let response: CallResult<(Result<(), String>,)> = ic_cdk::call(
+        daohouse_backend_id,
+        "store_follow_dao",
+        (dao_id, principal_id),
+    ).await;
+
+    match response {
+        Ok((Ok(()),)) => (),
+        Ok((Err(err),)) => return Err(err),
+        Err((code, message)) => {
+            let err_msg = match code {
+                RejectionCode::NoError => "NoError".to_string(),
+                RejectionCode::SysFatal => "SysFatal".to_string(),
+                RejectionCode::SysTransient => "SysTransient".to_string(),
+                RejectionCode::DestinationInvalid => "DestinationInvalid".to_string(),
+                RejectionCode::CanisterReject => "CanisterReject".to_string(),
+                _ => format!("Unknown rejection code: {:?}: {}", code, message),
+            };
+            return Err(err_msg);
+        }
+    };
 
     with_state(|state| {
         let dao = &mut state.dao;
-        if dao.followers.contains(&principal_id) {
-            return Err(String::from(crate::utils::WARNING_ALREADY_FOLLOW_DAO));
-        }
         dao.followers.push(principal_id);
         dao.followers_count += 1;
-        return Ok(String::from(crate::utils::SUCCESS_FOLLOW_DAO));
-    })
+    });
+
+    Ok(String::from(crate::utils::SUCCESS_FOLLOW_DAO))
 }
+
 
 #[update(guard=guard_check_members)]
 fn update_dao_settings(update_dao_details: UpdateDaoSettings) -> Result<String, String> {

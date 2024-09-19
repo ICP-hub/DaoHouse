@@ -88,6 +88,8 @@ async fn create_profile(profile: MinimalProfileinput) -> Result<String, String> 
         telegram: "".to_string(),
         website: "".to_string(),
         image_canister: asset_canister_id,
+        follow_dao : Vec::new(),
+        join_dao :  Vec::new(),
     };
 
     // with_state(|state| routes::create_new_profile(state, profile.clone()))

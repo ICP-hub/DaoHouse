@@ -1,4 +1,5 @@
 // Proposal routes
+use candid::Principal;
 
 use crate::{
     routes::{
@@ -7,6 +8,34 @@ use crate::{
     },
     with_state, ProposalValueStore,
 };
+
+#[ic_cdk::update]
+pub async fn store_follow_dao(dao_id: Principal, principal_id : Principal) -> Result<(), String> {
+    with_state(|state| {
+        if let Some(profile) = state.user_profile.get(&principal_id) {
+            let mut updated_profile = profile.clone();
+            updated_profile.follow_dao.push(dao_id);
+            state.user_profile.insert(principal_id, updated_profile);
+            Ok(())
+        } else {
+            Err(format!("User profile not found for principal: {}", principal_id))
+        }
+    })
+}
+
+#[ic_cdk::update]
+pub async fn store_join_dao(dao_id: Principal, principal_id : Principal) -> Result<(), String> {
+    with_state(|state| {
+        if let Some(profile) = state.user_profile.get(&principal_id) {
+            let mut updated_profile = profile.clone();
+            updated_profile.join_dao.push(dao_id);
+            state.user_profile.insert(principal_id, updated_profile);
+            Ok(())
+        } else {
+            Err(format!("User profile not found for principal: {}", principal_id))
+        }
+    })
+}
 
 #[ic_cdk::update]
 pub fn add_proposal(args: crate::ProposalValueStore) -> Result<String, String> {
@@ -35,6 +64,13 @@ pub fn add_proposal(args: crate::ProposalValueStore) -> Result<String, String> {
 pub fn get_proposals(args: crate::Pagination) -> Vec<ProposalValueStore> {
     with_state(|state| get_proposal_controller(state, args))
 }
+
+
+// #[update]
+// pub async fn my_follow_dao()->Vec<Principal>{
+
+// } 
+
 
 #[ic_cdk::query]
 pub async  fn get_my_proposals(args: crate::Pagination) -> Vec<ProposalValueStore> {

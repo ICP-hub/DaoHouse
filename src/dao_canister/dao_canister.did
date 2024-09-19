@@ -194,7 +194,7 @@ service : (DaoInput) -> {
   change_proposal_state : (text, ProposalState) -> (Result_1);
   comment_on_proposal : (text, text) -> (Result_1);
   create_proposal_controller : (principal, ProposalInput) -> (text);
-  follow_dao : () -> (Result_1);
+  follow_dao : (principal) -> (Result_1);
   get_all_balances : (text) -> (ProposalStakes) query;
   get_all_groups : () -> (vec DaoGroup);
   get_all_proposals : (Pagination) -> (vec Proposals) query;
