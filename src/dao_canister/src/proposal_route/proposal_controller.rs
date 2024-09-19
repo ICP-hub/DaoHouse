@@ -10,7 +10,6 @@ use sha2::{Digest, Sha256};
 // to create new canister
 // #[ic_cdk::update(guard=check_members)]
 // TODO add guards
-#[ic_cdk::update]
 pub async fn create_proposal_controller(
     // state: &mut State,
     daohouse_backend_id: candid::Principal,
