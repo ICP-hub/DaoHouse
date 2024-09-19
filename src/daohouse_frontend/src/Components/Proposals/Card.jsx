@@ -288,7 +288,8 @@ export default function Card({ proposal, voteApi }) {
 
         
       <ViewModal open={isModalOpen } onClose={handleOnClose}/>
-
+</div>
+</div>
     </div>
   );
 }
