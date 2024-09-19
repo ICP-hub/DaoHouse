@@ -8,6 +8,7 @@ import NoPostProfile from "../../Dao/NoPostProfile";
 import { useAuth } from "../../utils/useAuthClient";
 import Pagination from "../../pagignation/Pagignation";
 import MuiSkeleton from "../../Skeleton/MuiSkeleton";
+import ProposalCard from "../../../Components/Proposals/ProposalCard"; // Import the ProposalCard component
 
 const MyPosts = () => {
   const { backendActor } = useAuth();
@@ -17,18 +18,17 @@ const MyPosts = () => {
   const [myPost, setMyPost] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [showProposals, setShowProposals] = useState(false); // Track when to show proposals
+
   const className = "MyPosts";
   const canisterId = process.env.CANISTER_ID_IC_ASSET_HANDLER;
-  const [loading, setLoading] = useState(false);
 
   const getpost = async () => {
     const itemsPerPage = 4;
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    const paginationPayload = {
-      start,
-      end,
-    };
+    const paginationPayload = { start, end };
     try {
       setLoading(true);
       const res = await backendActor.get_my_post(paginationPayload);
@@ -44,88 +44,106 @@ const MyPosts = () => {
   };
 
   useEffect(() => {
-    getpost();
-  }, [currentPage]);
+    if (showProposals) {
+      getpost();
+    }
+  }, [showProposals, currentPage]); // Fetch proposals when "Submitted Proposals" is clicked or page changes
+
+  const handleProposalsClick = () => {
+    setShowProposals(true); // Trigger the display of proposals
+  };
 
   return (
     <div className={className}>
       <div className="md:ml-10 mx-5 mt-5">
-        <h3 className="text-[#05212C] md:text-[24px] text-[18px] md:font-bold font-semibold ml-4 translate-y-[-70px]" onClick={getpost}>
+        <h3
+          className="text-[#05212C] md:text-[24px] text-[18px] md:font-bold font-semibold ml-4 translate-y-[-70px]"
+          onClick={handleProposalsClick} // Handle click to show proposals
+        >
           Submitted Proposals
         </h3>
+
+        {/* Loading state */}
         {loading ? (
           <MuiSkeleton />
-        ) : myPost?.length === 0 ? (
+        ) : showProposals && myPost?.length === 0 ? (
           <NoPostProfile />
         ) : (
-          <div className="grid grid-cols-2 md:mt-4 mt-2 mb-6 bg-[#F4F2EC] p-2 rounded-lg gap-2">
-            {myPost?.map((post, index) => (
-              <div
-                key={index}
-                className="post relative w-full"
-                onMouseEnter={() => setHoverIndex(index)}
-                onMouseLeave={() => {
-                  setHoverIndex(null);
-                  setReadMoreIndex(null);
-                }}
-              >
-                <Link to={`/post/${post.post_id}`} onClick={() => setSelectedPost(post)}>
-                  <div className="h-64 w-full relative">
-                    <img
-                      src={`http://${canisterId}.localhost:4943/f/${post.post_img}`}
-                      alt="Post"
-                      className="postImage w-full h-full rounded object-cover"
-                    />
-                  </div>
-                </Link>
-
+          showProposals && (
+            <div className="grid grid-cols-2 md:mt-4 mt-2 mb-6 bg-[#F4F2EC] p-2 rounded-lg gap-2">
+              {myPost?.map((post, index) => (
                 <div
-                  style={{ opacity: hoverIndex === index ? 1 : 0 }}
-                  className="postContant w-full max-h-full flex flex-col gap-4 p-2 overflow-y-auto bg-[#05212C80] backdrop-blur absolute bottom-0 text-white rounded-b-lg transition-opacity duration-500"
+                  key={index}
+                  className="post relative w-full"
+                  onMouseEnter={() => setHoverIndex(index)}
+                  onMouseLeave={() => {
+                    setHoverIndex(null);
+                    setReadMoreIndex(null);
+                  }}
                 >
-                  <p className="laptop:text-base text-sm">
-                    {readMoreIndex === index
-                      ? post?.post_description
-                      : post?.post_description?.slice(0, 50)}
+                  <Link to={`/post/${post.post_id}`} onClick={() => setSelectedPost(post)}>
+                    <div className="h-64 w-full relative">
+                      <img
+                        src={`http://${canisterId}.localhost:4943/f/${post.post_img}`}
+                        alt="Post"
+                        className="postImage w-full h-full rounded object-cover"
+                      />
+                    </div>
+                  </Link>
 
-                    {post.post_description?.length > 120 && readMoreIndex !== index && (
-                      <span
-                        id="readMore"
-                        className="text-blue-500 cursor-pointer"
-                        onClick={() => setReadMoreIndex(index)}
-                      >
-                        ..more
-                      </span>
-                    )}
-                    {post.post_description?.length > 120 && readMoreIndex === index && (
-                      <span
-                        id="readMore"
-                        className="text-blue-500 cursor-pointer"
-                        onClick={() => setReadMoreIndex(null)}
-                      >
-                        ..close
-                      </span>
-                    )}
-                  </p>
+                  <div
+                    style={{ opacity: hoverIndex === index ? 1 : 0 }}
+                    className="postContant w-full max-h-full flex flex-col gap-4 p-2 overflow-y-auto bg-[#05212C80] backdrop-blur absolute bottom-0 text-white rounded-b-lg transition-opacity duration-500"
+                  >
+                    <p className="laptop:text-base text-sm">
+                      {readMoreIndex === index
+                        ? post?.post_description
+                        : post?.post_description?.slice(0, 50)}
 
-                  <div className="w-full flex flex-row items-center justify-evenly">
-                    <span className="flex flex-row gap-2 items-center text-lg">
-                      <FaHeart />
-                      {post.like_count}
-                    </span>
-                    <span className="flex flex-row gap-2 items-center text-lg">
-                      <FaTelegramPlane />
-                      {post.comment_count}
-                    </span>
-                    <span className="flex flex-row gap-2 items-center text-lg">
-                      <BiSolidCommentDetail />
-                    </span>
+                      {post.post_description?.length > 120 && readMoreIndex !== index && (
+                        <span
+                          id="readMore"
+                          className="text-blue-500 cursor-pointer"
+                          onClick={() => setReadMoreIndex(index)}
+                        >
+                          ..more
+                        </span>
+                      )}
+                      {post.post_description?.length > 120 && readMoreIndex === index && (
+                        <span
+                          id="readMore"
+                          className="text-blue-500 cursor-pointer"
+                          onClick={() => setReadMoreIndex(null)}
+                        >
+                          ..close
+                        </span>
+                      )}
+                    </p>
+
+                    <div className="w-full flex flex-row items-center justify-evenly">
+                      <span className="flex flex-row gap-2 items-center text-lg">
+                        <FaHeart />
+                        {post.like_count}
+                      </span>
+                      <span className="flex flex-row gap-2 items-center text-lg">
+                        <FaTelegramPlane />
+                        {post.comment_count}
+                      </span>
+                      <span className="flex flex-row gap-2 items-center text-lg">
+                        <BiSolidCommentDetail />
+                      </span>
+                    </div>
                   </div>
+
+                  {/* Conditionally render ProposalCard if the post contains a proposal */}
+                  {post.proposal && <ProposalCard proposal={post.proposal} />}
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )
         )}
+
+        {/* Pagination - Only show when there are posts */}
         {myPost?.length > 0 && (
           <Pagination
             costomClass={"mt-10"}

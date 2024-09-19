@@ -405,7 +405,7 @@ const FeedPage = () => {
   };
 
   return (
-    <div className={className + " " + "w-full mt-[90px]"}>
+    <div className={className + " " + "w-full "}>
       {showPopup && (
         <div className="fixed inset-0 bg-black opacity-40 z-40"></div>
       )}
