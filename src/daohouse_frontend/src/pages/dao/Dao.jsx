@@ -133,7 +133,7 @@ const Dao = () => {
   const noDaoFound = searchTerm && fetchedDAOs.length === 0;
 
   return (
-    <div className="bg-zinc-200 ">
+    <div className="bg-zinc-200 relative mt-[-90px]">
       <TopComponent showAll={showAll} setShowAll={setShowAll} showButtons={true} />
       <div className={"bg-gray"}>
         <Container classes={`__label small_phone:py-8 py-5 mobile:px-10 px-5 flex flex-row w-full justify-between items-center`}>
