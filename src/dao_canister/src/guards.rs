@@ -94,6 +94,36 @@ pub fn check_user_in_group(group_name: &String) -> Result<(), String> {
     })
 }
 
+pub fn check_user_and_member_in_group(
+    group_name: &String,
+    action_member: Principal,
+) -> Result<(), String> {
+    prevent_anonymous()?;
+    with_state(|state| match state.dao_groups.get(&group_name) {
+        Some(val) => {
+            if val.group_members.contains(&api::caller())
+                && val.group_members.contains(&action_member)
+            {
+                Ok(())
+            } else if !val.group_members.contains(&action_member){
+                Err(format!(
+                    "{} {}",
+                    crate::utils::WARNING_NO_MEMBER_IN_GROUP,
+                    action_member
+                ))
+            }
+             else {
+                Err(format!(
+                    "{} {}",
+                    crate::utils::WARNING_NOT_IN_GROUP,
+                    group_name
+                ))
+            }
+        }
+        None => Err(format!("{} {}", crate::utils::NOTFOUND_GROUP, group_name)),
+    })
+}
+
 // check if proposal exists
 pub fn guard_check_if_proposal_exists(
     action_principal: Principal,

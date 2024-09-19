@@ -36,6 +36,36 @@ pub fn get_proposals(args: crate::Pagination) -> Vec<ProposalValueStore> {
     with_state(|state| get_proposal_controller(state, args))
 }
 
+#[ic_cdk::query]
+pub async  fn get_my_proposals(args: crate::Pagination) -> Vec<ProposalValueStore> {
+    let mut my_proposals: Vec<ProposalValueStore> = Vec::new();
+
+    with_state(|state| {
+        for (_key, proposal) in state.proposal_store.iter() {
+            if ic_cdk::api::caller() == proposal.created_by {
+                my_proposals.push(proposal.clone());
+            }
+        }
+
+        let total_proposals = my_proposals.len();
+
+        if total_proposals == 0 {
+            return vec![];
+        }
+
+        let start = args.start as usize;
+        let end = args.end as usize;
+
+        if start < total_proposals {
+            let end = end.min(total_proposals);
+            return my_proposals[start..end].to_vec();
+        }
+
+        my_proposals
+    })
+}
+
+
 // get latest proposals
 #[ic_cdk::query]
 pub fn get_latest_proposals(args: crate::Pagination) -> Vec<ProposalValueStore> {

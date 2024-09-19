@@ -9,6 +9,8 @@ use ic_cdk::api;
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::{query, update};
 use sha2::{Digest, Sha256};
+use std::collections::HashSet;
+
 
 use super::{icrc_get_balance, icrc_transfer};
 
@@ -81,9 +83,23 @@ async fn get_proposal_by_id(proposal_id: String) -> Proposals {
     with_state(|state| state.proposals.get(&proposal_id).unwrap().clone())
 }
 
+// #[query]
+// async fn get_dao_detail() -> Dao {
+//     with_state(|state| state.dao.clone())
+// }
+
+// get Dao details with unique members always
+
 #[query]
 async fn get_dao_detail() -> Dao {
-    with_state(|state| state.dao.clone())
+    with_state(|state| {
+        let mut dao = state.dao.clone();
+        let unique_members: HashSet<candid::Principal> = dao.members.iter().cloned().collect();
+        dao.members = unique_members.into_iter().collect();
+        dao.members_count = dao.members.len() as u32;
+        
+        dao
+    })
 }
 
 #[update(guard = guard_check_members)]

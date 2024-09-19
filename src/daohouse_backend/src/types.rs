@@ -873,7 +873,15 @@ pub struct ProposalValueStore {
 pub enum ProposalType {
     AddMemberProposal,
     RemoveMemberPrposal,
-    VotingProposal,
+    ChangeDaoConfig,
+    ChnageDaoPolicy,
+    Bounty,
+    BountyDone,
+    Polls,
+    UpgradeRemote,
+    UpdateSelf,
+    FunctionCall,
+    Transfer
 }
 
 const MAX_VALUE_SIZE: u32 = 800;
