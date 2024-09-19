@@ -1,117 +1,92 @@
 import React from "react";
-import about from "../../../assets/gif/about.gif";
-import smallelipse from "../../../assets/smallElipse.png";
-import bigellipse from "../../../assets/bigEllipse.png";
-import SmallCircleAnimation from "../../Components/Ellipse-Animation/SmallCircle/SmallCircleAnimation.json";
-import Lottie from "react-lottie";
 import Container from "../Container/Container";
 import { useNavigate } from "react-router-dom";
 
 const About = () => {
   const navigate = useNavigate();
-  const defaultOptions2 = {
-    loop: true,
-    autoplay: true,
-    animationData: SmallCircleAnimation,
-    rendererSettings: {
-      preserveAspectRatio: "xMidYMid slice",
-      id: "lottie-smallCircle",
-    },
-  };
 
   const handleJoinDaoClick = () => {
     navigate("/dao");
   };
 
   return (
-    <div className="bg-[#05212C]">
-      <Container classes={'relative flex justify-center items-center py-8'}>
-        <div className="absolute pointer-events-none select-none xl:left-[40%] 2xl:left-[40%] lg:left-[35%] md:left-[35%] left-0 md:top-0 top-[18%] mt-8">
-          <div>
-            <img
-              src={smallelipse}
-              alt="Small Ellipse"
-              className="relative lg:w-[66px] lg:h-[61px] md:w-[59px] md:h-[59px]"
-            />
-          </div>
-          <div className="absolute inset-0 flex items-center justify-center z-20">
-            <div className="lg:w-[76px] lg:h-[76px] md:w-[69px] md:h-[69px] w-[75px] h-[75px]">
-              <Lottie
-                options={defaultOptions2}
-                style={{ width: "100%", height: "100%" }}
-              />
+    <div className="flex justify-center  items-center  ">
+      {/* Mobile view */}
+      <div className="block lg:hidden bg-[#0F3746] rounded-[8px] w-[324px] h-[315px] shadow-lg p-[20px_32px] gap-[16px]  translate-y-[50px] opacity-100">
+        <Container>
+          <div className="w-full text-white flex flex-col items-center relative text-center">
+            <div className="mb-4">
+              <h2 className="font-mulish text-[8px] font-bold leading-[12px] tracking-[0.04em] text-center mb-2">
+                ABOUT PLATFORM
+              </h2>
+              <p className="font-mulish font-bold text-[16px] leading-[20px] text-center">
+                Unlocking Collective Intelligence
+              </p>
+            </div>
+            <div className="flex flex-col gap-[16px] font-mulish text-[10px] font-normal leading-[14px] text-center">
+              <p>
+                At our platform, decentralized autonomous
+                <p> organization meets cutting-edge technology to</p> revolutionize the way communities govern themselves.
+              </p>
+              <p>
+                We believe in the power of collective intelligence and<p>the potential for blockchain technology to democratize</p>
+                <p> decision-making processes. Our platform provides a</p> 
+                 seamless and transparent framework for organizations of all sizes to manage resources, vote on proposals, and drive impactful change.
+              </p>
+            </div>
+            <div className="mt-6">
+              <button
+                onClick={handleJoinDaoClick}
+                className="px-8 py-3 bg-white text-black font-normal rounded-full shadow-md hover:bg-gray-200 hover:text-blue-900 transition-colors duration-300"
+              >
+                Join DAO
+              </button>
             </div>
           </div>
-        </div>
+        </Container>
+      </div>
 
-        {/* Image for larger screens */}
-        <div className="w-[100vw] hidden md:block my-8">
-          <img
-            src={about}
-            alt="Image"
-            className="w-full h-auto rounded-r-full pointer-events-none select-none"
-          />
-        </div>
+      {/* Desktop view */}
+      <div className="hidden lg:flex justify-center w-[75%] bg-[#0F3746] rounded-2xl  translate-y-[-50px] shadow-lg p-10">
+        <Container>
+          <div className="w-full text-white flex flex-col items-center relative text-center">
+            {/* Title */}
+            <div className="mb-4">
+              <h2 className="font-mulish text-[12px] md:text-[16px] font-normal mb-2">
+                ABOUT PLATFORM
+              </h2>
+              <p className="font-mulish font-bold text-[24px] sm:text-[28px] md:text-[32px] leading-snug">
+                Unlocking Collective Intelligence
+              </p>
+            </div>
 
-        <div className="md:w-60% w-full lg:p-8 text-white lg:mx-16 md:mx-4 mx-10 flex flex-col items-center relative z-10">
-          <div className="lg:px-8 md:px-8 md:ml-0 relative z-50 md:z-0 mb-2 text-center md:text-left">
-            <h2 className="text-about-heading font-mulish font-normal text-[16px] md:text-[16px] lg:text-[16px] leading-tight mt-4 mb-1">
-              About Platform
-            </h2>
-            <p className="text-about-subheading font-mulish font-medium text-[20px] small_phone:text-[32px] lg:text-[40px] leading-tight mt-1 whitespace-nowrap">
-              Unlocking Collective Intelligence
-            </p>
-          </div>
+            {/* Description */}
+            <div className="flex flex-col gap-4 font-mulish text-[12px] sm:text-[14px] md:text-[16px] leading-relaxed text-left lg:text-center">
+              <span className="block mb-1">
+                At our platform, decentralized autonomous organization meets cutting-edge 
+                <span className="block">technology to revolutionize the way communities govern themselves.</span>
+              </span>
+             
+              <span className="block">
+                We believe in the power of collective intelligence and the potential for blockchain
+                <span className="block"> technology to democratize decision-making processes. Our platform provides a</span>
+                <span className='block'>seamless and transparent framework for organizations of all sizes to manage</span> 
+                resources, vote on proposals, and drive impactful change.
+              </span>
+            </div>
 
-          {/* Image for smaller screens */}
-          <div className="w-[50vw] md:hidden my-4 relative z-10">
-            <img
-              src={about}
-              alt="Image"
-              className="w-full h-auto rounded-3xl pointer-events-none select-none"
-            />
-          </div>
-
-          <div className="flex flex-col items-center md:items-start gap-4 md:w-[480px] lg:w-[620px] font-mulish font-normal text-[12px] md:text-[14px] lg:text-[16px] md:px-8 md:pb-8 md:mx-0 md:my-4 lg:mr-6 relative z-10 text-center md:text-left">
-            <p className="pr-4">
-              At our platform, decentralized autonomous organization meets
-              cutting-edge technology to revolutionize the way communities govern
-              themselves.
-            </p>
-            <p className="pr-4">
-              We believe in the power of collective intelligence and the potential
-              for blockchain technology to democratize decision-making processes.
-              Our platform provides a seamless and transparent framework for
-              organizations of all sizes to manage resources, vote on proposals,
-              and drive impactful change.
-            </p>
-            
-            <button
-              onClick={handleJoinDaoClick}
-              className="px-8 py-3 bg-white text-black font-normal rounded-[27.5px] shadow-md hover:bg-gray-200 hover:text-blue-900">
-              Join DAO
-            </button>
-          </div>
-        </div>
-
-        <div className="absolute lg:bottom-0 md:-bottom-5 -bottom-2 md:right-0 -right-6 mr-8 mb-8 pointer-events-none select-none z-0 md:z-20">
-          <div>
-            <img
-              src={bigellipse}
-              alt="Big Ellipse"
-              className="relative lg:w-[122px] lg:h-[122px] md:w-[104px] h-[104px]"
-            />
-          </div>
-          <div className="absolute inset-0 flex items-center justify-center z-20">
-            <div className="lg:w-[142px] lg:h-[142px] md:w-[124px] h-[124px]">
-              <Lottie
-                options={defaultOptions2}
-                style={{ width: "100%", height: "100%" }}
-              />
+            {/* Join DAO Button */}
+            <div className="mt-6">
+              <button
+                onClick={handleJoinDaoClick}
+                className="px-8 py-3 bg-white text-black font-normal rounded-full shadow-md hover:bg-gray-200 hover:text-blue-900 transition-colors duration-300"
+              >
+                Join DAO
+              </button>
             </div>
           </div>
-        </div>
-      </Container>
+        </Container>
+      </div>
     </div>
   );
 };

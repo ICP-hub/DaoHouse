@@ -39,10 +39,10 @@ export default function Widget() {
         <div className="bg-white p-5 rounded-lg shadow-md w-fit md:mx-0 mx-6">
             <div className="flex flex-col md:flex-row justify-between items-center flex-wrap">
                 {/* Mobile view order: Members, Proposals, DAOs, Posts */}
-                <div className="w-full md:w-auto flex flex-wrap justify-between">
+                <div className="w-full  md:w-auto flex flex-wrap justify-between">
                     {statistics.map((statistic, index) => (
                         <div
-                            className={`text-center mx-6 my-2 flex-1 ${
+                            className={`text-center  mx-6 my-2 flex-1 ${
                                 index < 2 ? 'md:order-' + (index + 1) : ''
                             } ${index >= 2 ? 'md:order-' + (index - 1) : ''}`}
                             key={index}
