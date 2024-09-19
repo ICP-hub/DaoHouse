@@ -168,7 +168,7 @@ const CreateDao = () => {
       token_supply: Number(step2.TokenSupply) || 4,
     };
 
-    console.log(daoPayload);
+    console.log("daoPayload",daoPayload);
     
   
 
