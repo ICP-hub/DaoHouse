@@ -1,5 +1,6 @@
 use crate::{
-    guards::*, AddMemberArgs,RemoveMemberArgs, DaoGroup, LedgerCanisterId, ProposalInput, UpdateDaoSettings, ChnageDaoConfig
+    guards::*, AddMemberArgs, ChangeDaoPolicy, ChnageDaoConfig, DaoGroup, LedgerCanisterId,
+    ProposalInput, RemoveMemberArgs, TokenTransferPolicy, UpdateDaoSettings ,BountyRaised , BountyDone
 };
 use crate::{with_state, ProposalType};
 use candid::Principal;
@@ -30,7 +31,13 @@ async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, 
         proposal_title: String::from(crate::utils::TITLE_ADD_MEMBER),
         proposal_type: ProposalType::AddMemberProposal,
         group_to_join: Some(args.group_name),
-        new_dao_name: None
+        new_dao_name: None,
+        dao_purpose: None,
+        tokens: None,
+        from: None,
+        proposal_created_at: None,
+        proposal_expired_at: None,
+        bounty_task : None,
     };
 
     crate::proposal_route::create_proposal_controller(
@@ -52,16 +59,25 @@ async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<St
         proposal_title: String::from(crate::utils::TITLE_REMOVE_MEMBER),
         proposal_type: ProposalType::RemoveMemberPrposal,
         group_to_join: Some(args.group_name),
-        new_dao_name: None
+        new_dao_name: None,
+        dao_purpose: None,
+        tokens: None,
+        from: None,
+        proposal_created_at: None,
+        proposal_expired_at: None,
+        bounty_task : None,
     };
 
     crate::proposal_route::create_proposal_controller(
-    with_state(|state| state.dao.daohouse_canister_id),proposal,).await;
+        with_state(|state| state.dao.daohouse_canister_id),
+        proposal,
+    )
+    .await;
     Ok(String::from(crate::utils::TITLE_DELETE_MEMBER))
 }
 
 #[update]
-async fn proposal_to_chnage_dao_config(args: ChnageDaoConfig)->Result<String, String>{
+async fn proposal_to_chnage_dao_config(args: ChnageDaoConfig) -> Result<String, String> {
     guard_check_members()?;
     let proposal = ProposalInput {
         principal_of_action: Some(args.action_member),
@@ -70,11 +86,121 @@ async fn proposal_to_chnage_dao_config(args: ChnageDaoConfig)->Result<String, St
         proposal_type: ProposalType::ChangeDaoConfig,
         new_dao_name: Some(args.new_dao_name),
         group_to_join: None,
+        dao_purpose: None,
+        tokens: None,
+        from: None,
+        proposal_created_at: None,
+        proposal_expired_at: None,
+        bounty_task : None,
     };
     crate::proposal_route::create_proposal_controller(
-    with_state(|state| state.dao.daohouse_canister_id),proposal,).await;
+        with_state(|state| state.dao.daohouse_canister_id),
+        proposal,
+    )
+    .await;
     Ok(String::from(crate::utils::MESSAGE_CHANGE_DAO_CONFIG))
 }
+
+#[update]
+async fn proposal_to_change_dao_policy(args: ChangeDaoPolicy) -> Result<String, String> {
+    guard_check_members()?;
+    let proposal = ProposalInput {
+        principal_of_action: Some(args.action_member),
+        proposal_description: args.description,
+        proposal_title: String::from(crate::utils::TITLE_CHANGE_DAO_POLICY),
+        proposal_type: ProposalType::ChnageDaoPolicy,
+        new_dao_name: None,
+        group_to_join: None,
+        dao_purpose: Some(args.dao_purpose),
+        tokens: None,
+        from: None,
+        proposal_created_at: None,
+        proposal_expired_at: None,
+        bounty_task : None,
+    };
+    crate::proposal_route::create_proposal_controller(
+        with_state(|state| state.dao.daohouse_canister_id),
+        proposal,
+    )
+    .await;
+    Ok(String::from(crate::utils::MESSAGE_CHANGE_DAO_POLICY))
+}
+
+#[update]
+async fn proposal_to_transfer_token(args: TokenTransferPolicy) -> Result<String, String> {
+    guard_check_members()?;
+    let proposal = ProposalInput {
+        principal_of_action: Some(args.action_member),
+        proposal_description: args.description,
+        proposal_title: String::from(crate::utils::TITLE_TOKEN_TRANSFER_POLICY),
+        proposal_type: ProposalType::TokenTransfer,
+        new_dao_name: None,
+        group_to_join: None,
+        dao_purpose: None,
+        tokens: Some(args.tokens),
+        from: Some(args.from),
+        proposal_created_at: None,
+        proposal_expired_at: None,
+        bounty_task : None,
+    };
+    crate::proposal_route::create_proposal_controller(
+        with_state(|state| state.dao.daohouse_canister_id),
+        proposal,
+    )
+    .await;
+    Ok(String::from(crate::utils::MESSAGE_TOKEN_TRANSFER_POLICY))
+}
+
+#[update]
+async fn proposal_to_bounty_raised(args: BountyRaised)-> Result<String, String>{
+    guard_check_members()?;
+    let proposal = ProposalInput {
+        principal_of_action: Some(args.action_member),
+        proposal_description: args.description,
+        proposal_title: String::from(crate::utils::TITLE_BOUNTY_RAISED),
+        proposal_type: ProposalType::BountyRaised,
+        new_dao_name: None,
+        group_to_join: None,
+        dao_purpose: None,
+        tokens: Some(args.tokens),
+        from: None,
+        proposal_created_at: Some(args.proposal_created_at),
+        proposal_expired_at: Some(args.proposal_expired_at),
+        bounty_task : Some(args.bounty_task),
+    };
+    crate::proposal_route::create_proposal_controller(
+        with_state(|state| state.dao.daohouse_canister_id),
+        proposal,
+    )
+    .await;
+    Ok(String::from(crate::utils::MESSAGE_BOUNTY_RAISED))
+}
+
+#[update]
+async fn proposal_to_bounty_done(args: BountyDone)-> Result<String, String>{
+    guard_check_members()?;
+    let proposal = ProposalInput {
+        principal_of_action: Some(args.action_member),
+        proposal_description: args.description,
+        proposal_title: String::from(crate::utils::TITLE_BOUNTY_DONE),
+        proposal_type: ProposalType::BountyRaised,
+        new_dao_name: None,
+        group_to_join: None,
+        dao_purpose: None,
+        tokens: Some(args.tokens),
+        from: Some(args.from),
+        proposal_created_at: Some(args.proposal_created_at),
+        proposal_expired_at: Some(args.proposal_expired_at),
+        bounty_task : Some(args.bounty_task),
+    };
+    crate::proposal_route::create_proposal_controller(
+        with_state(|state| state.dao.daohouse_canister_id),
+        proposal,
+    )
+    .await;
+    Ok(String::from(crate::utils::MESSAGE_BOUNTY_DONE))
+}
+
 
 // #[update]
 // async fn add_member_to_group(group: String, principal: Principal) -> String {
@@ -163,7 +289,13 @@ async fn ask_to_join_dao(daohouse_backend_id: Principal) -> Result<String, Strin
         proposal_title: String::from(crate::utils::TITLE_ADD_MEMBER),
         proposal_type: crate::ProposalType::AddMemberProposal,
         principal_of_action: Some(api::caller()),
-        new_dao_name: None
+        new_dao_name: None,
+        dao_purpose: None,
+        tokens: None,
+        from: None,
+        proposal_created_at: None,
+        proposal_expired_at: None,
+        bounty_task : None,
     };
 
     Ok(crate::proposal_route::create_proposal_controller(daohouse_backend_id, proposal).await)
