@@ -26,12 +26,12 @@ const AboutMe = () => {
   );
 
   return (
-    <div className={className + "w-full"}>
+    <div className={className + "w-full translate-y-[-95px]"}>
       <div className="md:ml-10 mx-5 md:mt-12 mt-5">
-        <h3 className="text-[#05212C] lg:text-[24px] md:text-[18px] text-[16px] md:font-bold font-semibold lg:ml-4 md:ml-2">
+        <h3 className="text-[#05212C] lg:text-[24px]  md:text-[18px] text-[16px] md:font-bold font-semibold lg:ml-4 md:ml-2">
           About Me
         </h3>
-        <div className="md:mt-4 mt-2 mb-6 bg-[#F4F2EC] p-4 rounded-lg">
+        <div className="md:mt-4 mt-2 mb-6 bg-[#F4F2EC] p-4 rounded-lg ">
           <div className="flex flex-col items-start space-y-2">
             <p className="lg:text-[20px] md:text-[16px] text-[14px] font-semibold text-[#05212C] md:ml-2 md:mb-3">
               Principal Id

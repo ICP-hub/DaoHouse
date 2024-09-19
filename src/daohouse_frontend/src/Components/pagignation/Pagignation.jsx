@@ -1,10 +1,14 @@
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
-const Pagination = ({ totalItems, currentPage, setCurrentPage , costomClass}) => {
+const Pagination = ({ totalItems, currentPage, setCurrentPage, itemsPerPage, costomClass }) => {
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    console.log(totalPages);
+    
+
     const handleNextPage = () => {
-            if (currentPage < totalItems) {
-              setCurrentPage(prevPage => prevPage + 1);
-            }
+        if (currentPage < totalPages) {
+            setCurrentPage(prevPage => prevPage + 1);
+        }
     };
 
     const handlePrevPage = () => {
@@ -25,14 +29,14 @@ const Pagination = ({ totalItems, currentPage, setCurrentPage , costomClass}) =>
                 </button>
 
                 <button onClick={handleNextPage}
-                    disabled={currentPage >= totalItems || totalItems === 0}
-                    className={`text-black hover:text-gray-500 text-xl flex items-center ${(currentPage >= totalItems || totalItems === 0) ? 'text-gray-400 cursor-not-allowed' : 'cursor-pointer'}`}>
+                    disabled={currentPage >= totalPages}
+                    className={`text-black hover:text-gray-500 text-xl flex items-center ${(currentPage >= totalPages) ? 'text-gray-400 cursor-not-allowed' : 'cursor-pointer'}`}>
                     Next <FaArrowRight />
                 </button>
             </div>
 
             <div className="flex justify-center mb-5 text-xl">
-              {currentPage} of {totalItems}
+                Page {currentPage} of {totalPages}
             </div>
         </div>
     );

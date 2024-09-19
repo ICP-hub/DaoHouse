@@ -258,7 +258,7 @@ import bg_image1 from "../../../assets/bg_image1.png";
 import CreatePostPopup from "../../Components/FeedPage/CreatePostPopup";
 import { useAuth } from "../../Components/utils/useAuthClient";
 import Container from "../../Components/Container/Container";
-// import Pagignation from "../../Components/pagignation/Pagignation";
+import Pagignation from "../../Components/pagignation/Pagignation";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import NoPostProfile from "../../Components/Dao/NoPostProfile";
 import nodata from "../../../assets/nodata.png";
@@ -267,7 +267,7 @@ import LoginModal from "../../Components/Auth/LoginModal";
 import { useNavigate } from "react-router-dom";
 import Proposals from "../Proposals/Proposals";
 import ProposalsContent from "../../Components/DaoProfile/ProposalsContent";
-import { Pagignation, SearchProposals } from "../dao/Dao";
+import SearchProposals from "../../Components/Proposals/SearchProposals";
 
 const FeedPage = () => {
   const [active, setActive] = useState({ all: false, latest: true });
@@ -286,7 +286,7 @@ const FeedPage = () => {
   const [fetchedProposals, setFetchedProposals] = useState([])
   const className = "FeedPage";
 
-  const itemsPerPage = 4;
+  const itemsPerPage = 15;
 
   const setAllActive = () => {
     setActive({ all: true, latest: false });
@@ -337,55 +337,54 @@ const FeedPage = () => {
       start,
       end,
     };
-    
+  
     try {
-      // Step 1: Fetch all DAOs
       const allDaos = await backendActor.get_all_dao(pagination);
       let allProposals = [];
-
+  
       if (searchTerm.trim() === "") {
-        // Fetch all proposals from all DAOs
         for (const dao of allDaos) {
           const daoActor = await createDaoActor(dao.dao_canister_id);
           const daoProposals = await daoActor.get_all_proposals(pagination);
-          allProposals = allProposals.concat(
-            daoProposals.map((proposal) => ({
-              ...proposal,
-              daoCanisterId: dao.dao_canister_id,
-            }))
-          );
+          const proposalsWithDaoId = daoProposals.map((proposal) => ({
+            ...proposal,
+            dao_canister_id: dao.dao_canister_id,
+          }));
+          allProposals = allProposals.concat(proposalsWithDaoId);
         }
-        setHasMore(allProposals.length > itemsPerPage);
         setProposals(allProposals.slice(0, itemsPerPage));
+        setHasMore(allProposals.length > itemsPerPage);
         setTotalItems(allProposals.length);
       } else {
-        // Search proposals across all DAOs
-        setIsSearching(true);
+        // Search logic
         let searchResults = [];
         for (const dao of allDaos) {
           const daoActor = await createDaoActor(dao.dao_canister_id);
           try {
             const response = await daoActor.search_proposal(searchTerm.trim());
-            console.log("proposals", response);
-            
-            setSearchedProposal(response)
-            console.log(searchedProposal);
-            
+            if (response.length) {
+              const searchResultsWithDaoId = response.map((proposal) => ({
+                ...proposal,
+                dao_canister_id: dao.dao_canister_id, // Attach dao_canister_id to each proposal
+              }));
+              searchResults = searchResults.concat(searchResultsWithDaoId);
+            }
           } catch (error) {
             console.error(`Error searching proposals in DAO ${dao.dao_canister_id}:`, error);
           }
         }
-        // setSearchedProposals(searchResults.slice(0, itemsPerPage));
+        // Update the state after all proposals are gathered
+        setProposals(searchResults.slice(0, itemsPerPage));
+        setHasMore(searchResults.length > itemsPerPage);
         setTotalItems(searchResults.length);
-        setProposals([]);
       }
     } catch (error) {
       console.error("Error fetching proposals:", error);
     } finally {
       setLoading(false);
-      setIsSearching(false);
     }
   };
+  
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -406,7 +405,7 @@ const FeedPage = () => {
   };
 
   return (
-    <div className={className + " " + "w-full"}>
+    <div className={className + " " + "w-full mt-[90px]"}>
       {showPopup && (
         <div className="fixed inset-0 bg-black opacity-40 z-40"></div>
       )}
@@ -417,12 +416,12 @@ const FeedPage = () => {
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}>
-        <Container classes={`__filter w-100 mobile:h-[25vh] h-[17vh] big_phone:p-20 small_phone:p-10 p-4 flex flex-col items-start justify-center ${className}`}>
+        <Container classes={`__filter w-100 mobile:h-[25vh] h-[17vh] top-[70px] big_phone:p-20 small_phone:p-10 p-4 flex flex-col items-start justify-center ${className}`}>
           <h1 className="mobile:text-5xl text-3xl p-3 text-white">Social Feed</h1>
 
           
         </Container>
-      </div>
+      </div> 
 
       <div className={"bg-[#c8ced3]"}>
         <Container classes={`__label  small_phone:py-8 py-5 mobile:px-10 px-5 flex flex-col-reverse gap-4 lg:flex-row w-full justify-between items-start lg:items-center ${className}`}>
@@ -447,7 +446,6 @@ const FeedPage = () => {
         </Container>
       </div>
          
-
       {/* Post section */}
       <div
         className={
@@ -458,7 +456,7 @@ const FeedPage = () => {
           loading ?
             <MuiSkeleton />
             :
-            (isSearching ? searchedProposal : proposals).length === 0 ?
+            ( proposals).length === 0 ?
               <Container classes="w-full flex flex-col items-center justify-center ">
                 <img src={nodata} alt="No Data" className="mb-1 " />
                 <p className="text-center text-gray-700 text-2xl">
@@ -467,7 +465,7 @@ const FeedPage = () => {
               </Container>
               :
                 <Container classes={'w-full'} key={proposals.proposal_id}>
-                  <ProposalsContent proposals={isSearching ? searchedProposal : proposals} isMember={true} showActions={false} />
+                  <ProposalsContent proposals={ proposals} isMember={true} showActions={false} />
                 </Container>
         }
       </div>
@@ -481,8 +479,13 @@ const FeedPage = () => {
           "__postCards mobile:px-10 px-6 pb-10 bg-[#c8ced3] gap-8 flex flex-col"
         }>
         {/* <Pagignation totalItems={proposals.length} currentPage={1} itemsPerPage={itemsPerPage} setCurrentPage={() => {}} /> */}
-        <Pagignation  totalItems={totalItems} currentPage={currentPage} itemsPerPage={itemsPerPage}
-          setCurrentPage={setCurrentPage} />
+        <Pagignation 
+            totalItems={totalItems} 
+            currentPage={currentPage} 
+            itemsPerPage={itemsPerPage}
+            setCurrentPage={setCurrentPage} 
+            hasMore={hasMore} 
+        />
       
       </div>
     </div>
@@ -522,12 +525,6 @@ export default FeedPage;
 //         </button>
 //       </div>
 //     </div>
-
-//   );
-// };
-
-
-
 
 //   );
 // };
