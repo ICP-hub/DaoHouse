@@ -34,7 +34,7 @@ use super::{icrc_get_balance, icrc_transfer};
 // }
 
 // get all proposals
-#[query]
+#[update(guard=prevent_anonymous)]
 fn get_all_proposals(page_data: Pagination) -> Vec<Proposals> {
     // let mut proposals: Vec<Proposals> = Vec::new();
 
@@ -78,7 +78,7 @@ fn get_my_proposal() -> Result<Vec<Proposals>, String> {
     })
 }
 
-#[query]
+#[update(guard=prevent_anonymous)]
 async fn get_proposal_by_id(proposal_id: String) -> Proposals {
     with_state(|state| state.proposals.get(&proposal_id).unwrap().clone())
 }
@@ -90,14 +90,13 @@ async fn get_proposal_by_id(proposal_id: String) -> Proposals {
 
 // get Dao details with unique members always
 
-#[query]
+#[update(guard=prevent_anonymous)]
 async fn get_dao_detail() -> Dao {
     with_state(|state| {
         let mut dao = state.dao.clone();
         let unique_members: HashSet<candid::Principal> = dao.members.iter().cloned().collect();
         dao.members = unique_members.into_iter().collect();
         dao.members_count = dao.members.len() as u32;
-        
         dao
     })
 }

@@ -10,7 +10,7 @@ use crate::{
 };
 
 #[ic_cdk::update]
-pub async fn store_follow_dao(dao_id: Principal, principal_id : Principal) -> Result<(), String> {
+pub async fn store_follow_dao(dao_id: Principal, principal_id: Principal) -> Result<(), String> {
     with_state(|state| {
         if let Some(profile) = state.user_profile.get(&principal_id) {
             let mut updated_profile = profile.clone();
@@ -18,13 +18,40 @@ pub async fn store_follow_dao(dao_id: Principal, principal_id : Principal) -> Re
             state.user_profile.insert(principal_id, updated_profile);
             Ok(())
         } else {
-            Err(format!("User profile not found for principal: {}", principal_id))
+            Err(format!(
+                "User profile not found for principal: {}",
+                principal_id
+            ))
         }
     })
 }
 
 #[ic_cdk::update]
-pub async fn store_join_dao(dao_id: Principal, principal_id : Principal) -> Result<(), String> {
+pub async fn remove_follow_dao(dao_id: Principal, principal_id: Principal) -> Result<(), String> {
+    with_state(|state| {
+        if let Some(profile) = state.user_profile.get(&principal_id) {
+            let mut updated_profile = profile.clone();
+            if updated_profile.follow_dao.contains(&dao_id) {
+                updated_profile.follow_dao.retain(|id| id != &dao_id);
+                state.user_profile.insert(principal_id, updated_profile);
+
+                Ok(())
+            } else {
+                Err(format!("You haven't followed this DAO: {}", dao_id))
+            }
+        } else {
+            Err(format!(
+                "User profile not found for principal: {}",
+                principal_id
+            ))
+        }
+    })
+}
+
+
+
+#[ic_cdk::update]
+pub async fn store_join_dao(dao_id: Principal, principal_id: Principal) -> Result<(), String> {
     with_state(|state| {
         if let Some(profile) = state.user_profile.get(&principal_id) {
             let mut updated_profile = profile.clone();
@@ -32,7 +59,10 @@ pub async fn store_join_dao(dao_id: Principal, principal_id : Principal) -> Resu
             state.user_profile.insert(principal_id, updated_profile);
             Ok(())
         } else {
-            Err(format!("User profile not found for principal: {}", principal_id))
+            Err(format!(
+                "User profile not found for principal: {}",
+                principal_id
+            ))
         }
     })
 }
@@ -65,15 +95,13 @@ pub fn get_proposals(args: crate::Pagination) -> Vec<ProposalValueStore> {
     with_state(|state| get_proposal_controller(state, args))
 }
 
-
 // #[update]
 // pub async fn my_follow_dao()->Vec<Principal>{
 
-// } 
-
+// }
 
 #[ic_cdk::query]
-pub async  fn get_my_proposals(args: crate::Pagination) -> Vec<ProposalValueStore> {
+pub async fn get_my_proposals(args: crate::Pagination) -> Vec<ProposalValueStore> {
     let mut my_proposals: Vec<ProposalValueStore> = Vec::new();
 
     with_state(|state| {
@@ -100,7 +128,6 @@ pub async  fn get_my_proposals(args: crate::Pagination) -> Vec<ProposalValueStor
         my_proposals
     })
 }
-
 
 // get latest proposals
 #[ic_cdk::query]
