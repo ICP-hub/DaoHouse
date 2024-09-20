@@ -8,10 +8,14 @@ import RejectedAnimation from "./MyProposals/proposal-cards-animations/rejected-
 import { Principal } from "@dfinity/principal";
 import ViewModal from "../Dao/ViewModal";
 
-export default function Card({ proposal }) {
+export default function Card({ proposal, voteApi }) {
   
 
-  const [isModalOpen,setIsModalOpen]=useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [voteStatus, setVoteStatus] = useState(""); // Track user vote (Yes/No)
+  const [approvedVotes, setApprovedVotes] = useState(proposal?.proposal_approved_votes || 0);
+  const [rejectedVotes, setRejectedVotes] = useState(proposal?.proposal_rejected_votes || 0);
+  const [voteCount, setVoteCount] = useState(approvedVotes + rejectedVotes);
 
   const a = proposal?.proposal_description;
   const principalOfAction = proposal.principal_of_action.toText()
@@ -99,6 +103,33 @@ export default function Card({ proposal }) {
     setIsModalOpen(false)
   }
 
+  const handleVoteSubmit = async (e) => {
+    e.preventDefault();
+    if (!voteStatus) return;
+
+    console.log("Hello");
+    
+
+    try {
+      const voteParam = voteStatus === "In Favor" ? { Yes: null } : { No: null };
+      const result = await voteApi.vote(proposal.proposal_id, voteParam);
+
+      if (result?.Ok) {
+        // Update the vote counts locally based on the user vote
+        if (voteStatus === "In Favor") {
+          setApprovedVotes((prev) => prev + 1);
+        } else {
+          setRejectedVotes((prev) => prev + 1);
+        }
+        setVoteCount((prev) => prev + 1);
+      } else {
+        console.error("Error voting:", result.Err);
+      }
+    } catch (error) {
+      console.error("Error submitting vote:", error);
+    }
+  };
+
   const handleVotesClick = () => {
     setIsModalOpen(true)
   }
@@ -177,14 +208,26 @@ export default function Card({ proposal }) {
         {/* Cast Vote Section */}
         <div className="bg-sky-200 w-full md:w-96 p-4 rounded-md mt-6">
           <h1 className="text-lg font-semibold mb-2">Cast Vote</h1>
-          <form className="flex flex-col md:flex-row items-start md:items-center">
+          <form className="flex flex-col md:flex-row items-start md:items-center" onSubmit={handleVoteSubmit}>
             <div className="flex items-center space-x-4 mr-0 md:mr-4 mb-4 md:mb-0">
               <label className="text-md text-[#0E3746] flex items-center">
-                <input type="radio" name="vote" value="In Favor" className="mr-2" />
+                <input
+                  type="radio"
+                  name="vote"
+                  value="In Favor"
+                  className="mr-2"
+                  onChange={() => setVoteStatus("In Favor")}
+                />
                 In Favor
               </label>
               <label className="text-md text-[#0E3746] flex-col items-center">
-                <input type="radio" name="vote" value="Against" className="mr-2" />
+                <input
+                  type="radio"
+                  name="vote"
+                  value="Against"
+                  className="mr-2"
+                  onChange={() => setVoteStatus("Against")}
+                />
                 Against
               </label>
             </div>
@@ -226,4 +269,3 @@ export default function Card({ proposal }) {
     </div>
   );
 }
-
