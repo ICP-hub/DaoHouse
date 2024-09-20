@@ -27,7 +27,6 @@ import SingleProposal from "./Components/Proposals/SingleProposal/SingleProposal
 import Following from "./Components/MyProfile/Following/Following";
 import { ToastContainer, toast } from 'react-toastify';
 import ScrollToTop from "./Components/utils/ScrollToTop";
-import ProposalsDetails from "./pages/FeedPage/ProposalDetails";
 
 
 const App = () => {
@@ -48,7 +47,6 @@ const App = () => {
           <Route path="/*" element={<Error404 />} />
           <Route path="/" element={<Dashboard />} />
           <Route path="/social-feed" element={<FeedPage />} />
-          <Route path="/social-feed/proposal/:proposalId/dao/:daoCanisterId" element={<ProposalsDetails />} />
           {/* <Route path="/proposals" element={<Proposals />} /> */}
           <Route path="/create-proposal" element={<CreateProposal />} />
           <Route path="/dao" element={<Dao />} />

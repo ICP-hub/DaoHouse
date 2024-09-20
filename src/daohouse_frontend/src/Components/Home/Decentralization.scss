@@ -1,138 +1,31 @@
-/* Custom CSS for .Decentralization */
-.Decentralization {
-  background-color: #01273a;
+.Decentralization__movingTexts::-webkit-scrollbar {
+  display: none;
+}
 
-  /* Base styles for images */
-  img {
-    position: absolute;
-   /* Maintain aspect ratio */
+.Decentralization__movingTexts {
+  h1 {
+    font-family: "Mulish", sans-serif;
+    animation: moving 10s linear 0s infinite forwards;
+  
+    /* Create the gradient. */
+    background-image: linear-gradient(to bottom, #2c5364, #102228);
+    
+    /* Set the background size and repeat properties. */
+    background-size: 100%;
+    background-repeat: repeat;
+  
+    /* Use the text as a mask for the background. */
+    /* This will show the gradient as a text color rather than element bg. */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; 
   }
 }
 
-/* Styling for .stat-card */
-.stat-card {
-  position: relative;
-  border: 2px solid rgba(255, 255, 255, 0.6); /* Full border for large screens */
-  border-radius: 6px;
-  padding: 20px;
-  text-align: left;
-  overflow: hidden;
-
-  /* Responsive Borders */
-  @media (max-width: 640px) { /* For small devices */
-    border-width: 1px;
-    border-color: rgba(255, 255, 255, 0.4); /* Lighter border for mobile */
+@keyframes moving {
+  from {
+    transform: translateX(0%);
   }
-
-  h2 {
-    font-size: 1.25rem; /* text-xl equivalent */
-    font-weight: 600;
-    color: #ffffff;
-  }
-
-  .stat-number {
-    font-size: 7.75rem; /* text-6xl equivalent */
-    font-weight: 500;
-    color: #ffffff;
-    position: relative;
-    bottom: -20%; /* Moves the number down and hides the bottom part */
-
-    @media (max-width: 800px) { /* Mobile adjustments */
-      font-size: 5.4rem; /* Smaller number size on mobile */
-      bottom: -21%; /* Adjust the hiding effect for mobile */
-    }
-  }
-}
-
-/* Small circle image */
-.small-circle {
-  @media (max-width: 800px) { /* Mobile screens */
-    width: 70%; /* Width on mobile */
-    height: auto; /* Maintain aspect ratio */
-    max-width: 550px; /* Ensure the image doesn't get too large */
-    max-height: 550px; /* Ensure the height doesn't get too large */
-  }
-
-  @media (min-width: 801px) and (max-width: 1024px) { /* Small tablets */
-    width: 45%; /* Adjust width for small tablets */
-    height: auto; /* Maintain aspect ratio */
-    max-width: 150px; /* Adjust max width */
-    max-height: 150px; /* Adjust max height */
-  }
-
-  @media (min-width: 1025px) { /* Larger screens */
-    width: 40%; /* Default width for larger screens */
-    height: auto; /* Maintain aspect ratio */
-  }
-}
-
-/* Medium circle image */
-.medium-circle {
-  @media (max-width: 800px) { /* Mobile screens */
-    width: 100%; /* Full width on mobile */
-    height: auto; /* Maintain aspect ratio */
-    max-width: 550px; /* Ensure the image doesn't get too large */
-    max-height: 550px; /* Ensure the height doesn't get too large */
-  }
-
-  @media (min-width: 801px) and (max-width: 1024px) { /* Small tablets */
-    width: 60%; /* Adjust width for small tablets */
-    height: auto; /* Maintain aspect ratio */
-    max-width: 300px; /* Adjust max width */
-    max-height: 300px; /* Adjust max height */
-  }
-
-  @media (min-width: 1025px) { /* Larger screens */
-    width: 70%; /* Default width for larger screens */
-    height: auto; /* Maintain aspect ratio */
-  }
-}
-
-/* Base styles for the main section */
-.main-section {
-  @media (max-width: 640px) { /* Mobile screens */
-    height: 260px; /* Adjusted height for mobile */
-    width: 100%;  /* Set width to 100% for mobile screens */
-    padding: 0 20px; /* Add some horizontal padding for better spacing */
-  }
-
-  @media (min-width: 641px) and (max-width: 800px) { /* Small tablets */
-    height: 200px; /* Adjusted height for small tablets */
-    width: 90%; /* Slightly reduce width on small tablets */
-  }
-
-  @media (min-width: 801px) { /* Larger screens */
-    height: 402px; /* Default height for larger screens */
-    width: 100%; /* Set width to 100% for larger screens */
-  }
-}
-
-/* Mobile-specific styles for the circle images */
-.mobile-big-circle {
-  width: 800%; /* Full width for mobile screens */
-  height: 600px; /* Maintain aspect ratio */
-
-  @media (min-width: 640px) { /* Larger mobile screens */
-    width: 150vw; /* Adjust width for larger mobile screens */
-    max-width: 900px; /* Restrict max size */
-    max-height: 700px; /* Restrict max height */
-  }
-
-  @media (min-width: 768px) { /* Hide on medium and larger screens */
-    display: none;
-  }
-}
-
-.mobile-small-circle {
-  width: 60%; /* Default size for mobile screens */
-  height: auto; /* Maintain aspect ratio */
-
-  @media (min-width: 640px) { /* Larger mobile screens */
-    width: 500px; /* Adjusted size for larger mobile */
-    height: 100px; /* Adjusted height for larger mobile */
-  }
-
-  @media (min-width: 768px) { /* Hide on medium and larger screens */
-    display: none;
+  to {
+    transform: translateX(-100%);
   }
 }

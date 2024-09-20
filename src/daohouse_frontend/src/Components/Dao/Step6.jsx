@@ -325,19 +325,12 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
             className="rounded-lg w-[350px] h-[200px] object-cover"
           />
 
-         <div>
-         <label
+          <label
             htmlFor="profile"
             className="flex mobile:text-base text-xs font-semibold cursor-pointer mobile:m-4 m-2 flex-row items-center gap-2 bg-white px-4 py-2 rounded-[2rem] text-black shadow-xl"
           >
-            <FiUpload /> Upload New Photo
-           
+            <FiUpload /> Upload New Photo (Max 2 mb)
           </label>
-          <span className="block mt-1 text-xs translate-x-[35px] text-gray-500">
-            Upload JPG, PNG. Max 5 MB
-             </span>
-         </div>
-         
           <input
             type="file"
             id="profile"
@@ -346,9 +339,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
             onChange={handleFileInput}
           />
         </div>
-        
       </div>
-      
       
       <div className={
         className +
