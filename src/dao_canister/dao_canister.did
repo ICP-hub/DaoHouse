@@ -182,14 +182,14 @@ service : (DaoInput) -> {
   follow_dao : (principal) -> (Result_1);
   get_all_balances : (text) -> (ProposalStakes) query;
   get_all_groups : () -> (vec DaoGroup);
-  get_all_proposals : (Pagination) -> (vec Proposals) query;
-  get_dao_detail : () -> (Dao) query;
+  get_all_proposals : (Pagination) -> (vec Proposals);
+  get_dao_detail : () -> (Dao);
   get_dao_followers : () -> (vec principal) query;
   get_dao_groups : () -> (vec DaoGroup) query;
   get_dao_members : () -> (vec principal) query;
   get_members_of_group : (text) -> (Result_2) query;
   get_my_proposal : () -> (Result_3);
-  get_proposal_by_id : (text) -> (Proposals) query;
+  get_proposal_by_id : (text) -> (Proposals);
   icrc_transfer : (TokenTransferArgs) -> (Result_4);
   proposal_refresh : () -> (Result_1);
   proposal_to_add_member_to_group : (AddMemberArgs) -> (Result_1);
@@ -201,7 +201,7 @@ service : (DaoInput) -> {
   proposal_to_transfer_token : (TokenTransferPolicy) -> (Result_1);
   reply_comment : (ReplyCommentArgs) -> (Result_1);
   search_proposal : (text) -> (vec Proposals) query;
-  unfollow_dao : () -> (Result_1);
+  unfollow_dao : (principal) -> (Result_1);
   update_dao_settings : (UpdateDaoSettings) -> (Result_1);
   vote : (text, VoteParam) -> (Result_1);
 }
