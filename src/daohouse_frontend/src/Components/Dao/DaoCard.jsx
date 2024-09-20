@@ -14,6 +14,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
   const [loading, setLoading] = useState(false);
   const [joinStatus, setJoinStatus] = useState("Join DAO"); // 'Join DAO', 'Requested', 'Joined'
   const [isMember, setIsMember] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false); 
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
   const imageUrl = `${protocol}://${canisterId}.${domain}/f/${image_id}`;
@@ -80,7 +81,10 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
       toast.error(`You are already member of this dao`);
       return;
     };
+    setShowConfirmModal(true);
+  }
     
+  const confirmJoinDao = async () => {
     try {
       const response = await daoCanister.ask_to_join_dao(daoCanisterId);
       if (response.Ok) {
@@ -93,6 +97,8 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
     } catch (error) {
       console.error('Error sending join request:', error);
       toast.error('Error sending join request');
+    } finally {
+      setShowConfirmModal(false);
     }
   };
 
@@ -182,6 +188,33 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
           {joinStatus}
         </button>
       </div>
+      {/* Confirmation Modal */}
+      {showConfirmModal && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div className="bg-white p-6 rounded-lg shadow-lg md:w-[800px] mx-auto text-center">
+      <h3 className="text-xl font-mulish font-semibold text-[#234A5A]">Ready to join this DAO?</h3>
+      <p className="mt-4 text-[16px] md:px-24 font-mulish">
+        You’re about to join a DAO! A proposal will be created to welcome you, and DAO members will vote on your request. 
+        You'll be notified once the results are in. Approval happens when members vote in your favor—good luck!
+      </p>
+      <div className="flex justify-center gap-4 mt-4">
+        <button
+          onClick={() => setShowConfirmModal(false)}
+          className="px-8 py-3 text-[12px] lg:text-[16px] text-black font-normal rounded-full shadow-md hover:bg-gray-200 hover:text-blue-900"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={confirmJoinDao}
+          className="px-6 md:px-8 py-3 text-center text-[12px] lg:text-[16px] bg-[#0E3746] text-white rounded-full shadow-xl hover:bg-blue-800 hover:text-white"
+        >
+          Join Dao
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

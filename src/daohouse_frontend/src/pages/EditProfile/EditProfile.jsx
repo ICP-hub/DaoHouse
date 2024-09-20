@@ -280,7 +280,7 @@ const EditProfile = () => {
   }, [isModalOpen]); // STOP SCROLLING 
 
   return (
-    <div className="bg-zinc-200 w-full pb-20 relative">
+    <div className="bg-zinc-200 w-full mt-[90px] pb-20 relative">
       <div
         style={{
           backgroundImage: `url("${MyProfileRectangle}")`,

@@ -40,6 +40,7 @@ const DaoProfile = () => {
   const { daoCanisterId } = useParams();
   const [joinStatus, setJoinStatus] = useState("Join DAO"); // 'Join DAO', 'Requested', 'Joined'
   const [isMember, setIsMember] = useState(false);
+  const [voteApi, setVoteApi] = useState({})
   const [daoFollowers, setDaoFollowers] = useState([])
   const [daoMembers, setDaoMembers] = useState([])
   const [isExpanded, setIsExpanded] = useState(false);
@@ -83,6 +84,7 @@ const DaoProfile = () => {
             end,
           }
           const daoActor = createDaoActor(daoCanisterId);
+          setVoteApi(daoActor)
           console.log("daoActor",{daoActor});
           
           const daoDetails = await daoActor.get_dao_detail();
@@ -106,6 +108,8 @@ const DaoProfile = () => {
             setFollowersCount(daoFollowers.length);
             setIsFollowing(daoFollowers.some(follower => follower.toString() === currentUserId.toString()));
             const daoMembers = await daoActor.get_dao_members();
+            console.log(daoMembers);
+            
             setDaoMembers(daoMembers)
             const isCurrentUserMember = daoMembers.some(member => member.toString() === currentUserId.toString());
             if (isCurrentUserMember) {
@@ -245,7 +249,7 @@ const DaoProfile = () => {
 
 
   return (
-    <div className={className + " bg-zinc-200 w-full relative"}>
+    <div className={className + " bg-zinc-200 w-full relative mt-[90px]"}>
       <div
         className={
           className +
@@ -540,9 +544,9 @@ const DaoProfile = () => {
             Settings
           </button>
         </div>
-        {activeLink === "proposals" && <ProposalsContent proposals={proposals} isMember={isMember} />}
+        {activeLink === "proposals" && <ProposalsContent proposals={proposals} isMember={isMember} voteApi={voteApi} />}
         {activeLink === "feeds" && <FeedsContent  />}
-        {activeLink === "member_policy" && <Members />}
+        {activeLink === "member_policy" && <Members  />}
         {activeLink === "followers" && <FollowersContent daoFollowers={daoFollowers}/>}
         {activeLink === "funds" && <FundsContent />}
         {activeLink === "settings" && <DaoSettings />}
