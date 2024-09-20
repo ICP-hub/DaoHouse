@@ -9,13 +9,12 @@ const Step2 = ({ setData, setActiveStep, data }) => {
 
 
   useEffect(() => {
-    setLocalData(data);
+    setLocalData(data); 
   }, [data]);
   const [inputData, setInputData] = useState({
-    TokenName: data.Tokenname || " ",
+   TokenName: data.Tokenname || " ",
     TokenSymbol: data.Tokensymbol || " ",
-    TokenSupply: data.TokenSupply || " ",
-    VotesRequired: data.VotesRequired || " ",
+    TokenSupply : data.TokenSupply || " ",
   });
 
   console.log("inputData", inputData)
@@ -39,7 +38,8 @@ const Step2 = ({ setData, setActiveStep, data }) => {
         TokenName: data.TokenName,
         TokenSymbol: data.TokenSymbol,
         TokenSupply: data.TokenSupply,
-        VotesRequired: data.VotesRequired,
+
+
       });
 
     }
@@ -70,13 +70,13 @@ const Step2 = ({ setData, setActiveStep, data }) => {
   };
 
 
-  function changePeriod(value) {
-    // Convert the value to a number, ensure it's non-negative, and append "days"
-    const numberValue = Math.max(parseInt(value, 10) || 1, 0);
-    setInputData({
-      TokenSupply: numberValue,
-    });
-  }
+  // function changePeriod(value) {
+  //   // Convert the value to a number, ensure it's non-negative, and append "days"
+  //   const numberValue = Math.max(parseInt(value, 10) || 1, 0);
+  //   setInputData({
+  //     setUpPeriod: numberValue,
+  //   });
+  // }
 
   return (
     <React.Fragment>
@@ -87,21 +87,21 @@ const Step2 = ({ setData, setActiveStep, data }) => {
             "__form bg-[#F4F2EC] mobile:p-10 small_phone:p-6 p-4 big_phone:mx-4 mx-0 rounded-lg flex flex-col mobile:gap-4 gap-2"
           }
         >
-          {/* dao token */}
-          <div className="flex mobile:flex-row flex-col mobile:gap-4 gap-2 mobile:items-center items-start">
-            <p
+         {/* dao token */}
+         <div className="flex mobile:flex-row flex-col mobile:gap-4 gap-2 mobile:items-center items-start">
+          <p
               htmlFor="type"
               className="font-semibold mobile:text-base text-sm"
             >
               DAO Token*
             </p>
-
+         
           </div>
-
+         
           <div className="flex flex-wrap  gap-4">
-
+         
             {/* token name */}
-            <div className="w-full lg:w-1/5 flex flex-col gap-4 ">
+            <div className="w-full lg:w-1/4 flex flex-col gap-4 ">
               <label
                 htmlFor="tokenName"
                 className="font-semibold mobile:text-base text-xs"
@@ -120,7 +120,7 @@ const Step2 = ({ setData, setActiveStep, data }) => {
             </div>
 
             {/* token symbol */}
-            <div className="w-full lg:w-1/5 flex flex-col gap-4">
+            <div className="w-full lg:w-1/4 flex flex-col gap-4">
               <label
                 htmlFor="tokenSymbol"
                 className="font-semibold mobile:text-base text-xs"
@@ -136,14 +136,14 @@ const Step2 = ({ setData, setActiveStep, data }) => {
                 onChange={handleChange}
                 className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm"
               />
+             
 
-
-
+          
             </div>
-
-            {/* TokenSupply */}
-            <div className="w-full lg:w-1/5 flex flex-col gap-4 ">
-
+        
+        {/* TokenSupply */}
+            <div className="w-full lg:w-1/4 flex flex-col gap-4 ">
+              
               <label
                 htmlFor="tokenSymbol"
                 className="font-semibold mobile:text-base text-xs"
@@ -155,29 +155,8 @@ const Step2 = ({ setData, setActiveStep, data }) => {
                 required
                 type="number"
                 name="TokenSupply"
-                value={inputData.TokenSupply || 1000}
+                value={inputData.TokenSupply}
                 onChange={handleChange}
-                className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm"
-              />
-            </div>
-
-            {/* Votes Required */}
-            <div className="w-full lg:w-1/5 flex flex-col gap-4 ">
-
-              <label
-                htmlFor="tokenSymbol"
-                className="font-semibold mobile:text-base text-xs"
-              >
-                Votes Required
-              </label>
-
-              <input
-                required
-                type="text"
-                name="VotesRequired"
-                value={inputData.VotesRequired}
-                 onChange={handleChange}
-               // onChange={(e) => changePeriod(e.target.value)}
                 className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm"
               />
             </div>
