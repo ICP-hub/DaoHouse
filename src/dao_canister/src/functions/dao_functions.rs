@@ -19,10 +19,10 @@ async fn get_members_of_group(group: String) -> Result<Vec<Principal>, String> {
 // proposal to add member to a group
 #[update(guard=guard_check_members)]
 async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, String> {
-    check_group_member_permission(
-        &args.group_name,
-        crate::utils::PERMISSION_ADD_MEMBER_TO_GROUP.to_string(),
-    )?;
+    // check_group_member_permission(
+    //     &args.group_name,
+    //     crate::utils::PERMISSION_ADD_MEMBER_TO_GROUP.to_string(),
+    // )?;
     check_user_in_group(&args.group_name)?;
 
     // create proposal
