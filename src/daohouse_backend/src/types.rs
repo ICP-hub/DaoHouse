@@ -528,6 +528,8 @@ pub struct UserProfile {
     pub twitter_id: String,
     pub telegram: String,
     pub website: String,
+    pub follow_dao : Vec<Principal>,
+    pub join_dao :  Vec<Principal>,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize)]

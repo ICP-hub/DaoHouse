@@ -3,17 +3,13 @@ module.exports = {
   content: ["./src/**/*.{html,js,jsx,ts,tsx}"],
   theme: {
     extend: {
-      // Add Mulish font
-      fontFamily: {
-        mulish: ['Mulish', 'sans-serif'],
-      },
       translate: {
         full: "100%",
         "-full": "-100%",
       },
       colors: {
         'dark-green': "#0E3746",
-        'bg-color': '#DADEE4',
+        'bg-color': '#DADEE4'
       },
       scale: {
         90: "0.9",
@@ -28,10 +24,6 @@ module.exports = {
         wiggle: "wiggle 4s ease-in-out infinite",
       },
       screens: {
-        mini_phone: "360px",
-        iphone_SE: "375px",
-        iphone12_pro: "390px",
-        iphone14_pro_max: "430px",
         small_phone: "400px",
         mobile: "500px",
         big_phone: "800px",
@@ -39,6 +31,7 @@ module.exports = {
         laptop: "1280px",
         desktop: "1440px",
       },
+      // Add the blur utility here
       blur: {
         xs: '2px',
         sm: '4px',

@@ -8,24 +8,31 @@ import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import Container from "../Container/Container";
 import ViewModal from "./ViewModal";
 
-const Step5 = ({ setData, setActiveStep, data }) => {
+
+const Step5 = ({ setData, setActiveStep,data }) => {
+  console.log("step5",data)
   const [loadingNext, setLoadingNext] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const user = data.step3.members;
 
+  const [isModalOpen,setIsModalOpen]=useState(false)
+  
+  const user =data.step3.members
+  console.log(user)
+ 
+  // const [quorum, setQuorum] = useState([
+  //   { name: "Council", index: 0, vote: 50 },
+  //   { name: "Group 1", index: 1, vote: 50 },
+  //   { name: "Group 2", index: 2, vote: 50 },
+  // ]);
   const [quorum, setQuorum] = useState(() => {
-    const savedData = localStorage.getItem("step5Quorum");
-    return savedData
-      ? JSON.parse(savedData)
-      : [
-          { name: "Council", index: 0, vote: 50 },
-          { name: "Group 1", index: 1, vote: 50 },
-          { name: "Group 2", index: 2, vote: 50 },
-        ];
+    const savedData = localStorage.getItem('step5Quorum');
+    return savedData ? JSON.parse(savedData) : [
+      { name: "Council", index: 0, vote: 50 },
+      { name: "Group 1", index: 1, vote: 50 },
+      { name: "Group 2", index: 2, vote: 50 },
+    ];
   });
-
   const className = "DAO_Step5";
-
+ 
   const handleVoteChange = (index, newValue) => {
     setQuorum((prevQuorum) =>
       prevQuorum.map((item, i) =>
@@ -41,133 +48,134 @@ const Step5 = ({ setData, setActiveStep, data }) => {
     }));
     setActiveStep(5);
   }
-
+  
   useEffect(() => {
-    localStorage.setItem("step5Quorum", JSON.stringify(quorum));
-  }, [quorum]);
+    // Save quorum data to local storage whenever it changes
+    localStorage.setItem('step5Quorum', JSON.stringify(quorum));
+  }, [quorum]); 
 
-  function handleViewClickModal() {
-    setIsModalOpen(true);
+
+   function handleViewClickModal (){
+    setIsModalOpen(true)
+
+   
   }
 
-  function handleOnClose() {
-    setIsModalOpen(false);
+  function handleOnClose(){
+    setIsModalOpen(false)
   }
-
   return (
     <React.Fragment>
-      <Container>
-        <div
-          className={`${className}__form w-full bg-[#F5F5F5] big_phone:p-10 mobile:p-6 p-3 big_phone:mx-4 mx-0 rounded-lg flex flex-col gap-4`}
-        >
-          {/* Desktop View */}
-          <section className="heading big_phone:flex hidden items-center bg-[#F5F5F5] w-full">
-            <p className="flex items-center gap-2 w-1/3 font-semibold ">
-              <RiGroupLine /> Groups
-            </p>
+    <Container>
+      <div
+        className={
+          className +
+          "__form w-full bg-[#F4F2EC] big_phone:p-10 mobile:p-6 p-3 big_phone:mx-4 mx-0 rounded-lg flex flex-col gap-4"
+        }
+      >
+        {/**On the Desktop till 800px */}
+        <section className="heading big_phone:flex hidden items-center w-full">
+          <p className="flex items-center gap-2 w-1/3 font-semibold">
+            <RiGroupLine /> Groups
+          </p>
 
-            <p className="flex items-center gap-2 w-1/3 font-semibold">
-              <IoPersonOutline /> Members
-            </p>
+          <p className="flex items-center gap-2 w-1/3 font-semibold">
+            <IoPersonOutline /> Members
+          </p>
 
-            <p className="flex items-center gap-2 w-1/3 font-semibold">
-              <MdOutlineVerifiedUser /> Voting Policy <LuAlertCircle />
-            </p>
-          </section>
+          <p className="flex items-center gap-2 w-1/3 font-semibold">
+            <MdOutlineVerifiedUser /> Voting Policy <LuAlertCircle />
+          </p>
+        </section>
 
-          <section className="bg-white rounded-2xl w-full p-4 gap-4 big_phone:flex hidden flex-col">
-            {quorum.map(({ name, index, vote }) => (
-              <div
-                key={index}
-                className="border border-slate-200 p-3 flex items-center w-full rounded-lg"
-              >
-                <p className="w-1/3">{name}</p>
-
-                <p className="w-1/3 flex flex-row gap-4">
-                  <span>{index}</span>
-                  <button
-                    onClick={handleViewClickModal}
-                    className="text-cyan-800 bg-slate-200 px-5 py-1 rounded-md"
-                  >
-                    View
-                  </button>
-                </p>
-
-                <div className="w-1/3 gap-2 flex items-center">
-                  <RangeInput index={index} handleVoteChange={handleVoteChange} />
-                  <span className="text-nowrap hidden sm:block ">{vote} %</span>
-                </div>
-              </div>
-            ))}
-          </section>
-
-          {/* Mobile View */}
-          <section className="bg-[#EBEBEB] rounded-lg w-full p-4 gap-4 sm:hidden mt-2 big_phone:hidden flex flex-col gap-10">
-            <section className="flex justify-between items-center border-b pb-2">
-              <p className="flex items-center gap-2 font-semibold font-mulish">
-                Groups
-              </p>
-              <p className="flex items-center gap-2 translate-x-[34px] sm:translate-x-0 font-semibold font-mulish">
-                Voting Policy
-              </p>
-              <LuAlertCircle className="text-blue-300" />
-            </section>
-            <hr className="border-t-2 border-gray-400 sm:hidden mt-2" />
-
-            {quorum.map(({ name, index, vote }) => (
-              <div
-                key={index}
-                className="bg-[#EBEBEB] border border-slate-300 p-4 rounded-lg flex flex-col gap-4"
-              >
-                {/* Council, Members, and View button with gradient slider */}
-                <section className="flex justify-between items-center pt-2">
-                  <div className="flex flex-col gap-2">
-                    <p className="text-sm text-gray-500">{name}</p>
-                    <p className="text-sm text-gray-500">
-                      {user[index]?.length || 0} members
-                    </p>
-                    <button
-                      onClick={handleViewClickModal}
-                      className="text-[#229ED9] font-mulish text-sm bg-white border px-5 py-1 rounded-md"
-                    >
-                      View
-                    </button>
-                  </div>
-
-                  <div className="flex flex-col items-end gap-6">
-                    <h2 className="text-sm hidden sm:block">{vote} %</h2>
-                    <RangeInput index={index} handleVoteChange={handleVoteChange} />
-                  </div>
-                </section>
-              </div>
-            ))}
-          </section>
-
-          <div
-            className={`${className}__submitButton w-full flex flex-row items-center mobile:justify-end justify-between`}
-          >
-            <button
-              onClick={() => setActiveStep(3)}
-              className="flex mobile:m-4 my-4 flex-row items-center gap-2 border border-[#0E3746] hover:bg-[#0E3746] text-[#0E3746] hover:text-white mobile:text-base text-sm transition px-4 py-2 rounded-[2rem]"
+        {/**On the Desktop till 800px */}
+        <section className="bg-white rounded-2xl w-full p-4 gap-4 big_phone:flex hidden flex-col">
+          {quorum.map(({ name, index, vote }) => (
+            <div
+              key={index}
+              className="border border-slate-200 p-3 flex items-center w-full rounded-lg"
             >
-              <FaArrowLeftLong /> Back
-            </button>
+              <p className="w-1/3">{name}</p>
 
-            {loadingNext ? (
-              <CircularProgress className="m-4 my-4" />
-            ) : (
-              <button
-                type="submit"
-                onClick={handleSaveAndNext}
-                className="flex mobile:m-4 my-4 flex-row items-center gap-2 bg-[#0E3746] px-4 py-2 rounded-[2rem] text-white mobile:text-base text-sm"
-              >
-                Save & Next <FaArrowRightLong />
-              </button>
-            )}
-          </div>
+              <p className="w-1/3 flex flex-row gap-4">
+                <span>{index}</span>
+                <button onClick={handleViewClickModal} className="text-cyan-800 bg-slate-200 px-5 py-1 rounded-md">
+                  View
+                </button>
+              </p>
+
+              <div className="w-1/3 gap-2 flex items-center">
+                <RangeInput index={index} handleVoteChange={handleVoteChange} />
+                <span className="text-nowrap">{vote} %</span>
+              </div>
+            </div>
+          ))}
+        </section>
+
+        {/**On the Phone after 800px */}
+        {/* <div className="bg-white mobile:p-5 p-3 rounded-lg flex flex-col gap-y-4">
+          {quorum.map(({ name, index, vote }) => (
+            <div
+              key={index}
+              className="bg-[#C6DDE6] p-2 rounded-md border-2 border-[#97C3D3]"
+            >
+              <section className="flex flex-row items-center justify-between border-b border-cyan-600 p-2">
+                <p className="flex flex-row items-center gap-2">
+                  <RiGroupLine /> {name}
+                </p>
+                <p>Council</p>
+              </section>
+              <section className="flex flex-row items-center justify-between border-b border-cyan-600 p-2">
+                <p className="flex flex-row items-center gap-2">
+                  <IoPersonOutline /> Members
+                </p>
+                <p>1</p>
+              </section>
+              <section className="flex flex-row items-center justify-between p-2 mobile:gap-x-10 gap-x-6">
+                <p className="flex flex-row items-center gap-2 text-nowrap">
+                  <MdOutlineVerifiedUser /> Voting Policy
+                </p>
+                <div className="flex flex-col items-end gap-y-2">
+                  <span className="text-nowrap text-sm">{vote} %</span>
+                  <RangeInput
+                    index={index}
+                    handleVoteChange={handleVoteChange}
+                  />
+                </div>
+              </section>
+            </div>
+          ))}
+        </div> */}
+
+        <div
+          className={
+            className +
+            "__submitButton w-full flex flex-row items-center mobile:justify-end justify-between"
+          }
+        >
+          <button
+            onClick={() => setActiveStep(3)}
+            className="flex mobile:m-4 my-4 flex-row items-center gap-2 border border-[#0E3746] hover:bg-[#0E3746] text-[#0E3746] hover:text-white mobile:text-base text-sm transition px-4 py-2 rounded-[2rem]"
+          >
+            <FaArrowLeftLong /> Back
+          </button>
+
+          {loadingNext ? (
+            <CircularProgress className="m-4 my-4" />
+          ) : (
+            <button
+              type="submit"
+              onClick={handleSaveAndNext}
+              className="flex mobile:m-4 my-4 flex-row items-center gap-2 bg-[#0E3746] px-4 py-2 rounded-[2rem] text-white mobile:text-base text-sm"
+            >
+              Save & Next <FaArrowRightLong />
+            </button>
+          )}
         </div>
+      </div>
+
       </Container>
-      <ViewModal open={isModalOpen} onClose={handleOnClose} users={user} />
+      <ViewModal open={isModalOpen } onClose={handleOnClose} users={user}/>
     </React.Fragment>
   );
 };
@@ -182,30 +190,23 @@ const RangeInput = ({ index, handleVoteChange }) => {
     setValue(newValue);
     handleVoteChange(index, newValue);
   };
-
   useEffect(() => {
-    setValue(value);
+    setValue(value); // Update rangeValue when prop value changes
   }, [value]);
-
-  const gradient = `linear-gradient(to right, #0e3746 ${value}%, #D0D0D0 ${value}%)`;
+  const gradient = `linear-gradient(to right, #0e3746 ${value}%, #fff ${value}%)`;
 
   return (
-    <div className="flex items-center w-full gap-2">
-      <input
-        type="range"
-        min={0}
-        max={100}
-        className="w-[50%] h-[8px] border-3 bg-[#D0D0D0] sm:w-full sm:h-[8px] custom-range translate-x-[42px] sm:translate-x-0"
-        step={1}
-        value={value}
-        onChange={handleChange}
-        style={{
-          background: gradient,
-        }}
-      />
-      <span className="text-xs translate-x-[40px] font-semibold block sm:hidden">
-        {value} %
-      </span>
-    </div>
+    <input
+      type="range"
+      min={0}
+      max={100}
+      className="mobile:w-10/12 mobile:h-[8px] h-[5px] custom-range border-2 border-[#061c24]"
+      step={1}
+      value={value}
+      onChange={handleChange}
+      style={{
+        background: gradient,
+      }}
+    />
   );
 };

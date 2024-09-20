@@ -41,8 +41,8 @@ const Followers = () => {
   return (
     <div className={className + " " + "w-full"}>
       <div className="lg:ml-10 tablet:mt-12 mt-5 md:px-0 px-3">
-        <h3 className="text-[#05212C] tablet:text-[24px] text-[18px] tablet:font-bold font-semibold mb-4 translate-x-[12px] translate-y-[-90px]">
-          Followed Daos List
+        <h3 className="text-[#05212C] tablet:text-[24px] text-[18px] tablet:font-bold font-semibold mb-4">
+          Followers
         </h3>
 
         {loading ? (

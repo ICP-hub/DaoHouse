@@ -37,17 +37,17 @@ const PaymentModal = ({ open, onClose, onPay, loading, data }) => {
           </div>
           <p className="text-gray-600 mb-6">Click “Confirm” to complete your payment</p>
           <div className="flex justify-between">
-            <button
+            <Button
               onClick={onClose}
               variant="outlined"
-              className="text-black bg-white hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-6 py-2.5 sm:px-6 lg:px-12 sm:py-2.5 sm:me-2 mb-2 border border-gray-500 dark:bg-white dark:hover:bg-gray-200 dark:focus:ring-gray-300 dark:text-black w-full sm:w-auto"
+              class="text-black bg-white hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-10 py-2.5 me-2 mb-2 border border-gray-500 dark:bg-white dark:hover:bg-gray-200 dark:focus:ring-gray-300 dark:text-black"
             >
               Nah, Cancel
-            </button>
+            </Button>
             <button
               onClick={onPay}
               variant="contained"
-              className="text-white bg-black hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-6 py-2.5 sm:px-6 lg:px-16 sm:py-2.5 sm:me-2 mb-2 border border-gray-500 dark:bg-black dark:hover:bg-gray-800 dark:focus:ring-gray-700 dark:text-white w-full sm:w-auto"
+              class="text-white bg-black hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-12 py-2.5 me-2 mb-2 border border-gray-500 dark:bg-black dark:hover:bg-gray-800 dark:focus:ring-gray-700 dark:text-white"
               disabled={loading}
             >
               {loading ? <CircularProgress size={30} color="inherit" /> : "Confirm"}

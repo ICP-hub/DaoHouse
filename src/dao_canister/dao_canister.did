@@ -91,20 +91,6 @@ type DaoInput = record {
 };
 type LedgerCanisterId = record { id : principal };
 type Pagination = record { end : nat32; start : nat32 };
-type ProposalInput = record {
-  principal_of_action : opt principal;
-  proposal_expired_at : opt nat64;
-  new_dao_name : opt text;
-  from : opt principal;
-  proposal_title : text;
-  proposal_description : text;
-  tokens : opt nat64;
-  proposal_created_at : opt nat64;
-  dao_purpose : opt text;
-  group_to_join : opt text;
-  proposal_type : ProposalType;
-  bounty_task : opt text;
-};
 type ProposalStakes = record {
   proposal_id : text;
   balances : vec AccountBalance;
@@ -193,8 +179,7 @@ service : (DaoInput) -> {
   ask_to_join_dao : (principal) -> (Result_1);
   change_proposal_state : (text, ProposalState) -> (Result_1);
   comment_on_proposal : (text, text) -> (Result_1);
-  create_proposal_controller : (principal, ProposalInput) -> (text);
-  follow_dao : () -> (Result_1);
+  follow_dao : (principal) -> (Result_1);
   get_all_balances : (text) -> (ProposalStakes) query;
   get_all_groups : () -> (vec DaoGroup);
   get_all_proposals : (Pagination) -> (vec Proposals) query;

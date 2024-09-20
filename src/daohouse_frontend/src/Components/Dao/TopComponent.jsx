@@ -8,7 +8,6 @@ const TopComponent = ({ showButtons, showAll, setShowAll }) => {
 
     return (
         <div
-            className='mt-[90px]'
             style={{
                 backgroundImage: `url("${daobg1}")`,
                 backgroundRepeat: "no-repeat",

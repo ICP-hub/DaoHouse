@@ -50,8 +50,8 @@ const MyPosts = () => {
   return (
     <div className={className}>
       <div className="md:ml-10 mx-5 mt-5">
-        <h3 className="text-[#05212C] md:text-[24px] text-[18px] md:font-bold font-semibold ml-4 translate-y-[-70px]" onClick={getpost}>
-          Submitted Proposals
+        <h3 className="text-[#05212C] md:text-[24px] text-[18px] md:font-bold font-semibold ml-4" onClick={getpost}>
+          Post
         </h3>
         {loading ? (
           <MuiSkeleton />

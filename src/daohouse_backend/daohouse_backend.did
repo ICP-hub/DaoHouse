@@ -108,6 +108,7 @@ type UserProfile = record {
   post_id : vec text;
   username : text;
   dao_ids : vec principal;
+  join_dao : vec principal;
   twitter_id : text;
   description : text;
   followers_list : vec principal;
@@ -118,6 +119,7 @@ type UserProfile = record {
   contact_number : text;
   email_id : text;
   followers_count : nat32;
+  follow_dao : vec principal;
   profile_img : text;
   telegram : text;
   tag_defines : vec text;
@@ -145,6 +147,8 @@ service : (InitialArgs) -> {
   icrc28_trusted_origins : () -> (Icrc28TrustedOriginsResponse);
   make_payment : (nat64, principal) -> (Result_6);
   search_dao : (text) -> (vec DaoDetails) query;
+  store_follow_dao : (principal, principal) -> (Result_1);
+  store_join_dao : (principal, principal) -> (Result_1);
   update_profile : (Profileinput) -> (Result_1);
   upload_image : (ImageData) -> (Result);
 }
