@@ -125,7 +125,7 @@ const MyProfile = ({ childComponent }) => {
   }, [activeTab, following]); // Updated to include following
 
   return (
-    <div className={`${className} bg-zinc-200 w-full relative mt-[90px]`}>
+    <div className={`${className} bg-zinc-200 w-full relative `}>
 
       {/* Desktop View */}
       <div className="hidden md:block">
