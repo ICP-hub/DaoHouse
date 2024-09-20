@@ -247,79 +247,105 @@ fn proposal_refresh() -> Result<String, String> {
 //     })
 // }
 
-#[update]
-// only members
-// prevent anonymous
-// TODO: SAVE THE TRANSFERED TOKES TO PARTICULAR CANISTER AND REVERT IT BACK WHEN COMPLETED
+// #[update]
+// // only members
+// // prevent anonymous
+// // TODO: SAVE THE TRANSFERED TOKES TO PARTICULAR CANISTER AND REVERT IT BACK WHEN COMPLETED
+// async fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> {
+//     // to check if user has already voted
+//     check_voting_right(&proposal_id)?;
+
+//     let principal_id = api::caller();
+
+//     // user balance validation
+//     let balance = icrc_get_balance(principal_id)
+//         .await
+//         .map_err(|err| format!("Error while fetching user balance {}", err))?;
+
+//     let min_vote_req = with_state(|state| state.dao.tokens_required_to_vote);
+
+//     if balance < min_vote_req {
+//         return Err(String::from(
+//             "User token balance is less then the required threshold",
+//         ));
+//     } else {
+//         // frontend need to approve
+//         // transfer of tokens
+//         let token_transfer_args = TokenTransferArgs {
+//             from: principal_id,
+//             to: ic_cdk::api::id(),
+//             tokens: min_vote_req as u64,
+//         };
+//         icrc_transfer(token_transfer_args)
+//             .await
+//             .map_err(|err| format!("Error in transfer of tokens: {}", String::from(err)))?;
+
+//         // storing staked tokens
+//         with_state(|state| {
+//             let account_balance = AccountBalance {
+//                 id: principal_id.clone(),
+//                 staked: state.dao.tokens_required_to_vote,
+//             };
+
+//             let proposal_stake = ProposalStakes {
+//                 proposal_id: proposal_id.clone(),
+//                 balances: vec![account_balance],
+//             };
+
+//             state
+//                 .proposal_balances
+//                 .insert(proposal_id.clone(), proposal_stake);
+//         });
+
+//         // perform voting
+//         with_state(|state| match &mut state.proposals.get(&proposal_id) {
+//             Some(pro) => {
+//                 if voting == VoteParam::Yes {
+//                     pro.approved_votes_list.push(principal_id);
+//                     pro.proposal_approved_votes += 1;
+
+//                     state.proposals.insert(proposal_id, pro.to_owned());
+//                     Ok(String::from("Successfully voted in favour of Proposal."))
+//                 } else {
+//                     pro.rejected_votes_list.push(principal_id);
+//                     pro.proposal_rejected_votes += 1;
+
+//                     state.proposals.insert(proposal_id, pro.to_owned());
+//                     Ok(String::from("Successfully voted against the proposal."))
+//                 }
+//             }
+//             None => Err(String::from("Proposal ID is invalid !")),
+//         })
+//     }
+
+//     // Ok("()".to_string())
+// }
+
+#[update(guard=guard_check_members)]
 async fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> {
-    // to check if user has already voted
     check_voting_right(&proposal_id)?;
 
     let principal_id = api::caller();
+    with_state(|state| match &mut state.proposals.get(&proposal_id) {
+        Some(pro) => {
+            if voting == VoteParam::Yes {
+                pro.approved_votes_list.push(principal_id);
+                pro.proposal_approved_votes += 1;
 
-    // user balance validation
-    let balance = icrc_get_balance(principal_id)
-        .await
-        .map_err(|err| format!("Error while fetching user balance {}", err))?;
+                state.proposals.insert(proposal_id, pro.to_owned());
+                Ok(String::from("Successfully voted in favour of Proposal."))
+            } else {
+                pro.rejected_votes_list.push(principal_id);
+                pro.proposal_rejected_votes += 1;
 
-    let min_vote_req = with_state(|state| state.dao.tokens_required_to_vote);
-
-    if balance < min_vote_req {
-        return Err(String::from(
-            "User token balance is less then the required threshold",
-        ));
-    } else {
-        // frontend need to approve
-        // transfer of tokens
-        let token_transfer_args = TokenTransferArgs {
-            from: principal_id,
-            to: ic_cdk::api::id(),
-            tokens: min_vote_req as u64,
-        };
-        icrc_transfer(token_transfer_args)
-            .await
-            .map_err(|err| format!("Error in transfer of tokens: {}", String::from(err)))?;
-
-        // storing staked tokens
-        with_state(|state| {
-            let account_balance = AccountBalance {
-                id: principal_id.clone(),
-                staked: state.dao.tokens_required_to_vote,
-            };
-
-            let proposal_stake = ProposalStakes {
-                proposal_id: proposal_id.clone(),
-                balances: vec![account_balance],
-            };
-
-            state
-                .proposal_balances
-                .insert(proposal_id.clone(), proposal_stake);
-        });
-
-        // perform voting
-        with_state(|state| match &mut state.proposals.get(&proposal_id) {
-            Some(pro) => {
-                if voting == VoteParam::Yes {
-                    pro.approved_votes_list.push(principal_id);
-                    pro.proposal_approved_votes += 1;
-
-                    state.proposals.insert(proposal_id, pro.to_owned());
-                    Ok(String::from("Successfully voted in favour of Proposal."))
-                } else {
-                    pro.rejected_votes_list.push(principal_id);
-                    pro.proposal_rejected_votes += 1;
-
-                    state.proposals.insert(proposal_id, pro.to_owned());
-                    Ok(String::from("Successfully voted against the proposal."))
-                }
+                state.proposals.insert(proposal_id, pro.to_owned());
+                Ok(String::from("Successfully voted against the proposal."))
             }
-            None => Err(String::from("Proposal ID is invalid !")),
-        })
-    }
-
-    // Ok("()".to_string())
+        }
+        None => Err(String::from("Proposal ID is invalid !")),
+    })
 }
+
 
 #[query(guard=prevent_anonymous)]
 fn search_proposal(proposal_id: String) -> Vec<Proposals> {
