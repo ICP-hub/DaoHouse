@@ -17,6 +17,7 @@ const ProposalsDetails = () => {
   const { backendActor, createDaoActor } = useAuth();
   const [dao, setDao] = useState(null);
   const { proposalId, daoCanisterId } = useParams();
+  const [voteApi, setVoteApi] = useState({});
   const [proposal, setProposal] = useState([]);
   const [loading, setLoading] = useState(false);
   const [joinStatus, setJoinStatus] = useState("Join DAO");
@@ -58,6 +59,7 @@ const ProposalsDetails = () => {
         setLoading(true);
         try {
           const daoActor = createDaoActor(daoCanisterId);
+          setVoteApi(daoActor)
           const proposalDetails = await daoActor.get_proposal_by_id(proposalId);
           setProposal(proposalDetails);
 
@@ -207,7 +209,7 @@ const ProposalsDetails = () => {
 
         
                 <div>
-                  <Card proposal={proposal} showActions={true} isProposalDetails={true} />
+                  <Card proposal={proposal} showActions={true} isProposalDetails={true} voteApi={voteApi} />
                   <Comments />
                 </div>
         
