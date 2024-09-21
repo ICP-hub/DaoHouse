@@ -50,7 +50,7 @@ const App = () => {
           <Route path="/social-feed" element={<FeedPage />} />
           <Route path="/social-feed/proposal/:proposalId/dao/:daoCanisterId" element={<ProposalsDetails />} />
           {/* <Route path="/proposals" element={<Proposals />} /> */}
-          <Route path="/create-proposal" element={<CreateProposal />} />
+          <Route path="/create-proposal/:daoCanisterId" element={<CreateProposal />} />
           <Route path="/dao" element={<Dao />} />
           <Route path="/dao/create-dao" element={<CreateDao />} />
           <Route path="/dao/profile/:daoCanisterId" element={<DaoProfile />} />

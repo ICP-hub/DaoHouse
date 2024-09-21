@@ -1,3 +1,4 @@
+
 import React, { useState ,useEffect } from 'react';
 import proposals from "../../../assets/proposals.png";
 import createProposalNew from "../../../assets/createProposalNew.png";
@@ -16,16 +17,40 @@ function CreateProposal() {
     const [proposalDescription, setProposalDescription] = useState('');
     const [requiredVotes, setRequiredVotes] = useState('');
     const [proposalType, setProposalType] = useState(''); 
+    const[addMember,setAddMemeber] = useState({
+        description : '',
+        groupName : '',
+        newMember : '',
+    })
+    const[bountyDone,setBountyDone] = useState({
+        proposalExpiredAt : '',
+        from : '',
+        description : '',
+        tokens : '',
+        actionMember : '',
+        proposalCreatedAt : '',
+        bountTask : '',
+    })
+ 
+    const [formData,setFormData] = useState({
+        description: '',
+        groupName: '',
+        newMember: '',
+       
+    }
+        )
  
     const [loading, setLoading] = useState(false);
    const { createDaoActor, backendActor ,stringPrincipal  } = useAuth();
-  console.log("dfjsdljflksdf",stringPrincipal);
+
+
   
     
    const { daoCanisterId } = useParams();
     useEffect(() => {
         console.log("DAO Canister ID:", daoCanisterId);
     }, [daoCanisterId]);
+ 
     const className = "CreateProposals";
 
     const handleProposalTitleChange = (event) => {
@@ -38,116 +63,166 @@ function CreateProposal() {
 
     const handleProposalTypeChange = (event) => {
         setProposalType(event.target.value);
+        // setFormData({
+        //     description: '',
+        //     groupName: '',
+        //     newMember: '',
+        //     // proposalExpiredAt: '',
+        //     // from: '',
+        //     // tokens: '',
+        //     // actionMember: '',
+        //     // proposalCreatedAt: '',
+        //     // bountyTask: '',
+        //     // daoPurpose: '',
+        //     // newDaoName: '',
+        // })
     };
     const stripHtmlTags = (html) => {
         const doc = new DOMParser().parseFromString(html, 'text/html');
         return doc.body.textContent || "";
     };
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        setLoading(true);
-    
-        try {
-            // Validate proposal data before sending
-            // const votes = parseInt(requiredVotes, 10);
-            if (!proposalTitle || !proposalDescription  || !proposalType ) {
-                throw new Error("Please fill all the fields with valid data and choose a proposal type.");
-            }
-            
-            const strippedDescription = stripHtmlTags(proposalDescription);
-            const proposalData = {
-                // principal_of_action : Principal.fromText(stringPrincipal).toText(),
-                principal_of_action : stringPrincipal ? [Principal.fromText(stringPrincipal)] : [],
-                proposal_title: proposalTitle,
-                new_dao_name: [],
-                proposal_description: strippedDescription,
-                // required_votes: parseInt(requiredVotes, 10),
-                proposal_type: { [proposalType]: null },
-                group_to_join : [],
-            };
-    
-            console.log("Proposal Data:", proposalData);    
-            const pagination = { start: 0, end: 10 };
-            const response = await backendActor.get_all_dao(pagination);
-    
-            await Promise.all(response.map(async (data) => {
-                console.log("data",data);
-                
-                const daoCanister = createDaoActor(data.dao_canister_id);
-                console.log("DAO Canister ID:", data.dao_canister_id);
-                const backendPrincipal = Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND)
-                await daoCanister.create_proposal_controller(backendPrincipal, proposalData);
-            }));
-                        
-            // Display success message and clear form fields
-            toast.success("Proposal created successfully!");
-            setProposalTitle('');
-            setProposalDescription('');
-            // setRequiredVotes('');
-            setProposalType('');
-           
-        } catch (error) {
-            console.error("Error creating proposal:", error);
-            toast.error(error.message || "Error creating proposal. Please try again.");
-        } finally {
-            setLoading(false);
-        }
+    const handleInputChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+      };
+      const handleInputAddMemeber = (e) => {
+        const { name, value } = e.target;
+        setAddMemeber((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
     };
+   
+    const handleInputBountyDone = (e) => {
+        const { name, value } = e.target;
+        setBountyDone((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+      };
+    const handleSubmit = (e) => {
+        e.preventDefault();
     
-
-    // const handleSubmit = async (event) => {
-    //     event.preventDefault();
-    //     setLoading(true);
-    
-    //     try {
-    //         // Validate proposal data before sending
-    //         if (!proposalTitle || !proposalDescription || !proposalType) {
-    //             throw new Error("Please fill all the fields with valid data and choose a proposal type.");
-    //         }
-    
+        switch (proposalType) {
+          case 'AddMemberProposal':
           
-    //         const proposalData = {
-    //             principal_of_action :aaaaa-aa,
-    //             proposal_title: proposalTitle,
-    //             proposal_description: strippedDescription,
-    //             proposal_type: { [proposalType]: null },
-    //         };
+            submitAddMemberProposal({
+              description: addMember.description,
+              groupNname: addMember.groupName,
+              newMember: Principal.fromText(addMember.newMember),
+
+            });
+       
+            
+            break;
+         
+            case 'BountyDone':
+                // Integrate API for Bounty Done
+                submitBountyDone({
+                //   proposal_expired_at: new Date(bountyDone.proposalExpiredAt).getTime(),
+                proposalExpiredAt:Number(bountyDone.proposalExpiredAt),
+                  from: bountyDone.from, 
+                  description: bountyDone.description,
+                  tokens: Number(bountyDone.tokens), // Ensure tokens are numbers
+                  action_member: bountyDone.actionMember,
+                  proposal_created_at: new Date(bountyDone.proposalCreatedAt).getTime(), // Convert to timestamp if needed
+                  bounty_task: bountyDone.bountTask,
+                });
+                break;
+              
     
-    //         console.log("Proposal Data:", proposalData);
-    //         console.log("Backend ID:", process.env.CANISTER_ID_DAOHOUSE_BACKEND);
+          // case 'BountyRaised':
+          //   // Integrate API for Bounty Raised
+          //   submitBountyRaised({
+          //     proposal_expired_at: formData.proposalExpiredAt,
+          //     description: formData.description,
+          //     tokens: formData.tokens,
+          //     action_member: formData.actionMember,
+          //     proposal_created_at: formData.proposalCreatedAt,
+          //     bounty_task: formData.bountyTask,
+          //   });
+          //   break;
     
-    //         // Fetch all DAOs and get the DAO Canister
-    //         const pagination = { start: 0, end: 10 };
-    //         const response = await backendActor.get_all_dao(pagination);
+          //   case 'ChangeDaoPolicy':
+          //       // Handle Change DAO Policy submission
+          //       submitChangeDaoPolicy({
+          //         description: formData.description,
+          //         action_member: formData.actionMember,
+          //         dao_purpose: formData.daoPurpose,
+          //       });
+          //       break;
     
-    //         await Promise.all(response.map(async (data) => {
-    //             console.log("data", data);
+          // case 'ChangeDaoConfig':
+          //   // Integrate API for Change DAO Config
+          //   submitChangeDaoConfig({
+          //     new_dao_name: formData.newDaoName,
+          //     description: formData.description,
+          //     action_member: formData.actionMember,
+          //   });
+          //   break;
     
-    //             const daoCanister = createDaoActor(data.dao_canister_id);
-    //             console.log("DAO Canister ID:", data.dao_canister_id);
+          // default:
+          //   alert('Please select a proposal type and fill in the details.');
+        }
+      };
+       // Dummy API calls for demonstration
+// Define the API call function
+const submitAddMemberProposal = async (addMember) => {
     
-    //             // Convert the string canister ID to a valid Principal object
-    //             const backendPrincipal = Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND);
-                
-    //             // Pass the Principal object instead of the string
-    //             await daoCanister.create_proposal_controller(backendPrincipal, proposalData);
-    //         }));
+     
+     try {
+    const daoCanister = await createDaoActor(daoCanisterId);
+      console.log("daocanister iss",daoCanisterId);
+      
+  
+      console.log("Add member proposal : ",daoCanister)
+      const response = await daoCanister.proposal_to_add_member_to_group(addMember);
+      console.log("response of add ",response)
+     } catch (error) {
+      console.log("error of add",error);
+      
+     }
+   
+  };
+
+  const submitBountyDone = async (bountyDone) => {
     
-    //         console.log("Proposal created successfully");
-    
-    //         // Display success message and clear form fields
-    //         toast.success("Proposal created successfully!");
-    //         setProposalTitle('');
-    //         setProposalDescription('');
-    //         setProposalType('');
-    
-    //     } catch (error) {
-    //         console.error("Error creating proposal:", error);
-    //         toast.error(error.message || "Error creating proposal. Please try again.");
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
+     
+    try {
+   const daoCanister = await createDaoActor(daoCanisterId);
+     console.log("daocanister iss",daoCanisterId);
+     
+ 
+     console.log("bounty done  proposal : ",daoCanister)
+     const response = await daoCanister.proposal_to_bounty_done(bountyDone);
+     console.log("response of add ",response)
+    } catch (error) {
+     console.log("error of add",error);
+     
+    }
+  
+ };
+  
+
+const proposal  = async()=>{
+    const payload= {
+        description : "askdjkasd",
+        group_name : "askdjkasd",
+new_member :Principal.fromText("3ej5p-k6yeq-a5egb-xzhmp-4h3ic-22vmb-ns2gq-2jijx-z2qjb-qlq4m-yqe")
+    }
+    console.log("daopyalod",payload)
+    try {
+        const daoCanister = await createDaoActor(daoCanisterId);
+        console.log("daocanister iss",daoCanisterId);
+        
+        const response = await daoCanister.proposal_to_add_member_to_group(payload);
+        console.log("response of add ",response)
+    } catch (error) {
+        console.log("error",error);
+        
+    }
+}
+
+   
     return (
      
         <div className="bg-zinc-200 w-full">
@@ -217,14 +292,133 @@ function CreateProposal() {
                                         onChange={handleProposalTypeChange}
                                         className="w-full max-w-[800px] px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                                     >
-                                        <option value="">Select Proposal Type</option>
-                                        <option value="VotingProposal">Voting Proposal</option>
-                                        <option value="RemoveMemberProposal">Remove Member Proposal</option>
-                                        <option value="AddMemberProposal">Add Member Proposal</option>
+                                     <option value="">Select Proposal Type</option>
+  <option value="AddMemberProposal">Add Member Proposal</option>
+  <option value="ChangeDaoConfig">Change DAO Config</option>
+  <option value="BountyDone">Bounty Done</option>
+  <option value="UpgradeRemote">Upgrade Remote</option>
+  <option value="Polls">Polls</option>
+  <option value="TokenTransfer">Token Transfer</option>
+  <option value="ChnageDaoPolicy">Change DAO Policy</option>
+  <option value="BountyRaised">Bounty Raised</option>
+  <option value="RemoveMemberProposal">Remove Member Proposal</option>
+  <option value="FunctionCall">Function Call</option>
+  <option value="UpdateSelf">Update Self</option>
                                     </select>
                                 </div>
 
-                                <div className="flex justify-center my-8">
+
+                                   {/* Conditional Input Fields Based on Proposal Type */}
+      {proposalType === 'AddMemberProposal' && (
+        <>
+          <div className="mb-4">
+            <label>Description</label>
+            <input
+              type="text"
+              name="description"
+              value={addMember.description}
+              onChange={handleInputAddMemeber}
+              className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+              placeholder="Enter description"
+            />
+          </div>
+          <div className="mb-4">
+            <label>Group Name</label>
+            <input
+              type="text"
+              name="groupName"
+              value={addMember.groupName}
+              onChange={handleInputAddMemeber}
+              className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+              placeholder="Enter group name"
+            />
+          </div>
+          <div className="mb-4">
+            <label>New Member (Principal)</label>
+            <input
+              type="text"
+              name="newMember"
+              value={addMember.newMember}
+              onChange={handleInputAddMemeber}
+              className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+              placeholder="Enter new member principal"
+            />
+          </div>
+        </>
+      )}
+       {proposalType === 'BountyDone' && (
+        <>
+          <div className="mb-4">
+            <label>Description</label>
+            <input
+              type="text"
+              name="description"
+              value={bountyDone.description}
+              onChange={handleInputBountyDone}
+              className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+              placeholder="Enter description"
+            />
+          </div>
+          <div className="mb-4">
+            <label>Bounty Task</label>
+            <input
+              type="text"
+              name="bountyTask"
+              value={bountyDone.bountyTask}
+              onChange={handleInputBountyDone}
+              className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+              placeholder="Enter bounty task"
+            />
+          </div>
+          <div className="mb-4">
+            <label>Tokens</label>
+            <input
+              type="number"
+              name="tokens"
+              value={bountyDone.tokens}
+              onChange={handleInputBountyDone}
+              className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+              placeholder="Enter tokens"
+            />
+          </div>
+          <div className="mb-4">
+            <label>Action Member (Principal)</label>
+            <input
+              type="text"
+              name="actionMember"
+              value={bountyDone.actionMember}
+              onChange={handleInputBountyDone}
+              className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+              placeholder="Enter action member principal"
+            />
+          </div>
+          <div className="mb-4">
+            <label>Proposal Expired At</label>
+            <input
+              type="datetime-local"
+              name="proposalExpiredAt"
+              value={bountyDone.proposalExpiredAt}
+              onChange={handleInputBountyDone}
+              className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+            />
+          </div>
+          <div className="mb-4">
+            <label>Proposal Created At</label>
+            <input
+              type="datetime-local"
+              name="proposalCreatedAt"
+              value={bountyDone.proposalCreatedAt}
+              onChange={handleInputBountyDone}
+              className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+            />
+          </div>
+        </>
+      )}
+      <button onClick={proposal}>
+        add
+      </button>
+
+                     <div className="flex justify-center my-8">
                                 {
                                     loading ? <CircularProgress /> :
                                     <button
@@ -235,6 +429,7 @@ function CreateProposal() {
                                     >
                                         Submit
                                     </button>
+                                   
                                 }
                                 </div>
                             </div>
