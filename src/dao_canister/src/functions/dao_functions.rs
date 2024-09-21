@@ -17,12 +17,12 @@ async fn get_members_of_group(group: String) -> Result<Vec<Principal>, String> {
 }
 
 // proposal to add member to a group
-#[update]
+#[update(guard=guard_check_members)]
 async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, String> {
-    check_group_member_permission(
-        &args.group_name,
-        crate::utils::PERMISSION_ADD_MEMBER_TO_GROUP.to_string(),
-    )?;
+    // check_group_member_permission(
+    //     &args.group_name,
+    //     crate::utils::PERMISSION_ADD_MEMBER_TO_GROUP.to_string(),
+    // )?;
     check_user_in_group(&args.group_name)?;
 
     // create proposal
@@ -50,7 +50,7 @@ async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, 
     Ok(String::from(crate::utils::REQUEST_ADD_MEMBER))
 }
 
-#[update]
+#[update(guard=guard_check_members)]
 async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<String, String> {
     check_user_and_member_in_group(&args.group_name, args.action_member)?;
 
@@ -77,7 +77,7 @@ async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<St
     Ok(String::from(crate::utils::TITLE_DELETE_MEMBER))
 }
 
-#[update]
+#[update(guard=guard_check_members)]
 async fn proposal_to_chnage_dao_config(args: ChnageDaoConfig) -> Result<String, String> {
     guard_check_members()?;
     let proposal = ProposalInput {
@@ -102,7 +102,7 @@ async fn proposal_to_chnage_dao_config(args: ChnageDaoConfig) -> Result<String, 
     Ok(String::from(crate::utils::MESSAGE_CHANGE_DAO_CONFIG))
 }
 
-#[update]
+#[update(guard=guard_check_members)]
 async fn proposal_to_change_dao_policy(args: ChangeDaoPolicy) -> Result<String, String> {
     guard_check_members()?;
     let proposal = ProposalInput {
@@ -127,7 +127,7 @@ async fn proposal_to_change_dao_policy(args: ChangeDaoPolicy) -> Result<String, 
     Ok(String::from(crate::utils::MESSAGE_CHANGE_DAO_POLICY))
 }
 
-#[update]
+#[update(guard=guard_check_members)]
 async fn proposal_to_transfer_token(args: TokenTransferPolicy) -> Result<String, String> {
     guard_check_members()?;
     let proposal = ProposalInput {
@@ -152,7 +152,7 @@ async fn proposal_to_transfer_token(args: TokenTransferPolicy) -> Result<String,
     Ok(String::from(crate::utils::MESSAGE_TOKEN_TRANSFER_POLICY))
 }
 
-#[update]
+#[update(guard=guard_check_members)]
 async fn proposal_to_bounty_raised(args: BountyRaised)-> Result<String, String>{
     guard_check_members()?;
     let proposal = ProposalInput {
@@ -177,7 +177,7 @@ async fn proposal_to_bounty_raised(args: BountyRaised)-> Result<String, String>{
     Ok(String::from(crate::utils::MESSAGE_BOUNTY_RAISED))
 }
 
-#[update]
+#[update(guard=guard_check_members)]
 async fn proposal_to_bounty_done(args: BountyDone)-> Result<String, String>{
     guard_check_members()?;
     let proposal = ProposalInput {
@@ -401,21 +401,92 @@ fn update_dao_settings(update_dao_details: UpdateDaoSettings) -> Result<String, 
     })
 }
 
-// #[update(guard=)]
-#[update(guard = prevent_anonymous)]
-fn unfollow_dao() -> Result<String, String> {
-    with_state(|state| {
-        let dao = &mut state.dao;
-        if dao.followers.contains(&api::caller()) {
-            dao.followers.retain(|s| s != &api::caller());
-            state.dao.followers_count -= 1;
+// // #[update(guard=)]
+// #[update(guard = prevent_anonymous)]
+// pub async fn unfollow_dao(daohouse_backend_id: Principal) -> Result<String, String> {
 
-            Ok(String::from(crate::utils::SUCCESS_FOLLOW_DAO))
+//     let principal_id = api::caller();
+//     let dao_id = ic_cdk::api::id();
+
+//     with_state(|state| {
+//         let dao = &mut state.dao;
+//         if dao.followers.contains(&api::caller()) {
+//             dao.followers.retain(|s| s != &api::caller());
+//             state.dao.followers_count -= 1;
+
+//             let response: CallResult<(Result<(), String>,)> = ic_cdk::call(
+//                 daohouse_backend_id,
+//                 "remove_follow_dao",
+//                 (dao_id, principal_id),
+//             ).await;
+
+//             match response {
+//                 Ok((Ok(()),)) => (),
+//                 Ok((Err(err),)) => return Err(err),
+//                 Err((code, message)) => {
+//                     let err_msg = match code {
+//                         RejectionCode::NoError => "NoError".to_string(),
+//                         RejectionCode::SysFatal => "SysFatal".to_string(),
+//                         RejectionCode::SysTransient => "SysTransient".to_string(),
+//                         RejectionCode::DestinationInvalid => "DestinationInvalid".to_string(),
+//                         RejectionCode::CanisterReject => "CanisterReject".to_string(),
+//                         _ => format!("Unknown rejection code: {:?}: {}", code, message),
+//                     };
+//                     return Err(err_msg);
+//                 }
+//             };
+        
+
+//             Ok(String::from(crate::utils::SUCCESS_FOLLOW_DAO))
+//         } else {
+//             Err(String::from(crate::utils::WARNING_DONT_FOLLOW))
+//         }
+//     })
+// }
+
+#[update(guard=guard_check_members)]
+pub async fn unfollow_dao(daohouse_backend_id: Principal) -> Result<String, String> {
+    let principal_id = api::caller();
+    let dao_id = ic_cdk::api::id();
+
+    let is_follow = with_state(|state| {
+        let dao = &mut state.dao;
+        if dao.followers.contains(&principal_id) {
+            dao.followers.retain(|s| s != &principal_id);
+            state.dao.followers_count -= 1;
+            true
         } else {
-            Err(String::from(crate::utils::WARNING_DONT_FOLLOW))
+            false
         }
-    })
+    });
+
+    if is_follow {
+        let response: CallResult<(Result<(), String>,)> = ic_cdk::call(
+            daohouse_backend_id,
+            "remove_follow_dao",
+            (dao_id, principal_id),
+        ).await;
+
+        match response {
+            Ok((Ok(()),)) => Ok(crate::utils::SUCCESS_UNFOLLOW_DAO.to_string()),
+            Ok((Err(err),)) => Err(err),
+            Err((code, message)) => {
+                let err_msg = match code {
+                    RejectionCode::NoError => "NoError".to_string(),
+                    RejectionCode::SysFatal => "SysFatal".to_string(),
+                    RejectionCode::SysTransient => "SysTransient".to_string(),
+                    RejectionCode::DestinationInvalid => "DestinationInvalid".to_string(),
+                    RejectionCode::CanisterReject => "CanisterReject".to_string(),
+                    _ => format!("Unknown rejection code: {:?}: {}", code, message),
+                };
+                Err(err_msg)
+            }
+        }
+    } else {
+        Err(crate::utils::WARNING_DONT_FOLLOW.to_string())
+    }
 }
+
 
 // add members guard
 #[update(guard=guard_daohouse_exclusive_method)]
