@@ -3,33 +3,61 @@ import { RxArrowTopRight } from "react-icons/rx";
 import MuiSkeleton from "../../Skeleton/MuiSkeleton";
 import { useAuth } from "../../utils/useAuthClient";
 import Avatar from "../../../../assets/Avatar.png"
+import { Principal } from "@dfinity/principal";
+import Container from "../../Container/Container";
+import NoDataComponent from "../../Dao/NoDataComponent";
+import DaoCard from "../../Dao/DaoCard";
 
 const Following = () => {
   const className = "Following";
-  const { backendActor, frontendCanisterId, identity } = useAuth();
-  const [data, setdata] = useState([])
+  const { backendActor, createDaoActor, stringPrincipal } = useAuth();
+  const [joinedDAO, setJoinedDAO] = useState([])
   const [loading, setLoading] = useState(false);
 
-  const getdata = async () => {
+  const getJoinedDaos = async () => {
     try {
-      setLoading(true);
-      const response = await backendActor.get_my_following();
-      console.log("following api:", response);
-      if (Array.isArray(response.Ok)) {
-        setdata(response.Ok);
-      } else {
-        setdata([]);
-      }
+      console.log("Fetching joined DAOs...");
+      
+      const profile = await backendActor.get_profile_by_id(Principal.fromText(stringPrincipal));
+      console.log("Profile:", profile);
+      
+      const joinedDaoPrincipals = profile?.Ok?.join_dao || [];
+      console.log("Joined DAO Principals:", joinedDaoPrincipals);
+      
+      const joinedDaoDetails = await Promise.all(
+        joinedDaoPrincipals.map(async (daoPrincipal) => {
+          try {
+
+            const daoCanisterPrincipal = Principal.fromUint8Array(daoPrincipal._arr);
+            
+            console.log("DAO Canister Principal:", daoCanisterPrincipal.toText());
+  
+            const daoCanister = await createDaoActor(daoCanisterPrincipal);
+  
+            const daoDetails = await daoCanister.get_dao_detail();
+
+            console.log(daoDetails);
+            
+            
+            return { ...daoDetails, dao_canister_id: daoCanisterPrincipal.toText() };
+          } catch (error) {
+            console.error(`Error fetching details for DAO: ${daoPrincipal._arr}`, error);
+            return null; 
+          }
+        })
+      );
+      
+      const validDaoDetails = joinedDaoDetails.filter(dao => dao !== null);
+      
+      setJoinedDAO(validDaoDetails);
+      
     } catch (error) {
-      console.error("Error :", error);
-      setdata([]);
-    } finally {
-      setLoading(false);
+      console.error("Error fetching joined DAOs:", error);
     }
-  }
+  };
 
   useEffect(() => {
-    getdata();
+    getJoinedDaos();
 
   }, [backendActor]);
 
@@ -42,93 +70,31 @@ const Following = () => {
         {loading ? (
           <MuiSkeleton />
         ) :
-          data.length === 0 ? (
-            <p className=" text-black mt-10 "></p>
-          ) :
-            (
-              <>
-                <div className="flex gap-5 md:w-[50%]">
-                  <div className="flex flex-1 flex-col gap-4 bg-[#F4F2EC] p-4 rounded-[10px] overflow-y-auto max-h-[300px]">
-                    {data.map((principal, index) => (
-                      <div
-                        key={index}
-                        className="w-full flex flex-row items-center justify-between"
-                      >
-                        <div className="flex flex-row tablet:gap-4 gap-2 items-center">
-                          <section className="border border-cyan-200 rounded-[50%]">
-                            <img
-                              src={Avatar}
-                              alt="Following"
-                              className="tablet:w-16 w-16 h-full object-contain border-4 border-white rounded-[50%]"
-                            />
-                          </section>
-
-                          <section className="flex flex-col items-start">
-                            <p className="tablet:text-lg text-sm truncate ... w-40 lg:w-80">
-                              {principal.toString()}
-                            </p>
-                            <p className="text-slate-500 tablet:text-sm text-xs truncate ... lg:w-80 w-40">
-                              {principal.toString()}
-                            </p>
-                          </section>
-                        </div>
-
-                        {/* <button className="border border-cyan-500 tablet:px-4 px-2 py-1 tablet:text-sm text-xs rounded-2xl text-cyan-500">
-                    Remove
-                  </button> */}
-                      </div>
-                    ))}
-                  </div>
-                  {/* <div className="w-[40%] p-3 bg-[#F4F2EC] rounded-[10px] overflow-y-auto max-h-[300px] hidden md:block">
-              <h1 className="text-[#05212C] text-[20px] font-bold">More People</h1>
-              <div className="w-full bg-[#0000004D] h-[1px] my-3"></div>
-              <div>
-                {morePeopleList.map(({ userName, image, gmail, key }) => (
-                  <div
-                    key={key}
-                    className="flex justify-between items-center mb-4"
-                  >
-                    <span className="flex gap-4">
-                      <img
-                        src={image}
-                        alt="Follower"
-                        className="tablet:w-10 w-8 object-contain rounded-[50%]"
-                      />
-                      <span>
-                        <p className="tablet:text-1xl text-sm">{userName}</p>
-                        <p className="text-slate-500 tablet:text-xs text-xs">
-                          {gmail}
-                        </p>
-                      </span>
-                    </span>
-                    <RxArrowTopRight className="tablet:text-2xl text-lg" />
-                  </div>
-                ))}
-              </div>
-            </div> */}
-                </div>
-                {/* <div className="mt-4 md:hidden">
-            <h1 className="text-[#05212C] text-[16px] font-bold ml-2">More People</h1>
-            <div className="w-full bg-[#0000004D] h-[2px] mb-4 mt-2"></div>
-            <div className="flex gap-3 overflow-x-auto max-w-full">
-              {morePeopleList.map(({ userName, image, gmail, key }) => (
-                <div
-                  key={key}
-                  className="flex flex-col justify-between items-center mb-4 bg-[#FFFFFF] py-4 px-6 rounded-[10px]"
-                >
-                  <img
-                    src={image}
-                    alt="Follower"
-                    className="tablet:w-10 w-8 object-contain rounded-[50%]"
-                  />
-                  <p className="tablet:text-1xl text-sm">{userName}</p>
-                  <p className="text-slate-500 tablet:text-xs text-xs">{gmail}</p>
-                </div>
+        joinedDAO.length === 0 ? (
+          <p className=" text-black mt-10 "></p>
+        ) :
+          (
+          
+          <div className="bg-gray">
+            <Container classes="__cards tablet:px-10 px-4 pb-10 grid grid-cols-1 big_phone:grid-cols-2 tablet:gap-6 gap-4">
+              {joinedDAO.map((daos, index) => (
+                <DaoCard
+                  key={index}
+                  {...{
+                    name: daos.dao_name || "No Name",
+                    followers: daos.followers_count || "0",
+                    members: daos.members_count ? Number(BigInt(daos.members_count)) : "0",
+                    groups: daos.groups_count ? Number(BigInt(daos.groups_count)) : "No Groups",
+                    proposals: daos.proposals_count || "0",
+                    image_id: daos.image_id || "No Image",
+                    daoCanister: daos.daoCanister,
+                    daoCanisterId: daos.dao_canister_id || "No ID",
+                  }}
+                />
               ))}
-            </div>
-          </div> */}
-              </>
-            )}
+            </Container>
+          </div>
+          )}
       </div>
     </div>
 

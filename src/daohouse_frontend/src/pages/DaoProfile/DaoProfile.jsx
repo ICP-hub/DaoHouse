@@ -76,6 +76,7 @@ const DaoProfile = () => {
       if (daoCanisterId) {
         setLoading(true);
         try {
+          let allProposals = [];
           const itemsPerPage = 8;
           const start = (currentPage - 1) * itemsPerPage;
           const end = start + itemsPerPage;
@@ -89,12 +90,20 @@ const DaoProfile = () => {
           
           const daoDetails = await daoActor.get_dao_detail();
           console.log(daoDetails);
-          
-          const proposals = await daoActor.get_all_proposals(paginationPayload)
-          console.log(proposals, " proposals aa rhe")
-          console.log(proposals.map(proposal => proposal.proposal_description), " proposals descriptions");
           setDao(daoDetails);
-          setProposals(proposals)
+          
+          // const daoActor = await createDaoActor(dao.dao_canister_id);
+          const daoProposals = await daoActor.get_all_proposals(paginationPayload);
+          
+          const proposalsWithDaoId = daoProposals.map((proposal) => ({
+            ...proposal,
+            dao_canister_id: daoCanisterId,
+          }));
+          allProposals = allProposals.concat(proposalsWithDaoId);
+          console.log(allProposals);
+          
+        
+        setProposals(allProposals);
 
           const profileResponse = await backendActor.get_user_profile();
           if (profileResponse.Ok) {
@@ -249,7 +258,7 @@ const DaoProfile = () => {
 
 
   return (
-    <div className={className + " bg-zinc-200 w-full relative mt-[90px]"}>
+    <div className={className + " bg-zinc-200 w-full relative"}>
       <div
         className={
           className +
