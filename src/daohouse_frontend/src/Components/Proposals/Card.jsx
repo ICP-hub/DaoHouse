@@ -9,7 +9,7 @@ import { Principal } from "@dfinity/principal";
 import ViewModal from "../Dao/ViewModal";
 import { useNavigate } from "react-router-dom";
 
-export default function Card({ proposal, voteApi }) {
+export default function Card({ proposal, voteApi, showActions=true }) {
 
 
   const [isModalOpen, setIsModalOpen] = useState(false);

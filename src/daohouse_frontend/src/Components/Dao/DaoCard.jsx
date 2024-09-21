@@ -5,6 +5,7 @@ import { useAuth } from "../utils/useAuthClient";
 import { toast } from 'react-toastify';
 
 const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoCanisterId }) => {
+
   const navigate = useNavigate();
   const { backendActor } = useAuth();
   const canisterId = process.env.CANISTER_ID_IC_ASSET_HANDLER;
@@ -12,12 +13,12 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
   const [followersCount, setFollowersCount] = useState(0);
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [joinStatus, setJoinStatus] = useState("Join DAO"); // 'Join DAO', 'Requested', 'Joined'
+  const [joinStatus, setJoinStatus] = useState("Join Dao"); // 'Join DAO', 'Requested', 'Joined'
   const [isMember, setIsMember] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false); 
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
-  const imageUrl = `${protocol}://${canisterId}.${domain}/f/${image_id}`;
+  const imageUrl = `${protocol}://${canisterId}.${domain}/f/${image_id}`;  
 
   useEffect(() => {
     const fetchDaoDetails = async () => {
@@ -30,6 +31,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
             const currentUserId = Principal.fromText(profileResponse.Ok.user_id.toString());
 
             const daoFollowers = await daoCanister.get_dao_followers();
+            
             setFollowersCount(daoFollowers.length);
             setIsFollowing(daoFollowers.some(follower => follower.toString() === currentUserId.toString()));
 
@@ -39,8 +41,6 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
 
             if (isCurrentUserMember) {
               setJoinStatus('Joined');
-            } else {
-              setJoinStatus('Join DAO');
             }
           }
         } catch (error) {
@@ -86,7 +86,10 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
     
   const confirmJoinDao = async () => {
     try {
-      const response = await daoCanister.ask_to_join_dao(daoCanisterId);
+      let a = Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND)
+      const response = await daoCanister.ask_to_join_dao(a);
+      console.log(response);
+      
       if (response.Ok) {
         setJoinStatus("Requested");
         toast.success("Join request sent successfully");
