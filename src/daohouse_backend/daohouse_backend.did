@@ -146,6 +146,7 @@ service : (InitialArgs) -> {
   get_wasm : () -> (Result_5) query;
   icrc28_trusted_origins : () -> (Icrc28TrustedOriginsResponse);
   make_payment : (nat64, principal) -> (Result_6);
+  remove_follow_dao : (principal, principal) -> (Result_1);
   search_dao : (text) -> (vec DaoDetails) query;
   store_follow_dao : (principal, principal) -> (Result_1);
   store_join_dao : (principal, principal) -> (Result_1);
