@@ -15,6 +15,7 @@ pub async fn store_follow_dao(dao_id: Principal, principal_id: Principal) -> Res
         if let Some(profile) = state.user_profile.get(&principal_id) {
             let mut updated_profile = profile.clone();
             updated_profile.follow_dao.push(dao_id);
+            updated_profile.followers_count += 1;
             state.user_profile.insert(principal_id, updated_profile);
             Ok(())
         } else {
@@ -33,6 +34,7 @@ pub async fn remove_follow_dao(dao_id: Principal, principal_id: Principal) -> Re
             let mut updated_profile = profile.clone();
             if updated_profile.follow_dao.contains(&dao_id) {
                 updated_profile.follow_dao.retain(|id| id != &dao_id);
+                updated_profile.followers_count -= 1;
                 state.user_profile.insert(principal_id, updated_profile);
 
                 Ok(())

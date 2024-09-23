@@ -96,6 +96,7 @@ pub struct ProposalInput {
     pub proposal_created_at: Option<u64>,
     pub proposal_expired_at: Option<u64>,
     pub bounty_task : Option<String>,
+    pub poll_title : Option<String>, 
     // pub proposal_amount:String,
     // pub proposal_receiver_id:String,
     // pub created_by: Principal,
@@ -166,6 +167,21 @@ pub struct Dao {
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
+pub struct ChangeDaoConfigArg {
+    pub dao_name: String,
+    pub purpose: String,
+    pub daotype: String,
+}
+
+#[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
+pub struct ChangeDaoPolicyArg {
+    pub cool_down_period: u32,
+    pub required_votes: u32,
+}
+
+
+
+#[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct DaoGroup {
     pub group_name: String,
     pub group_members: Vec<Principal>,
@@ -224,6 +240,12 @@ pub struct RemoveMemberArgs {
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
+pub struct RemoveDaoMemberArgs {
+    pub action_member: Principal,
+    pub description: String,
+}
+
+#[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct ChnageDaoConfig {
     pub new_dao_name: String,
     pub action_member: Principal,
@@ -262,6 +284,15 @@ pub struct BountyDone{
     pub tokens: u64,
     pub bounty_task : String,
     pub from: Principal,
+    pub proposal_created_at: u64,
+    pub proposal_expired_at: u64,
+}
+
+#[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
+pub struct CreatePoll{
+    pub action_member: Principal,
+    pub description: String,
+    pub poll_title : String,
     pub proposal_created_at: u64,
     pub proposal_expired_at: u64,
 }
@@ -327,6 +358,7 @@ pub struct TokenBalanceArgs {
 // pub struct Vote {
 //     vote_param: VoteParam,
 // }
+
 
 const MAX_VALUE_SIZE: u32 = 600;
 

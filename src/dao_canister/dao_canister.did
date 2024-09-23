@@ -21,10 +21,19 @@ type BountyRaised = record {
   proposal_created_at : nat64;
   bounty_task : text;
 };
+type ChangeDaoConfigArg = record {
+  daotype : text;
+  dao_name : text;
+  purpose : text;
+};
 type ChangeDaoPolicy = record {
   description : text;
   action_member : principal;
   dao_purpose : text;
+};
+type ChangeDaoPolicyArg = record {
+  cool_down_period : nat32;
+  required_votes : nat32;
 };
 type ChnageDaoConfig = record {
   new_dao_name : text;
@@ -38,6 +47,13 @@ type Comment = record {
   replies : vec text;
   comment_text : text;
   comment_id : text;
+};
+type CreatePoll = record {
+  proposal_expired_at : nat64;
+  poll_title : text;
+  description : text;
+  action_member : principal;
+  proposal_created_at : nat64;
 };
 type Dao = record {
   image_canister : principal;
@@ -138,6 +154,10 @@ type Proposals = record {
   proposal_type : ProposalType;
   required_votes : nat32;
 };
+type RemoveDaoMemberArgs = record {
+  description : text;
+  action_member : principal;
+};
 type RemoveMemberArgs = record {
   description : text;
   action_member : principal;
@@ -197,9 +217,17 @@ service : (DaoInput) -> {
   proposal_to_bounty_raised : (BountyRaised) -> (Result_1);
   proposal_to_change_dao_policy : (ChangeDaoPolicy) -> (Result_1);
   proposal_to_chnage_dao_config : (ChnageDaoConfig) -> (Result_1);
+  proposal_to_create_poll : (CreatePoll) -> (Result_1);
+  proposal_to_remove_member_to_dao : (RemoveDaoMemberArgs) -> (Result_1);
   proposal_to_remove_member_to_group : (RemoveMemberArgs) -> (Result_1);
   proposal_to_transfer_token : (TokenTransferPolicy) -> (Result_1);
   reply_comment : (ReplyCommentArgs) -> (Result_1);
+  run_add_member_to_dao : (principal) -> (Result_1);
+  run_add_member_to_group : (principal, text) -> (Result_1);
+  run_chnage_dao_config : (ChangeDaoConfigArg) -> (Result_1);
+  run_chnage_dao_policy : (ChangeDaoPolicyArg) -> (Result_1);
+  run_remove_member_from_dao : (principal) -> (Result_1);
+  run_remove_member_to_group : (principal, text) -> (Result_1);
   search_proposal : (text) -> (vec Proposals) query;
   unfollow_dao : (principal) -> (Result_1);
   update_dao_settings : (UpdateDaoSettings) -> (Result_1);
