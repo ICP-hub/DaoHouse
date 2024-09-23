@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { RxArrowTopRight } from "react-icons/rx";
-import MuiSkeleton from "../../Skeleton/MuiSkeleton";
+import MuiSkeleton from "../../SkeletonLoaders/MuiSkeleton";
 import { useAuth } from "../../utils/useAuthClient";
 import Avatar from "../../../../assets/Avatar.png"
 import { Principal } from "@dfinity/principal";
