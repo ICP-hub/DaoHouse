@@ -23,7 +23,9 @@ import { Principal } from '@dfinity/principal';
 import { useAuth, useAuthClient } from "../../Components/utils/useAuthClient";
 import { useUserProfile } from "../../context/UserProfileContext";
 import { toast } from "react-toastify";
-import MuiSkeleton from "../../Components/Skeleton/MuiSkeleton";
+import MuiSkeleton from "../../Components/SkeletonLoaders/MuiSkeleton";
+import ProposalLoaderSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/ProposalLoaderSkeleton";
+import DaoProfileLoaderSkeleton from "../../Components/SkeletonLoaders/DaoProfileLoaderSkeleton/DaoProfileLoaderSkeleton";
 
 
 const DaoProfile = () => {
@@ -33,7 +35,8 @@ const DaoProfile = () => {
   const { backendActor, createDaoActor } = useAuth();
   const [dao, setDao] = useState(null);
   const [proposals, setProposals] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loadingProfile, setLoadingProfile] = useState(true);
+  const [loadingProposals, setLoadingProposals] = useState(true);
   const canisterId = process.env.CANISTER_ID_IC_ASSET_HANDLER;
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
@@ -75,71 +78,56 @@ const DaoProfile = () => {
   useEffect(() => {
     const fetchDaoDetails = async () => {
       if (daoCanisterId) {
-        setLoading(true);
+        setLoadingProfile(true);
         try {
-          let allProposals = [];
-          const itemsPerPage = 8;
-          const start = (currentPage - 1) * itemsPerPage;
-          const end = start + itemsPerPage;
-          const paginationPayload = {
-            start,
-            end,
-          }
           const daoActor = createDaoActor(daoCanisterId);
-          setVoteApi(daoActor)
-          console.log("daoActor",{daoActor});
-          
-          const daoDetails = await daoActor.get_dao_detail();
-          console.log(daoDetails);
-          setDao(daoDetails);
-          
-          // const daoActor = await createDaoActor(dao.dao_canister_id);
-          const daoProposals = await daoActor.get_all_proposals(paginationPayload);
-          
-          const proposalsWithDaoId = daoProposals.map((proposal) => ({
-            ...proposal,
-            dao_canister_id: daoCanisterId,
-          }));
-          allProposals = allProposals.concat(proposalsWithDaoId);
-          console.log(allProposals);
-          
-        
-        setProposals(allProposals);
+          setVoteApi(daoActor);
 
+          const daoDetails = await daoActor.get_dao_detail();
+          setDao(daoDetails);
+
+          const daoFollowers = await daoActor.get_dao_followers();
+          setDaoFollowers(daoFollowers);
+          setFollowersCount(daoFollowers.length);
+
+          const daoMembers = await daoActor.get_dao_members();
+          setDaoMembers(daoMembers);
+
+          // Fetch user profile
           const profileResponse = await backendActor.get_user_profile();
           if (profileResponse.Ok) {
             setUserProfile(profileResponse.Ok);
-            const currentUserId = Principal.fromText(profileResponse.Ok.user_id.toString());
-
-            const daoFollowers = await daoActor.get_dao_followers();
-            setDaoFollowers(daoFollowers);
-            console.log(daoFollowers);
-            
-            setFollowersCount(daoFollowers.length);
-            setIsFollowing(daoFollowers.some(follower => follower.toString() === currentUserId.toString()));
-            const daoMembers = await daoActor.get_dao_members();
-            console.log(daoMembers);
-            
-            setDaoMembers(daoMembers)
-            const isCurrentUserMember = daoMembers.some(member => member.toString() === currentUserId.toString());
-            if (isCurrentUserMember) {
-              setIsMember(true)
-              setJoinStatus('Joined');
-            } else {
-              setIsMember(false)
-              setJoinStatus('Join DAO');
-            }
           }
         } catch (error) {
           console.error('Error fetching DAO details:', error);
         } finally {
-          setLoading(false);
+          setLoadingProfile(false);  // Profile data loading finished
+        }
+      }
+    };
+
+    const fetchProposals = async () => {
+      if (daoCanisterId) {
+        setLoadingProposals(true);  // Start loading proposals
+        try {
+          const daoActor = createDaoActor(daoCanisterId);
+          const itemsPerPage = 8;
+          const start = (currentPage - 1) * itemsPerPage;
+          const end = start + itemsPerPage;
+
+          const proposals = await daoActor.get_all_proposals({ start, end });
+          setProposals(proposals);
+        } catch (error) {
+          console.error('Error fetching proposals:', error);
+        } finally {
+          setLoadingProposals(false);  // Proposals data loading finished
         }
       }
     };
 
     fetchDaoDetails();
-  }, [daoCanisterId, backendActor, createDaoActor]);
+    fetchProposals();
+  }, [daoCanisterId, backendActor, createDaoActor, currentPage]);
 
   const handleJoinDao = async () => {
     if (joinStatus === 'Joined') return;
@@ -211,10 +199,10 @@ const DaoProfile = () => {
   
   // }
 
-  if (loading) {
+  if (loadingProfile) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <MuiSkeleton variant="rectangular" width={210} height={118} />
+        <DaoProfileLoaderSkeleton />
       </div>
     );
   }
@@ -554,7 +542,7 @@ const DaoProfile = () => {
             Settings
           </button>
         </div>
-        {activeLink === "proposals" && <ProposalsContent proposals={proposals} isMember={isMember} voteApi={voteApi} />}
+        {activeLink === "proposals" && ( <div>{ loadingProposals ? ( <ProposalLoaderSkeleton />) : (<ProposalsContent proposals={proposals} isMember={isMember} voteApi={voteApi} />)}</div> ) }
         {activeLink === "feeds" && <FeedsContent  />}
         {activeLink === "member_policy" && <Members  />}
         {activeLink === "followers" && <FollowersContent daoFollowers={daoFollowers}/>}
