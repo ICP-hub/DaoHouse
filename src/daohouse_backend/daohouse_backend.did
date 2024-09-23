@@ -84,14 +84,14 @@ type ProposalType = variant {
   UpdateSelf;
 };
 type ProposalValueStore = record {
-  title : text;
-  action_principal : principal;
-  description : text;
+  proposal_expired_at : nat64;
+  proposal_submitted_at : nat64;
+  principal_action : principal;
   created_by : principal;
+  proposal_description : text;
   proposal_id : text;
-  expiring_on : nat64;
+  propsal_title : text;
   proposal_type : ProposalType;
-  submitted_at : nat64;
   required_votes : nat32;
   associated_dao_canister_id : principal;
   dao_members : vec principal;

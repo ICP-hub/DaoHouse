@@ -859,14 +859,14 @@ pub struct ProposalKeyStore {
 pub struct ProposalValueStore {
     pub associated_dao_canister_id: Principal,
     pub proposal_id: String,
-    pub title: String,
-    pub description: String,
-    pub submitted_at: u64,
-    pub expiring_on: u64,
+    pub propsal_title: String,
+    pub proposal_description: String,
+    pub proposal_submitted_at: u64,
+    pub proposal_expired_at: u64,
     pub required_votes: u32,
     pub created_by: Principal,
     pub proposal_type: ProposalType,
-    pub action_principal: Principal,
+    pub principal_action: Principal,
     // pub total_tokens: u32,
     pub dao_members: Vec<Principal>, // pub votes:
 }
