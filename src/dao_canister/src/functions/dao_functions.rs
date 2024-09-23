@@ -1,6 +1,6 @@
 use crate::{
     guards::*, AddMemberArgs, ChangeDaoPolicy, ChnageDaoConfig, DaoGroup, LedgerCanisterId,
-    ProposalInput, RemoveMemberArgs, TokenTransferPolicy, UpdateDaoSettings ,BountyRaised , BountyDone ,CreatePoll ,RemoveDaoMemberArgs
+    ProposalInput, RemoveMemberArgs, TokenTransferPolicy, UpdateDaoSettings ,BountyRaised , BountyDone ,CreatePoll ,RemoveDaoMemberArgs ,CreateGeneralPurpose
 };
 use crate::{with_state, ProposalType};
 use candid::Principal;
@@ -252,6 +252,32 @@ async fn proposal_to_create_poll(args: CreatePoll)-> Result<String, String>{
     )
     .await;
     Ok(String::from(crate::utils::MESSAGE_BOUNTY_DONE))
+}
+
+
+#[update(guard=guard_check_members)]
+async fn proposal_to_create_general_purpose(args: CreateGeneralPurpose)-> Result<String, String>{
+    let proposal = ProposalInput {
+        principal_of_action: Some(args.action_member),
+        proposal_description: args.description,
+        proposal_title: String::from(crate::utils::TITLE_CREATE_GENERAL_PURPOSE),
+        proposal_type: ProposalType::GeneralPurpose,
+        new_dao_name: None,
+        group_to_join: None,
+        dao_purpose: None,
+        tokens: None,
+        from: None,
+        proposal_created_at: Some(args.proposal_created_at),
+        proposal_expired_at: Some(args.proposal_expired_at),
+        bounty_task : None,
+        poll_title : None,
+    };
+    crate::proposal_route::create_proposal_controller(
+        with_state(|state| state.dao.daohouse_canister_id),
+        proposal,
+    )
+    .await;
+    Ok(String::from(crate::utils::MESSAGE_GENERAL_PURPOSE_CREATED))
 }
 
 

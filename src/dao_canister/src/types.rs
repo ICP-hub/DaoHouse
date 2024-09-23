@@ -27,6 +27,7 @@ pub enum ProposalType {
     UpdateSelf,
     FunctionCall,
     TokenTransfer,
+    GeneralPurpose
 }
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
@@ -296,6 +297,16 @@ pub struct CreatePoll{
     pub proposal_created_at: u64,
     pub proposal_expired_at: u64,
 }
+
+#[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
+pub struct CreateGeneralPurpose{
+    pub action_member: Principal,
+    pub purpose_title : String,
+    pub description: String,
+    pub proposal_created_at: u64,
+    pub proposal_expired_at: u64,
+}
+
 
 // #[derive(Clone, CandidType, Serialize, Deserialize)]
 // pub struct GroupList {

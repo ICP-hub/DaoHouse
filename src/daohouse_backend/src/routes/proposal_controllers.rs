@@ -55,7 +55,7 @@ pub fn get_latest_proposal_controller(
         return vec![];
     }
 
-    all_proposals.sort_by(|a, b| b.submitted_at.cmp(&a.submitted_at));
+    all_proposals.sort_by(|a, b| b.proposal_submitted_at.cmp(&a.proposal_submitted_at));
 
     let start = pagination.start as usize;
     let end = pagination.end as usize;
@@ -87,7 +87,7 @@ pub fn get_my_proposal_controller(
         return vec![];
     }
 
-    my_proposals.sort_by(|a, b| b.submitted_at.cmp(&a.submitted_at));
+    my_proposals.sort_by(|a, b| b.proposal_submitted_at.cmp(&a.proposal_submitted_at));
 
     let start = pagination.start as usize;
     let end = pagination.end as usize;

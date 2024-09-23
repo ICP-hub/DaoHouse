@@ -48,6 +48,13 @@ type Comment = record {
   comment_text : text;
   comment_id : text;
 };
+type CreateGeneralPurpose = record {
+  proposal_expired_at : nat64;
+  description : text;
+  action_member : principal;
+  purpose_title : text;
+  proposal_created_at : nat64;
+};
 type CreatePoll = record {
   proposal_expired_at : nat64;
   poll_title : text;
@@ -131,6 +138,7 @@ type ProposalType = variant {
   RemoveMemberPrposal;
   FunctionCall;
   UpdateSelf;
+  GeneralPurpose;
 };
 type Proposals = record {
   principal_of_action : principal;
@@ -217,6 +225,7 @@ service : (DaoInput) -> {
   proposal_to_bounty_raised : (BountyRaised) -> (Result_1);
   proposal_to_change_dao_policy : (ChangeDaoPolicy) -> (Result_1);
   proposal_to_chnage_dao_config : (ChnageDaoConfig) -> (Result_1);
+  proposal_to_create_general_purpose : (CreateGeneralPurpose) -> (Result_1);
   proposal_to_create_poll : (CreatePoll) -> (Result_1);
   proposal_to_remove_member_to_dao : (RemoveDaoMemberArgs) -> (Result_1);
   proposal_to_remove_member_to_group : (RemoveMemberArgs) -> (Result_1);
@@ -228,6 +237,7 @@ service : (DaoInput) -> {
   run_chnage_dao_policy : (ChangeDaoPolicyArg) -> (Result_1);
   run_remove_member_from_dao : (principal) -> (Result_1);
   run_remove_member_to_group : (principal, text) -> (Result_1);
+  run_transfer_token : (TokenTransferArgs) -> (Result_1);
   search_proposal : (text) -> (vec Proposals) query;
   unfollow_dao : (principal) -> (Result_1);
   update_dao_settings : (UpdateDaoSettings) -> (Result_1);

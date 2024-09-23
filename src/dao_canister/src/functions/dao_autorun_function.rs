@@ -1,5 +1,7 @@
-use crate::with_state;
+use super::{icrc_get_balance, icrc_transfer};
+use crate::{with_state, TokenTransferArgs};
 use candid::Principal;
+use ic_cdk::api;
 use ic_cdk::update;
 
 #[update]
@@ -101,7 +103,9 @@ async fn run_remove_member_from_dao(principal_id: Principal) -> Result<String, S
 
     with_state(|state| {
         state.dao.members.retain(|s| s != &principal_id);
-        Ok(String::from(crate::utils::MESSAGE_DAO_MEMBER_REMOVE_SUCCESSFULLY))
+        Ok(String::from(
+            crate::utils::MESSAGE_DAO_MEMBER_REMOVE_SUCCESSFULLY,
+        ))
     })
 }
 
@@ -129,21 +133,24 @@ async fn run_chnage_dao_policy(args: crate::types::ChangeDaoPolicyArg) -> Result
 }
 
 #[update]
-async fn run_bounty_raised(){
-    
-}
-
-#[update]
-async fn run_bounty_done(){
-    
-}
-
-#[update]
-async fn run_transfer_token(){
-  
-}
-
-#[update]
-async fn run_poll_done(){
-
+async fn run_transfer_token(args: TokenTransferArgs) -> Result<String, String> {
+    let principal_id = api::caller();
+    let balance = icrc_get_balance(principal_id)
+        .await
+        .map_err(|err| format!("Error while fetching user balance {}", err))?;
+    if balance >= 0 as u8 {
+        return Err(String::from(
+            "User token balance is less then the required transfer tokens",
+        ));
+    } else {
+        let token_transfer_args = TokenTransferArgs {
+            from: args.from,
+            to: args.to,
+            tokens: args.tokens as u64,
+        };
+        icrc_transfer(token_transfer_args)
+            .await
+            .map_err(|err| format!("Error in transfer of tokens: {}", String::from(err)))?;
+        Ok("()".to_string())
+    }
 }
