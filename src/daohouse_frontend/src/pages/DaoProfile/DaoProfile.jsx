@@ -173,7 +173,7 @@ const DaoProfile = () => {
     try {
       const daoActor = createDaoActor(daoCanisterId);
       const response = isFollowing
-        ? await daoActor.unfollow_dao()
+        ? await daoActor.unfollow_dao(backendCanisterId)
         : await daoActor.follow_dao(backendCanisterId);
   
         if (response?.Ok) {
