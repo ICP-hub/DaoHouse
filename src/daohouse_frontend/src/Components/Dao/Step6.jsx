@@ -218,6 +218,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
     }
   }
 
+
   const createDAO = async () => {
     if (!file) {
       toast.error("Please insert an image");
@@ -226,49 +227,30 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
   
     setLoadingNext(true);
   
-    // Trigger payment first
     try {
+      // Read the file content first
+      const fileContent = await readFileContent(file);
+      
+      // Update the state with the image content
+      setData((prevData) => ({
+        ...prevData,
+        step6: {
+          imageURI: fileURL,
+          image_content: new Uint8Array(fileContent),
+          image_content_type: file.type,
+          image_title: file.name,
+          image_id: '12',
+        },
+      }));
+      
       setIsModalOpen(true);
-      // await paymentTest(); // Assume paymentTest will throw an error if payment fails
+  
     } catch (error) {
-      toast.error("Payment failed. Please try again.");
+      toast.error("Error reading image content.");
       setLoadingNext(false);
-      return;
     }
-    
-    if (!loadingPayment) {
-    setTimeout(async () => {
-      if (file) {
-        const fileContent = await readFileContent(file);
-        setData((prevData) => ({
-          ...prevData,
-          step6: {
-            imageURI: fileURL,
-            image_content: new Uint8Array(fileContent),
-            image_content_type: file.type,
-            image_title: file.name,
-            image_id: '12',
-          },
-        }));
-      } else {
-        setData((prevData) => ({
-          ...prevData,
-          step6: {
-            imageURI: defaultImage,
-            image_content: undefined,
-            image_content_type: undefined,
-            image_title: undefined,
-            image_id: '12',
-          },
-        }));
-      }
-      if(isModalOpen) {
-        setShouldCreateDAO(true);
-      }
-      // handleDaoClick();
-    }, 2000);
-  }
   };
+  
 
   const handleCancel = () => {
     setLoadingPayment(false); 
