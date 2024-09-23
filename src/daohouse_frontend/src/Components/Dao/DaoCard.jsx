@@ -18,7 +18,8 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
   const [showConfirmModal, setShowConfirmModal] = useState(false); 
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
-  const imageUrl = `${protocol}://${canisterId}.${domain}/f/${image_id}`;  
+  const imageUrl = `${protocol}://${canisterId}.${domain}/f/${image_id}`;
+  const backendCanisterId = Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND)  
 
   useEffect(() => {
     const fetchDaoDetails = async () => {
@@ -55,16 +56,19 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
   }, [daoCanisterId, backendActor]);
 
   const toggleFollow = async () => {
+    
     try {
       if (!userProfile) return;
       setIsFollowing(!isFollowing);
       const response = isFollowing
         ? await daoCanister.unfollow_dao()
-        : await daoCanister.follow_dao();
+        : await daoCanister.follow_dao(backendCanisterId);
 
       if (response?.Ok) {
         const updatedFollowers = await daoCanister.get_dao_followers();
         setFollowersCount(updatedFollowers.length);
+        console.log(followersCount);
+        
         toast.success(isFollowing ? "Successfully unfollowed" : "Successfully followed");
       } else if (response?.Err) {
         setIsFollowing(!isFollowing);

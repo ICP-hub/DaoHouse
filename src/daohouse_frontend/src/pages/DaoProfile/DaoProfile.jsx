@@ -45,6 +45,7 @@ const DaoProfile = () => {
   const [daoMembers, setDaoMembers] = useState([])
   const [isExpanded, setIsExpanded] = useState(false);
   const maxWords = 250;
+  const backendCanisterId = Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND)
   
   const toggleExpanded = () => setIsExpanded(!isExpanded);
   const navigate = useNavigate();
@@ -173,7 +174,7 @@ const DaoProfile = () => {
       const daoActor = createDaoActor(daoCanisterId);
       const response = isFollowing
         ? await daoActor.unfollow_dao()
-        : await daoActor.follow_dao();
+        : await daoActor.follow_dao(backendCanisterId);
   
         if (response?.Ok) {
           toast.success(newIsFollowing ? "Successfully followed" : "Successfully unfollowed");
