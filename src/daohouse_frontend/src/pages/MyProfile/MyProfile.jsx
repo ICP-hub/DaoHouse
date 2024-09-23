@@ -364,7 +364,8 @@ const MyProfile = ({ childComponent }) => {
 
               {childComponent}
               {activeTab === 2 && showNoFollowers && <NoFollowers setFollowers={setShowNoFollowers} />}
-              {activeTab === 3 && showNoFollowing && <NoFollowing />} {/* Render NoFollowing component */}
+              {/* {activeTab === 3 && showNoFollowing && <NoFollowing />} */}
+               {/* Render NoFollowing component */}
             </div>
           </Container>
         </div>
@@ -640,7 +641,8 @@ const MyProfile = ({ childComponent }) => {
 
         
             {activeTab === 2 && showNoFollowers && <NoFollowers setFollowers={setShowNoFollowers} />}
-            {activeTab === 3 && showNoFollowing && <NoFollowing />} {/* Render NoFollowing component */}
+            {/* {activeTab === 3 && showNoFollowing && <NoFollowing />}  */}
+            {/* Render NoFollowing component */}
           </div>
           
         </Container>
