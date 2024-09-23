@@ -19,6 +19,7 @@ const Dao = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [dao, setDao] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingJoinedDAO, setLoaadingJoinedDao] = useState(false)
   const [searchTerm, setSearchTerm] = useState("");
   const [fetchedDAOs, setFetchedDAOs] = useState([]);
   const [hasMore, setHasMore] = useState(true);
@@ -72,6 +73,7 @@ const Dao = () => {
 
   const getJoinedDaos = async () => {
     try {
+      setLoaadingJoinedDao(true)
       console.log("Fetching joined DAOs...");
       
       const profile = await backendActor.get_profile_by_id(Principal.fromText(stringPrincipal));
@@ -96,7 +98,7 @@ const Dao = () => {
           } catch (error) {
             console.error(`Error fetching details for DAO: ${daoPrincipal._arr}`, error);
             return null; 
-          }
+          } 
         })
       );
       
@@ -106,6 +108,8 @@ const Dao = () => {
       
     } catch (error) {
       console.error("Error fetching joined DAOs:", error);
+    } finally {
+      setLoaadingJoinedDao(false)
     }
   };
   
@@ -208,6 +212,8 @@ const Dao = () => {
             <Pagignation currentPage={currentPage} setCurrentPage={setCurrentPage} hasMore={hasMore} />
           </div>
         )
+      ) : loadingJoinedDAO ? (
+        <MuiSkeleton />
       ) : joinedDAO.length ? (
         <div className="bg-gray">
           <Container classes="__cards tablet:px-10 px-4 pb-10 grid grid-cols-1 big_phone:grid-cols-2 tablet:gap-6 gap-4">
