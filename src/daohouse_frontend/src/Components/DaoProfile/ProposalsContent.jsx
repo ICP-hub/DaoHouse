@@ -6,7 +6,7 @@ import { useAuth } from "../../Components/utils/useAuthClient";
 import { useParams } from "react-router-dom";
 import nodata from "../../../assets/nodata.png";
 
-const ProposalsContent = ({ proposals, isMember, showActions=true }) => {
+const ProposalsContent = ({ proposals, isMember, showActions=true, voteApi }) => {
   const { backendActor, createDaoActor } = useAuth();
   const { daoCanisterId } = useParams();
   const [searchTerm, setSearchTerm] = useState("");
@@ -50,7 +50,7 @@ const ProposalsContent = ({ proposals, isMember, showActions=true }) => {
           Proposals
         </h1>
         <Link
-          to="/create-proposal"
+          to ={ `/create-proposal/${daoCanisterId}`}
           className="flex justify-center items-center text-[16px] relative lg:w-[220px] lg:h-[50px] md:w-[185px] md:h-[46px] w-[30px] h-[30px] bg-white rounded-full"
           style={{
             boxShadow:
