@@ -1,19 +1,42 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Decentralization.scss";
+
 import Container from "../Container/Container";
 import { useNavigate } from "react-router-dom";
 import smallcircle from "../../../assets/smallcircle.png";
 import mediumcircle from "../../../assets/mediumcircle.png";
 import mobileviewCircleBig from "../../../assets/mobileviewCircleBig.png";
 import mobilecircleSmall from "../../../assets/mobilecircleSmall.png";
+import { useAuth, useAuthClient } from "../../Components/utils/useAuthClient";
+
 
 const Decentralization = () => {
   const className = "Decentralization";
+  const { backendActor } = useAuth();
+  const [analtics, setGetAnaltics] = useState({});
   const navigate = useNavigate();
 
   const handleJoinDaoClick = () => {
     navigate("/dao");
   };
+  const daosdata = analtics?.dao_counts ? Number(analtics.dao_counts) : 0;
+  const propsaldata = analtics?.proposals_count ? Number(analtics.proposals_count) : 0;
+  const membersdata = analtics?.members_count ? Number(analtics.members_count) : 0;
+  const getanaltics = async () => {
+    console.log("sagdksgakjdgaskjdg");
+
+    try {
+      const response = await backendActor.get_analytics();
+      console.log("anltyics_API_response", response);
+      setGetAnaltics(response.Ok || {});
+    } catch (error) {
+      console.error("Error fetching analytics:", error);
+    }
+  };
+
+  useEffect(() => {
+    getanaltics();
+  }, [backendActor]);
 
   return (
     <div
@@ -25,7 +48,7 @@ const Decentralization = () => {
       <Container classes={"flex flex-col items-center justify-center relative max-w-full px-4"}>
         {/* Main Section */}
         <div className="relative translate-y-[-10px] w-full max-w-[110%] lg:mx-80 sm:max-w-[90%] md:max-w-[190%] px-4 sm:px-6 md:px-8 lg:px-16 tablet:px-8 mobile:px-4 flex flex-col items-center justify-center gap-8 bg-white rounded-xl shadow-lg p-6 sm:p-8 md:p-10 lg:p-12 overflow-hidden main-section">
-          
+
           {/* Circles as Background */}
           {/* Large screen circles (shown only on large screens) */}
           <img
@@ -51,7 +74,7 @@ const Decentralization = () => {
             className="block md:hidden w-[230px] h-[240px] absolute top-[-6px] rounded-tl-[60px]  opacity-100"
           />
 
-         
+
 
           {/* Text Section */}
           <div className="w-full text-center flex flex-col items-center gap-6 z-10">
@@ -82,21 +105,26 @@ const Decentralization = () => {
             <div className="stat-card bg-transparent border border-white rounded-lg py-2 flex justify-start pl-4 relative overflow-hidden">
               <div className="text-left">
                 <h1 className="text-lg md:text-2xl translate-x-[20px] translate-y-[20px] font-mulish">Members</h1>
-                <p className="stat-number text-5xl translate-x-[-10px] font-mulish md:text-7xl mt-2">150K+</p>
+                <p className="stat-number ml-10 text-5xl translate-x-[-10px] font-mulish md:text-7xl mt-2">
+                  {membersdata}
+
+                </p>
               </div>
             </div>
             {/* Proposals */}
             <div className="stat-card bg-transparent border border-white rounded-lg py-2 flex justify-start pl-4 relative overflow-hidden">
               <div className="text-left">
                 <h1 className="text-lg md:text-2xl translate-x-[20px] translate-y-[20px] font-mulish">Proposals</h1>
-                <p className="stat-number text-5xl translate-x-[-10px] font-mulish md:text-7xl mt-2">100K+</p>
+                <p className="stat-number ml-10 text-5xl translate-x-[-10px] font-mulish md:text-7xl mt-2">
+                  {propsaldata}
+                </p>
               </div>
             </div>
             {/* DAOs */}
             <div className="stat-card bg-transparent border border-white rounded-lg py-2 flex justify-start pl-4 relative overflow-hidden">
               <div className="text-left">
                 <h1 className="text-lg md:text-2xl translate-x-[20px] translate-y-[20px] font-mulish">DAOs</h1>
-                <p className="stat-number text-5xl translate-x-[-10px] translate-x-0 font-mulish md:text-7xl mt-2">800+</p>
+                <p className="stat-number ml-10 text-5xl translate-x-[-10px] translate-x-0 font-mulish md:text-7xl mt-2">{daosdata}</p>
               </div>
             </div>
           </div>
