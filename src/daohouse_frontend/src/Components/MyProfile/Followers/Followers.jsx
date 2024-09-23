@@ -11,7 +11,7 @@ import DaoCard from "../../Dao/DaoCard";
 const Followers = () => {
   const className = "Followers";
   const { backendActor, createDaoActor, stringPrincipal } = useAuth();
-  const [followedDAO, setFollowedDAO] = useState([])
+  const [followedDAO, setFollowedDAO] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const getFollowedDaos = async () => {
@@ -27,7 +27,6 @@ const Followers = () => {
       const followedDaoDetails = await Promise.all(
         followedDaoPrincipals.map(async (daoPrincipal) => {
           try {
-
             const daoCanisterPrincipal = Principal.fromUint8Array(daoPrincipal._arr);
             
             console.log("DAO Canister Principal:", daoCanisterPrincipal.toText());
@@ -37,7 +36,6 @@ const Followers = () => {
             const daoDetails = await daoCanister.get_dao_detail();
 
             console.log(daoDetails);
-            
             
             return { ...daoDetails, dao_canister_id: daoCanisterPrincipal.toText() };
           } catch (error) {
@@ -58,20 +56,19 @@ const Followers = () => {
 
   useEffect(() => {
     getFollowedDaos();
-
   }, [backendActor]);
 
   return (
     <div className={className + " " + "w-full"}>
       <div className="lg:ml-10 tablet:mt-12 mt-5 md:px-0 px-3">
         <h3 className="text-[#05212C] tablet:text-[24px] text-[18px] translate-x-[12px] translate-y-[-90px] tablet:font-bold font-semibold mb-4">
-          Dao Joined
+          DAOs Followed
         </h3>
         {loading ? (
           <MuiSkeleton />
         ) : followedDAO.length === 0 ? (
-          <p className=" text-black mt-10 "></p>
-        ) : (  
+          <NoDataComponent />
+        ) : (
           <div className="bg-gray">
             <Container classes="__cards tablet:px-10 px-4 pb-10 grid grid-cols-1 big_phone:grid-cols-2 tablet:gap-6 gap-4">
               {followedDAO.map((daos, index) => (
@@ -91,10 +88,9 @@ const Followers = () => {
               ))}
             </Container>
           </div>
-          )}
+        )}
       </div>
     </div>
-
   );
 };
 

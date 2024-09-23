@@ -11,7 +11,7 @@ import DaoCard from "../../Dao/DaoCard";
 const Following = () => {
   const className = "Following";
   const { backendActor, createDaoActor, stringPrincipal } = useAuth();
-  const [joinedDAO, setJoinedDAO] = useState([])
+  const [joinedDAO, setJoinedDAO] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const getJoinedDaos = async () => {
@@ -27,7 +27,6 @@ const Following = () => {
       const joinedDaoDetails = await Promise.all(
         joinedDaoPrincipals.map(async (daoPrincipal) => {
           try {
-
             const daoCanisterPrincipal = Principal.fromUint8Array(daoPrincipal._arr);
             
             console.log("DAO Canister Principal:", daoCanisterPrincipal.toText());
@@ -37,7 +36,6 @@ const Following = () => {
             const daoDetails = await daoCanister.get_dao_detail();
 
             console.log(daoDetails);
-            
             
             return { ...daoDetails, dao_canister_id: daoCanisterPrincipal.toText() };
           } catch (error) {
@@ -58,7 +56,6 @@ const Following = () => {
 
   useEffect(() => {
     getJoinedDaos();
-
   }, [backendActor]);
 
   return (
@@ -69,12 +66,9 @@ const Following = () => {
         </h3>
         {loading ? (
           <MuiSkeleton />
-        ) :
-        joinedDAO.length === 0 ? (
-          <p className=" text-black mt-10 "></p>
-        ) :
-          (
-          
+        ) : joinedDAO.length === 0 ? (
+          <NoDataComponent text="No DAOs joined yet!" />
+        ) : (
           <div className="bg-gray">
             <Container classes="__cards tablet:px-10 px-4 pb-10 grid grid-cols-1 big_phone:grid-cols-2 tablet:gap-6 gap-4">
               {joinedDAO.map((daos, index) => (
@@ -94,10 +88,9 @@ const Following = () => {
               ))}
             </Container>
           </div>
-          )}
+        )}
       </div>
     </div>
-
   );
 };
 

@@ -3,18 +3,21 @@ import nodata1 from "../../../assets/nodata1.png";
 
 const NoDataComponent = ({ setJoinedDAO  }) => {
   return (
-    <div className="w-full flex flex-col items-center justify-center p-20">
-      <img src={nodata1} alt="No Data" className="mb-4" />
-      <p className="text-center text-gray-700 mb-4 text-[16px]">
-        You have not created any DAO
-      </p>
-      {/* <button
-        onClick={() => setJoinedDAO(true)}
-        className="flex-1 bg-[#0E3746] border-2 border-[#0E3746] text-white px-8 py-2 rounded-[3rem]"
-      >
-        Join DAO
-      </button> */}
-    </div>
+    <>
+     <div className="hidden md:flex w-full max-w-[950px] h-[367px] translate-y-[-100px]  mx-auto flex-col items-center justify-center p-4 bg-slate-100 rounded-md">
+        <img src={nodata1} alt="No Data" className="mb-1" />
+        <p className="text-center text-gray-700 text-[16px]">
+          No Data Available !
+        </p>
+      </div>
+
+      {/* Mobile View (visible only on small screens) */}
+      <div className="flex md:hidden w-full max-w-[320px] h-[248px] mx-auto flex-col items-center justify-center p-2 bg-slate-100 rounded-md gap-0">
+        <img src={nodata1} alt="No Data" className="mb-1" />
+        <p className="text-center text-gray-700 text-[14px]">
+        No Data Available !
+        </p>
+      </div></>
   );
 };
 
