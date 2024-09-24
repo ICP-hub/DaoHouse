@@ -134,11 +134,13 @@ async fn run_chnage_dao_policy(args: crate::types::ChangeDaoPolicyArg) -> Result
 
 #[update]
 async fn run_transfer_token(args: TokenTransferArgs) -> Result<String, String> {
-    let principal_id = api::caller();
+    let principal_id: Principal = api::caller();
+    
     let balance = icrc_get_balance(principal_id)
         .await
         .map_err(|err| format!("Error while fetching user balance {}", err))?;
-    if balance >= 0 as u8 {
+    if balance <= 0 as u8 {
+        ic_cdk::println!("user balance : {} ", balance);
         return Err(String::from(
             "User token balance is less then the required transfer tokens",
         ));
