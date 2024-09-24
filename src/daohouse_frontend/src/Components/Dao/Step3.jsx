@@ -43,11 +43,6 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
       council.members.forEach(member => allMembers.add(member));
     }
 
-    // Add group members
-    list.filter(group => group.name !== "Council").forEach(group => {
-      group.members.forEach(member => allMembers.add(member));
-    });
-
     console.log(Array.from(allMembers));
 
 
@@ -75,12 +70,14 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
 
     // Set data and move to the next step
     const uniqueMembers = getUniqueMembers();
+    console.log("Council--", council.members);
+    
     setData(prev => ({
       ...prev,
       step3: {
         groups: list.slice(1) || [],  // Default to empty array if list is undefined
         council: council.members || [],
-        members: uniqueMembers || []  // Default to empty array if uniqueMembers is undefined
+        members: getUniqueMembers || []  // Default to empty array if uniqueMembers is undefined
       },
     }));
     setActiveStep(3);

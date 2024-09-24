@@ -2,12 +2,12 @@ import React from 'react'
 
 const DaoCardLoaderSkeleton = () => {
   return (
-    <div className='flex flex-wrap justify-center mx-4 gap-10'>
+    <div className='flex flex-wrap justify-start md:mx-10 xl:mx-40 gap-10'>
         {[...Array(4)].map((_, index) => (
-    <div key={index} className="bg-[#F4F2EC] shadow-lg tablet:p-6 big_phone:p-3 small_phone:p-5 p-3  rounded-lg mr-12 ml-8 animate-pulse max-w-[800px] h-[350px]">
+    <div key={index} className="bg-[#F4F2EC] shadow-lg tablet:p-6 big_phone:p-3 small_phone:p-5 p-3  rounded-lg mr-12 ml-8 animate-pulse max-w-[350px] md:max-w-[800px]">
   <div className="flex big_phone:flex-row small_phone:flex-col justify-start items-start mb-4 gap-2">
     {/* Image Skeleton */}
-    <div className="w-full big_phone:w-40 lg:w-60 mobile:h-[120px] bg-gray-300 border border-black rounded"></div>
+    <div className="w-full big_phone:w-40 lg:w-60 h-[120px] bg-gray-300 border border-black rounded"></div>
     
     {/* Name and Follow button skeleton */}
     <div className="flex flex-col items-start big_phone:ml-4 small_phone:ml-0 small_phone:mt-4 space-y-2">
@@ -52,7 +52,7 @@ const DaoCardLoaderSkeleton = () => {
   </div>
 
   {/* Buttons skeleton */}
-  <div className="flex justify-between gap-2 w-96">
+  <div className="flex justify-between gap-2 w-72 md:w-96">
     <div className="flex-1 bg-gray-300 w-20 h-10 rounded-[3rem]"></div>
     <div className="flex-1 bg-gray-300 w-20 h-10 rounded-[3rem]"></div>
   </div>

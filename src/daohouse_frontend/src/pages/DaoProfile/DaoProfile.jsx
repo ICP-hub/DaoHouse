@@ -46,6 +46,7 @@ const DaoProfile = () => {
   const [voteApi, setVoteApi] = useState({})
   const [daoFollowers, setDaoFollowers] = useState([])
   const [daoMembers, setDaoMembers] = useState([])
+  const [daoGroups, setDaoGroups] = useState([])
   const [isExpanded, setIsExpanded] = useState(false);
   const maxWords = 250;
   const backendCanisterId = Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND)
@@ -95,6 +96,10 @@ const DaoProfile = () => {
           setDaoFollowers(daoFollowers);
           setFollowersCount(daoFollowers.length);
           setIsFollowing(daoFollowers.some(follower => follower.toString() === currentUserId.toString()));
+          const daoGroups = await daoActor.get_dao_groups();
+          setDaoGroups(daoGroups);
+          console.log(daoGroups);
+          
           const daoMembers = await daoActor.get_dao_members();
           console.log(daoMembers);
           
@@ -554,7 +559,7 @@ const DaoProfile = () => {
         </div>
         {activeLink === "proposals" && ( <div>{ loadingProposals ? ( <ProposalLoaderSkeleton />) : (<ProposalsContent proposals={proposals} isMember={isMember} voteApi={voteApi} />)}</div> ) }
         {activeLink === "feeds" && <FeedsContent  />}
-        {activeLink === "member_policy" && <Members  />}
+        {activeLink === "member_policy" && <Members daoGroups={daoGroups} daoMembers={daoMembers} />}
         {activeLink === "followers" && <FollowersContent daoFollowers={daoFollowers}/>}
         {activeLink === "funds" && <FundsContent />}
         {activeLink === "settings" && <DaoSettings />}
