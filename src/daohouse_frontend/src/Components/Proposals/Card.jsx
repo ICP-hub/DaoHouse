@@ -300,7 +300,8 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const navigate = useNavigate()
 
   const a = proposal?.proposal_description;
-  const principalOfAction = proposal.principal_of_action.toText()
+  const principalOfAction = proposal.principal_of_action.toText() || proposal.action_principal.toText()
+  console.log("data2",principalOfAction)
   const approvedProposals = Number(BigInt(proposal?.proposal_approved_votes || 0));
   const rejectedvoters = Number(BigInt(proposal?.proposal_rejected_votes || 0));
   const status = proposal?.proposal_status

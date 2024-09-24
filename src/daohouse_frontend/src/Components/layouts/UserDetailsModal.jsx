@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { toast } from "react-toastify";
 import MyProfileImage from "../../../assets/Avatar.png";
-import defaultImage from "../../../assets/defaultImage.png";
+import defaultImage from "../../../assets/Avatar.png";
 import { useAuth } from "../utils/useAuthClient";
 import { useNavigate } from "react-router-dom";
 
