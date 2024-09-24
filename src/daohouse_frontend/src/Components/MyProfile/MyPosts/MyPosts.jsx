@@ -22,6 +22,8 @@ const MyPosts = () => {
     try {
       setLoading(true);
       const res = await backendActor.get_my_proposals({ start, end });
+      
+      console.log("data1",res)
       const dataLength = res.length || 0;
       setTotalItems(Math.ceil(dataLength / itemsPerPage));
       setMyProposals(res);

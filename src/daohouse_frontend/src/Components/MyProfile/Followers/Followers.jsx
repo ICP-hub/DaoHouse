@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { RxArrowTopRight } from "react-icons/rx";
 import MuiSkeleton from "../../Skeleton/MuiSkeleton";
 import { useAuth } from "../../utils/useAuthClient";
-import Avatar from "../../../../assets/Avatar.png"
+import Avatar from "../../../../assets/Avatar.png";
 import { Principal } from "@dfinity/principal";
 import Container from "../../Container/Container";
 import NoDataComponent from "../../Dao/NoDataComponent";
@@ -16,41 +16,58 @@ const Followers = () => {
 
   const getFollowedDaos = async () => {
     try {
+      setLoading(true); // Set loading to true when fetching begins
       console.log("Fetching followed DAOs...");
-      
-      const profile = await backendActor.get_profile_by_id(Principal.fromText(stringPrincipal));
+
+      const profile = await backendActor.get_profile_by_id(
+        Principal.fromText(stringPrincipal)
+      );
       console.log("Profile:", profile);
-      
+
       const followedDaoPrincipals = profile?.Ok?.follow_dao || [];
       console.log("Followed DAO Principals:", followedDaoPrincipals);
-      
+
       const followedDaoDetails = await Promise.all(
         followedDaoPrincipals.map(async (daoPrincipal) => {
           try {
-            const daoCanisterPrincipal = Principal.fromUint8Array(daoPrincipal._arr);
-            
-            console.log("DAO Canister Principal:", daoCanisterPrincipal.toText());
-  
+            const daoCanisterPrincipal = Principal.fromUint8Array(
+              daoPrincipal._arr
+            );
+
+            console.log(
+              "DAO Canister Principal:",
+              daoCanisterPrincipal.toText()
+            );
+
             const daoCanister = await createDaoActor(daoCanisterPrincipal);
-  
+
             const daoDetails = await daoCanister.get_dao_detail();
 
             console.log(daoDetails);
-            
-            return { ...daoDetails, dao_canister_id: daoCanisterPrincipal.toText() };
+
+            return {
+              ...daoDetails,
+              dao_canister_id: daoCanisterPrincipal.toText(),
+            };
           } catch (error) {
-            console.error(`Error fetching details for DAO: ${daoPrincipal._arr}`, error);
-            return null; 
+            console.error(
+              `Error fetching details for DAO: ${daoPrincipal._arr}`,
+              error
+            );
+            return null;
           }
         })
       );
-      
-      const validDaoDetails = followedDaoDetails.filter(dao => dao !== null);
-      
+
+      const validDaoDetails = followedDaoDetails.filter(
+        (dao) => dao !== null
+      );
+
       setFollowedDAO(validDaoDetails);
-      
     } catch (error) {
       console.error("Error fetching followed DAOs:", error);
+    } finally {
+      setLoading(false); // Set loading to false when fetching is done
     }
   };
 
@@ -77,8 +94,12 @@ const Followers = () => {
                   {...{
                     name: daos.dao_name || "No Name",
                     followers: daos.followers_count || "0",
-                    members: daos.members_count ? Number(BigInt(daos.members_count)) : "0",
-                    groups: daos.groups_count ? Number(BigInt(daos.groups_count)) : "No Groups",
+                    members: daos.members_count
+                      ? Number(BigInt(daos.members_count))
+                      : "0",
+                    groups: daos.groups_count
+                      ? Number(BigInt(daos.groups_count))
+                      : "No Groups",
                     proposals: daos.proposals_count || "0",
                     image_id: daos.image_id || "No Image",
                     daoCanister: daos.daoCanister,
