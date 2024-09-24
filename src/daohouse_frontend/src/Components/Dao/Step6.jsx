@@ -388,8 +388,10 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
         onClose={handleCancel}
         onPay={async () => {
           await paymentTest();
+
         }}
         loading={loadingPayment}
+        fileURL={fileURL}
       />
     </React.Fragment>
   );
