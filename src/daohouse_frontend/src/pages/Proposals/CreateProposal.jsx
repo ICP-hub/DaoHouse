@@ -38,6 +38,15 @@ function CreateProposal() {
     bountTask: '',
   })
 
+  const [generalPurp, setGeneralPurp] = useState({
+    proposalExpiredAt: '',
+    description: '',
+    actionMember: '',
+    purposeTitle: '',
+    proposalCreatedAt: '',
+  })
+
+
   const [loading, setLoading] = useState(false);
   const { createDaoActor, backendActor, stringPrincipal } = useAuth();
 
@@ -87,6 +96,14 @@ function CreateProposal() {
       [name]: value,
     }));
   };
+
+  const handleInputGeneralPurp = (e) => {
+    const { name, value } = e.target;
+    setGeneralPurp((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -111,6 +128,15 @@ function CreateProposal() {
             action_member: Principal.fromText(bountyDone.actionMember),
             proposal_created_at: 12,
             bounty_task: bountyDone.bountTask,
+          });
+          break;
+        case 'GeneralPurp':
+          await submitGeneralPurp({
+            proposal_expired_at: new Date(generalPurp.proposalExpiredAt).getTime(),
+            description: generalPurp.description,
+            action_member: Principal.fromText(generalPurp.actionMember),
+            purpose_title: generalPurp.purposeTitle,
+            proposal_created_at: new Date(generalPurp.proposalCreatedAt).getTime(),
           });
           break;
 
@@ -167,6 +193,27 @@ function CreateProposal() {
 
   };
 
+
+  const submitGeneralPurp = async (generalPurp) => {
+
+
+    try {
+      const daoCanister = await createDaoActor(daoCanisterId);
+      console.log("daocanister iss", daoCanisterId);
+
+
+
+      console.log("generl purpose  proposal : ", daoCanister)
+      const response = await daoCanister.proposal_to_create_general_purpose(generalPurp);
+      console.log("response of general ", response)
+      toast.success("General Purpose  proposal created successfully");
+      movetodao();
+    } catch (error) {
+      console.log("error of add", error);
+
+    }
+
+  };
 
 
 
@@ -246,7 +293,7 @@ function CreateProposal() {
 
                     <option value="TokenTransfer">Token Transfer</option>
 
-                    <option value="GeneralPurpose">General Purpose</option>
+                    <option value="GeneralPurp">General Purpose</option>
 
                   </select>
                 </div>
@@ -376,6 +423,64 @@ function CreateProposal() {
                         name="proposalCreatedAt"
                         value={bountyDone.proposalCreatedAt}
                         onChange={handleInputBountyDone}
+                        className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {proposalType === 'GeneralPurp' && (
+                  <>
+                    <div className="mb-4">
+                      <label>Purpose Title</label>
+                      <input
+                        type="text"
+                        name="purposeTitle"
+                        value={generalPurp.purposeTitle}
+                        onChange={handleInputGeneralPurp}
+                        className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+                        placeholder="Enter purpose title"
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <label>Description</label>
+                      <input
+                        type="text"
+                        name="description"
+                        value={generalPurp.description}
+                        onChange={handleInputGeneralPurp}
+                        className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+                        placeholder="Enter description"
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <label>Action Member (Principal)</label>
+                      <input
+                        type="text"
+                        name="actionMember"
+                        value={generalPurp.actionMember}
+                        onChange={handleInputGeneralPurp}
+                        className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+                        placeholder="Enter action member principal"
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <label>Proposal Expired At</label>
+                      <input
+                        type="date"
+                        name="proposalExpiredAt"
+                        value={generalPurp.proposalExpiredAt}
+                        onChange={handleInputGeneralPurp}
+                        className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <label>Proposal Created At</label>
+                      <input
+                        type="date"
+                        name="proposalCreatedAt"
+                        value={generalPurp.proposalCreatedAt}
+                        onChange={handleInputGeneralPurp}
                         className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                       />
                     </div>
