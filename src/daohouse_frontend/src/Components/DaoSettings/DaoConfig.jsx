@@ -6,7 +6,7 @@ import Container from "../Container/Container";
 import { useAuth } from '../../Components/utils/useAuthClient';
 import { Principal } from "@dfinity/principal";
 
-const DaoConfig = ({ setData, setActiveStep, data }) => {
+const DaoConfig = ({ setData, setActiveStep,setActiveLink, data }) => {
     const { daoCanisterId } = useParams();
     const { createDaoActor } = useAuth();
     const navigate = useNavigate();
@@ -77,7 +77,8 @@ const DaoConfig = ({ setData, setActiveStep, data }) => {
             console.log("Response from proposal:", response);
             toast.success("DAO configuration proposal created successfully");
             movetodao();
-            // Navigate to the DAO page (assuming this is what movetodao was intended to do)
+            setActiveLink("proposals");
+           
 
         } catch (error) {
             console.error("Error during proposal submission:", error);
