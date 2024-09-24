@@ -86,17 +86,27 @@ const DaoProfile = () => {
           const daoDetails = await daoActor.get_dao_detail();
           setDao(daoDetails);
 
-          const daoFollowers = await daoActor.get_dao_followers();
-          setDaoFollowers(daoFollowers);
-          setFollowersCount(daoFollowers.length);
-
-          const daoMembers = await daoActor.get_dao_members();
-          setDaoMembers(daoMembers);
-
           // Fetch user profile
           const profileResponse = await backendActor.get_user_profile();
           if (profileResponse.Ok) {
             setUserProfile(profileResponse.Ok);
+            const currentUserId = Principal.fromText(profileResponse.Ok.user_id.toString());
+            const daoFollowers = await daoActor.get_dao_followers();
+          setDaoFollowers(daoFollowers);
+          setFollowersCount(daoFollowers.length);
+          setIsFollowing(daoFollowers.some(follower => follower.toString() === currentUserId.toString()));
+          const daoMembers = await daoActor.get_dao_members();
+          console.log(daoMembers);
+          
+          setDaoMembers(daoMembers)
+          const isCurrentUserMember = daoMembers.some(member => member.toString() === currentUserId.toString());
+            if (isCurrentUserMember) {
+              setIsMember(true)
+              setJoinStatus('Joined');
+            } else {
+              setIsMember(false)
+              setJoinStatus('Join DAO');
+            }
           }
         } catch (error) {
           console.error('Error fetching DAO details:', error);
