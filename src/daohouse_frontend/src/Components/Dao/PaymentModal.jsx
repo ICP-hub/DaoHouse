@@ -4,9 +4,10 @@ import Button from '@mui/material/Button';
 import { CircularProgress } from '@mui/material';
 import defaultImage from "../../../assets/defaultImage.png"; // Import your default image
 
-const PaymentModal = ({ open, onClose, onPay, loading, data }) => {
+const PaymentModal = ({ open, onClose, onPay, loading, data,fileURL }) => {
   return (
     <Modal
+
       open={open}
       onClose={onClose}
       BackdropProps={{
@@ -21,7 +22,7 @@ const PaymentModal = ({ open, onClose, onPay, loading, data }) => {
           <h2 className="text-lg font-bold mb-4">Verify your order details</h2>
           <div className="flex items-center mb-4">
             <img
-              src={data?.step6?.imageUrl || defaultImage} // Show default image if imageUrl is not provided
+              src={fileURL || defaultImage} // Show default image if imageUrl is not provided
               alt="Product"
               className="w-16 h-16 rounded mr-4"
             />
