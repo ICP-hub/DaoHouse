@@ -3,7 +3,7 @@ import { usePostContext } from "../../../PostProvider";
 import NoPostProfile from "../../Dao/NoPostProfile";
 import { useAuth } from "../../utils/useAuthClient";
 import Pagination from "../../pagignation/Pagignation";
-import MuiSkeleton from "../../Skeleton/MuiSkeleton";
+import MuiSkeleton from "../../SkeletonLoaders/MuiSkeleton";
 import Card from "../../../Components/Proposals/Card";
 
 const MyPosts = () => {

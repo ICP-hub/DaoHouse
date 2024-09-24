@@ -7,13 +7,15 @@ import Step3 from "./Step3";
 import Step4 from "./Step4";
 import Step5 from "./Step5";
 import Step6 from "./Step6";
+import DaoConfig from "./DaoConfig";
+
 
 const DaoSettings = () => {
   const className = "DaoSettings";
   const [activeStep, setActiveStep] = React.useState(0);
 
   const [data, setData] = useState({
-    step1: {},
+    DaoConfig: {},
     step2: {},
     step3: {},
     step4: {},
@@ -29,7 +31,7 @@ const DaoSettings = () => {
   const Form = () => {
     switch (activeStep) {
       case 0:
-        return <Step1 setData={setData} setActiveStep={setActiveStep} />;
+        return <DaoConfig setData={setData} setActiveStep={setActiveStep} />;
       case 1:
         return <Step2 setData={setData} setActiveStep={setActiveStep} />;
       case 2:
@@ -121,15 +123,15 @@ export default DaoSettings;
 const steps = [
   {
     step: 1,
-    name: "Basic Info",
+    name: "ChangeDaoConfig",
   },
   {
     step: 2,
-    name: "Settle Down Period",
+    name: "sdfjkshdkfj",
   },
   {
     step: 3,
-    name: "Add members & Groups",
+    name: "sdfbskdjfjk",
   },
   {
     step: 4,

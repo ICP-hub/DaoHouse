@@ -6,12 +6,13 @@ import NoDataComponent from "../../Components/Dao/NoDataComponent";
 import TopComponent from "../../Components/Dao/TopComponent";
 import Container from "../../Components/Container/Container";
 import { useAuth } from "../../Components/utils/useAuthClient";
-import MuiSkeleton from "../../Components/Skeleton/MuiSkeleton";
+import MuiSkeleton from "../../Components/SkeletonLoaders/MuiSkeleton";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import LoginModal from "../../Components/Auth/LoginModal";
 import nodata1 from "../../../assets/nodata.png";
 import SearchProposals from "../../Components/Proposals/SearchProposals";
 import { Principal } from "@dfinity/principal";
+import DaoCardLoaderSkeleton from "../../Components/SkeletonLoaders/DaoCardLoaderSkeleton/DaoCardLoaderSkeleton";
 
 const Dao = () => {
   const [showAll, setShowAll] = useState(true);
@@ -185,7 +186,7 @@ const Dao = () => {
 
       {showAll ? (
         loading ? (
-          <MuiSkeleton />
+          <DaoCardLoaderSkeleton />
         ) : noDaoFound ? (
           <div className="flex justify-center items-center h-full">
             <img src={nodata1} alt="No Data" className="mb-1 mx-auto block" />
@@ -213,7 +214,7 @@ const Dao = () => {
           </div>
         )
       ) : loadingJoinedDAO ? (
-        <MuiSkeleton />
+        <DaoCardLoaderSkeleton />
       ) : joinedDAO.length ? (
         <div className="bg-gray">
           <Container classes="__cards tablet:px-10 px-4 pb-10 grid grid-cols-1 big_phone:grid-cols-2 tablet:gap-6 gap-4">

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../utils/useAuthClient";
-import MuiSkeleton from "../../Skeleton/MuiSkeleton";
+import MuiSkeleton from "../../SkeletonLoaders/MuiSkeleton";
 import NoDataComponent from "../../Dao/NoDataComponent";
 import DaoCard from "../../Dao/DaoCard";
 import { Principal } from "@dfinity/principal";
