@@ -236,7 +236,9 @@ const Dao = () => {
           </Container>
         </div>
       ) : (
-        <NoDataComponent />
+        <div className="mt-10 mb-10 md:mt-40 mx-10">
+          <NoDataComponent />
+        </div>
       )}
     </div>
   );
