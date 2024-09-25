@@ -5,7 +5,7 @@ const DaoProfileLoaderSkeleton = () => {
   return (
     
     <div className=''>
-      <div className='p-32 w-[100%] bg-[#8f9da8]'></div>
+      {/* <div className='p-32 w-[100%] bg-[#8f9da8]'></div> */}
       <div className="bg-zinc-200 w-full relative flex-col space-y-16">
     
     <div className="bg-[#c8ced3] p-6 flex flex-col gap-2">

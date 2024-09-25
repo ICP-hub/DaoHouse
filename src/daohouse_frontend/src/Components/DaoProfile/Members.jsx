@@ -77,13 +77,7 @@ const Members = ({ daoGroups, daoMembers }) => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="mobile:text-2xl text-lg font-bold py-1">Members</h1>
-        <button
-          onClick={() => navigate("/create-proposal")}
-          className="big_phone:flex hidden justify-center items-center text-[16px] relative w-[220px] h-[50px] bg-white rounded-full hover:shadow-lg hover:bg-[#ECECEC] transition"
-        >
-          <span className="absolute text-[35px] font-thin left-5 bottom-[1px] ">+</span>
-          <span className="ml-6">Create Proposals</span>
-        </button>
+        
       </div>
 
       {/* Members Section */}
@@ -94,7 +88,7 @@ const Members = ({ daoGroups, daoMembers }) => {
             onClick={toggleCouncil}
             className="cursor-pointer flex flex-row items-center justify-between bg-[#AAC8D6] p-3 rounded-lg"
           >
-            <p className="font-semibold text-lg">Council</p>
+            <p className="font-semibold big_phone:text-lg text-sm">Council</p>
             <p className="font-semibold big_phone:text-base text-sm">
               {councilMembers.length} {councilMembers.length === 1 ? "Member" : "Members"}
             </p>

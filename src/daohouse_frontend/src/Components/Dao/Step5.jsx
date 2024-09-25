@@ -9,20 +9,25 @@ import Container from "../Container/Container";
 import ViewModal from "./ViewModal";
 
 const Step5 = ({ setData, setActiveStep, data }) => {
+  console.log("data", data);
+  
   const [loadingNext, setLoadingNext] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const user = data.step3.members;
+  const [selectedMembers, setSelectedMembers] = useState([]);
+  const { council, groups, members } = data.step3;
+  const users = data.step3;
+  console.log("user", users);
+  
 
-  const [quorum, setQuorum] = useState(() => {
-    const savedData = localStorage.getItem("step5Quorum");
-    return savedData
-      ? JSON.parse(savedData)
-      : [
-          { name: "Council", index: 0, vote: 50 },
-          { name: "Group 1", index: 1, vote: 50 },
-          { name: "Group 2", index: 2, vote: 50 },
-        ];
-  });
+  const [quorum, setQuorum] = useState(() => [
+    { name: "Council", index: council.length, vote: 51, members: council },
+    ...groups.map((group, i) => ({
+      name: group.name,
+      index: group.members.length,
+      vote: 51,
+      members: group.members,
+    })),
+  ]);
 
   const className = "DAO_Step5";
 
@@ -46,8 +51,9 @@ const Step5 = ({ setData, setActiveStep, data }) => {
     localStorage.setItem("step5Quorum", JSON.stringify(quorum));
   }, [quorum]);
 
-  function handleViewClickModal() {
-    setIsModalOpen(true);
+  function handleViewClickModal(members) {
+    setSelectedMembers(members); 
+    setIsModalOpen(true); 
   }
 
   function handleOnClose() {
@@ -76,7 +82,7 @@ const Step5 = ({ setData, setActiveStep, data }) => {
           </section>
 
           <section className="bg-white rounded-2xl w-full p-4 gap-4 big_phone:flex hidden flex-col">
-            {quorum.map(({ name, index, vote }) => (
+            {quorum.map(({ name, index, vote, members }) => (
               <div
                 key={index}
                 className="border border-slate-200 p-3 flex items-center w-full rounded-lg"
@@ -86,7 +92,7 @@ const Step5 = ({ setData, setActiveStep, data }) => {
                 <p className="w-1/3 flex flex-row gap-4">
                   <span>{index}</span>
                   <button
-                    onClick={handleViewClickModal}
+                    onClick={() => handleViewClickModal(members)}
                     className="text-cyan-800 bg-slate-200 px-5 py-1 rounded-md"
                   >
                     View
@@ -114,7 +120,7 @@ const Step5 = ({ setData, setActiveStep, data }) => {
             </section>
             <hr className="border-t-2 border-gray-400 sm:hidden mt-2" />
 
-            {quorum.map(({ name, index, vote }) => (
+            {quorum.map(({ name, index, vote, members }) => (
               <div
                 key={index}
                 className="bg-[#EBEBEB] border border-slate-300 p-4 rounded-lg flex flex-col gap-4"
@@ -124,10 +130,10 @@ const Step5 = ({ setData, setActiveStep, data }) => {
                   <div className="flex flex-col gap-2">
                     <p className="text-sm text-gray-500">{name}</p>
                     <p className="text-sm text-gray-500">
-                      {user[index]?.length || 0} members
+                      {users[index]?.length || 0} members
                     </p>
                     <button
-                      onClick={handleViewClickModal}
+                      onClick={() => handleViewClickModal(members)}
                       className="text-[#229ED9] font-mulish text-sm bg-white border px-5 py-1 rounded-md"
                     >
                       View
@@ -167,7 +173,7 @@ const Step5 = ({ setData, setActiveStep, data }) => {
           </div>
         </div>
       </Container>
-      <ViewModal open={isModalOpen} onClose={handleOnClose} users={user} />
+      <ViewModal open={isModalOpen} onClose={handleOnClose} users={selectedMembers} />
     </React.Fragment>
   );
 };

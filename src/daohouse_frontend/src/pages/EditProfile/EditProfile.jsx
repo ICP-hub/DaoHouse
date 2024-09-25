@@ -129,7 +129,7 @@ const EditProfile = () => {
     const canisterId = process.env.CANISTER_ID_IC_ASSET_HANDLER;
 
     try {
-      const response = await backendActor.update_profile(canisterId, profilePayload);
+      const response = await backendActor.update_profile( profilePayload);
       if (response.Err) {
         toast.error(`${response.Err}`);
       } else {
