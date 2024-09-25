@@ -9,7 +9,6 @@ import { useAuth } from "../../Components/utils/useAuthClient";
 import MuiSkeleton from "../../Components/SkeletonLoaders/MuiSkeleton";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import LoginModal from "../../Components/Auth/LoginModal";
-import nodata1 from "../../../assets/nodata.png";
 import SearchProposals from "../../Components/Proposals/SearchProposals";
 import { Principal } from "@dfinity/principal";
 import DaoCardLoaderSkeleton from "../../Components/SkeletonLoaders/DaoCardLoaderSkeleton/DaoCardLoaderSkeleton";
@@ -20,7 +19,7 @@ const Dao = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [dao, setDao] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [loadingJoinedDAO, setLoaadingJoinedDao] = useState(false)
+  const [loadingJoinedDAO, setLoaadingJoinedDao] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [fetchedDAOs, setFetchedDAOs] = useState([]);
   const [hasMore, setHasMore] = useState(true);
@@ -74,7 +73,7 @@ const Dao = () => {
 
   const getJoinedDaos = async () => {
     try {
-      setLoaadingJoinedDao(true)
+      setLoaadingJoinedDao(true);
       console.log("Fetching joined DAOs...");
       
       const profile = await backendActor.get_profile_by_id(Principal.fromText(stringPrincipal));
@@ -86,34 +85,27 @@ const Dao = () => {
       const joinedDaoDetails = await Promise.all(
         joinedDaoPrincipals.map(async (daoPrincipal) => {
           try {
-
             const daoCanisterPrincipal = Principal.fromUint8Array(daoPrincipal._arr);
-            
             console.log("DAO Canister Principal:", daoCanisterPrincipal.toText());
-  
+
             const daoCanister = await createDaoActor(daoCanisterPrincipal);
-  
             const daoDetails = await daoCanister.get_dao_detail();
-            
             return { ...daoDetails, dao_canister_id: daoCanisterPrincipal.toText() };
           } catch (error) {
             console.error(`Error fetching details for DAO: ${daoPrincipal._arr}`, error);
-            return null; 
-          } 
+            return null;
+          }
         })
       );
-      
+
       const validDaoDetails = joinedDaoDetails.filter(dao => dao !== null);
-      
       setJoinedDAO(validDaoDetails);
-      
     } catch (error) {
       console.error("Error fetching joined DAOs:", error);
     } finally {
-      setLoaadingJoinedDao(false)
+      setLoaadingJoinedDao(false);
     }
   };
-  
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -187,9 +179,9 @@ const Dao = () => {
       {showAll ? (
         loading ? (
           <DaoCardLoaderSkeleton />
-        ) : noDaoFound ? (
-          <div className="flex justify-center items-center h-full">
-            <img src={nodata1} alt="No Data" className="mb-1 mx-auto block" />
+        ) : dao.length === 0 ? ( // Check if there are no DAOs
+          <div className="mt-10 mb-10 md:mt-40 mx-10">
+            <NoDataComponent />
           </div>
         ) : (
           <div className="bg-gray">
@@ -215,7 +207,11 @@ const Dao = () => {
         )
       ) : loadingJoinedDAO ? (
         <DaoCardLoaderSkeleton />
-      ) : joinedDAO.length ? (
+      ) : joinedDAO.length === 0 ? ( // Check if there are no joined DAOs
+        <div className="mt-10 mb-10 md:mt-40 mx-10">
+          <NoDataComponent />
+        </div>
+      ) : (
         <div className="bg-gray">
           <Container classes="__cards tablet:px-10 px-4 pb-10 grid grid-cols-1 big_phone:grid-cols-2 tablet:gap-6 gap-4">
             {joinedDAO.map((daos, index) => (
@@ -235,49 +231,9 @@ const Dao = () => {
             ))}
           </Container>
         </div>
-      ) : (
-        <div className="mt-10 mb-10 md:mt-40 mx-10">
-          <NoDataComponent />
-        </div>
       )}
     </div>
   );
 };
 
 export default Dao;
-
-
-
-export const Pagignation = ({ currentPage, setCurrentPage, hasMore }) => {
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
-
-  return (
-    <div className="pagination">
-      <div className="flex items-center gap-12 justify-center mt-3">
-        <button
-          className={`text-xl flex items-center ml-1 ${currentPage === 1
-            ? "text-gray-400 cursor-not-allowed"
-            : "text-black hover:text-gray-500 cursor-pointer"
-            }`}
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          <FaArrowLeft /> Prev
-        </button>
-        <button
-          className={`text-xl flex items-center px-3 py-1 transition duration-300 ease-in-out ${!hasMore
-            ? "text-gray-400 cursor-not-allowed"
-            : "text-black hover:text-gray-500 cursor-pointer"
-            }`}
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={!hasMore}
-        >
-          Next <FaArrowRight />
-        </button>
-      </div>
-    </div>
-
-  );
-};

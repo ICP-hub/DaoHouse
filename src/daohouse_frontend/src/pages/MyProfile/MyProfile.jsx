@@ -608,10 +608,10 @@ const MyProfile = ({ childComponent }) => {
   </Link>
 </div>
 
-        
-            {activeTab === 2 && showNoFollowers && <NoFollowers setFollowers={setShowNoFollowers} />}
-            {/* {activeTab === 3 && showNoFollowing && <NoFollowing />}  */}
-            {/* Render NoFollowing component */}
+{childComponent}
+              {activeTab === 2 && showNoFollowers && <NoFollowers setFollowers={setShowNoFollowers} />}
+               {activeTab === 3 && showNoFollowing && <NoFollowing />} *
+               {/* Render NoFollowing component */}
           </div>
           
         </Container>
