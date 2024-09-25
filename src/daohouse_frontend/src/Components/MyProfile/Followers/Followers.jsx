@@ -60,17 +60,19 @@ const Followers = () => {
 
   return (
     <div className={className + " " + "w-full"}>
-      <div className="lg:ml-10 tablet:mt-12 mt-5 md:px-0 px-3">
-        <h3 className="text-[#05212C] tablet:text-[24px] text-[18px] translate-x-[12px] translate-y-[-90px] tablet:font-bold font-semibold mb-4">
+      <div className=" md:px-0 px-3">
+        <h3 className="text-[#05212C] mt-10 ml-12 tablet:text-[24px] text-[18px] translate-x-[12px] translate-y-[-90px] tablet:font-bold font-semibold">
           DAOs Followed
         </h3>
         {loading ? (
           <MuiSkeleton />
         ) : followedDAO.length === 0 ? (
-          <NoDataComponent />
+          <div className="mt-4">
+            <NoDataComponent />
+          </div>
         ) : (
           <div className="bg-gray">
-            <Container classes="__cards tablet:px-10 px-4 pb-10 grid grid-cols-1 big_phone:grid-cols-2 tablet:gap-6 gap-4">
+            <Container classes="__cards tablet:px-10 px-4 pb-10 translate-y-[-50px] grid grid-cols-1 big_phone:grid-cols-2 tablet:gap-6 gap-4">
               {followedDAO.map((daos, index) => (
                 <DaoCard
                   key={index}
