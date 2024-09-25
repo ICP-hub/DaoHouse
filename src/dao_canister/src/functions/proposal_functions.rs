@@ -1,12 +1,14 @@
+use crate::functions::dao_autorun_function::{run_remove_member_from_dao, run_chnage_dao_config, run_chnage_dao_policy, run_transfer_token};
 use crate::proposal_route::check_proposal_state;
 use crate::types::{Dao, Proposals};
 use crate::{guards::*, Comment, DaoGroup, Pagination, ProposalStakes, ReplyCommentArgs};
-use crate::{with_state, ProposalState, VoteParam};
+use crate::{with_state, ProposalState, ProposalType, VoteParam};
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::api::{self};
 use ic_cdk::{query, update};
 use sha2::{Digest, Sha256};
 use std::collections::HashSet;
+use crate::types::{ChangeDaoConfigArg, ChangeDaoPolicyArg, TokenTransferArgs};
 
 // #[update(guard=check_members)]
 // pub async fn create_proposal(daohouse_backend_id: Principal, proposal: ProposalInput) -> String {
@@ -27,44 +29,81 @@ use std::collections::HashSet;
 //     // response
 // }
 
-// get all
 #[update(guard = prevent_anonymous)]
 fn get_all_proposals(page_data: Pagination) -> Vec<Proposals> {
     with_state(|state| {
         let mut proposals: Vec<Proposals> = Vec::with_capacity(state.proposals.len() as usize);
         let timestamp = ic_cdk::api::time();
-        let expiration_time = 4 * 60 * 1_000_000_000;
-        // let cool_down_period  = state.dao.cool_down_period.clone() as u64;
-        // let current_time  = cool_down_period * 60 * 60 * 1_000_000_000;
+        let expiration_time = 1 * 60 * 1_000_000_000;
 
-        for (_, v) in state.proposals.iter() {
+        let cloned_proposals = &state.proposals;
+
+        for (_, v) in cloned_proposals.iter() {
             let mut all_proposals = v.clone();
             let time_diff = timestamp.saturating_sub(all_proposals.proposal_submitted_at);
 
-            let total_persentage =
-                (all_proposals.proposal_approved_votes  as f64 /all_proposals.required_votes as f64) * 100.0 as f64;
+            let total_percentage = (all_proposals.proposal_approved_votes as f64 
+                / all_proposals.required_votes as f64) * 100.0;
 
             if time_diff >= expiration_time {
-                if total_persentage >= 51.0 as f64 {
+                if total_percentage >= 51.0 {
                     all_proposals.proposal_status = ProposalState::Accepted;
-                } else if total_persentage <= 50.0 as f64 && total_persentage > 0.0 as f64 {
+                    let proposal_id = &all_proposals.proposal_id;
+
+                    let proposals_details = cloned_proposals.get(proposal_id).unwrap().clone();
+
+                    match proposals_details.proposal_type {
+                        ProposalType::AddMemberProposal => {
+                            let dao = &mut state.dao;
+                            if !dao.members.contains(&proposals_details.principal_of_action) {
+                                ic_cdk::println!("aa gya hai yahn par printicipal  {:?} : ", &proposals_details.principal_of_action);
+                                dao.members.push(proposals_details.principal_of_action);
+                                dao.members_count += 1;
+                            }
+                        },
+                        ProposalType::RemoveMemberPrposal => {
+                            // let _ = run_remove_member_from_dao(proposals_details.principal_of_action);
+                        },
+                        ProposalType::ChangeDaoConfig => {
+                            // let change_dao_config = ChangeDaoConfigArg {
+                            //     dao_name: proposals_details.new_dao_name
+                            //         .unwrap_or_else(|| String::from("Default DAO Name")),
+                            //     purpose: proposals_details.proposal_description,
+                            //     daotype: proposals_details.proposal_title,
+                            // };
+                            // let _ = run_chnage_dao_config(change_dao_config);
+                        },
+                        ProposalType::ChnageDaoPolicy => {
+                            // let change_dao_policy = ChangeDaoPolicyArg {
+                            //     cool_down_period: 120,
+                            //     required_votes: 100,
+                            // };
+                            // let _ = run_chnage_dao_policy(change_dao_policy);
+                        },
+                        ProposalType::TokenTransfer => {
+                            // let token_transfer_arg = TokenTransferArgs {
+                            //     tokens: 23,
+                            //     from: proposals_details.principal_of_action.clone(),
+                            //     to: proposals_details.principal_of_action.clone(),
+                            // };
+                            // let _ = run_transfer_token(token_transfer_arg);
+                        },
+                        _ => {}
+                    }
+
+                } else if total_percentage <= 50.0 && total_percentage > 0.0 {
                     all_proposals.proposal_status = ProposalState::Rejected;
-                }
-                else {
+                } else {
                     all_proposals.proposal_status = ProposalState::Expired;
                 }
             } else {
-                ic_cdk::println!(
-                    "open open open open open open open open {} {} {} ",
-                    all_proposals.proposal_approved_votes,
-                    all_proposals.required_votes,
-                    total_persentage
-                );
                 all_proposals.proposal_status = ProposalState::Open;
             }
+
             proposals.push(all_proposals);
         }
 
+        // Handle pagination logic
         let ending = proposals.len();
         if ending == 0 {
             return proposals;
@@ -80,6 +119,8 @@ fn get_all_proposals(page_data: Pagination) -> Vec<Proposals> {
         Vec::new()
     })
 }
+
+
 
 // get user specific user
 #[update(guard=prevent_anonymous)]
