@@ -364,7 +364,8 @@ const MyProfile = ({ childComponent }) => {
 
               {childComponent}
               {activeTab === 2 && showNoFollowers && <NoFollowers setFollowers={setShowNoFollowers} />}
-              {activeTab === 3 && showNoFollowing && <NoFollowing />} {/* Render NoFollowing component */}
+               {activeTab === 3 && showNoFollowing && <NoFollowing />} *
+               {/* Render NoFollowing component */}
             </div>
           </Container>
         </div>
@@ -522,41 +523,10 @@ const MyProfile = ({ childComponent }) => {
                   </div>
                 </div>
               </div>
-            {/* <div className="flex justify-end gap-4 tablet:mt-4 tablet:mr-4">
-                {activeTab === 0 && (
-                  <button
-                    onClick={() => navigate("/edit-profile")}
-                    className="bg-white text-[16px] text-[#05212C] gap-1 shadow-xl md:px-3 rounded-[27px] tablet:w-[181px] tablet:h-[40px] md:w-[151px] md:h-[35px] w-[2.5rem] h-[2.5rem] flex items-center justify-center space-x-4 rounded-2xl"
-                  >
-                    <img
-                      src={EditPen}
-                      alt="edit"
-                      className="tablet:mr-2 h-4 w-4 edit-pen"
-                    />
-                    <span className="md:inline hidden whitespace-nowrap">
-                      {userProfile === null ? "Complete Profile" : "Edit Profile"}
-                    </span>
-                  </button>
-                )}
-              </div>*/}  
+           
             </div>
             <div className="flex justify-start gap-8 p-4 mx-6 md:hidden text-center text-[#05212C]">
-             {/* <div className="text-[22px] font-semibold ">
-                {userProfile?.post_count}{" "}
-                <div className="text-[15px] font-medium">   Submitted Proposals</div>
-              </div>
-              
-              <div className="text-[22px] font-semibold ">
-                {userProfile?.followings_count}{" "}
-                <div className="text-[15px] font-medium"> Dao Joined</div>
-              </div>
-              <div className="text-[22px] font-semibold ">
-                {userProfile?.followers_count}{" "}
-                <div className="text-[15px] font-medium">   Followed Dao List</div>
-              </div> */}
-              
-              
-            <div className="mr-20 translate-y-[30px] translate-x-[-20px]">   <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C]">
+<div className="mr-20 translate-y-[30px] translate-x-[-20px]">   <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C]">
                     {name || "Username.user"}{" "}
                   </h2>
                   <p className="md:text-[14px] text-[10px] tablet:text-[16px] font-normal text-left text-[#646464]">
@@ -577,8 +547,8 @@ const MyProfile = ({ childComponent }) => {
                       className="tablet:mr-2 h-4 w-4 edit-pen"
                     />
                    <span className="md:inline whitespace- text-xs">
-  Edit Profile
-</span>
+                 Edit Profile
+                   </span>
                   </button>
                   
                 )}
@@ -610,7 +580,7 @@ const MyProfile = ({ childComponent }) => {
 
   <Link to="/my-profile/posts" onClick={() => setActiveTab(1)}>
     <p className={`${tabButtonsStyle} ${activeTab === 1 ? "text-hex text-[14px] border-b-0.8 border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
-   Submitted Proposals
+    Proposals
       {activeTab === 1 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
       {/* Tab underlining effect */}
       <span className={`${activeTab === 1 ? "absolute w-full h-[4px] bg-black  text-[14px] left-0 bottom-0 -z-10" : "hover:w-full hover:h-[4px] hover:bg-black left-0 bottom-0 -z-10 transition-all duration-300"}`}></span>
@@ -638,9 +608,10 @@ const MyProfile = ({ childComponent }) => {
   </Link>
 </div>
 
-        
-            {activeTab === 2 && showNoFollowers && <NoFollowers setFollowers={setShowNoFollowers} />}
-            {activeTab === 3 && showNoFollowing && <NoFollowing />} {/* Render NoFollowing component */}
+{childComponent}
+              {activeTab === 2 && showNoFollowers && <NoFollowers setFollowers={setShowNoFollowers} />}
+               {activeTab === 3 && showNoFollowing && <NoFollowing />} *
+               {/* Render NoFollowing component */}
           </div>
           
         </Container>
