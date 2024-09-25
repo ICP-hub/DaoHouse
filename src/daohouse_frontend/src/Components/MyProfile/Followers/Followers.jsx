@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { RxArrowTopRight } from "react-icons/rx";
 import MuiSkeleton from "../../SkeletonLoaders/MuiSkeleton";
 import { useAuth } from "../../utils/useAuthClient";
-import Avatar from "../../../../assets/Avatar.png"
+import Avatar from "../../../../assets/Avatar.png";
 import { Principal } from "@dfinity/principal";
 import Container from "../../Container/Container";
 import NoDataComponent from "../../Dao/NoDataComponent";
@@ -13,30 +13,33 @@ const Followers = () => {
   const { backendActor, createDaoActor, stringPrincipal } = useAuth();
   const [followedDAO, setFollowedDAO] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null); // State to handle errors
 
   const getFollowedDaos = async () => {
+    setLoading(true); // Start loading
+    setError(null); // Reset error state
     try {
       console.log("Fetching followed DAOs...");
-      
+
       const profile = await backendActor.get_profile_by_id(Principal.fromText(stringPrincipal));
       console.log("Profile:", profile);
-      
+
       const followedDaoPrincipals = profile?.Ok?.follow_dao || [];
       console.log("Followed DAO Principals:", followedDaoPrincipals);
-      
+
       const followedDaoDetails = await Promise.all(
         followedDaoPrincipals.map(async (daoPrincipal) => {
           try {
             const daoCanisterPrincipal = Principal.fromUint8Array(daoPrincipal._arr);
-            
+
             console.log("DAO Canister Principal:", daoCanisterPrincipal.toText());
-  
+
             const daoCanister = await createDaoActor(daoCanisterPrincipal);
-  
+
             const daoDetails = await daoCanister.get_dao_detail();
 
             console.log(daoDetails);
-            
+
             return { ...daoDetails, dao_canister_id: daoCanisterPrincipal.toText() };
           } catch (error) {
             console.error(`Error fetching details for DAO: ${daoPrincipal._arr}`, error);
@@ -44,13 +47,16 @@ const Followers = () => {
           }
         })
       );
-      
+
       const validDaoDetails = followedDaoDetails.filter(dao => dao !== null);
       
       setFollowedDAO(validDaoDetails);
-      
+
     } catch (error) {
       console.error("Error fetching followed DAOs:", error);
+      setError("Failed to load followed DAOs. Please try again."); // Set error message
+    } finally {
+      setLoading(false); // End loading
     }
   };
 
@@ -66,6 +72,8 @@ const Followers = () => {
         </h3>
         {loading ? (
           <MuiSkeleton />
+        ) : error ? (
+          <div className="text-red-500">{error}</div> // Display error message
         ) : followedDAO.length === 0 ? (
           <div className="mt-4">
             <NoDataComponent />

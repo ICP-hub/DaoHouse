@@ -8,9 +8,10 @@ import Step4 from "./Step4";
 import Step5 from "./Step5";
 import Step6 from "./Step6";
 import DaoConfig from "./DaoConfig";
+import AddMember from "./AddMember";
 
 
-const DaoSettings = () => {
+const DaoSettings = ({setActiveLink}) => {
   const className = "DaoSettings";
   const [activeStep, setActiveStep] = React.useState(0);
 
@@ -31,9 +32,9 @@ const DaoSettings = () => {
   const Form = () => {
     switch (activeStep) {
       case 0:
-        return <DaoConfig setData={setData} setActiveStep={setActiveStep} />;
+        return <DaoConfig setData={setData} setActiveStep={setActiveStep}  setActiveLink={setActiveLink}/>;
       case 1:
-        return <Step2 setData={setData} setActiveStep={setActiveStep} />;
+        return <AddMember setData={setData} setActiveStep={setActiveStep} setActiveLink={setActiveLink} />;
       case 2:
         return (
           <Step3
@@ -127,22 +128,34 @@ const steps = [
   },
   {
     step: 2,
-    name: "sdfjkshdkfj",
+    name: "Add Member Proposal",
   },
   {
     step: 3,
-    name: "sdfbskdjfjk",
+    name: "Upgrade Remote",
   },
   {
     step: 4,
-    name: "Permissions",
+    name: "Pools",
   },
   {
     step: 5,
-    name: "Quorum",
+    name: "Change Dao Policy",
   },
   {
     step: 6,
-    name: "DAO Asset",
+    name: "Bounty Raised",
+  },
+  {
+    step: 7,
+    name: "Remove Member Proposal",
+  },
+  {
+    step: 8,
+    name: "Function Call",
+  },
+  {
+    step: 9,
+    name: "Upgrade Self",
   },
 ];

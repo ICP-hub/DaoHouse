@@ -1,18 +1,12 @@
 use crate::proposal_route::check_proposal_state;
 use crate::types::{Dao, Proposals};
-use crate::{
-    guards::*, AccountBalance, Comment, DaoGroup, Pagination, ProposalStakes,
-    ReplyCommentArgs, TokenTransferArgs,
-};
+use crate::{guards::*, Comment, DaoGroup, Pagination, ProposalStakes, ReplyCommentArgs};
 use crate::{with_state, ProposalState, VoteParam};
-use ic_cdk::api;
 use ic_cdk::api::management_canister::main::raw_rand;
+use ic_cdk::api::{self};
 use ic_cdk::{query, update};
 use sha2::{Digest, Sha256};
 use std::collections::HashSet;
-
-
-use super::{icrc_get_balance, icrc_transfer};
 
 // #[update(guard=check_members)]
 // pub async fn create_proposal(daohouse_backend_id: Principal, proposal: ProposalInput) -> String {
@@ -33,30 +27,56 @@ use super::{icrc_get_balance, icrc_transfer};
 //     // response
 // }
 
-// get all proposals
-#[update(guard=prevent_anonymous)]
+// get all
+#[update(guard = prevent_anonymous)]
 fn get_all_proposals(page_data: Pagination) -> Vec<Proposals> {
-    // let mut proposals: Vec<Proposals> = Vec::new();
-
     with_state(|state| {
         let mut proposals: Vec<Proposals> = Vec::with_capacity(state.proposals.len() as usize);
+        let timestamp = ic_cdk::api::time();
+        let expiration_time = 4 * 60 * 1_000_000_000;
+        // let cool_down_period  = state.dao.cool_down_period.clone() as u64;
+        // let current_time  = cool_down_period * 60 * 60 * 1_000_000_000;
+
         for (_, v) in state.proposals.iter() {
-            proposals.push(v.clone());
+            let mut all_proposals = v.clone();
+            let time_diff = timestamp.saturating_sub(all_proposals.proposal_submitted_at);
+
+            let total_persentage =
+                (all_proposals.proposal_approved_votes  as f64 /all_proposals.required_votes as f64) * 100.0 as f64;
+
+            if time_diff >= expiration_time {
+                if total_persentage >= 51.0 as f64 {
+                    all_proposals.proposal_status = ProposalState::Accepted;
+                } else if total_persentage <= 50.0 as f64 && total_persentage > 0.0 as f64 {
+                    all_proposals.proposal_status = ProposalState::Rejected;
+                }
+                else {
+                    all_proposals.proposal_status = ProposalState::Expired;
+                }
+            } else {
+                ic_cdk::println!(
+                    "open open open open open open open open {} {} {} ",
+                    all_proposals.proposal_approved_votes,
+                    all_proposals.required_votes,
+                    total_persentage
+                );
+                all_proposals.proposal_status = ProposalState::Open;
+            }
+            proposals.push(all_proposals);
         }
 
         let ending = proposals.len();
-
         if ending == 0 {
             return proposals;
         }
 
         let start = page_data.start as usize;
         let end = page_data.end as usize;
-
         if start < ending {
             let end = end.min(ending);
             return proposals[start..end].to_vec();
         }
+
         Vec::new()
     })
 }
@@ -321,9 +341,9 @@ fn proposal_refresh() -> Result<String, String> {
 //     // Ok("()".to_string())
 // }
 
-#[update(guard=guard_check_members)]
+#[update]
 async fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> {
-    check_voting_right(&proposal_id)?;
+    // check_voting_right(&proposal_id)?;
 
     let principal_id = api::caller();
     with_state(|state| match &mut state.proposals.get(&proposal_id) {
@@ -345,7 +365,6 @@ async fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> 
         None => Err(String::from("Proposal ID is invalid !")),
     })
 }
-
 
 #[query(guard=prevent_anonymous)]
 fn search_proposal(proposal_id: String) -> Vec<Proposals> {
