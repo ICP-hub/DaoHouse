@@ -17,7 +17,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
   const [groupNameInputIndex, setGroupNameInputIndex] = useState(null);
   const [updatedGroupName, setUpdatedGroupName] = useState("");
   const [memberName, setMemberName] = useState("");
-  const { backendActor } = useAuth();
+  const { backendActor, stringPrincipal } = useAuth();
 
   const [list, setList] = useState([
     { name: "Council", members: [] },
@@ -42,6 +42,11 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
     if (council) {
       council.members.forEach(member => allMembers.add(member));
     }
+
+    // Add group members
+    list.filter(group => group.name !== "Council").forEach(group => {
+      group.members.forEach(member => allMembers.add(member));
+    });
 
     console.log(Array.from(allMembers));
 
@@ -254,16 +259,23 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
   //   console.log("Current council members:", councilMembers);
   // }, [councilMembers]);
   useEffect(() => {
-
-
-    // const savedData = localStorage.getItem('step3Data');
-    // if (savedData) {
-    //   setList(JSON.parse(savedData));
-    // }
-
-
+    const council = list.find((group) => group.name === "Council");
+    
+    // Check if the current user is already in the council
+    if (council && !council.members.includes(stringPrincipal)) {
+      setList((prevList) =>
+        prevList.map((group) => {
+          if (group.name === "Council") {
+            return { ...group, members: [...group.members, stringPrincipal] };
+          }
+          return group;
+        })
+      );
+    }
+  
     console.log("Current council members:", councilMembers);
-  }, [councilMembers]);
+  }, [councilMembers, stringPrincipal]);  // Add stringPrincipal as a dependency
+  
 
   const handleEditGroup = (index) => {
     setGroupNameInputIndex(index);
