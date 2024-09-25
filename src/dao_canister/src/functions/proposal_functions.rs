@@ -27,45 +27,17 @@ use std::collections::HashSet;
 //     // response
 // }
 
-// get all
 #[update(guard = prevent_anonymous)]
 fn get_all_proposals(page_data: Pagination) -> Vec<Proposals> {
     with_state(|state| {
         let mut proposals: Vec<Proposals> = Vec::with_capacity(state.proposals.len() as usize);
-        let timestamp = ic_cdk::api::time();
-        let expiration_time = 4 * 60 * 1_000_000_000;
-        // let cool_down_period  = state.dao.cool_down_period.clone() as u64;
-        // let current_time  = cool_down_period * 60 * 60 * 1_000_000_000;
+        let all_proposals = &state.proposals;
 
-        for (_, v) in state.proposals.iter() {
-            let mut all_proposals = v.clone();
-            let time_diff = timestamp.saturating_sub(all_proposals.proposal_submitted_at);
-
-            let total_persentage =
-                (all_proposals.proposal_approved_votes  as f64 /all_proposals.required_votes as f64) * 100.0 as f64;
-
-            if time_diff >= expiration_time {
-                if total_persentage >= 51.0 as f64 {
-                    all_proposals.proposal_status = ProposalState::Accepted;
-                } else if total_persentage <= 50.0 as f64 && total_persentage > 0.0 as f64 {
-                    all_proposals.proposal_status = ProposalState::Rejected;
-                }
-                else {
-                    all_proposals.proposal_status = ProposalState::Expired;
-                }
-            } else {
-                ic_cdk::println!(
-                    "open open open open open open open open {} {} {} ",
-                    all_proposals.proposal_approved_votes,
-                    all_proposals.required_votes,
-                    total_persentage
-                );
-                all_proposals.proposal_status = ProposalState::Open;
-            }
-            proposals.push(all_proposals);
+        for (_, v) in all_proposals.iter() {
+            proposals.push(v.clone());
         }
-
         let ending = proposals.len();
+
         if ending == 0 {
             return proposals;
         }
@@ -348,18 +320,20 @@ async fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> 
     let principal_id = api::caller();
     with_state(|state| match &mut state.proposals.get(&proposal_id) {
         Some(pro) => {
-            if voting == VoteParam::Yes {
-                pro.approved_votes_list.push(principal_id);
-                pro.proposal_approved_votes += 1;
-
-                state.proposals.insert(proposal_id, pro.to_owned());
-                Ok(String::from("Successfully voted in favour of Proposal."))
+            if pro.proposal_status == ProposalState::Open {
+                if voting == VoteParam::Yes {
+                    pro.approved_votes_list.push(principal_id);
+                    pro.proposal_approved_votes += 1;
+                    state.proposals.insert(proposal_id, pro.to_owned());
+                    Ok(String::from("Successfully voted in favour of Proposal."))
+                } else {
+                    pro.rejected_votes_list.push(principal_id);
+                    pro.proposal_rejected_votes += 1;
+                    state.proposals.insert(proposal_id, pro.to_owned());
+                    Ok(String::from("Successfully voted against the proposal."))
+                }
             } else {
-                pro.rejected_votes_list.push(principal_id);
-                pro.proposal_rejected_votes += 1;
-
-                state.proposals.insert(proposal_id, pro.to_owned());
-                Ok(String::from("Successfully voted against the proposal."))
+                Err(format!("Proposal has been {:?} ", pro.proposal_status))
             }
         }
         None => Err(String::from("Proposal ID is invalid !")),

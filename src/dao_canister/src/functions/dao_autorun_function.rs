@@ -5,7 +5,7 @@ use ic_cdk::api;
 use ic_cdk::update;
 
 #[update]
-async fn run_add_member_to_group(
+pub async fn run_add_member_to_group(
     principal_id: Principal,
     group_name: String,
 ) -> Result<String, String> {
@@ -41,7 +41,7 @@ async fn run_add_member_to_group(
 }
 
 #[update]
-async fn run_remove_member_to_group(
+pub async fn run_remove_member_to_group(
     principal_id: Principal,
     group_name: String,
 ) -> Result<String, String> {
@@ -77,15 +77,16 @@ async fn run_remove_member_to_group(
 }
 
 #[update]
-async fn run_add_member_to_dao(principal_id: Principal) -> Result<String, String> {
+pub fn run_add_member_to_dao(principal_id: Principal) -> Result<String, String> {
     with_state(|state| {
         let dao = &mut state.dao;
+        ic_cdk::println!("aaaaaaaaa gya hai yhan par brppppppppoooo");
 
         if dao.members.contains(&principal_id) {
             Err(String::from(crate::utils::MESSAGE_ALREADY_DAO_MEMBER))
         } else {
             dao.members.push(principal_id);
-            state.dao.members_count += 1;
+            state.dao.members_count += 5;
             Ok(String::from(
                 crate::utils::MESSAGE_DAO_MEMBER_ADDED_SUCCESSFULLY,
             ))
@@ -94,7 +95,7 @@ async fn run_add_member_to_dao(principal_id: Principal) -> Result<String, String
 }
 
 #[update]
-async fn run_remove_member_from_dao(principal_id: Principal) -> Result<String, String> {
+pub async fn run_remove_member_from_dao(principal_id: Principal) -> Result<String, String> {
     let is_member = with_state(|state| state.dao.members.contains(&principal_id));
 
     if !is_member {
@@ -110,7 +111,7 @@ async fn run_remove_member_from_dao(principal_id: Principal) -> Result<String, S
 }
 
 #[update]
-async fn run_chnage_dao_config(args: crate::types::ChangeDaoConfigArg) -> Result<String, String> {
+pub async fn run_chnage_dao_config(args: crate::types::ChangeDaoConfigArg) -> Result<String, String> {
     with_state(|state| {
         state.dao.dao_name = args.dao_name;
         state.dao.purpose = args.purpose;
@@ -122,7 +123,7 @@ async fn run_chnage_dao_config(args: crate::types::ChangeDaoConfigArg) -> Result
 }
 
 #[update]
-async fn run_chnage_dao_policy(args: crate::types::ChangeDaoPolicyArg) -> Result<String, String> {
+pub async fn run_chnage_dao_policy(args: crate::types::ChangeDaoPolicyArg) -> Result<String, String> {
     with_state(|state| {
         state.dao.cool_down_period = args.cool_down_period;
         state.dao.required_votes = args.required_votes;
@@ -133,7 +134,7 @@ async fn run_chnage_dao_policy(args: crate::types::ChangeDaoPolicyArg) -> Result
 }
 
 #[update]
-async fn run_transfer_token(args: TokenTransferArgs) -> Result<String, String> {
+pub async fn run_transfer_token(args: TokenTransferArgs) -> Result<String, String> {
     let principal_id: Principal = api::caller();
     
     let balance = icrc_get_balance(principal_id)
