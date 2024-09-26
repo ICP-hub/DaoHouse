@@ -12,7 +12,7 @@ function ViewModal({ open, onClose, users = [] }) {
     const { backendActor } = useAuth();
     const [profiles, setProfiles] = useState([]);
     const [loading, setLoading] = useState(false);
-    console.log(profiles);
+    // console.log(profiles);
     
 
     const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";

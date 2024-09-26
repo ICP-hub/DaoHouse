@@ -213,7 +213,7 @@ const ProposalsDetails = () => {
         
                 <div>
                   <Card proposal={proposal} showActions={true} isProposalDetails={true} voteApi={voteApi} />
-                  <Comments />
+                  <Comments daoId={daoCanisterId} proposalId={proposalId} />
                 </div>
         
       </Container>
