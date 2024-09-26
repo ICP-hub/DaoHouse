@@ -1,5 +1,5 @@
 // DAO permissions
-pub const PERMISSION_ADD_MEMBER_TO_GROUP: &str = "add_member";
+// pub const PERMISSION_ADD_MEMBER_TO_GROUP: &str = "add_member";
 
 pub const PERMISSION_CHANGE_DAO_CONFIG: &str = "ChangeDAOConfig";
 
