@@ -2,7 +2,7 @@ import React from 'react'
 
 const DaoCardLoaderSkeleton = () => {
   return (
-    <div className='flex flex-wrap justify-center w-full gap-2 mb-10'>
+    <div className='flex flex-wrap justify-center w-full gap-2 mb-10 desktop:px-40'>
         {[...Array(4)].map((_, index) => (
     <div key={index} className="bg-[#F4F2EC] shadow-lg tablet:p-6 big_phone:p-3 small_phone:p-5 p-3  rounded-lg mr-12 ml-8 animate-pulse max-w-full md:max-w-[350px] lg:max-w-[800px]">
   <div className="flex big_phone:flex-row small_phone:flex-col justify-start items-start mb-4 gap-2">
