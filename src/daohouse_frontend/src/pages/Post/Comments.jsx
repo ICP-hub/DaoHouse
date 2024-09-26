@@ -103,9 +103,6 @@ const Comments = ({ daoId, proposalId }) => {
         setDaoActor(daoActor)
         const proposalDetails = await daoActor.get_proposal_by_id(proposalId);
         console.log("propDetailz", proposalDetails.proposal_id);
-        
-        a = proposalDetails.proposal_id;
-        b = "jdjhshdhsbdhcbjbj"
 
         // Extract and set comments if they exist
         if (proposalDetails && proposalDetails.comments_list) {
