@@ -16,8 +16,8 @@ use icrc_ledger_types::icrc1::transfer::BlockIndex;
 use types::*;
 mod utils;
 use ic_cdk::api::time;
-use std::time::Duration;
 use ic_cdk_timers::set_timer_interval;
+use std::time::Duration;
 
 thread_local! {
     static STATE: RefCell<State> = RefCell::new(State::new());
@@ -27,7 +27,7 @@ pub fn with_state<R>(f: impl FnOnce(&mut State) -> R) -> R {
     STATE.with(|cell| f(&mut cell.borrow_mut()))
 }
 
-const EXPIRATION_TIME: u64 = 1 * 60 * 1_000_000_000;
+const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
 
 fn start_proposal_checker() {
     set_timer_interval(Duration::from_secs(60), || {
@@ -42,12 +42,14 @@ fn check_proposals() {
 
         for (_, proposal) in state.proposals.iter() {
             let time_diff = timestamp.saturating_sub(proposal.proposal_submitted_at);
-            let total_percentage = (proposal.proposal_approved_votes as f64
-                / proposal.required_votes as f64)
-                * 100.0;
+            let proposal_approved_votes = proposal.proposal_approved_votes as f64;
+            let proposal_rejected_votes = proposal.proposal_rejected_votes as f64;
+            let total_votes = proposal_approved_votes + proposal_rejected_votes;
+            let total_percentage = (proposal_approved_votes / total_votes) * 100.0;
 
             let mut proposal = proposal.clone();
-            if time_diff >= EXPIRATION_TIME {
+            if time_diff >= EXPIRATION_TIME && !proposal.has_been_processed {
+                proposal.has_been_processed = true;
                 if total_percentage >= 51.0 {
                     proposal.proposal_status = ProposalState::Accepted;
                     proposals_to_update.push(proposal.clone());
@@ -62,22 +64,25 @@ fn check_proposals() {
             proposals_to_update.push(proposal);
         }
 
-        for proposal in proposals_to_update {
-            if proposal.proposal_status == ProposalState::Accepted {
-                if let ProposalType::AddMemberProposal = proposal.proposal_type {
+        for mut proposal in proposals_to_update {
+            proposal.has_been_processed = false;
+            if proposal.proposal_status == ProposalState::Accepted
+            && !proposal.has_been_processed_secound {
+                proposal.has_been_processed_secound = true;
+                if let ProposalType::AddMemberToDaoProposal = proposal.proposal_type {
                     add_member_to_dao(state, &proposal);
-                }
-                else if let ProposalType::RemoveMemberPrposal = proposal.proposal_type {
-                    // remove_member_from_dao();
-                }
-                else if let ProposalType::ChangeDaoConfig = proposal.proposal_type {
-                    // chnage_dao_config();
-                }
-                else if let ProposalType::ChnageDaoPolicy = proposal.proposal_type {
-                    // chnage_dao_policy();
-                }
-                else if let  ProposalType::TokenTransfer = proposal.proposal_type {
-                    // transfer_token();
+                } else if let ProposalType::AddMemberToGroupProposal = proposal.proposal_type {
+                    add_member_to_group(state, &proposal);
+                } else if let ProposalType::RemoveMemberToDaoProposal = proposal.proposal_type {
+                    remove_member_from_dao(state, &proposal);
+                } else if let ProposalType::RemoveMemberToGroupProposal = proposal.proposal_type {
+                    remove_member_to_group(state, &proposal);
+                } else if let ProposalType::ChangeDaoConfig = proposal.proposal_type {
+                    chnage_dao_config(state, &proposal);
+                } else if let ProposalType::ChnageDaoPolicy = proposal.proposal_type {
+                    change_dao_policy(state, &proposal);
+                } else if let ProposalType::TokenTransfer = proposal.proposal_type {
+                    let _ = transfer_token(&proposal);
                 }
             }
             state.proposals.insert(proposal.proposal_id.clone(), proposal);
@@ -86,57 +91,101 @@ fn check_proposals() {
 }
 
 fn add_member_to_dao(state: &mut State, proposal: &Proposals) {
-    if let ProposalType::AddMemberProposal = proposal.proposal_type {
-        let dao = &mut state.dao;
-        if !dao.members.contains(&proposal.principal_of_action) {
-            dao.members.push(proposal.principal_of_action);
-            dao.members_count += 1;
+    let dao = &mut state.dao;
+    dao.members.push(proposal.principal_of_action);
+    dao.members_count += 1;
+    ic_cdk::println!("add_member_to_dao me aa gya");
+}
+
+fn add_member_to_group(state: &mut State, proposal: &Proposals) {
+    let dao_groups = &mut state.dao_groups;
+    if let Some(group_to_join) = &proposal.group_to_join {
+        if let Some(mut dao_group) = dao_groups.get(group_to_join) {
+            dao_group.group_members.push(proposal.principal_of_action);
+            dao_groups.insert(group_to_join.clone(), dao_group);
         }
     }
 }
 
-fn remove_member_from_dao(state: &mut State,proposal: &Proposals){
+fn remove_member_from_dao(state: &mut State, proposal: &Proposals) {
     let dao = &mut state.dao;
-    if dao.members.contains(&proposal.principal_of_action) {
-        dao.members.retain(|s| s != &proposal.principal_of_action);
-        dao.members_count -= 1;
+    dao.members.retain(|s| s != &proposal.principal_of_action);
+    dao.members_count -= 1;
+}
+
+fn remove_member_to_group(state: &mut State, proposal: &Proposals) {
+    let dao_groups = &mut state.dao_groups;
+    if let Some(group_to_remove) = &proposal.group_to_remove {
+        if let Some(mut dao_group) = dao_groups.get(group_to_remove) {
+            dao_group.group_members.retain(|s| s != &proposal.principal_of_action);
+            dao_groups.insert(group_to_remove.clone(), dao_group);
+        }
     }
 }
 
-fn chnage_dao_config(args: crate::types::ChangeDaoConfigArg, state: &mut State,){
+fn chnage_dao_config(state: &mut State, proposal: &Proposals) {
     let dao = &mut state.dao;
-    dao.dao_name = args.dao_name;
-    dao.purpose = args.purpose;
-    dao.daotype = args.daotype;
+    if let Some(ref new_dao_name) = proposal.new_dao_name {
+        dao.dao_name = new_dao_name.clone();
+        ic_cdk::println!("chnage_dao_config me aa gya 1");
+    }
+    if let Some(ref purpose) = proposal.new_dao_purpose {
+        dao.purpose = purpose.clone();
+        ic_cdk::println!("chnage_dao_config me aa gya 2");
+    }
+    if let Some(ref daotype) = proposal.new_daotype {
+        dao.daotype = daotype.clone();
+        ic_cdk::println!("chnage_dao_config me aa gya 3");
+    }
 }
 
-fn chnage_dao_policy(state: &mut State, args: crate::types::ChangeDaoPolicyArg){
-    state.dao.cool_down_period = args.cool_down_period;
-    state.dao.required_votes = args.required_votes;
+fn change_dao_policy(state: &mut State, proposal: &Proposals) {
+    if let Some(cool_down_period) = proposal.cool_down_period {
+        state.dao.cool_down_period = cool_down_period;
+        ic_cdk::println!("change_dao_policy me aa gya 1");
+    }
+    ic_cdk::println!("change_dao_policy me aa gya 2");
+    state.dao.required_votes = proposal.required_votes;
 }
 
-async fn transfer_token(args: crate::types::TokenTransferArgs) -> Result<String, String>{
+async fn transfer_token(proposal: &Proposals) -> Result<String, String> {
     let principal_id: Principal = api::caller();
-    
+    ic_cdk::println!("transfer_token me aa gya 1");
     let balance = icrc_get_balance(principal_id)
         .await
-        .map_err(|err| format!("Error while fetching user balance {}", err))?;
+        .map_err(|err| format!("Error while fetching user balance: {}", err))?;
+
     if balance <= 0 as u8 {
-        ic_cdk::println!("user balance : {} ", balance);
         return Err(String::from(
-            "User token balance is less then the required transfer tokens",
+            "User token balance is less than the required transfer tokens",
         ));
-    } else {
-        let token_transfer_args = TokenTransferArgs {
-            from: args.from,
-            to: args.to,
-            tokens: args.tokens as u64,
-        };
-        icrc_transfer(token_transfer_args)
-            .await
-            .map_err(|err| format!("Error in transfer of tokens: {}", String::from(err)))?;
-        Ok("()".to_string())
     }
+
+    let from = match &proposal.from {
+        Some(principal) => principal,
+        None => return Err(String::from("Missing 'from' principal")),
+    };
+
+    let to = match &proposal.to {
+        Some(principal) => principal,
+        None => return Err(String::from("Missing 'to' principal")),
+    };
+    let tokens = match proposal.tokens {
+        Some(tokens) => tokens,
+        None => return Err(String::from("Missing token amount")),
+    };
+
+    let token_transfer_args = TokenTransferArgs {
+        from: *from,
+        to: *to,
+        tokens,
+    };
+
+    icrc_transfer(token_transfer_args)
+        .await
+        .map_err(|err| format!("Error in transfer of tokens: {}", String::from(err)))?;
+
+    Ok("Token transfer SuccessFully".to_string())
 }
 
 #[init]
