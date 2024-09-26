@@ -300,7 +300,7 @@ const MyProfile = ({ childComponent }) => {
                         className="tablet:mr-2 h-4 w-4 edit-pen "
                       />
                       <span className="md:inline hidden whitespace-nowrap">
-                        {userProfile === null ? "Edit Profile" : "Complete Profile"}
+                        {userProfile === null ? "Complete Profile" : "Edit Profile"}
                       </span>
                     </button>
                   )}
