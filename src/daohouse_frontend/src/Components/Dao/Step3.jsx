@@ -17,7 +17,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
   const [groupNameInputIndex, setGroupNameInputIndex] = useState(null);
   const [updatedGroupName, setUpdatedGroupName] = useState("");
   const [memberName, setMemberName] = useState("");
-  const { backendActor } = useAuth();
+  const { backendActor, stringPrincipal } = useAuth();
 
   const [list, setList] = useState([
     { name: "Council", members: [] },
@@ -75,12 +75,14 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
 
     // Set data and move to the next step
     const uniqueMembers = getUniqueMembers();
+    console.log("Council--", council.members);
+    
     setData(prev => ({
       ...prev,
       step3: {
         groups: list.slice(1) || [],  // Default to empty array if list is undefined
         council: council.members || [],
-        members: uniqueMembers || []  // Default to empty array if uniqueMembers is undefined
+        members: getUniqueMembers || []  // Default to empty array if uniqueMembers is undefined
       },
     }));
     setActiveStep(3);
@@ -257,16 +259,23 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
   //   console.log("Current council members:", councilMembers);
   // }, [councilMembers]);
   useEffect(() => {
-
-
-    // const savedData = localStorage.getItem('step3Data');
-    // if (savedData) {
-    //   setList(JSON.parse(savedData));
-    // }
-
-
+    const council = list.find((group) => group.name === "Council");
+    
+    // Check if the current user is already in the council
+    if (council && !council.members.includes(stringPrincipal)) {
+      setList((prevList) =>
+        prevList.map((group) => {
+          if (group.name === "Council") {
+            return { ...group, members: [...group.members, stringPrincipal] };
+          }
+          return group;
+        })
+      );
+    }
+  
     console.log("Current council members:", councilMembers);
-  }, [councilMembers]);
+  }, [councilMembers, stringPrincipal]);  // Add stringPrincipal as a dependency
+  
 
   const handleEditGroup = (index) => {
     setGroupNameInputIndex(index);

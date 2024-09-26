@@ -90,7 +90,7 @@ const MyProfile = ({ childComponent }) => {
   const [data, setData] = useState({});
   const followers = data?.followers_count ? Number(data.followers_count) : 0;
   const post = data?.post_count ? Number(data.post_count) : 0;
-  const following = data?.followings_count ? Number(data.followings_count) : 0;
+  const following = data?.join_dao ? Number(data.join_dao.length) : 0; 
   const email = data?.email_id;
   const name = data?.username;
 
@@ -612,7 +612,7 @@ const MyProfile = ({ childComponent }) => {
               {activeTab === 2 && showNoFollowers && <NoFollowers setFollowers={setShowNoFollowers} />}
                {activeTab === 3 && showNoFollowing && <NoFollowing />} *
                {/* Render NoFollowing component */}
-          </div>
+            </div>
           
         </Container>
       </div>

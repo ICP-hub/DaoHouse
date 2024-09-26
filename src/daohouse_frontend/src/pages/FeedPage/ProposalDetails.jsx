@@ -6,11 +6,12 @@ import { Principal } from '@dfinity/principal';
 import { useAuth } from "../../Components/utils/useAuthClient";
 import { useUserProfile } from "../../context/UserProfileContext";
 import { toast } from "react-toastify";
-import MuiSkeleton from "../../Components/Skeleton/MuiSkeleton";
+import MuiSkeleton from "../../Components/SkeletonLoaders/MuiSkeleton";
 import { CircularProgressBar } from "../../Components/Proposals/CircularProgressBar";
 import Card from "../../Components/Proposals/Card";
 import avatar from "../../../assets/avatar.png";
 import Comments from "../Post/Comments";
+import ProposalDetailsLoaderSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/ProposalDetailsLoaderSkeleton";
 
 const ProposalsDetails = () => {
    const className="DaoProfile"
@@ -85,7 +86,9 @@ const ProposalsDetails = () => {
         } catch (error) {
           console.error('Error fetching DAO details:', error);
         } finally {
-          setLoading(false);
+          setTimeout(() => {
+            setLoading(false);
+          }, 1000)
         }
       }
     };
@@ -143,7 +146,7 @@ const ProposalsDetails = () => {
   if (loading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <MuiSkeleton variant="rectangular" width={210} height={118} />
+        <ProposalDetailsLoaderSkeleton isProposalDetails={true} showActions={true} />
       </div>
     );
   }

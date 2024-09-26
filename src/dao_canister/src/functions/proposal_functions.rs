@@ -1,18 +1,12 @@
 use crate::proposal_route::check_proposal_state;
 use crate::types::{Dao, Proposals};
-use crate::{
-    guards::*, AccountBalance, Comment, DaoGroup, Pagination, ProposalStakes,
-    ReplyCommentArgs, TokenTransferArgs,
-};
+use crate::{guards::*, Comment, DaoGroup, Pagination, ProposalStakes, ReplyCommentArgs};
 use crate::{with_state, ProposalState, VoteParam};
-use ic_cdk::api;
 use ic_cdk::api::management_canister::main::raw_rand;
+use ic_cdk::api::{self};
 use ic_cdk::{query, update};
 use sha2::{Digest, Sha256};
 use std::collections::HashSet;
-
-
-use super::{icrc_get_balance, icrc_transfer};
 
 // #[update(guard=check_members)]
 // pub async fn create_proposal(daohouse_backend_id: Principal, proposal: ProposalInput) -> String {
@@ -33,17 +27,15 @@ use super::{icrc_get_balance, icrc_transfer};
 //     // response
 // }
 
-// get all proposals
-#[update(guard=prevent_anonymous)]
+#[update(guard = prevent_anonymous)]
 fn get_all_proposals(page_data: Pagination) -> Vec<Proposals> {
-    // let mut proposals: Vec<Proposals> = Vec::new();
-
     with_state(|state| {
         let mut proposals: Vec<Proposals> = Vec::with_capacity(state.proposals.len() as usize);
-        for (_, v) in state.proposals.iter() {
+        let all_proposals = &state.proposals;
+
+        for (_, v) in all_proposals.iter() {
             proposals.push(v.clone());
         }
-
         let ending = proposals.len();
 
         if ending == 0 {
@@ -52,11 +44,11 @@ fn get_all_proposals(page_data: Pagination) -> Vec<Proposals> {
 
         let start = page_data.start as usize;
         let end = page_data.end as usize;
-
         if start < ending {
             let end = end.min(ending);
             return proposals[start..end].to_vec();
         }
+
         Vec::new()
     })
 }
@@ -321,31 +313,32 @@ fn proposal_refresh() -> Result<String, String> {
 //     // Ok("()".to_string())
 // }
 
-#[update(guard=guard_check_members)]
+#[update]
 async fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> {
-    check_voting_right(&proposal_id)?;
+    // check_voting_right(&proposal_id)?;
 
     let principal_id = api::caller();
     with_state(|state| match &mut state.proposals.get(&proposal_id) {
         Some(pro) => {
-            if voting == VoteParam::Yes {
-                pro.approved_votes_list.push(principal_id);
-                pro.proposal_approved_votes += 1;
-
-                state.proposals.insert(proposal_id, pro.to_owned());
-                Ok(String::from("Successfully voted in favour of Proposal."))
+            if pro.proposal_status == ProposalState::Open {
+                if voting == VoteParam::Yes {
+                    pro.approved_votes_list.push(principal_id);
+                    pro.proposal_approved_votes += 1;
+                    state.proposals.insert(proposal_id, pro.to_owned());
+                    Ok(String::from("Successfully voted in favour of Proposal."))
+                } else {
+                    pro.rejected_votes_list.push(principal_id);
+                    pro.proposal_rejected_votes += 1;
+                    state.proposals.insert(proposal_id, pro.to_owned());
+                    Ok(String::from("Successfully voted against the proposal."))
+                }
             } else {
-                pro.rejected_votes_list.push(principal_id);
-                pro.proposal_rejected_votes += 1;
-
-                state.proposals.insert(proposal_id, pro.to_owned());
-                Ok(String::from("Successfully voted against the proposal."))
+                Err(format!("Proposal has been {:?} ", pro.proposal_status))
             }
         }
         None => Err(String::from("Proposal ID is invalid !")),
     })
 }
-
 
 #[query(guard=prevent_anonymous)]
 fn search_proposal(proposal_id: String) -> Vec<Proposals> {

@@ -1,22 +1,8 @@
-DAOHOUSE_CANISTER_ID=$(dfx canister id daohouse_backend)
-
-test10=$(dfx canister call b77ix-eeaaa-aaaaa-qaada-cai create_proposal '(
-  principal "'$DAOHOUSE_CANISTER_ID'",
+test10=$(dfx canister call b77ix-eeaaa-aaaaa-qaada-cai proposal_to_add_member_to_group '(
   record {
-    proposal_title = "Testing out proposal";
-    proposal_description = "Proposal for the construction of a new community park in the downtown area.";
-    required_votes = 0;
-    proposal_type = variant {AddMemberProposal};
-    proposal_expired_at = 1705000000000000000;
+    group_name = "Example Group";
+    new_member = principal "ui2dz-muwb7-dhwzj-545cc-ets5d-wc3gr-hi5qi-zavzz-arybg-fsh6r-eae";
+    description = "we want add an member to ddddddd";
   }
 )')
-
-echo $test10
-
-# ./refresh_proposals.sh
-
-dfx canister call b77ix-eeaaa-aaaaa-qaada-cai get_all_proposals
-
-# b5d01f898f6a7d75397763d901b5a54597b3bd3f1276d0b5f3cc0299ab28fc48
-
-# dfx canister call bw4dl-smaaa-aaaaa-qaacq-cai refresh_proposals '("446efeb6e23a33e71309471d0900e1a2751c6aface26e68d87fee68d7c33a861")' e
+ echo "$test10"

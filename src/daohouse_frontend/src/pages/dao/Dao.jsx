@@ -6,12 +6,13 @@ import NoDataComponent from "../../Components/Dao/NoDataComponent";
 import TopComponent from "../../Components/Dao/TopComponent";
 import Container from "../../Components/Container/Container";
 import { useAuth } from "../../Components/utils/useAuthClient";
-import MuiSkeleton from "../../Components/Skeleton/MuiSkeleton";
+import MuiSkeleton from "../../Components/SkeletonLoaders/MuiSkeleton";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import LoginModal from "../../Components/Auth/LoginModal";
 import nodata1 from "../../../assets/nodata.png";
 import SearchProposals from "../../Components/Proposals/SearchProposals";
 import { Principal } from "@dfinity/principal";
+import DaoCardLoaderSkeleton from "../../Components/SkeletonLoaders/DaoCardLoaderSkeleton/DaoCardLoaderSkeleton";
 
 const Dao = () => {
   const [showAll, setShowAll] = useState(true);
@@ -19,6 +20,7 @@ const Dao = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [dao, setDao] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingJoinedDAO, setLoaadingJoinedDao] = useState(false)
   const [searchTerm, setSearchTerm] = useState("");
   const [fetchedDAOs, setFetchedDAOs] = useState([]);
   const [hasMore, setHasMore] = useState(true);
@@ -72,6 +74,7 @@ const Dao = () => {
 
   const getJoinedDaos = async () => {
     try {
+      setLoaadingJoinedDao(true)
       console.log("Fetching joined DAOs...");
       
       const profile = await backendActor.get_profile_by_id(Principal.fromText(stringPrincipal));
@@ -96,7 +99,7 @@ const Dao = () => {
           } catch (error) {
             console.error(`Error fetching details for DAO: ${daoPrincipal._arr}`, error);
             return null; 
-          }
+          } 
         })
       );
       
@@ -106,6 +109,8 @@ const Dao = () => {
       
     } catch (error) {
       console.error("Error fetching joined DAOs:", error);
+    } finally {
+      setLoaadingJoinedDao(false)
     }
   };
   
@@ -181,7 +186,7 @@ const Dao = () => {
 
       {showAll ? (
         loading ? (
-          <MuiSkeleton />
+          <DaoCardLoaderSkeleton />
         ) : noDaoFound ? (
           <div className="flex justify-center items-center h-full">
             <img src={nodata1} alt="No Data" className="mb-1 mx-auto block" />
@@ -196,7 +201,7 @@ const Dao = () => {
                     name: daos.dao_name || "No Name",
                     followers: daos.followers_count || "0",
                     members: daos.members_count ? Number(BigInt(daos.members_count)) : "0",
-                    groups: daos.groups_count ? Number(BigInt(daos.groups_count)) : "No Groups",
+                    groups: daos.groups_count ? Number(BigInt(daos.groups_count)) : "0",
                     proposals: daos.proposals_count || "0",
                     image_id: daos.image_id || "No Image",
                     daoCanister: daos.daoCanister,
@@ -208,6 +213,8 @@ const Dao = () => {
             <Pagignation currentPage={currentPage} setCurrentPage={setCurrentPage} hasMore={hasMore} />
           </div>
         )
+      ) : loadingJoinedDAO ? (
+        <DaoCardLoaderSkeleton />
       ) : joinedDAO.length ? (
         <div className="bg-gray">
           <Container classes="__cards tablet:px-10 px-4 pb-10 grid grid-cols-1 big_phone:grid-cols-2 tablet:gap-6 gap-4">
@@ -218,7 +225,7 @@ const Dao = () => {
                   name: daos.dao_name || "No Name",
                   followers: daos.followers_count || "0",
                   members: daos.members_count ? Number(BigInt(daos.members_count)) : "0",
-                  groups: daos.groups_count ? Number(BigInt(daos.groups_count)) : "No Groups",
+                  groups: daos.groups_count ? Number(BigInt(daos.groups_count)) : "0",
                   proposals: daos.proposals_count || "0",
                   image_id: daos.image_id || "No Image",
                   daoCanister: daos.daoCanister,
@@ -229,7 +236,9 @@ const Dao = () => {
           </Container>
         </div>
       ) : (
-        <NoDataComponent />
+        <div className="mt-10 mb-10 md:mt-40 mx-10">
+          <NoDataComponent />
+        </div>
       )}
     </div>
   );

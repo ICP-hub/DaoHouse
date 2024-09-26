@@ -129,9 +129,6 @@ const CreateDao = () => {
     councilMembers.forEach(member => allMembers.add(Principal.fromText(member).toText()));
   
     // Add members from each group
-    step3.groups?.forEach(group => {
-      group.members.forEach(member => allMembers.add(Principal.fromText(member).toText()));
-    });
   
     const principalMembers = Array.from(allMembers).map(member => Principal.fromText(member));
 

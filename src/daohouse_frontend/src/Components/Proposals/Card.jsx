@@ -300,7 +300,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const navigate = useNavigate()
 
   const a = proposal?.proposal_description;
-  const principalOfAction = proposal.principal_of_action.toText()
+  const principalOfAction = proposal.principal_of_action.toText() || "aaaaa-aa"
   const approvedProposals = Number(BigInt(proposal?.proposal_approved_votes || 0));
   const rejectedvoters = Number(BigInt(proposal?.proposal_rejected_votes || 0));
   const status = proposal?.proposal_status
@@ -457,7 +457,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
           <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-4 gap-4">
             <div className="max-w-full lg:max-w-full">
               <h4 className="text-xl font-bold text-[#0E3746] overflow-hidden text-ellipsis whitespace-nowrap">
-                Transfer | <span className="md:text-[1rem] text-[1rem]">Proposal ID: #{proposal?.proposal_id}</span>
+                {proposal.proposal_title} | <span className="md:text-[1rem] text-[1rem]">Proposal ID: #{proposal?.proposal_id}</span>
               </h4>
             </div>
     

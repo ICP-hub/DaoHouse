@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Principal } from "@dfinity/principal";
 import { useAuth } from "../utils/useAuthClient";
 import { toast } from 'react-toastify';
+import { CircularProgress } from "@mui/material";
 
 const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoCanisterId }) => {
 
@@ -61,7 +62,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
       if (!userProfile) return;
       setIsFollowing(!isFollowing);
       const response = isFollowing
-        ? await daoCanister.unfollow_dao()
+        ? await daoCanister.unfollow_dao(backendCanisterId)
         : await daoCanister.follow_dao(backendCanisterId);
 
       if (response?.Ok) {
@@ -89,6 +90,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
   }
     
   const confirmJoinDao = async () => {
+    setLoading(true)
     try {
       let a = Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND)
       const response = await daoCanister.ask_to_join_dao(a);
@@ -102,10 +104,12 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
         toast.error(`Failed to send join request: ${response.Err || "Unknown error"}`);
       }
     } catch (error) {
+      setLoading(false)
       console.error('Error sending join request:', error);
       toast.error('Error sending join request');
     } finally {
       setShowConfirmModal(false);
+      setLoading(false)
     }
   };
 
@@ -207,15 +211,19 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
       <div className="flex justify-center gap-4 mt-4">
         <button
           onClick={() => setShowConfirmModal(false)}
-          className="px-8 py-3 text-[12px] lg:text-[16px] text-black font-normal rounded-full shadow-md hover:bg-gray-200 hover:text-blue-900"
+          className="px-8 py-3 text-[12px] lg:text-[16px] text-black font-normal rounded-full shadow-md hover:bg-gray-200 hover:text-[#0d2933]"
         >
           Cancel
         </button>
         <button
           onClick={confirmJoinDao}
-          className="px-6 md:px-8 py-3 text-center text-[12px] lg:text-[16px] bg-[#0E3746] text-white rounded-full shadow-xl hover:bg-blue-800 hover:text-white"
+          className="px-6 md:px-8 py-3 text-center text-[12px] lg:text-[16px] bg-[#0E3746] text-white rounded-full shadow-xl hover:bg-[#0d2933] hover:text-white"
         >
-          Join Dao
+          {loading ? (
+              <CircularProgress size={24} />
+            ) : (
+              "Join DAO"
+            )}
         </button>
       </div>
     </div>
