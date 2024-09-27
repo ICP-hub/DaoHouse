@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "./Step5.scss";
 import { RiGroupLine } from "react-icons/ri";
 import { LuAlertCircle } from "react-icons/lu";
@@ -15,7 +15,7 @@ const Step5 = ({ setData, setActiveStep, data }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMembers, setSelectedMembers] = useState([]);
   const { council, groups, members } = data.step3;
-  const users = data.step3;
+  const users = useMemo(() => data.step3, [data.step3]);
   console.log("user", users);
   
 
