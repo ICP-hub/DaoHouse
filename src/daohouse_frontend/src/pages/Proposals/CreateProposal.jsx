@@ -26,7 +26,7 @@ function CreateProposal() {
     tokens: '',
     actionMember: '',
   })
-  console.log("transfer", tokenTransfer);
+
 
   const [bountyDone, setBountyDone] = useState({
     proposalExpiredAt: '',
@@ -45,8 +45,17 @@ function CreateProposal() {
     purposeTitle: '',
     proposalCreatedAt: '',
   })
-
-
+  const [changeData, setChangeData] = useState({
+    new_dao_name: "",
+    description: "",
+    action_member: "",
+  });
+  const [addMember, setAddMember] = useState({
+    group_name: "",
+    description: "",
+    new_member: "",
+  });
+  const [groupNames, setGropNames] = useState([]);
   const [loading, setLoading] = useState(false);
   const { createDaoActor, backendActor, stringPrincipal } = useAuth();
 
@@ -104,6 +113,18 @@ function CreateProposal() {
       [name]: value,
     }));
   };
+  function handleChange(e) {
+    setChangeData({
+      ...changeData,
+      [e.target.name]: e.target.value,
+    });
+  }
+  const handleInputAddMember = (e) => {
+    setAddMember({
+      ...addMember,
+      [e.target.name]: e.target.value,
+    });
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -140,6 +161,19 @@ function CreateProposal() {
           });
           break;
 
+        case 'DaoConfig':
+          await submitDaoConfig({
+            new_dao_name: changeData.new_dao_name,
+            description: changeData.description,
+            action_member: Principal.fromText(changeData.action_member),
+          });
+
+        case 'AddMember':
+          await submitAddMember({
+            group_name: addMember.group_name,
+            description: addMember.description,
+            new_member: Principal.fromText(addMember.new_member),
+          });
         // default:
         //     toast.error('Please select a proposal type and fill in the details.');
       }
@@ -215,9 +249,88 @@ function CreateProposal() {
 
   };
 
+  const submitDaoConfig = async () => {
+    const formattedInputData = {
+      new_dao_name: "khasdgkjasgdja",
+      description: "kasgdjagsd",
+      action_member: Principal.fromText("aaaaa-aa"),
+      new_dao_name: changeData.new_dao_name,
+      description: changeData.description,
+      action_member: Principal.fromText(changeData.action_member),
+    };
+
+
+    try {
+      const daoCanister = await createDaoActor(daoCanisterId);
+      console.log("daoCanister ID:", daoCanisterId);
+      console.log("response", formattedInputData);
+
+      // Send the correctly formatted data
+      const response = await daoCanister.proposal_to_chnage_dao_config(formattedInputData);
+      console.log("Response from proposal:", response);
+      if (response.Ok) {
+        toast.success("DAO configuration proposal created successfully");
+        movetodao();
+        setActiveLink("proposals");
+      }
+      else {
+        toast.error("Failed to create DAO configruation proposal")
+      }
 
 
 
+
+    } catch (error) {
+
+      console.error("Error during proposal submission:", error);
+
+    }
+  };
+  const submitAddMember = async () => {
+
+
+    const formattedInputData = {
+      group_name: addMember.group_name,
+      description: addMember.description,
+      new_member: Principal.fromText(addMember.new_member),
+    };
+
+    try {
+      const daoCanister = await createDaoActor(daoCanisterId);
+      const response = await daoCanister.proposal_to_add_member_to_group(formattedInputData);
+      console.log("Response from  add member proposal:", response);
+      if (response.Ok) {
+        toast.success("Add member proposal created successfully");
+        movetodao();
+        setActiveLink("proposals");
+        setAddMember({
+          group_name: "",
+          description: "",
+          new_member: "",
+        });
+      }
+      else {
+        toast.error("Failed to create Add Member proposal");
+      }
+
+    } catch (error) {
+      console.error("Error during proposal submission:", error);
+
+    }
+  };
+
+  useEffect(() => {
+
+    const fetchGroupNames = async () => {
+
+      const daoCanister = await createDaoActor(daoCanisterId);
+      const daogroups = await daoCanister.get_dao_groups();
+      const names = daogroups.map(group => group.group_name);
+      setGropNames(names)
+    };
+
+    fetchGroupNames();
+  }, []);
   return (
 
     <div className="bg-zinc-200 w-full">
@@ -294,7 +407,8 @@ function CreateProposal() {
                     <option value="TokenTransfer">Token Transfer</option>
 
                     <option value="GeneralPurp">General Purpose</option>
-
+                    <option value="DaoConfig">Dao Config</option>
+                    <option value="AddMember">Add Member</option>
                   </select>
                 </div>
 
@@ -486,6 +600,120 @@ function CreateProposal() {
                     </div>
                   </>
                 )}
+
+                {proposalType === 'DaoConfig' && (
+                  <>
+                    {/* DAO Name */}
+                    <div className="mb-4">
+                      <label htmlFor="new_dao_name" className="font-semibold mobile:text-base text-sm">
+                        New DAO Name
+                      </label>
+                      <input
+                        type="text"
+                        id="new_dao_name"
+                        name="new_dao_name"
+                        required
+                        value={changeData.new_dao_name}
+                        placeholder="Enter New DAO Name"
+                        className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm w-full border border-[#aba9a5] bg-transparent"
+                        onChange={handleChange}
+                      />
+                    </div>
+
+                    {/* Description */}
+                    <div className="mb-4">
+                      <label htmlFor="description" className="font-semibold mobile:text-base text-sm">
+                        Description
+                      </label>
+                      <textarea
+                        id="description"
+                        name="description"
+                        value={changeData.description}
+                        placeholder="Specify the description of the DAO"
+                        className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm w-full border border-[#aba9a5] bg-transparent"
+                        onChange={handleChange}
+                      />
+                    </div>
+
+                    {/* Action Member */}
+                    <div className="mb-4">
+                      <label htmlFor="action_member" className="font-semibold mobile:text-base text-sm">
+                        Action Member (Principal)
+                      </label>
+                      <input
+                        type="text"
+                        id="action_member"
+                        name="action_member"
+                        value={changeData.action_member}
+                        placeholder="Enter Action Member Principal ID"
+                        className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm w-full border border-[#aba9a5] bg-transparent"
+                        onChange={handleChange}
+                      />
+                    </div>
+
+
+
+
+
+
+                  </>
+                )}
+
+                {proposalType === 'AddMember' && (
+                  <>
+                    {/* Group Name */}
+                    <div className="mb-4">
+                      <label htmlFor="group_name" className="font-semibold mobile:text-base text-sm">
+                        Group Name
+                      </label>
+                      <select
+                        name="group_name"
+                        required
+                        value={addMember.group_name}
+                        className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm w-full border border-[#aba9a5] bg-transparent"
+                        onChange={handleInputAddMember}
+                      >
+                        <option value="" disabled>Select Group Name</option>
+                        {groupNames.map((name, index) => (
+                          <option key={index} value={name}>
+                            {name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Description */}
+                    <div className="mb-4">
+                      <label htmlFor="description" className="font-semibold mobile:text-base text-sm">
+                        Description
+                      </label>
+                      <textarea
+                        name="description"
+                        value={addMember.description}
+                        placeholder="Specify the description of the group"
+                        className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm w-full border border-[#aba9a5] bg-transparent"
+                        onChange={handleInputAddMember}
+                      />
+                    </div>
+
+                    {/* New Member (Principal ID) */}
+                    <div className="mb-4">
+                      <label htmlFor="new_member" className="font-semibold mobile:text-base text-sm">
+                        New Member (Principal ID)
+                      </label>
+                      <input
+                        type="text"
+                        name="new_member"
+                        value={addMember.new_member}
+                        placeholder="Enter New Member Principal ID"
+                        className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm w-full border border-[#aba9a5] bg-transparent"
+                        onChange={handleInputAddMember}
+                      />
+                    </div>
+                  </>
+                )}
+
+
 
 
                 <div className="flex justify-center my-8">
