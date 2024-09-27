@@ -69,26 +69,28 @@ pub async fn create_proposal_controller(
 
     // to record proposals on Parent canister
     let proposal_copy: ProposalInstance = ProposalInstance {
-        action_principal: proposal.principal_of_action.unwrap_or(api::caller()),
+        principal_action : proposal.principal_of_action.unwrap_or(api::caller()),
         associated_dao_canister_id: ic_cdk::api::id(),
         created_by: api::caller(),
-        description: proposal.proposal_description,
-        expiring_on: proposal_expire_time,
+        proposal_description : proposal.proposal_description,
+        proposal_expired_at : proposal_expire_time,
         proposal_id: proposal_id.clone(),
         proposal_type: proposal.proposal_type,
         required_votes: proposal.required_votes.unwrap_or(required_votes),
-        submitted_at: ic_cdk::api::time(),
-        title: proposal.proposal_title,
+        proposal_submitted_at: ic_cdk::api::time(),
+        propsal_title: proposal.proposal_title,
         dao_members,
     };
 
-    let _ = call_inter_canister::<ProposalInstance, Result<String, String>>(
+    let data = call_inter_canister::<ProposalInstance, Result<String, String>>(
         "add_proposal",
         proposal_copy,
         daohouse_backend_id,
     )
     .await
     .map_err(|err| return format!("{}{}", crate::utils::WARNING_INTER_CANISTER, err));
+
+    ic_cdk::println!("this is inter_canister {:?} ", data);
 
     with_state(|state| {
         let mut updated_dao = state.dao.clone();

@@ -98,14 +98,16 @@ fn add_member_to_dao(state: &mut State, proposal: &Proposals) {
 }
 
 fn add_member_to_group(state: &mut State, proposal: &Proposals) {
-    let dao_groups = &mut state.dao_groups;
     if let Some(group_to_join) = &proposal.group_to_join {
-        if let Some(mut dao_group) = dao_groups.get(group_to_join) {
-            dao_group.group_members.push(proposal.principal_of_action);
-            dao_groups.insert(group_to_join.clone(), dao_group);
+        if let Some(mut dao_group) = state.dao_groups.get(group_to_join) {
+            if !dao_group.group_members.contains(&proposal.principal_of_action) {
+                ic_cdk::println!("add_member_to_group me aa gya{} ", &proposal.principal_of_action);
+                dao_group.group_members.push(proposal.principal_of_action);
+            }
         }
     }
 }
+
 
 fn remove_member_from_dao(state: &mut State, proposal: &Proposals) {
     let dao = &mut state.dao;
@@ -118,7 +120,7 @@ fn remove_member_to_group(state: &mut State, proposal: &Proposals) {
     if let Some(group_to_remove) = &proposal.group_to_remove {
         if let Some(mut dao_group) = dao_groups.get(group_to_remove) {
             dao_group.group_members.retain(|s| s != &proposal.principal_of_action);
-            dao_groups.insert(group_to_remove.clone(), dao_group);
+            // dao_groups.insert(group_to_remove.clone(), dao_group);
         }
     }
 }
