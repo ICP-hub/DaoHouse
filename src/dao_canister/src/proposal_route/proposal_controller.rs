@@ -41,7 +41,8 @@ pub async fn create_proposal_controller(
         proposal_description: proposal.proposal_description.clone(),
         proposal_status: ProposalState::Open,
         proposal_submitted_at: ic_cdk::api::time(),
-        proposal_expired_at: proposal_expire_time.clone(),
+        // proposal_expired_at: proposal_expire_time.clone(),
+        proposal_expired_at: proposal.proposal_expired_at.unwrap_or(proposal_expire_time),
         proposal_approved_votes: 0,
         approved_votes_list: Vec::new(),
         proposal_rejected_votes: 0,
@@ -56,13 +57,13 @@ pub async fn create_proposal_controller(
         likes: 0,
         group_to_join: proposal.group_to_join,
         new_dao_name : proposal.new_dao_name,
-        new_dao_purpose : None,
-        group_to_remove: None,
-        new_daotype : None,
-        cool_down_period: None,
-        tokens: None,
-        from: None,
-        to: None,
+        new_dao_purpose : proposal.dao_purpose,
+        group_to_remove: proposal.group_to_remove,
+        new_daotype : proposal.new_dao_type,
+        cool_down_period: proposal.cool_down_period,
+        tokens: proposal.tokens,
+        token_from: proposal.token_from,
+        token_to : proposal.token_to,
         has_been_processed: false, 
         has_been_processed_secound : false,
     };
@@ -82,15 +83,13 @@ pub async fn create_proposal_controller(
         dao_members,
     };
 
-    let data = call_inter_canister::<ProposalInstance, Result<String, String>>(
+    let _ = call_inter_canister::<ProposalInstance, Result<String, String>>(
         "add_proposal",
         proposal_copy,
         daohouse_backend_id,
     )
     .await
     .map_err(|err| return format!("{}{}", crate::utils::WARNING_INTER_CANISTER, err));
-
-    ic_cdk::println!("this is inter_canister {:?} ", data);
 
     with_state(|state| {
         let mut updated_dao = state.dao.clone();

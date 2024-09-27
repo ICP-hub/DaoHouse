@@ -33,12 +33,13 @@ pub const WARNING_ANONYMOUS_CALL: &str = "Anonymous principal not allowed !";
 pub const WARNING_INTER_CANISTER: &str = "Intercanister call failed";
 pub const WARNING_DONT_FOLLOW: &str = "You do not follow this dao";
 pub const SUCCESS_DAO_UPDATED: &str = "DAO successfully updated";
-pub const TITLE_DELETE_MEMBER : &str = "Delete member Proposal successfully created !.";
+pub const TITLE_DELETE_MEMBER : &str = "remove member Proposal successfully created !.";
 pub const WARNING_NO_MEMBER_IN_GROUP: &str = "You are not part of the group";
 pub const MESSAGE_CHANGE_DAO_CONFIG: &str = "Chnage dao config proposal created successfully";
 pub const MESSAGE_CHANGE_DAO_POLICY: &str =  "Chnage dao policy proposal created successfully";
 pub const MESSAGE_TOKEN_TRANSFER_POLICY: &str =  "token transfer policy proposal created successfully";
 pub const MESSAGE_BOUNTY_RAISED: &str =  "Bounty raised proposal created successfully";
 pub const MESSAGE_BOUNTY_DONE: &str =  "Bounty Done proposal created successfully";
+pub const MESSAGE_POLL_CREATE_DONE: &str =  "Poll creation proposal created successfully";
 pub const MESSAGE_GENERAL_PURPOSE_CREATED: &str =  "General purpose proposal created successfully";
 
