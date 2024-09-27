@@ -7,7 +7,6 @@ type AddMemberArgs = record {
 type BountyDone = record {
   to : principal;
   proposal_expired_at : nat64;
-  from : principal;
   description : text;
   tokens : nat64;
   action_member : principal;
@@ -23,9 +22,9 @@ type BountyRaised = record {
   bounty_task : text;
 };
 type ChangeDaoConfigArg = record {
+  new_dao_name : text;
   daotype : text;
   description : text;
-  dao_name : text;
   action_member : principal;
   purpose : text;
 };
@@ -194,7 +193,6 @@ type TokenTransferArgs = record {
 };
 type TokenTransferPolicy = record {
   to : principal;
-  from : principal;
   description : text;
   tokens : nat64;
   action_member : principal;

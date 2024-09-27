@@ -149,7 +149,7 @@ async fn proposal_to_chnage_dao_config(args: ChangeDaoConfigArg) -> Result<Strin
         proposal_description: args.description,
         proposal_title: String::from(crate::utils::TITLE_CHANGE_DAO_CONFIG),
         proposal_type: ProposalType::ChangeDaoConfig,
-        new_dao_name: Some(args.dao_name),
+        new_dao_name: Some(args.new_dao_name),
         new_dao_type : Some(args.daotype),
         group_to_join: None,
         dao_purpose: Some(args.purpose),
@@ -164,6 +164,7 @@ async fn proposal_to_chnage_dao_config(args: ChangeDaoConfigArg) -> Result<Strin
         cool_down_period : None,
         group_to_remove : None,
     };
+
     crate::proposal_route::create_proposal_controller(
         with_state(|state| state.dao.daohouse_canister_id),
         proposal,
@@ -204,12 +205,13 @@ async fn proposal_to_change_dao_policy(args: ChangeDaoPolicy) -> Result<String, 
 
 #[update(guard=guard_check_members)]
 async fn proposal_to_transfer_token(args: TokenTransferPolicy) -> Result<String, String> {
+    let principal_id: Principal = api::caller();
 
-    if args.from == args.to {
+    if principal_id == args.to {
         return Err(String::from("Principal can't be same"));
     };
 
-    let balance = icrc_get_balance(args.from).await.map_err(|err| format!("Error while fetching user balance: {}", err))?;
+    let balance = icrc_get_balance(principal_id).await.map_err(|err| format!("Error while fetching user balance: {}", err))?;
 
     if balance <= args.tokens as u8 {
      return Err(String::from("User token balance is less than the required transfer tokens"));
@@ -224,7 +226,7 @@ async fn proposal_to_transfer_token(args: TokenTransferPolicy) -> Result<String,
         group_to_join: None,
         dao_purpose: None,
         tokens: Some(args.tokens),
-        token_from: Some(args.from),
+        token_from: Some(principal_id),
         token_to : Some(args.to),
         proposal_created_at: None,
         proposal_expired_at: None,
@@ -275,14 +277,15 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
 
 #[update(guard=guard_check_members)]
 async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
-    if args.from == args.to {
+    let principal_id: Principal = api::caller();
+    if principal_id == args.to {
         return Err(String::from("Principal can't be same"));
     };
-    if args.from == args.to {
+    if principal_id == args.to {
         return Err(String::from("Principal can't be same"));
     };
 
-    let balance = icrc_get_balance(args.from).await.map_err(|err| format!("Error while fetching user balance: {}", err))?;
+    let balance = icrc_get_balance(principal_id).await.map_err(|err| format!("Error while fetching user balance: {}", err))?;
 
     if balance <= args.tokens as u8 {
      return Err(String::from("User token balance is less than the required transfer tokens"));
@@ -297,7 +300,7 @@ async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
         group_to_join: None,
         dao_purpose: None,
         tokens: Some(args.tokens),
-        token_from:Some(args.from),
+        token_from:Some(principal_id),
         token_to : Some(args.to),
         proposal_created_at: Some(args.proposal_created_at),
         proposal_expired_at: Some(args.proposal_expired_at),

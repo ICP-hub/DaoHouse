@@ -8,7 +8,7 @@ pub const COUNCIL_GROUP_NAME: &str = "council";
 
 // General responses / errors / warninigs
 pub const TITLE_ADD_MEMBER: &str = "Add new memeber";
-pub const TITLE_REMOVE_MEMBER: &str = "Remove group memeber";
+pub const TITLE_REMOVE_MEMBER: &str = "Remove dao memeber";
 pub const TITLE_CHANGE_DAO_CONFIG : &str = "Chnage dao config";
 pub const TITLE_CHANGE_DAO_POLICY : &str = "Chnage dao policy";
 pub const TITLE_TOKEN_TRANSFER_POLICY : &str = "Token transfer policy";
@@ -17,7 +17,7 @@ pub const TITLE_BOUNTY_DONE : &str = "Bounty done";
 pub const TITLE_CREATE_POLL : &str = "Create poll";
 pub const TITLE_CREATE_GENERAL_PURPOSE : &str = "Create general purpose";
 
-pub const REQUEST_ADD_MEMBER: &str = "Proposal successfully created !.";
+pub const REQUEST_ADD_MEMBER: &str = "Add member to group proposal successfully created !.";
 pub const NOTFOUND_GROUP: &str = "No groups found with the given name";
 pub const WARNING_ALREADY_FOLLOW_DAO: &str = "You are already following this DAO";
 pub const SUCCESS_FOLLOW_DAO: &str = "Successfully followed !";
