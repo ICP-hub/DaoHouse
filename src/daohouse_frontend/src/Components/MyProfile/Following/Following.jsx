@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../utils/useAuthClient";
-import MuiSkeleton from "../../SkeletonLoaders/MuiSkeleton";
+import MyProfileSkelton from "../../SkeletonLoaders/MyProfileSkelton";
 import NoDataComponent from "../../Dao/NoDataComponent";
 import { Principal } from "@dfinity/principal";
 import Container from "../../Container/Container";
+import "./Following.scss"; // Add this line to import custom CSS for scrollbar
 
 const Following = () => {
   const className = "Following";
@@ -60,26 +61,26 @@ const Following = () => {
           DAOs Joined
         </h3>
         {loading ? (
-          <MuiSkeleton />
+         <MyProfileSkelton />
         ) : joinedDAO.length === 0 ? (
           <NoDataComponent text="No DAOs joined yet!" />
         ) : (
-          <div className="bg-gray ">
-            <Container classes="__cards w-[1000px] p-[20px] px-[24px] pb-[20px] translate-y-[-90px] translate-x-[-18px]  rounded-tl-[12px] rounded-tr-none rounded-br-none rounded-bl-none max-h-[350px] overflow-y-auto">
-              <div className="flex-col space-y-4">
+          <div className="bg-[#F4F2EC] translate-y-[-90px] shadow-lg">
+            <Container classes="__cards w-[1000px] p-[20px] translate-x-[-18px] rounded-lg overflow-hidden">
+              <div className="grid grid-cols-1 tablet:grid-cols-2 gap-4 max-h-[350px] overflow-y-auto px-4 custom-scrollbar"> {/* Add custom-scrollbar class */}
                 {joinedDAO.map((dao, index) => (
                   <div
                     key={index}
-                    className="bg-white shadow-md rounded-md flex items-center p-4 space-x-4"
+                    className="bg-white shadow-lg rounded-lg flex items-center p-4 space-x-4 transition-transform transform hover:scale-105"
                   >
                     <img
                       src={getImageUrl(dao?.image_id)}
                       alt={dao.dao_name}
-                      className="w-16 h-16 rounded-full"
+                      className="w-16 h-16 rounded-full border-2 border-black"
                     />
                     <div className="flex-1">
                       <h4 className="text-lg font-semibold">{dao?.dao_name || "No Name"}</h4>
-                      <p className="text-gray-500">{dao?.purpose || "No ID"}</p>
+                      <p className="text-gray-500">{dao?.purpose || "No Purpose"}</p>
                     </div>
                     <button
                       onClick={() => handleViewProfile(dao?.dao_canister_id)}
