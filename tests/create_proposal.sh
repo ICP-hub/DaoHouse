@@ -1,8 +1,8 @@
-test10=$(dfx canister call by6od-j4aaa-aaaaa-qaadq-cai proposal_to_add_member_to_group '(
+test10=$(dfx canister call b77ix-eeaaa-aaaaa-qaada-cai proposal_to_remove_member_to_group '(
   record {
     group_name = "Example Group";
-    new_member = principal "aaaaa-aa";
-    description = "we want add an member to ddddddd";
+    action_member = principal "aaaaa-aa";
+    description = "we want add a member to Example Group";
   }
 )')
  echo "$test10"
