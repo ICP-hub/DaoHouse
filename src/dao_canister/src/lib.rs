@@ -108,7 +108,6 @@ fn add_member_to_group(state: &mut State, proposal: &Proposals) {
     }
 }
 
-
 fn remove_member_from_dao(state: &mut State, proposal: &Proposals) {
     let dao = &mut state.dao;
     dao.members.retain(|s| s != &proposal.principal_of_action);
@@ -163,12 +162,12 @@ async fn transfer_token(proposal: &Proposals) -> Result<String, String> {
         ));
     }
 
-    let from = match &proposal.from {
+    let from = match &proposal.token_from {
         Some(principal) => principal,
         None => return Err(String::from("Missing 'from' principal")),
     };
 
-    let to = match &proposal.to {
+    let to = match &proposal.token_to {
         Some(principal) => principal,
         None => return Err(String::from("Missing 'to' principal")),
     };

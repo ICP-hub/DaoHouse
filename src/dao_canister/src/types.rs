@@ -76,8 +76,8 @@ pub struct Proposals {
     pub new_daotype :  Option<String>,
     pub cool_down_period: Option<u32>,
     pub tokens: Option<u64>,
-    pub from: Option<Principal>,
-    pub to: Option<Principal>,
+    pub token_from: Option<Principal>,
+    pub token_to: Option<Principal>,
     pub has_been_processed: bool, 
     pub has_been_processed_secound : bool,
 }
@@ -99,16 +99,20 @@ pub struct ProposalInput {
     pub proposal_description: String,
     pub required_votes: Option<u32>,
     pub group_to_join: Option<String>,
+    pub group_to_remove: Option<String>,
     pub proposal_type: ProposalType,
     pub principal_of_action: Option<Principal>, // principal id of user who is to be added, removed, transfered funds
     pub new_dao_name : Option<String>,
+    pub new_dao_type : Option<String>,
     pub dao_purpose : Option<String>,
-    pub tokens: Option<u64>,
-    pub from: Option<Principal>,
+    pub tokens : Option<u64>,
+    pub token_to: Option<Principal>,
+    pub token_from: Option<Principal>,
     pub proposal_created_at: Option<u64>,
     pub proposal_expired_at: Option<u64>,
     pub bounty_task : Option<String>,
     pub poll_title : Option<String>, 
+    pub cool_down_period : Option<u32>,
     // pub proposal_amount:String,
     // pub proposal_receiver_id:String,
     // pub created_by: Principal,
@@ -264,8 +268,8 @@ pub struct RemoveDaoMemberArgs {
 pub struct ChangeDaoPolicy{
     pub action_member: Principal,
     pub description: String,
-    pub dao_purpose : String,
-    pub required_votes : u32
+    pub required_votes : u32,
+    pub cool_down_period : u32,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
@@ -274,6 +278,7 @@ pub struct TokenTransferPolicy{
     pub description: String,
     pub tokens: u64,
     pub from: Principal,
+    pub to : Principal,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
@@ -293,6 +298,7 @@ pub struct BountyDone{
     pub tokens: u64,
     pub bounty_task : String,
     pub from: Principal,
+    pub to: Principal,
     pub proposal_created_at: u64,
     pub proposal_expired_at: u64,
 }
