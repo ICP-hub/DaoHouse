@@ -146,6 +146,14 @@ const Dao = () => {
 
   const noDaoFound = searchTerm && fetchedDAOs.length === 0;
 
+  if(!dao) {
+    return (
+      <div>
+        <NoDataComponent />
+      </div>
+    )
+  }
+
   return (
     <div className="bg-zinc-200 ">
       <TopComponent showAll={showAll} setShowAll={setShowAll} showButtons />
@@ -187,9 +195,9 @@ const Dao = () => {
       {showAll ? (
         loading ? (
           <DaoCardLoaderSkeleton />
-        ) : noDaoFound ? (
-          <div className="flex justify-center items-center h-full">
-            <img src={nodata1} alt="No Data" className="mb-1 mx-auto block" />
+        ) : noDaoFound || dao.length === 0 ? (
+          <div className="flex justify-center items-center h-full mb-10 md:mt-40 mx-10">
+            <NoDataComponent />
           </div>
         ) : (
           <div className="bg-gray">
@@ -236,7 +244,7 @@ const Dao = () => {
           </Container>
         </div>
       ) : (
-        <div className="mt-10 mb-10 md:mt-40 mx-10">
+        <div className="mt-10 mb-10 md:mt-40 mobile:mx-10">
           <NoDataComponent />
         </div>
       )}
