@@ -315,7 +315,7 @@ pub struct CreatePoll{
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct CreateGeneralPurpose{
     pub action_member: Principal,
-    pub purpose_title : String,
+    pub proposal_title : String,
     pub description: String,
     pub proposal_created_at: u64,
     pub proposal_expired_at: u64,

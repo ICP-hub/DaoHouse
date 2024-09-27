@@ -8,6 +8,7 @@ use candid::Principal;
 use ic_cdk::api;
 use ic_cdk::api::call::{CallResult, RejectionCode};
 use ic_cdk::{query, update};
+use crate::icrc_get_balance;
 
 #[query]
 async fn get_members_of_group(group: String) -> Result<Vec<Principal>, String> {
@@ -142,6 +143,7 @@ async fn proposal_to_remove_member_to_dao(args: RemoveDaoMemberArgs) -> Result<S
 
 #[update(guard=guard_check_members)]
 async fn proposal_to_chnage_dao_config(args: ChangeDaoConfigArg) -> Result<String, String> {
+
     let proposal = ProposalInput {
         principal_of_action: Some(args.action_member),
         proposal_description: args.description,
@@ -202,6 +204,17 @@ async fn proposal_to_change_dao_policy(args: ChangeDaoPolicy) -> Result<String, 
 
 #[update(guard=guard_check_members)]
 async fn proposal_to_transfer_token(args: TokenTransferPolicy) -> Result<String, String> {
+
+    if args.from == args.to {
+        return Err(String::from("Principal can't be same"));
+    };
+
+    let balance = icrc_get_balance(args.from).await.map_err(|err| format!("Error while fetching user balance: {}", err))?;
+
+    if balance <= args.tokens as u8 {
+     return Err(String::from("User token balance is less than the required transfer tokens"));
+    }
+
     let proposal = ProposalInput {
         principal_of_action: Some(args.action_member),
         proposal_description: args.description,
@@ -262,6 +275,19 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
 
 #[update(guard=guard_check_members)]
 async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
+    if args.from == args.to {
+        return Err(String::from("Principal can't be same"));
+    };
+    if args.from == args.to {
+        return Err(String::from("Principal can't be same"));
+    };
+
+    let balance = icrc_get_balance(args.from).await.map_err(|err| format!("Error while fetching user balance: {}", err))?;
+
+    if balance <= args.tokens as u8 {
+     return Err(String::from("User token balance is less than the required transfer tokens"));
+    }
+
     let proposal = ProposalInput {
         principal_of_action: Some(args.action_member),
         proposal_description: args.description,
@@ -313,11 +339,8 @@ async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
         group_to_remove : None,
     };
     crate::proposal_route::create_proposal_controller(
-        with_state(|state| state.dao.daohouse_canister_id),
-        proposal,
-    )
-    .await;
-    Ok(String::from(crate::utils::MESSAGE_BOUNTY_DONE))
+        with_state(|state| state.dao.daohouse_canister_id),proposal,).await;
+    Ok(String::from(crate::utils::MESSAGE_POLL_CREATE_DONE))
 }
 
 #[update(guard=guard_check_members)]
@@ -325,7 +348,7 @@ async fn proposal_to_create_general_purpose(args: CreateGeneralPurpose) -> Resul
     let proposal = ProposalInput {
         principal_of_action: Some(args.action_member),
         proposal_description: args.description,
-        proposal_title: args.purpose_title,
+        proposal_title: String::from(crate::utils::TITLE_CREATE_GENERAL_PURPOSE),
         proposal_type: ProposalType::GeneralPurpose,
         new_dao_name: None,
         group_to_join: None,
@@ -336,7 +359,7 @@ async fn proposal_to_create_general_purpose(args: CreateGeneralPurpose) -> Resul
         proposal_created_at: Some(args.proposal_created_at),
         proposal_expired_at: Some(args.proposal_expired_at),
         bounty_task: None,
-        poll_title: None,
+        poll_title: Some(args.proposal_title),
         required_votes: None,
         cool_down_period : None,
         new_dao_type : None,
@@ -427,7 +450,7 @@ async fn proposal_to_create_general_purpose(args: CreateGeneralPurpose) -> Resul
 //     })
 // }
 
-#[update (guard = prevent_anonymous)]
+#[update(guard = prevent_anonymous)]
 async fn ask_to_join_dao(daohouse_backend_id: Principal) -> Result<String, String> {
     crate::guards::guard_check_if_proposal_exists(
         api::caller(),

@@ -46,8 +46,8 @@ type Comment = record {
 type CreateGeneralPurpose = record {
   proposal_expired_at : nat64;
   description : text;
+  proposal_title : text;
   action_member : principal;
-  purpose_title : text;
   proposal_created_at : nat64;
 };
 type CreatePoll = record {

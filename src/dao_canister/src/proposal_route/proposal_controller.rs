@@ -83,15 +83,13 @@ pub async fn create_proposal_controller(
         dao_members,
     };
 
-    let data = call_inter_canister::<ProposalInstance, Result<String, String>>(
+    let _ = call_inter_canister::<ProposalInstance, Result<String, String>>(
         "add_proposal",
         proposal_copy,
         daohouse_backend_id,
     )
     .await
     .map_err(|err| return format!("{}{}", crate::utils::WARNING_INTER_CANISTER, err));
-
-    ic_cdk::println!("this is inter_canister {:?} ", data);
 
     with_state(|state| {
         let mut updated_dao = state.dao.clone();
