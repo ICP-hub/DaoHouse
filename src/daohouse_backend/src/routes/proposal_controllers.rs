@@ -5,6 +5,9 @@ pub fn add_proposal_controller(
     state: &mut State,
     args: ProposalValueStore,
 ) -> Result<String, String> {
+    
+    ic_cdk::println!("yhan tak aa gya args : {:?} ", args);
+
     state.proposal_store.insert(args.proposal_id.clone(), args);
 
     Ok(String::from("Proposal added"))

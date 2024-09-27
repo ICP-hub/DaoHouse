@@ -873,22 +873,25 @@ pub struct ProposalValueStore {
 
 #[derive(Debug, Clone, CandidType, Deserialize, Serialize, PartialEq, Eq)]
 pub enum ProposalType {
-    AddMemberProposal,
-    RemoveMemberPrposal,
+    AddMemberToDaoProposal,
+    AddMemberToGroupProposal,
+    RemoveMemberToDaoProposal,
+    RemoveMemberToGroupProposal,
     ChangeDaoConfig,
     ChnageDaoPolicy,
-    Bounty,
+    BountyRaised,
     BountyDone,
     Polls,
     UpgradeRemote,
     UpdateSelf,
     FunctionCall,
-    Transfer
+    TokenTransfer,
+    GeneralPurpose
 }
 
-const MAX_VALUE_SIZE: u32 = 800;
+// const MAX_VALUE_SIZE: u32 = 800;
 const MAX_VALUE_SIZE_ANALYTICS: u32 = 300;
-const MAX_VALUE_SIZE_DAO: u32 = 400;
+// const MAX_VALUE_SIZE_DAO: u32 = 400;
 const MAX_VALUE_SIZE_CANISTER_DATA: u32 = 600;
 // const MAX_VALUE_SIZE: u32 = 600;
 
