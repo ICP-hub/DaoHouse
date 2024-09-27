@@ -315,7 +315,7 @@ fn proposal_refresh() -> Result<String, String> {
 
 #[update]
 async fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> {
-    // check_voting_right(&proposal_id)?;
+    check_voting_right(&proposal_id)?;
 
     let principal_id = api::caller();
     with_state(|state| match &mut state.proposals.get(&proposal_id) {

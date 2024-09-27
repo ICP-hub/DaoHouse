@@ -23,22 +23,16 @@ type BountyRaised = record {
 };
 type ChangeDaoConfigArg = record {
   daotype : text;
+  description : text;
   dao_name : text;
+  action_member : principal;
   purpose : text;
 };
 type ChangeDaoPolicy = record {
   description : text;
   action_member : principal;
   dao_purpose : text;
-};
-type ChangeDaoPolicyArg = record {
-  cool_down_period : nat32;
   required_votes : nat32;
-};
-type ChnageDaoConfig = record {
-  new_dao_name : text;
-  description : text;
-  action_member : principal;
 };
 type Comment = record {
   created_at : nat64;
@@ -127,38 +121,49 @@ type ProposalState = variant {
   Expired;
 };
 type ProposalType = variant {
-  AddMemberProposal;
+  RemoveMemberToDaoProposal;
   ChangeDaoConfig;
   BountyDone;
   UpgradeRemote;
   Polls;
   TokenTransfer;
+  AddMemberToDaoProposal;
+  RemoveMemberToGroupProposal;
   ChnageDaoPolicy;
   BountyRaised;
-  RemoveMemberPrposal;
+  AddMemberToGroupProposal;
   FunctionCall;
   UpdateSelf;
   GeneralPurpose;
 };
 type Proposals = record {
+  to : opt principal;
+  has_been_processed_secound : bool;
   principal_of_action : principal;
   share_count : nat64;
   proposal_expired_at : nat64;
   new_dao_name : opt text;
   proposal_submitted_at : nat64;
+  from : opt principal;
   proposal_approved_votes : nat64;
+  has_been_processed : bool;
   created_by : principal;
+  new_dao_purpose : opt text;
   likes : nat32;
   proposal_rejected_votes : nat64;
+  group_to_remove : opt text;
   proposal_title : text;
   rejected_votes_list : vec principal;
   proposal_description : text;
+  tokens : opt nat64;
   proposal_id : text;
   proposal_status : ProposalState;
   approved_votes_list : vec principal;
   comments : nat32;
+  new_daotype : opt text;
   group_to_join : opt text;
   comments_list : vec Comment;
+  cool_down_period : opt nat32;
   proposal_type : ProposalType;
   required_votes : nat32;
 };
@@ -224,20 +229,13 @@ service : (DaoInput) -> {
   proposal_to_bounty_done : (BountyDone) -> (Result_1);
   proposal_to_bounty_raised : (BountyRaised) -> (Result_1);
   proposal_to_change_dao_policy : (ChangeDaoPolicy) -> (Result_1);
-  proposal_to_chnage_dao_config : (ChnageDaoConfig) -> (Result_1);
+  proposal_to_chnage_dao_config : (ChangeDaoConfigArg) -> (Result_1);
   proposal_to_create_general_purpose : (CreateGeneralPurpose) -> (Result_1);
   proposal_to_create_poll : (CreatePoll) -> (Result_1);
   proposal_to_remove_member_to_dao : (RemoveDaoMemberArgs) -> (Result_1);
   proposal_to_remove_member_to_group : (RemoveMemberArgs) -> (Result_1);
   proposal_to_transfer_token : (TokenTransferPolicy) -> (Result_1);
   reply_comment : (ReplyCommentArgs) -> (Result_1);
-  run_add_member_to_dao : (principal) -> (Result_1);
-  run_add_member_to_group : (principal, text) -> (Result_1);
-  run_chnage_dao_config : (ChangeDaoConfigArg) -> (Result_1);
-  run_chnage_dao_policy : (ChangeDaoPolicyArg) -> (Result_1);
-  run_remove_member_from_dao : (principal) -> (Result_1);
-  run_remove_member_to_group : (principal, text) -> (Result_1);
-  run_transfer_token : (TokenTransferArgs) -> (Result_1);
   search_proposal : (text) -> (vec Proposals) query;
   unfollow_dao : (principal) -> (Result_1);
   update_dao_settings : (UpdateDaoSettings) -> (Result_1);

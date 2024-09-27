@@ -38,7 +38,9 @@ pub async fn create_dao_canister(dao_detail: crate::DaoInput) -> Result<Principa
     };
 
     let mut updated_members = dao_detail.members.clone();
-    updated_members.push(principal_id.clone());
+    if !updated_members.contains(&principal_id) {
+        updated_members.push(principal_id.clone());
+    }
 
     // image upload
     let image_id: Result<String, String> = super::upload_image(

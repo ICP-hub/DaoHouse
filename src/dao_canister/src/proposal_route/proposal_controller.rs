@@ -46,7 +46,7 @@ pub async fn create_proposal_controller(
         approved_votes_list: Vec::new(),
         proposal_rejected_votes: 0,
         rejected_votes_list: Vec::new(),
-        required_votes: required_votes.clone(),
+        required_votes: proposal.required_votes.unwrap_or(required_votes),
         created_by: api::caller(),
         comments: 0,
         comments_list: Vec::new(),
@@ -56,6 +56,15 @@ pub async fn create_proposal_controller(
         likes: 0,
         group_to_join: proposal.group_to_join,
         new_dao_name : proposal.new_dao_name,
+        new_dao_purpose : None,
+        group_to_remove: None,
+        new_daotype : None,
+        cool_down_period: None,
+        tokens: None,
+        from: None,
+        to: None,
+        has_been_processed: false, 
+        has_been_processed_secound : false,
     };
 
     // to record proposals on Parent canister
@@ -67,7 +76,7 @@ pub async fn create_proposal_controller(
         expiring_on: proposal_expire_time,
         proposal_id: proposal_id.clone(),
         proposal_type: proposal.proposal_type,
-        required_votes: required_votes,
+        required_votes: proposal.required_votes.unwrap_or(required_votes),
         submitted_at: ic_cdk::api::time(),
         title: proposal.proposal_title,
         dao_members,

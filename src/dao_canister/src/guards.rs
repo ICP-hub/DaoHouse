@@ -39,8 +39,8 @@ pub fn member_permission(permission: String) -> Result<(), String> {
 
 // check for user who has already voted
 pub fn check_voting_right(proposal_id: &String) -> Result<(), String> {
-    guard_check_members()?;
-    // prevent_anonymous()?;
+    // guard_check_members()?;
+    prevent_anonymous()?;
     let principal_id = api::caller();
 
     with_state(|state| match state.proposals.get(&proposal_id) {

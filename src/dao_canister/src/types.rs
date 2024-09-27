@@ -16,8 +16,10 @@ pub enum ProposalState {
 
 #[derive(Debug, Clone, CandidType, Deserialize, Serialize, PartialEq, Eq)]
 pub enum ProposalType {
-    AddMemberProposal,
-    RemoveMemberPrposal,
+    AddMemberToDaoProposal,
+    AddMemberToGroupProposal,
+    RemoveMemberToDaoProposal,
+    RemoveMemberToGroupProposal,
     ChangeDaoConfig,
     ChnageDaoPolicy,
     BountyRaised,
@@ -68,7 +70,16 @@ pub struct Proposals {
     pub share_count: u64,
     pub principal_of_action: Principal, // principal id of user who is to be added, removed, transfered funds
     pub group_to_join: Option<String>,
-    pub new_dao_name : Option<String>
+    pub new_dao_name : Option<String>,
+    pub new_dao_purpose : Option<String>,
+    pub group_to_remove: Option<String>,
+    pub new_daotype :  Option<String>,
+    pub cool_down_period: Option<u32>,
+    pub tokens: Option<u64>,
+    pub from: Option<Principal>,
+    pub to: Option<Principal>,
+    pub has_been_processed: bool, 
+    pub has_been_processed_secound : bool,
 }
 
 // for proposal comments
@@ -86,7 +97,7 @@ pub struct Comment {
 pub struct ProposalInput {
     pub proposal_title: String,
     pub proposal_description: String,
-    // pub required_votes: u32,
+    pub required_votes: Option<u32>,
     pub group_to_join: Option<String>,
     pub proposal_type: ProposalType,
     pub principal_of_action: Option<Principal>, // principal id of user who is to be added, removed, transfered funds
@@ -172,12 +183,15 @@ pub struct ChangeDaoConfigArg {
     pub dao_name: String,
     pub purpose: String,
     pub daotype: String,
+    pub action_member: Principal,
+    pub description: String,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct ChangeDaoPolicyArg {
     pub cool_down_period: u32,
     pub required_votes: u32,
+    pub action_member: Principal,
 }
 
 
@@ -247,17 +261,11 @@ pub struct RemoveDaoMemberArgs {
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
-pub struct ChnageDaoConfig {
-    pub new_dao_name: String,
-    pub action_member: Principal,
-    pub description: String,
-}
-
-#[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct ChangeDaoPolicy{
     pub action_member: Principal,
     pub description: String,
-    pub dao_purpose : String
+    pub dao_purpose : String,
+    pub required_votes : u32
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
@@ -382,10 +390,11 @@ impl Storable for Proposals {
         Decode!(bytes.as_ref(), Self).unwrap()
     }
 
-    const BOUND: Bound = Bound::Bounded {
-        max_size: MAX_VALUE_SIZE,
-        is_fixed_size: false,
-    };
+    // const BOUND: Bound = Bound::Bounded {
+    //     max_size: MAX_VALUE_SIZE,
+    //     is_fixed_size: false,
+    // };
+    const BOUND: Bound = Bound::Unbounded;
 }
 
 // impl Storable for GroupList {

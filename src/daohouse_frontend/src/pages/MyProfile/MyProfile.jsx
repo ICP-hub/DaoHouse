@@ -90,7 +90,7 @@ const MyProfile = ({ childComponent }) => {
   const [data, setData] = useState({});
   const followers = data?.followers_count ? Number(data.followers_count) : 0;
   const post = data?.post_count ? Number(data.post_count) : 0;
-  const following = data?.followings_count ? Number(data.followings_count) : 0;
+  const following = data?.join_dao ? Number(data.join_dao.length) : 0; 
   const email = data?.email_id;
   const name = data?.username;
 
@@ -300,7 +300,7 @@ const MyProfile = ({ childComponent }) => {
                         className="tablet:mr-2 h-4 w-4 edit-pen "
                       />
                       <span className="md:inline hidden whitespace-nowrap">
-                        {userProfile === null ? "Edit Profile" : "Complete Profile"}
+                        {userProfile === null ? "Complete Profile" : "Edit Profile"}
                       </span>
                     </button>
                   )}
@@ -608,11 +608,11 @@ const MyProfile = ({ childComponent }) => {
   </Link>
 </div>
 
-        
-            {activeTab === 2 && showNoFollowers && <NoFollowers setFollowers={setShowNoFollowers} />}
-            {/* {activeTab === 3 && showNoFollowing && <NoFollowing />}  */}
-            {/* Render NoFollowing component */}
-          </div>
+{childComponent}
+              {activeTab === 2 && showNoFollowers && <NoFollowers setFollowers={setShowNoFollowers} />}
+               {activeTab === 3 && showNoFollowing && <NoFollowing />} *
+               {/* Render NoFollowing component */}
+            </div>
           
         </Container>
       </div>
