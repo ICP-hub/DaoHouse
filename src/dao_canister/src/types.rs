@@ -184,7 +184,7 @@ pub struct Dao {
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct ChangeDaoConfigArg {
-    pub dao_name: String,
+    pub new_dao_name: String,
     pub purpose: String,
     pub daotype: String,
     pub action_member: Principal,
@@ -277,7 +277,6 @@ pub struct TokenTransferPolicy{
     pub action_member: Principal,
     pub description: String,
     pub tokens: u64,
-    pub from: Principal,
     pub to : Principal,
 }
 
@@ -297,10 +296,7 @@ pub struct BountyDone{
     pub description: String,
     pub tokens: u64,
     pub bounty_task : String,
-    pub from: Principal,
     pub to: Principal,
-    pub proposal_created_at: u64,
-    pub proposal_expired_at: u64,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
@@ -317,8 +313,6 @@ pub struct CreateGeneralPurpose{
     pub action_member: Principal,
     pub proposal_title : String,
     pub description: String,
-    pub proposal_created_at: u64,
-    pub proposal_expired_at: u64,
 }
 
 
