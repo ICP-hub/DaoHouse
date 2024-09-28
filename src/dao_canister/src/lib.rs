@@ -94,15 +94,15 @@ fn add_member_to_dao(state: &mut State, proposal: &Proposals) {
     let dao = &mut state.dao;
     dao.members.push(proposal.principal_of_action);
     dao.members_count += 1;
-    ic_cdk::println!("add_member_to_dao me aa gya");
 }
 
 fn add_member_to_group(state: &mut State, proposal: &Proposals) {
-    let dao_groups = &mut state.dao_groups;
     if let Some(group_to_join) = &proposal.group_to_join {
-        if let Some(mut dao_group) = dao_groups.get(group_to_join) {
+        if let Some(mut dao_group) = state.dao_groups.get(group_to_join) {
+            if !dao_group.group_members.contains(&proposal.principal_of_action) {
             dao_group.group_members.push(proposal.principal_of_action);
-            dao_groups.insert(group_to_join.clone(), dao_group);
+                state.dao_groups.insert(dao_group.group_name.clone(), dao_group);
+            }
         }
     }
 }
@@ -118,7 +118,7 @@ fn remove_member_to_group(state: &mut State, proposal: &Proposals) {
     if let Some(group_to_remove) = &proposal.group_to_remove {
         if let Some(mut dao_group) = dao_groups.get(group_to_remove) {
             dao_group.group_members.retain(|s| s != &proposal.principal_of_action);
-            dao_groups.insert(group_to_remove.clone(), dao_group);
+            state.dao_groups.insert(dao_group.group_name.clone(), dao_group);
         }
     }
 }
@@ -127,30 +127,24 @@ fn chnage_dao_config(state: &mut State, proposal: &Proposals) {
     let dao = &mut state.dao;
     if let Some(ref new_dao_name) = proposal.new_dao_name {
         dao.dao_name = new_dao_name.clone();
-        ic_cdk::println!("chnage_dao_config me aa gya 1");
     }
     if let Some(ref purpose) = proposal.new_dao_purpose {
         dao.purpose = purpose.clone();
-        ic_cdk::println!("chnage_dao_config me aa gya 2");
     }
     if let Some(ref daotype) = proposal.new_daotype {
         dao.daotype = daotype.clone();
-        ic_cdk::println!("chnage_dao_config me aa gya 3");
     }
 }
 
 fn change_dao_policy(state: &mut State, proposal: &Proposals) {
     if let Some(cool_down_period) = proposal.cool_down_period {
         state.dao.cool_down_period = cool_down_period;
-        ic_cdk::println!("change_dao_policy me aa gya 1");
-    }
-    ic_cdk::println!("change_dao_policy me aa gya 2");
+ }
     state.dao.required_votes = proposal.required_votes;
 }
 
 async fn transfer_token(proposal: &Proposals) -> Result<String, String> {
     let principal_id: Principal = api::caller();
-    ic_cdk::println!("transfer_token me aa gya 1");
     let balance = icrc_get_balance(principal_id)
         .await
         .map_err(|err| format!("Error while fetching user balance: {}", err))?;
@@ -161,12 +155,14 @@ async fn transfer_token(proposal: &Proposals) -> Result<String, String> {
         ));
     }
 
-    let from = match &proposal.from {
+
+    let from = match &proposal.token_from {
         Some(principal) => principal,
         None => return Err(String::from("Missing 'from' principal")),
     };
 
-    let to = match &proposal.to {
+
+    let to = match &proposal.token_to {
         Some(principal) => principal,
         None => return Err(String::from("Missing 'to' principal")),
     };

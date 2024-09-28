@@ -71,17 +71,20 @@ type Profileinput = record {
   tag_defines : vec text;
 };
 type ProposalType = variant {
-  AddMemberProposal;
+  RemoveMemberToDaoProposal;
   ChangeDaoConfig;
   BountyDone;
   UpgradeRemote;
   Polls;
+  TokenTransfer;
+  AddMemberToDaoProposal;
+  RemoveMemberToGroupProposal;
   ChnageDaoPolicy;
-  Bounty;
-  Transfer;
-  RemoveMemberPrposal;
+  BountyRaised;
+  AddMemberToGroupProposal;
   FunctionCall;
   UpdateSelf;
+  GeneralPurpose;
 };
 type ProposalValueStore = record {
   proposal_expired_at : nat64;

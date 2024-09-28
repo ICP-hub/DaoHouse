@@ -76,8 +76,8 @@ pub struct Proposals {
     pub new_daotype :  Option<String>,
     pub cool_down_period: Option<u32>,
     pub tokens: Option<u64>,
-    pub from: Option<Principal>,
-    pub to: Option<Principal>,
+    pub token_from: Option<Principal>,
+    pub token_to: Option<Principal>,
     pub has_been_processed: bool, 
     pub has_been_processed_secound : bool,
 }
@@ -99,16 +99,20 @@ pub struct ProposalInput {
     pub proposal_description: String,
     pub required_votes: Option<u32>,
     pub group_to_join: Option<String>,
+    pub group_to_remove: Option<String>,
     pub proposal_type: ProposalType,
     pub principal_of_action: Option<Principal>, // principal id of user who is to be added, removed, transfered funds
     pub new_dao_name : Option<String>,
+    pub new_dao_type : Option<String>,
     pub dao_purpose : Option<String>,
-    pub tokens: Option<u64>,
-    pub from: Option<Principal>,
+    pub tokens : Option<u64>,
+    pub token_to: Option<Principal>,
+    pub token_from: Option<Principal>,
     pub proposal_created_at: Option<u64>,
     pub proposal_expired_at: Option<u64>,
     pub bounty_task : Option<String>,
     pub poll_title : Option<String>, 
+    pub cool_down_period : Option<u32>,
     // pub proposal_amount:String,
     // pub proposal_receiver_id:String,
     // pub created_by: Principal,
@@ -180,7 +184,7 @@ pub struct Dao {
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct ChangeDaoConfigArg {
-    pub dao_name: String,
+    pub new_dao_name: String,
     pub purpose: String,
     pub daotype: String,
     pub action_member: Principal,
@@ -264,8 +268,8 @@ pub struct RemoveDaoMemberArgs {
 pub struct ChangeDaoPolicy{
     pub action_member: Principal,
     pub description: String,
-    pub dao_purpose : String,
-    pub required_votes : u32
+    pub required_votes : u32,
+    pub cool_down_period : u32,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
@@ -273,7 +277,7 @@ pub struct TokenTransferPolicy{
     pub action_member: Principal,
     pub description: String,
     pub tokens: u64,
-    pub from: Principal,
+    pub to : Principal,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
@@ -292,9 +296,7 @@ pub struct BountyDone{
     pub description: String,
     pub tokens: u64,
     pub bounty_task : String,
-    pub from: Principal,
-    pub proposal_created_at: u64,
-    pub proposal_expired_at: u64,
+    pub to: Principal,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
@@ -309,10 +311,8 @@ pub struct CreatePoll{
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct CreateGeneralPurpose{
     pub action_member: Principal,
-    pub purpose_title : String,
+    pub proposal_title : String,
     pub description: String,
-    pub proposal_created_at: u64,
-    pub proposal_expired_at: u64,
 }
 
 
@@ -348,14 +348,14 @@ pub enum VoteParam {
 pub struct ProposalInstance {
     pub associated_dao_canister_id: Principal,
     pub proposal_id: String,
-    pub title: String,
-    pub description: String,
-    pub submitted_at: u64,
-    pub expiring_on: u64,
+    pub propsal_title: String,
+    pub proposal_description: String,
+    pub proposal_submitted_at: u64,
+    pub proposal_expired_at : u64,
     pub required_votes: u32,
     pub created_by: Principal,
     pub proposal_type: ProposalType,
-    pub action_principal: Principal,
+    pub principal_action : Principal,
     pub dao_members: Vec<Principal>,
 }
 

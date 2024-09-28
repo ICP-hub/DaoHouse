@@ -5,8 +5,8 @@ type AddMemberArgs = record {
   new_member : principal;
 };
 type BountyDone = record {
+  to : principal;
   proposal_expired_at : nat64;
-  from : principal;
   description : text;
   tokens : nat64;
   action_member : principal;
@@ -22,16 +22,16 @@ type BountyRaised = record {
   bounty_task : text;
 };
 type ChangeDaoConfigArg = record {
+  new_dao_name : text;
   daotype : text;
   description : text;
-  dao_name : text;
-  action_member : principal;
+action_member : principal;
   purpose : text;
 };
 type ChangeDaoPolicy = record {
   description : text;
   action_member : principal;
-  dao_purpose : text;
+  cool_down_period : nat32;
   required_votes : nat32;
 };
 type Comment = record {
@@ -45,8 +45,8 @@ type Comment = record {
 type CreateGeneralPurpose = record {
   proposal_expired_at : nat64;
   description : text;
+  proposal_title : text;
   action_member : principal;
-  purpose_title : text;
   proposal_created_at : nat64;
 };
 type CreatePoll = record {
@@ -137,10 +137,10 @@ type ProposalType = variant {
   GeneralPurpose;
 };
 type Proposals = record {
-  to : opt principal;
   has_been_processed_secound : bool;
   principal_of_action : principal;
   share_count : nat64;
+  token_to : opt principal;
   proposal_expired_at : nat64;
   new_dao_name : opt text;
   proposal_submitted_at : nat64;
@@ -163,7 +163,8 @@ type Proposals = record {
   new_daotype : opt text;
   group_to_join : opt text;
   comments_list : vec Comment;
-  cool_down_period : opt nat32;
+  token_from : opt principal;
+cool_down_period : opt nat32;
   proposal_type : ProposalType;
   required_votes : nat32;
 };
@@ -192,7 +193,7 @@ type TokenTransferArgs = record {
   tokens : nat64;
 };
 type TokenTransferPolicy = record {
-  from : principal;
+  to : principal;
   description : text;
   tokens : nat64;
   action_member : principal;
