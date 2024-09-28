@@ -17,6 +17,7 @@ import GeneralPurpose from './GeneralPurpose';
 import DaoConfig from './DaoConfig';
 import AddMember from './AddMember';
 import RemoveMember from './RemoveMember';
+import BountyRaised from './BountyRaised';
 function CreateProposal() {
   const navigate = useNavigate();
 
@@ -67,6 +68,14 @@ function CreateProposal() {
     description: "",
     action_member: "",
   });
+  const[bountyRaised,setBountyRaised] = useState({
+    proposal_expired_at : '',
+    description : '',
+    tokens :'',
+    action_member : '',
+    proposal_created_at : '',
+    bounty_task :'',
+  })
   const [groupNames, setGropNames] = useState([]);
   console.log("group", groupNames);
 
@@ -145,6 +154,12 @@ function CreateProposal() {
       [e.target.name]: e.target.value,
     });
   };
+  const handleInputBountyRaised = (e) => {
+    setBountyRaised({
+      ...bountyRaised,
+      [e.target.name]: e.target.value,
+    });
+  };
   const handleSubmit = async (e) => {
     console.log("slkadjlksajdlkasj");
 
@@ -189,7 +204,7 @@ function CreateProposal() {
           await submitDaoConfig({
             daotype: daoConfig.daotype,
             description: daoConfig.description,
-            dao_name: daoConfig.dao_name,
+            new_dao_name: daoConfig.dao_name,
             action_member: Principal.fromText(daoConfig.action_member),
             purpose: daoConfig.purpose,
           });
@@ -206,6 +221,15 @@ function CreateProposal() {
             description: removeMember.description,
             action_member: Principal.fromText(removeMember.action_member),
           });
+          case 'BountyRaised':
+            await submitBountyRaised({
+              proposal_expired_at : new Date(bountyRaised.proposal_expired_at).getTime(),
+              description :bountyRaised.description,
+              tokens : Number(bountyRaised.tokens),
+              action_member : Principal.fromText(bountyRaised.action_member),
+              proposal_created_at :new Date(bountyRaised.proposal_created_at).getTime(),
+              bounty_task : bountyRaised.bounty_task,
+            });
         // default:
         //     toast.error('Please select a proposal type and fill in the details.');
       }
@@ -233,6 +257,8 @@ function CreateProposal() {
  };
 
   const submitBountyDone = async (bountyDone) => {
+    console.log("bounty done",bountyDone);
+    
 try {
       const daoCanister = await createDaoActor(daoCanisterId);
       console.log("daocanister iss", daoCanisterId);
@@ -338,6 +364,24 @@ const formattedInputData = {
     }
   };
 
+  const submitBountyRaised = async (bountyRaised) => {
+
+    console.log("raised",bountyRaised);
+    
+    try {
+          const daoCanister = await createDaoActor(daoCanisterId);
+          console.log("daocanister iss", daoCanisterId);
+  ;
+       
+          const response = await daoCanister.proposal_to_bounty_raised(bountyRaised);
+          console.log("response of bounty raised ", response)
+          toast.success("Bounty Raised  proposal created successfully");
+          movetodao();
+        } catch (error) {
+          console.log("error of add", error);
+         }
+    };
+
   useEffect(() => {
 const fetchGroupNames = async () => {
 const daoCanister = await createDaoActor(daoCanisterId);
@@ -424,6 +468,7 @@ const daoCanister = await createDaoActor(daoCanisterId);
                     <option value="DaoConfig">Dao Config</option>
                     <option value="AddMember">Add Member</option>
                     <option value="RemoveMember">Remove Member</option>
+                    <option value="BountyRaised">Bounty Raised</option>
                   </select>
                 </div>
 
@@ -456,7 +501,9 @@ const daoCanister = await createDaoActor(daoCanisterId);
 <RemoveMember removeMember={removeMember} handleInputRemoveMember={handleInputRemoveMember}
                     groupNames={groupNames} />
                 )}
-
+          {proposalType === "BountyRaised" && (
+<BountyRaised bountyRaised={bountyRaised} handleInputBountyRaised={handleInputBountyRaised}/>
+                )}
                 <div className="flex justify-center my-8">
                   {
                     loading ? <CircularProgress /> :
