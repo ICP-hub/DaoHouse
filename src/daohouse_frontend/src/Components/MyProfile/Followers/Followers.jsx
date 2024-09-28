@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { RxArrowTopRight } from "react-icons/rx";
 import MyProfileSkelton from "../../SkeletonLoaders/MyProfileSkelton";
 import { useAuth } from "../../utils/useAuthClient";
-import Avatar from "../../../../assets/Avatar.png";
 import { Principal } from "@dfinity/principal";
 import Container from "../../Container/Container";
 import NoDataComponent from "../../Dao/NoDataComponent";
+import SearchProposals from "../../../Components/Proposals/SearchProposals";
 
 const Followers = () => {
   const className = "Followers";
   const { backendActor, createDaoActor, stringPrincipal } = useAuth();
   const [joinedDAO, setJoinedDAO] = useState([]);
+  const [fetchedDAOs, setFetchedDAOs] = useState([]); // State for search results
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const canisterId = process.env.CANISTER_ID_IC_ASSET_HANDLER;
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
-  
 
   const getJoinedDaos = async () => {
     setLoading(true);
@@ -43,38 +43,83 @@ const Followers = () => {
       setLoading(false);
     }
   };
+
+  const fetchDaoDetails = async (daoList) => {
+    const allDaoDetails = await Promise.all(
+      daoList.map(async (data) => {
+        try {
+          const daoCanister = await createDaoActor(data.dao_canister_id);
+          const dao_details = await daoCanister.get_dao_detail();
+          return { ...dao_details, dao_canister_id: data.dao_canister_id };
+        } catch (err) {
+          console.error(`Error fetching details for DAO ${data.dao_canister_id}:`, err);
+          return null;
+        }
+      })
+    );
+    return allDaoDetails.filter(Boolean);
+  };
+
   const getImageUrl = (imageId) => {
     return `${protocol}://${canisterId}.${domain}/f/${imageId}`;
+  };
+
+  const handleViewProfile = (daoCanisterId) => {
+    window.location.href = `dao/profile/${daoCanisterId}`;
+  };
+
+  const getSearchDao = async () => {
+    if (!searchTerm.trim()) return setFetchedDAOs([]); // Clear the search results if input is empty
+
+    try {
+      const response = await backendActor.search_dao(searchTerm); // Fetch the searched DAOs
+      const combinedSearchDaoDetails = await fetchDaoDetails(response);
+      setFetchedDAOs(combinedSearchDaoDetails); // Update state with search results
+    } catch (error) {
+      console.error("Error searching DAOs:", error);
+    }
   };
 
   useEffect(() => {
     getJoinedDaos();
   }, [backendActor]);
 
-  const handleViewProfile = (daoCanisterId) => {
-    window.location.href = `dao/profile/${daoCanisterId}`;
-  };
-  
+  useEffect(() => {
+    if (searchTerm) getSearchDao();
+  }, [searchTerm]);
 
+  const displayDAOs = searchTerm ? fetchedDAOs : joinedDAO; // Show search results if searchTerm is not empty
 
   return (
     <div className={`${className} w-full`}>
       <div className="lg:ml-10 tablet:mt-12 mt-5 md:px-0 px-3">
-        <h3 className="text-[#05212C] tablet:text-[24px] text-[18px] translate-x-[18px] translate-y-[-90px] tablet:font-bold font-mulish mb-4">
-         Followed  Dao List
-        </h3>
+        <div className="flex justify-between items-center translate-y-[-90px]">
+          <h3 className="text-[#05212C] tablet:text-[24px] text-[18px] tablet:font-bold font-mulish mb-4">
+            {searchTerm ? "Search Results" : "Followed DAO List"}
+          </h3>
+          <div className="flex-grow lg:flex justify-end hidden">
+            <SearchProposals
+              width="90%"
+              bgColor="transparent"
+              placeholder="Search here"
+              className="border-2 border-[#AAC8D6] w-full max-w-lg"
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+
         {loading ? (
-           <MyProfileSkelton />
-        ) : joinedDAO.length === 0 ? (
-          <NoDataComponent text="No DAOs joined yet!" />
+          <MyProfileSkelton />
+        ) : displayDAOs.length === 0 ? (
+          <NoDataComponent text={searchTerm ? "No DAOs found!" : "No DAOs joined yet!"} />
         ) : (
-          <div className="bg-[#F4F2EC] translate-y-[-90px] ">
-       <Container classes="__cards w-[1000px] p-[20px] translate-x-[-18px] rounded-lg overflow-hidden">
-              <div className="grid grid-cols-1 tablet:grid-cols-2 gap-4 max-h-[350px] overflow-y-auto px-4 custom-scrollbar"> {/* Add custom-scrollbar class */}
-                {joinedDAO.map((dao, index) => (
+          <div className="bg-[#F4F2EC] translate-y-[-20px]">
+            <Container classes="__cards w-[1000px] p-[20px] translate-x-[-18px] rounded-lg overflow-hidden">
+              <div className="grid grid-cols-1 tablet:grid-cols-2 gap-4 max-h-[350px] overflow-y-auto px-4 custom-scrollbar">
+                {displayDAOs.map((dao, index) => (
                   <div
                     key={index}
-                    className="bg-white shadow-lg rounded-lg flex items-center p-4 space-x-4 transition-transform transform hover:scale-105"
+                    className="bg-white shadow-lg rounded-lg flex items-center p-4 space-x-4 transition-transform "
                   >
                     <img
                       src={getImageUrl(dao?.image_id)}
@@ -82,7 +127,7 @@ const Followers = () => {
                       className="w-16 h-16 rounded-full border-2 border-black"
                     />
                     <div className="flex-1">
-                      <h4 className="text-lg font-semibold">{dao?.dao_name || "No Name"}</h4>
+                      <h4 className="text-lg font-mulish">{dao?.dao_name || "No Name"}</h4>
                       <p className="text-gray-500">{dao?.purpose || "No Purpose"}</p>
                     </div>
                     <button
