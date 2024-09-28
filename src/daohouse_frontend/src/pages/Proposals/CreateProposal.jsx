@@ -68,13 +68,13 @@ function CreateProposal() {
     description: "",
     action_member: "",
   });
-  const[bountyRaised,setBountyRaised] = useState({
-    proposal_expired_at : '',
-    description : '',
-    tokens :'',
-    action_member : '',
-    proposal_created_at : '',
-    bounty_task :'',
+  const [bountyRaised, setBountyRaised] = useState({
+    proposal_expired_at: '',
+    description: '',
+    tokens: '',
+    action_member: '',
+    proposal_created_at: '',
+    bounty_task: '',
   })
   const [groupNames, setGropNames] = useState([]);
   console.log("group", groupNames);
@@ -221,15 +221,15 @@ function CreateProposal() {
             description: removeMember.description,
             action_member: Principal.fromText(removeMember.action_member),
           });
-          case 'BountyRaised':
-            await submitBountyRaised({
-              proposal_expired_at : new Date(bountyRaised.proposal_expired_at).getTime(),
-              description :bountyRaised.description,
-              tokens : Number(bountyRaised.tokens),
-              action_member : Principal.fromText(bountyRaised.action_member),
-              proposal_created_at :new Date(bountyRaised.proposal_created_at).getTime(),
-              bounty_task : bountyRaised.bounty_task,
-            });
+        case 'BountyRaised':
+          await submitBountyRaised({
+            proposal_expired_at: new Date(bountyRaised.proposal_expired_at).getTime(),
+            description: bountyRaised.description,
+            tokens: Number(bountyRaised.tokens),
+            action_member: Principal.fromText(bountyRaised.action_member),
+            proposal_created_at: new Date(bountyRaised.proposal_created_at).getTime(),
+            bounty_task: bountyRaised.bounty_task,
+          });
         // default:
         //     toast.error('Please select a proposal type and fill in the details.');
       }
@@ -254,45 +254,45 @@ function CreateProposal() {
     } catch (error) {
       console.log("error of add", error);
     }
- };
+  };
 
   const submitBountyDone = async (bountyDone) => {
-    console.log("bounty done",bountyDone);
-    
-try {
+    console.log("bounty done", bountyDone);
+
+    try {
       const daoCanister = await createDaoActor(daoCanisterId);
       console.log("daocanister iss", daoCanisterId);
       console.log("bounty done", bountyDone?.proposalExpiredAt);
-     console.log("bounty done  proposal : ", daoCanister)
+      console.log("bounty done  proposal : ", daoCanister)
       const response = await daoCanister.proposal_to_bounty_done(bountyDone);
       console.log("response of add ", response)
       toast.success("Bounty  proposal created successfully");
       movetodao();
     } catch (error) {
       console.log("error of add", error);
-     }
-};
+    }
+  };
 
-const submitGeneralPurp = async (generalPurp) => {
-try {
+  const submitGeneralPurp = async (generalPurp) => {
+    try {
       const daoCanister = await createDaoActor(daoCanisterId);
       console.log("daocanister iss", daoCanisterId);
-     console.log("generl purpose  proposal : ", daoCanister)
+      console.log("generl purpose  proposal : ", daoCanister)
       const response = await daoCanister.proposal_to_create_general_purpose(generalPurp);
       console.log("response of general ", response)
       toast.success("General Purpose  proposal created successfully");
       movetodao();
     } catch (error) {
       console.log("error of add", error);
-}
-};
+    }
+  };
 
   const submitDaoConfig = async (daoConfig) => {
-console.log("dao condifg", daoConfig);
-try {
+    console.log("dao condifg", daoConfig);
+    try {
       const daoCanister = await createDaoActor(daoCanisterId);
       console.log("daoCanister ID:", daoCanisterId);
-const response = await daoCanister.proposal_to_chnage_dao_config(daoConfig);
+      const response = await daoCanister.proposal_to_chnage_dao_config(daoConfig);
       console.log("Response from proposal:", response);
       if (response.Ok) {
         toast.success("DAO configuration proposal created successfully");
@@ -302,17 +302,17 @@ const response = await daoCanister.proposal_to_chnage_dao_config(daoConfig);
       else {
         toast.error("Failed to create DAO configruation proposal")
       }
-} catch (error) {
-console.error("Error during proposal submission:", error);
-}
+    } catch (error) {
+      console.error("Error during proposal submission:", error);
+    }
   };
   const submitAddMember = async () => {
-const formattedInputData = {
+    const formattedInputData = {
       group_name: addMember.group_name,
       description: addMember.description,
       new_member: Principal.fromText(addMember.new_member),
     };
-try {
+    try {
       const daoCanister = await createDaoActor(daoCanisterId);
       const response = await daoCanister.proposal_to_add_member_to_group(formattedInputData);
       console.log("Response from  add member proposal:", response);
@@ -329,13 +329,13 @@ try {
       else {
         toast.error("Failed to create Add Member proposal");
       }
-} catch (error) {
+    } catch (error) {
       console.error("Error during proposal submission:", error);
 
     }
   };
   const submitRemoveMember = async () => {
-const formattedInputData = {
+    const formattedInputData = {
       group_name: removeMember.group_name,
       description: removeMember.description,
       action_member: Principal.fromText(removeMember.action_member),
@@ -358,7 +358,7 @@ const formattedInputData = {
       else {
         toast.error("Failed to create Add Member proposal");
       }
-} catch (error) {
+    } catch (error) {
       console.error("Error during proposal submission:", error);
 
     }
@@ -366,25 +366,25 @@ const formattedInputData = {
 
   const submitBountyRaised = async (bountyRaised) => {
 
-    console.log("raised",bountyRaised);
-    
+    console.log("raised", bountyRaised);
+
     try {
-          const daoCanister = await createDaoActor(daoCanisterId);
-          console.log("daocanister iss", daoCanisterId);
-  ;
-       
-          const response = await daoCanister.proposal_to_bounty_raised(bountyRaised);
-          console.log("response of bounty raised ", response)
-          toast.success("Bounty Raised  proposal created successfully");
-          movetodao();
-        } catch (error) {
-          console.log("error of add", error);
-         }
-    };
+      const daoCanister = await createDaoActor(daoCanisterId);
+      console.log("daocanister iss", daoCanisterId);
+      ;
+
+      const response = await daoCanister.proposal_to_bounty_raised(bountyRaised);
+      console.log("response of bounty raised ", response)
+      toast.success("Bounty Raised  proposal created successfully");
+      movetodao();
+    } catch (error) {
+      console.log("error of add", error);
+    }
+  };
 
   useEffect(() => {
-const fetchGroupNames = async () => {
-const daoCanister = await createDaoActor(daoCanisterId);
+    const fetchGroupNames = async () => {
+      const daoCanister = await createDaoActor(daoCanisterId);
       const daogroups = await daoCanister.get_dao_groups();
       const names = daogroups.map(group => group.group_name);
       setGropNames(names)
@@ -462,9 +462,9 @@ const daoCanister = await createDaoActor(daoCanisterId);
                     className="w-full max-w-[800px] px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                   >
                     <option value="">Select Proposal Type</option>
-                 <option value="bountyDone">Bounty Done</option>
-                 <option value="tokenTransfer">Token Transfer</option>
-                <option value="GeneralPurp">General Purpose</option>
+                    <option value="bountyDone">Bounty Done</option>
+                    <option value="tokenTransfer">Token Transfer</option>
+                    <option value="GeneralPurp">General Purpose</option>
                     <option value="DaoConfig">Dao Config</option>
                     <option value="AddMember">Add Member</option>
                     <option value="RemoveMember">Remove Member</option>
@@ -481,28 +481,28 @@ const daoCanister = await createDaoActor(daoCanisterId);
                 )}
 
                 {proposalType === "tokenTransfer" && (
-<TokenTransfer
+                  <TokenTransfer
                     tokenTransfer={tokenTransfer}
                     handleInputTransferToken={handleInputTranferToken} />
                 )}
 
-{proposalType === "GeneralPurp" && (
- <GeneralPurpose generalPurp={generalPurp} handleInputGeneralPurp={handleInputGeneralPurp} />
+                {proposalType === "GeneralPurp" && (
+                  <GeneralPurpose generalPurp={generalPurp} handleInputGeneralPurp={handleInputGeneralPurp} />
                 )}
 
-{proposalType === "DaoConfig" && (
-<DaoConfig daoConfig={daoConfig} handleInputDaoConfig={handleInputDaoConfig} />
+                {proposalType === "DaoConfig" && (
+                  <DaoConfig daoConfig={daoConfig} handleInputDaoConfig={handleInputDaoConfig} />
                 )}
 
                 {proposalType === "AddMember" && (
-<AddMember addMember={addMember} handleInputAddMember={handleInputAddMember} groupNames={groupNames} />
+                  <AddMember addMember={addMember} handleInputAddMember={handleInputAddMember} groupNames={groupNames} />
                 )}
                 {proposalType === "RemoveMember" && (
-<RemoveMember removeMember={removeMember} handleInputRemoveMember={handleInputRemoveMember}
+                  <RemoveMember removeMember={removeMember} handleInputRemoveMember={handleInputRemoveMember}
                     groupNames={groupNames} />
                 )}
-          {proposalType === "BountyRaised" && (
-<BountyRaised bountyRaised={bountyRaised} handleInputBountyRaised={handleInputBountyRaised}/>
+                {proposalType === "BountyRaised" && (
+                  <BountyRaised bountyRaised={bountyRaised} handleInputBountyRaised={handleInputBountyRaised} />
                 )}
                 <div className="flex justify-center my-8">
                   {
@@ -515,7 +515,7 @@ const daoCanister = await createDaoActor(daoCanisterId);
                       >
                         Submit
                       </button>
-}
+                  }
 
                 </div>
               </div>
@@ -532,3 +532,6 @@ const daoCanister = await createDaoActor(daoCanisterId);
 }
 
 export default CreateProposal;
+
+
+
