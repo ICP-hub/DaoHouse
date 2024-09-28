@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "../DaoProfile/DaoProfile.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import Container from "../../Components/Container/Container";
@@ -12,6 +12,7 @@ import Card from "../../Components/Proposals/Card";
 import avatar from "../../../assets/avatar.png";
 import Comments from "../Post/Comments";
 import ProposalDetailsLoaderSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/ProposalDetailsLoaderSkeleton";
+import NoDataComponent from "../../Components/Dao/NoDataComponent";
 
 const ProposalsDetails = () => {
    const className="DaoProfile"
@@ -29,6 +30,7 @@ const ProposalsDetails = () => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [followersCount, setFollowersCount] = useState(0);
   const [userProfile, setUserProfile] = useState(null);
+  const [isComment, setIsComment] = useState(false);
 
   const maxWords = 250;
 
@@ -54,46 +56,49 @@ const ProposalsDetails = () => {
 
   const { truncated, isTruncated } = truncateText(dao?.purpose || 'Dao Purpose', maxWords);
 
+  const daoActor = useMemo(() => {
+    return daoCanisterId ? createDaoActor(daoCanisterId) : null;
+  }, [daoCanisterId, createDaoActor]);
+
   useEffect(() => {
     const fetchDaoDetails = async () => {
-      if (daoCanisterId) {
-        setLoading(true);
-        try {
-          const daoActor = createDaoActor(daoCanisterId);
-          setVoteApi(daoActor)
-          const proposalDetails = await daoActor.get_proposal_by_id(proposalId);
-          setProposal(proposalDetails);
+      if (!daoActor) return;
 
-          const daoDetails = await daoActor.get_dao_detail();
-          setDao(daoDetails);
+      setLoading(true);
+      try {
+        const proposalDetails = await daoActor.get_proposal_by_id(proposalId);
+        setProposal(proposalDetails);
 
-          const profileResponse = await backendActor.get_user_profile();
-          if (profileResponse.Ok) {
-            setUserProfile(profileResponse.Ok);
-            const currentUserId = Principal.fromText(profileResponse.Ok.user_id.toString());
+        const daoDetails = await daoActor.get_dao_detail();
+        setDao(daoDetails);
 
-            const daoFollowers = await daoActor.get_dao_followers();
-            setDaoFollowers(daoFollowers);
-            setFollowersCount(daoFollowers.length);
-            setIsFollowing(daoFollowers.some(follower => follower.toString() === currentUserId.toString()));
+        const profileResponse = await backendActor.get_user_profile();
+        if (profileResponse.Ok) {
+          setUserProfile(profileResponse.Ok);
+          const currentUserId = Principal.fromText(profileResponse.Ok.user_id.toString());
 
-            const daoMembers = await daoActor.get_dao_members();
-            setDaoMembers(daoMembers);
-            const isCurrentUserMember = daoMembers.some(member => member.toString() === currentUserId.toString());
-            setIsMember(isCurrentUserMember);
-            setJoinStatus(isCurrentUserMember ? 'Joined' : 'Join DAO');
-          }
-        } catch (error) {
-          console.error('Error fetching DAO details:', error);
-        } finally {
-          setTimeout(() => {
-            setLoading(false);
-          }, 1000)
+          const daoFollowers = await daoActor.get_dao_followers();
+          setDaoFollowers(daoFollowers);
+          setFollowersCount(daoFollowers.length);
+          setIsFollowing(daoFollowers.some(follower => follower.toString() === currentUserId.toString()));
+
+          const daoMembers = await daoActor.get_dao_members();
+          setDaoMembers(daoMembers);
+          const isCurrentUserMember = daoMembers.some(member => member.toString() === currentUserId.toString());
+          setIsMember(isCurrentUserMember);
+          setJoinStatus(isCurrentUserMember ? 'Joined' : 'Join DAO');
         }
+      } catch (error) {
+        console.error('Error fetching DAO details:', error);
+      } finally {
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
       }
     };
+
     fetchDaoDetails();
-  }, [daoCanisterId, backendActor, createDaoActor]);
+  }, [daoActor, backendActor, proposalId]);
 
   const handleJoinDao = async () => {
     if (joinStatus === 'Joined') return;
@@ -139,6 +144,10 @@ const ProposalsDetails = () => {
     }
   };
 
+  function toggleComment() {
+    setIsComment(!isComment);
+  }
+
   const getImageUrl = (imageId) => {
     return `${process.env.DFX_NETWORK === "ic" ? "https" : "http"}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943"}/f/${imageId}`;
   };
@@ -152,7 +161,7 @@ const ProposalsDetails = () => {
   }
 
   if (!dao) {
-    return <div>No DAO details available</div>;
+    return <div><NoDataComponent /></div>;
   }
 
   return (
@@ -212,8 +221,12 @@ const ProposalsDetails = () => {
 
         
                 <div>
-                  <Card proposal={proposal} showActions={true} isProposalDetails={true} voteApi={voteApi} />
-                  <Comments daoId={daoCanisterId} proposalId={proposalId} />
+               <Card proposal={proposal} showActions={true} isProposalDetails={true} voteApi={voteApi} isComment={isComment} setIsComment={setIsComment} />
+                  { isComment && (
+                    <Comments daoId={daoCanisterId} proposalId={proposalId} />
+                  )
+                  }
+
                 </div>
         
       </Container>
