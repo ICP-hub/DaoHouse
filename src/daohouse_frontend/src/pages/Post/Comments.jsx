@@ -4,6 +4,8 @@ import { useAuth } from '../../Components/utils/useAuthClient';
 
 import userImage from "../../../assets/commentUser.jpg";
 import { FaReply } from "react-icons/fa6";
+import CommentsSkeletonLoader from '../../Components/SkeletonLoaders/CommentsSkeletonLoader/CommentsSkeletonLoader';
+import CommentSkeletonLoader from '../../Components/SkeletonLoaders/CommentsSkeletonLoader/CommentSkeletonLoader';
 
 // Comment component
 const Comment = ({ comment, proposalId, daoId }) => {
@@ -15,6 +17,7 @@ const Comment = ({ comment, proposalId, daoId }) => {
   const [profileImg, setProfileImg] = useState("");
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Fetch user profile when the component mounts
@@ -29,6 +32,7 @@ const Comment = ({ comment, proposalId, daoId }) => {
             : userImage;
           setProfileImg(profileImg);
         }
+        setIsLoading(false)
       } catch (error) {
         console.error("Error fetching profile:", error);
       }
@@ -77,6 +81,10 @@ const Comment = ({ comment, proposalId, daoId }) => {
   };
 
   return (
+    <>
+    {isLoading ? (
+      <CommentSkeletonLoader />
+    ) : (
     <div className="flex font-mulish">
       <div className="p-4 rounded-lg w-full gap-[18px]">
         {/* Show the author's profile image and username */}
@@ -143,6 +151,8 @@ const Comment = ({ comment, proposalId, daoId }) => {
 
       </div>
     </div>
+    )}
+    </>
   );
 };
 
@@ -163,15 +173,15 @@ const Reply = ({ reply }) => {
 
 
 // Comments list component
-const Comments = ({ daoId, proposalId }) => {
+const Comments = ({ daoId, proposalId, commentCount, setCommentCount }) => {
   const [comments, setComments] = useState([]);
   const [visibleComments, setVisibleComments] = useState(3);
   const [showMore, setShowMore] = useState(false);
   const [newComment, setNewComment] = useState("");
   const [daoActor, setDaoActor] = useState({});
   const {createDaoActor} = useAuth()
+  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
     const fetchComments = async () => {
       try {
         // Fetch proposal details which include comments using get_proposal_by_id
@@ -186,9 +196,12 @@ const Comments = ({ daoId, proposalId }) => {
         }
       } catch (error) {
         console.error('Error fetching comments:', error);
+      } finally {
+        setIsLoading(false)
       }
     };
 
+  useEffect(() => {
     fetchComments();
   }, [proposalId, daoId]);
 
@@ -210,15 +223,20 @@ const Comments = ({ daoId, proposalId }) => {
         console.log("OK");
         
         // Add new comment to the list
-        setComments([...comments, {
-          author_principal: response.Ok.author_principal,
-          comment_text: newComment,
-          created_at: Date.now(),
-          likes: 0,
-          replies: [],
-          comment_id: response.Ok.comment_id,
-        }]);
+        setComments(prevComments => [
+          ...prevComments,
+          {
+            author_principal: response.Ok.author_principal,
+            comment_text: newComment,
+            created_at: Date.now(),
+            likes: 0,
+            replies: [],
+            comment_id: response.Ok.comment_id,
+          }
+        ]);
         setNewComment("");
+        setCommentCount(commentCount+1)
+        fetchComments();
       } else {
         console.error("Failed to add comment:", response.Err);
       }
@@ -233,6 +251,10 @@ console.log("newComment:", typeof newComment, newComment);
 
   return (
 
+    <>
+    {isLoading ? (
+      <CommentsSkeletonLoader />
+    ) : (
     <div className='bg-white mt-1 rounded-t-sm rounded-b-lg px-12 py-12 font-mulish bg'>
       <h3 className="font-bold mb-6 text-[#234A5A] text-xl">Comments</h3>
 
@@ -258,6 +280,8 @@ console.log("newComment:", typeof newComment, newComment);
         </div>
       </div>
     </div>
+    )}
+    </>
   );
 };
 

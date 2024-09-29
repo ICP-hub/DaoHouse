@@ -30,7 +30,8 @@ const ProposalsDetails = () => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [followersCount, setFollowersCount] = useState(0);
   const [userProfile, setUserProfile] = useState(null);
-  const [isComment, setIsComment] = useState(false);
+  const [isComment, setIsComment] = useState(true);
+  const [commentCount, setCommentCount] = useState(0);  // State for comment count
 
   const maxWords = 250;
 
@@ -68,6 +69,10 @@ const ProposalsDetails = () => {
       try {
         const proposalDetails = await daoActor.get_proposal_by_id(proposalId);
         setProposal(proposalDetails);
+        console.log("propos",proposalDetails);
+
+        setCommentCount(Number(BigInt(proposalDetails?.comments || 0)))
+        
 
         const daoDetails = await daoActor.get_dao_detail();
         setDao(daoDetails);
@@ -221,9 +226,11 @@ const ProposalsDetails = () => {
 
         
                 <div>
-               <Card proposal={proposal} showActions={true} isProposalDetails={true} voteApi={voteApi} isComment={isComment} setIsComment={setIsComment} />
+
+                  <Card proposal={proposal} showActions={true} isProposalDetails={true} voteApi={voteApi} isComment={isComment} setIsComment={setIsComment} commentCount={commentCount}  />
+
                   { isComment && (
-                    <Comments daoId={daoCanisterId} proposalId={proposalId} />
+                    <Comments daoId={daoCanisterId} proposalId={proposalId} commentCount={commentCount} setCommentCount={setCommentCount} />
                   )
                   }
 

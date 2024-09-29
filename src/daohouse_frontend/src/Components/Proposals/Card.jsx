@@ -14,7 +14,8 @@ import userImage from "../../../assets/commentUser.jpg";
 import { CircularProgress } from "@mui/material";
 
 
-export default function Card({ proposal, voteApi, showActions, isProposalDetails, isComment, setIsComment }) {
+export default function Card({ proposal, voteApi, showActions, isProposalDetails, isComment, setIsComment, commentCount}) {
+
 
   console.log("Vote API", proposal);
   
@@ -26,7 +27,8 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const [votersList, setVotersList] = useState(null)
   const [userProfile, setUserProfile] = useState({})
   const [profileImg, setProfileImg] = useState("");
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isDisabled, setIsDisabled] = useState(false)
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
   console.log(votersList);
@@ -36,18 +38,22 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
 
   useEffect(() => {
     async function fetchUserProfile() {
-      const userProfile = await backendActor.get_profile_by_id(Principal.fromUint8Array(proposal?.created_by?._arr));
-      console.log("User", userProfile);
-      setUserProfile(userProfile.Ok)
-      const profileImg = userProfile.Ok.profile_img
-            ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${userProfile.Ok.profile_img}`
-            : userImage;
-      setProfileImg(profileImg);
-      
+      try {
+        const userProfile = await backendActor.get_profile_by_id(Principal.fromUint8Array(proposal?.created_by?._arr));
+        setUserProfile(userProfile.Ok);
+        const profileImg = userProfile.Ok.profile_img
+          ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${userProfile.Ok.profile_img}`
+          : userImage;
+        setProfileImg(profileImg);
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      } finally {
+        setIsLoading(false); // Set loading to false after fetching data
+      }
     }
 
-    fetchUserProfile()
-  }, [proposal])
+    fetchUserProfile();
+  }, [proposal]);
 
   const approvedVotersList = useMemo(() => proposal?.approved_votes_list || [], [proposal])
   const rejectedVotersList = useMemo(() => proposal?.rejected_votes_list || [], [proposal])
@@ -76,8 +82,6 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
     setRejectedVotes(proposal?.rejected_votes_list?.length || 0);
     setVoteCount((proposal?.approved_votes_list?.length || 0) + (proposal?.rejected_votes_list?.length || 0));
   }, [proposal]);
-
-  const commentcount = Number(BigInt(proposal?.comments || 0));
   // console.log(proposal);
   
 
@@ -165,7 +169,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
 
 
     try {
-      setIsLoading(true)
+      setIsDisabled(true)
       const voteParam = voteStatus === "In Favor" ? { Yes: null } : { No: null };
       const result = await voteApi.vote(proposal.proposal_id, voteParam);
       // console.log("Result", result);
@@ -185,13 +189,11 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
         toast.error(result.Err);
       }
     } catch (error) {
-      setIsLoading(true)
       console.error("Error submitting vote:", error);
       toast.error("Error submitting vote:", error)
 
     } finally {
-      // setIsLoading(false);
-
+      setIsDisabled(false);
     }
   };
 
@@ -224,8 +226,16 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
         {/* Top Section */}
         <div className="w-full flex justify-between items-center bg-[#0E3746] px-[20px] md:px-12 py-6  rounded-t-lg rounded-b-none">
           <div className="flex gap-[12px] md:gap-8 justify-center items-center">
+          {isLoading ? (
+            <div className="w-8 h-8 md:w-16 md:h-16 rounded-full bg-gray-300 animate-pulse"></div>
+          ) : (
             <img src={profileImg || avatar} alt="user avatar" className="w-8 h-8 md:w-16 md:h-16 rounded-full" />
+          )}
+            {isLoading ? (
+            <div className="w-24 h-6 md:w-36 md:h-8 bg-gray-400"></div>
+          ) : (
             <h4 className="text-white text-sm md:text-xl font-semibold">{userProfile.username || "Username"}</h4>
+          )}
           </div>
           <div className="flex gap-4">
             <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
@@ -289,7 +299,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                       <svg className="mb-1" width="16" height="15" viewBox="0 0 16 15">
                         <path d="M3.11111 9.22293H12.8889V8.34456H3.11111V9.22293ZM3.11111 6.58781H12.8889V5.70943H3.11111V6.58781ZM3.11111 3.95269H12.8889V3.07431H3.11111V3.95269ZM16 15L13.2649 12.2972H1.43556C1.02667 12.2972 0.685333 12.162 0.411556 11.8914C0.137778 11.6209 0.000592593 11.2833 0 10.8787V1.41857C0 1.01452 0.137185 0.677227 0.411556 0.406687C0.685926 0.136148 1.02726 0.000585583 1.43556 0H14.5644C14.9733 0 15.3147 0.135562 15.5884 0.406687C15.8622 0.677812 15.9994 1.01511 16 1.41857V15ZM1.43556 11.4189H13.6444L15.1111 12.8629V1.41857C15.1111 1.28389 15.0542 1.16004 14.9404 1.04702C14.8267 0.934005 14.7013 0.877789 14.5644 0.878374H1.43556C1.29926 0.878374 1.17393 0.93459 1.05956 1.04702C0.945185 1.15945 0.888296 1.2833 0.888889 1.41857V10.8787C0.888889 11.0134 0.945778 11.1372 1.05956 11.2502C1.17333 11.3632 1.29867 11.4195 1.43556 11.4189Z" fill="black" />
                       </svg>
-                      <span className="md:ml-2 text-sm mobile:text-base">{commentcount} Comments</span>
+                      <span className="md:ml-2 text-sm mobile:text-base">{commentCount} Comments</span>
                     </button>
                   )}
 
@@ -339,13 +349,10 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                   </div>
                     <button
                         type="submit"
-                        className={`bg-[#0E3746] hover:bg-[#051c24] flex justify-center text-white py-1 px-4 rounded-full transition-colors duration-300 ${isLoading ? "w-20": ""}`}
+                        className={`bg-[#0E3746] hover:bg-[#051c24] flex justify-center text-white py-1 px-4 rounded-full transition-colors duration-300 ${isDisabled && "bg-[#859ca5]"}`}
+                        disabled={isDisabled}
                       >
-                        {isLoading ? (
-                          <div className="w-4 h-4 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
-                        ) : (
-                          "Submit"
-                        )}
+                          Submit
                       </button>
                 </form>
               </div>
