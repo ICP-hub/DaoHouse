@@ -15,7 +15,10 @@ pub enum ProposalState {
     Unreachable,
 }
 
-#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+
+#[derive(
+    CandidType, Serialize, Deserialize, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone, Default,
+)]
 pub struct ProposalPlace {
     pub place_name : String,
     pub min_required_thredshold : u64,
@@ -87,7 +90,8 @@ pub struct Proposals {
     pub token_to: Option<Principal>,
     pub has_been_processed: bool, 
     pub has_been_processed_secound : bool,
-    pub proposal_entiry : ProposalPlace,
+    // pub proposal_entiry : ProposalPlace,
+    pub minimum_threadsold : u64,
 }
 
 // for proposal comments
@@ -121,7 +125,7 @@ pub struct ProposalInput {
     pub bounty_task : Option<String>,
     pub poll_title : Option<String>, 
     pub cool_down_period : Option<u32>,
-    pub proposal_entiry : ProposalPlace,
+    pub minimum_threadsold : u64,
     // pub proposal_amount:String,
     // pub proposal_receiver_id:String,
     // pub created_by: Principal,
@@ -162,7 +166,8 @@ pub struct ReplyCommentArgs {
 pub struct LedgerCanisterId {
     pub id: Principal,
 }
-#[derive(Clone, CandidType, Serialize, Deserialize)]
+
+#[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct Dao {
     pub dao_id: Principal,
     pub dao_name: String,
@@ -189,6 +194,7 @@ pub struct Dao {
     pub token_symbol: String,
     pub tokens_required_to_vote: u32, // pub dao_groups: Vec<DaoGroup>,
     pub daohouse_canister_id: Principal,
+    pub proposal_entiry : Vec<ProposalPlace>,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
@@ -239,6 +245,7 @@ pub struct DaoInput {
     pub token_symbol: String,
     pub token_supply: u32,
     pub daohouse_canister_id: Principal,
+    pub proposal_entiry : Vec<ProposalPlace>,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
@@ -377,7 +384,8 @@ pub struct ProposalInstance {
     pub proposal_type: ProposalType,
     pub principal_action : Principal,
     pub dao_members: Vec<Principal>,
-    pub proposal_entiry : ProposalPlace,
+    // pub proposal_entiry : ProposalPlace,
+    pub minimum_threadsold : u64,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize)]
