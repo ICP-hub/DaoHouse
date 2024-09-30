@@ -7,23 +7,24 @@ import { MdOutlineVerifiedUser } from "react-icons/md";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import Container from "../Container/Container";
 import ViewModal from "./ViewModal";
+import CircularProgress from '@mui/material/CircularProgress'; // Ensure this import exists
 
 const Step5 = ({ setData, setActiveStep, data }) => {
   console.log("data", data);
-  
+
   const [loadingNext, setLoadingNext] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMembers, setSelectedMembers] = useState([]);
   const { council, groups, members } = data.step3;
   const users = useMemo(() => data.step3, [data.step3]);
   console.log("user", users);
-  
+
 
   const [quorum, setQuorum] = useState(() => [
-    { name: "Council", index: council.length, vote: 51, members: council },
-    ...groups.map((group, i) => ({
+    { name: "Council", memberCount: council.length, vote: 51, members: council },
+    ...groups.map((group) => ({
       name: group.name,
-      index: group.members.length,
+      memberCount: group.members.length,
       vote: 51,
       members: group.members,
     })),
@@ -31,10 +32,10 @@ const Step5 = ({ setData, setActiveStep, data }) => {
 
   const className = "DAO_Step5";
 
-  const handleVoteChange = (index, newValue) => {
+  const handleVoteChange = (arrayIndex, newValue) => {
     setQuorum((prevQuorum) =>
       prevQuorum.map((item, i) =>
-        i === index ? { ...item, vote: newValue } : item
+        i === arrayIndex ? { ...item, vote: newValue } : item
       )
     );
   };
@@ -52,8 +53,8 @@ const Step5 = ({ setData, setActiveStep, data }) => {
   }, [quorum]);
 
   function handleViewClickModal(members) {
-    setSelectedMembers(members); 
-    setIsModalOpen(true); 
+    setSelectedMembers(members);
+    setIsModalOpen(true);
   }
 
   function handleOnClose() {
@@ -82,17 +83,17 @@ const Step5 = ({ setData, setActiveStep, data }) => {
           </section>
 
           <section className="bg-white rounded-2xl w-full p-4 gap-4 big_phone:flex hidden flex-col">
-            {quorum.map(({ name, index, vote, members }) => (
+            {quorum.map((item, i) => (
               <div
-                key={index}
+                key={i}
                 className="border border-slate-200 p-3 flex items-center w-full rounded-lg"
               >
-                <p className="w-1/3">{name}</p>
+                <p className="w-1/3">{item.name}</p>
 
                 <p className="w-1/3 flex flex-row gap-4">
-                  <span>{index}</span>
+                  <span>{item.memberCount}</span>
                   <button
-                    onClick={() => handleViewClickModal(members)}
+                    onClick={() => handleViewClickModal(item.members)}
                     className="text-cyan-800 bg-slate-200 px-5 py-1 rounded-md"
                   >
                     View
@@ -100,8 +101,8 @@ const Step5 = ({ setData, setActiveStep, data }) => {
                 </p>
 
                 <div className="w-1/3 gap-2 flex items-center">
-                  <RangeInput index={index} handleVoteChange={handleVoteChange} />
-                  <span className="text-nowrap hidden sm:block ">{vote} %</span>
+                  <RangeInput arrayIndex={i} value={item.vote} handleVoteChange={handleVoteChange} />
+                  <span className="text-nowrap hidden sm:block ">{item.vote} %</span>
                 </div>
               </div>
             ))}
@@ -120,20 +121,20 @@ const Step5 = ({ setData, setActiveStep, data }) => {
             </section>
             <hr className="border-t-2 border-gray-400 sm:hidden mt-2" />
 
-            {quorum.map(({ name, index, vote, members }) => (
+            {quorum.map((item, i) => (
               <div
-                key={index}
+                key={i}
                 className="bg-[#EBEBEB] border border-slate-300 p-4 rounded-lg flex flex-col gap-4"
               >
                 {/* Council, Members, and View button with gradient slider */}
                 <section className="flex justify-between items-center pt-2">
                   <div className="flex flex-col gap-2">
-                    <p className="text-sm text-gray-500">{name}</p>
+                    <p className="text-sm text-gray-500">{item.name}</p>
                     <p className="text-sm text-gray-500">
-                      {users[index]?.length || 0} members
+                      {item.memberCount} members
                     </p>
                     <button
-                      onClick={() => handleViewClickModal(members)}
+                      onClick={() => handleViewClickModal(item.members)}
                       className="text-[#229ED9] font-mulish text-sm bg-white border px-5 py-1 rounded-md"
                     >
                       View
@@ -141,8 +142,8 @@ const Step5 = ({ setData, setActiveStep, data }) => {
                   </div>
 
                   <div className="flex flex-col items-end gap-6">
-                    <h2 className="text-sm hidden sm:block">{vote} %</h2>
-                    <RangeInput index={index} handleVoteChange={handleVoteChange} />
+                    <h2 className="text-sm hidden sm:block">{item.vote} %</h2>
+                    <RangeInput arrayIndex={i} value={item.vote} handleVoteChange={handleVoteChange} />
                   </div>
                 </section>
               </div>
@@ -180,20 +181,20 @@ const Step5 = ({ setData, setActiveStep, data }) => {
 
 export default Step5;
 
-const RangeInput = ({ index, handleVoteChange }) => {
-  const [value, setValue] = useState(50);
+const RangeInput = ({ arrayIndex, value, handleVoteChange }) => {
+  const [currentValue, setCurrentValue] = useState(value);
 
   const handleChange = (e) => {
-    const newValue = parseInt(e.target.value);
-    setValue(newValue);
-    handleVoteChange(index, newValue);
+    const newValue = parseInt(e.target.value, 10);
+    setCurrentValue(newValue);
+    handleVoteChange(arrayIndex, newValue);
   };
 
   useEffect(() => {
-    setValue(value);
+    setCurrentValue(value);
   }, [value]);
 
-  const gradient = `linear-gradient(to right, #0e3746 ${value}%, #D0D0D0 ${value}%)`;
+  const gradient = `linear-gradient(to right, #0e3746 ${currentValue}%, #D0D0D0 ${currentValue}%)`;
 
   return (
     <div className="flex items-center w-full gap-2">
@@ -203,14 +204,14 @@ const RangeInput = ({ index, handleVoteChange }) => {
         max={100}
         className="w-[50%] h-[8px] border-3 bg-[#D0D0D0] sm:w-full sm:h-[8px] custom-range translate-x-[42px] sm:translate-x-0"
         step={1}
-        value={value}
+        value={currentValue}
         onChange={handleChange}
         style={{
           background: gradient,
         }}
       />
       <span className="text-xs translate-x-[40px] font-semibold block sm:hidden">
-        {value} %
+        {currentValue} %
       </span>
     </div>
   );

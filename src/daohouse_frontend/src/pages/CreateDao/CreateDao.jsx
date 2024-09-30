@@ -113,7 +113,9 @@ const CreateDao = () => {
 
   const handleDaoClick = async () => {
     setLoadingNext(true);
-    const { step1, step2, step3, step4, step6 } = data;
+    const { step1, step2, step3, step4, step5, step6 } = data;
+    console.log("Data", data);
+    
     const council = step4.voting?.Council;
     const councilArray = Object.entries(council)
       .filter(([permission, hasPermission]) => hasPermission)
@@ -135,6 +137,12 @@ const CreateDao = () => {
     console.log(step2);
     console.log(data.dao_groups);
     
+    const proposalEntity = step5.map(q => ({
+      place_name: q.name,
+      min_required_thredshold: BigInt(q.vote), // Ensure it's a nat64
+    }));
+
+    console.log(proposalEntity);
     
   
     const daoPayload = {
@@ -156,6 +164,7 @@ const CreateDao = () => {
       image_content_type: step6.image_content_type || "just image content bro",
       image_id: "12",
       dao_groups: data.dao_groups,
+      proposal_entiry: proposalEntity,
       // [{
       //   group_members: [Principal.fromText("aaaaa-aa")],
       //   quorem: 5,
@@ -181,9 +190,9 @@ const CreateDao = () => {
         setLoadingNext(false);
         toast.success("DAO created successfully");
         clearLocalStorage();
-        setTimeout(() => {
-          window.location.href = '/dao';
-        }, 500);
+        // setTimeout(() => {
+        //   window.location.href = '/dao';
+        // }, 500);
       }
     } catch (error) {
       setLoadingNext(false);
