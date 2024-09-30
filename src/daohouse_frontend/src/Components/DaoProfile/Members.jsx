@@ -167,9 +167,9 @@ const GridView = ({ member }) => {
         <p className="font-semibold text-lg">{member.Ok.username}</p>
         <p className="text-sm">{member.Ok.email_id}</p>
       </section>
-      <section>
+      {/* <section>
         <button className="bg-[#FFEDED] text-sm text-red-500 rounded-2xl shadow-lg px-4 py-2">Propose to Remove</button>
-      </section>
+      </section> */}
     </div>
   </div>
   )
@@ -193,9 +193,9 @@ const ListView = ({ member }) => {
       <p className="text-center font-semibold mobile:text-1xl">{member.Ok.username}</p>
       <p className="text-center text-xs">{member.Ok.email_id}</p>
     </section>
-    <section className="flex flex-row justify-center p-2">
+    {/* <section className="flex flex-row justify-center p-2">
       <button className="bg-[#FFEDED] text-xs text-red-500 rounded-2xl shadow-lg px-4 py-2">Propose to Remove</button>
-    </section>
+    </section> */}
   </div>
 );
 }

@@ -469,7 +469,7 @@ const DaoProfile = () => {
         {activeLink === "member_policy" && <Members daoGroups={daoGroups} daoMembers={daoMembers} />}
         {activeLink === "followers" && <FollowersContent daoFollowers={daoFollowers}/>}
         {activeLink === "funds" && <FundsContent />}
-        {activeLink === "settings" && <DaoSettings />}
+        {/* {activeLink === "settings" && <DaoSettings />} */}
 
         </Container>
       </div>
