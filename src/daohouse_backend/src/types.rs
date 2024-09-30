@@ -635,7 +635,7 @@ pub struct DaoInput {
     pub token_supply: u32,
     pub tokens_required_to_vote: u32,
     // pub followers: Vec<Principal>,
-
+    // min_treadshold : Vec<u32>,
     // image data
     // pub image_id: Option<String>,
     pub image_id: String,

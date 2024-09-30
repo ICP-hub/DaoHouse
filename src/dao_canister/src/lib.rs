@@ -38,28 +38,62 @@ fn start_proposal_checker() {
 fn check_proposals() {
     with_state(|state: &mut State| {
         let timestamp = time();
+        // let cool_down_period =  state.dao.cool_down_period as u64;
+        // let expiration_time  =  cool_down_period * 60 * 60 * 1_000_000_000;
+        // min_treadshold : Vec<u32>,
         let mut proposals_to_update: Vec<Proposals> = Vec::new();
-
+        
         for (_, proposal) in state.proposals.iter() {
             let time_diff = timestamp.saturating_sub(proposal.proposal_submitted_at);
+
             let proposal_approved_votes = proposal.proposal_approved_votes as f64;
             let proposal_rejected_votes = proposal.proposal_rejected_votes as f64;
             let total_votes = proposal_approved_votes + proposal_rejected_votes;
             let total_percentage = (proposal_approved_votes / total_votes) * 100.0;
 
+            let user_propsal_expire_date = proposal.proposal_expired_at;
+            let min_require_vote = state.dao.required_votes;
+            // let min_threadshold = state.dao.min_treadshold;
+
             let mut proposal = proposal.clone();
-            if time_diff >= EXPIRATION_TIME && !proposal.has_been_processed {
-                proposal.has_been_processed = true;
-                if total_percentage >= 51.0 {
-                    proposal.proposal_status = ProposalState::Accepted;
-                    proposals_to_update.push(proposal.clone());
-                } else if total_percentage > 0.0 {
-                    proposal.proposal_status = ProposalState::Rejected;
+            if proposal.proposal_type == ProposalType::Polls
+                || proposal.proposal_type == ProposalType::BountyRaised
+            {
+                if time_diff >= user_propsal_expire_date && !proposal.has_been_processed {
+                    proposal.has_been_processed = true;
+                    if total_votes >= min_require_vote as f64 {
+                        if total_percentage >= 51.0 {
+                            proposal.proposal_status = ProposalState::Accepted;
+                            proposals_to_update.push(proposal.clone());
+                        } else if total_percentage > 0.0 {
+                            proposal.proposal_status = ProposalState::Rejected;
+                        } else {
+                            proposal.proposal_status = ProposalState::Expired;
+                        }
+                    } else {
+                        proposal.proposal_status = ProposalState::Unreachable;
+                    }
                 } else {
-                    proposal.proposal_status = ProposalState::Expired;
+                    proposal.proposal_status = ProposalState::Open;
                 }
             } else {
-                proposal.proposal_status = ProposalState::Open;
+                if time_diff >= EXPIRATION_TIME && !proposal.has_been_processed {
+                    proposal.has_been_processed = true;
+                    if total_votes >= min_require_vote as f64 {
+                        if total_percentage >= 51.0 {
+                            proposal.proposal_status = ProposalState::Accepted;
+                            proposals_to_update.push(proposal.clone());
+                        } else if total_percentage > 0.0 {
+                            proposal.proposal_status = ProposalState::Rejected;
+                        } else {
+                            proposal.proposal_status = ProposalState::Expired;
+                        }
+                    } else {
+                        proposal.proposal_status = ProposalState::Unreachable;
+                    }
+                } else {
+                    proposal.proposal_status = ProposalState::Open;
+                }
             }
             proposals_to_update.push(proposal);
         }
@@ -67,7 +101,8 @@ fn check_proposals() {
         for mut proposal in proposals_to_update {
             proposal.has_been_processed = false;
             if proposal.proposal_status == ProposalState::Accepted
-            && !proposal.has_been_processed_secound {
+                && !proposal.has_been_processed_secound
+            {
                 proposal.has_been_processed_secound = true;
                 if let ProposalType::AddMemberToDaoProposal = proposal.proposal_type {
                     add_member_to_dao(state, &proposal);
@@ -83,9 +118,13 @@ fn check_proposals() {
                     change_dao_policy(state, &proposal);
                 } else if let ProposalType::TokenTransfer = proposal.proposal_type {
                     let _ = transfer_token(&proposal);
+                } else if let ProposalType::BountyDone = proposal.proposal_type {
+                    let _ = bounty_done(&proposal);
                 }
             }
-            state.proposals.insert(proposal.proposal_id.clone(), proposal);
+            state
+                .proposals
+                .insert(proposal.proposal_id.clone(), proposal);
         }
     });
 }
@@ -99,9 +138,14 @@ fn add_member_to_dao(state: &mut State, proposal: &Proposals) {
 fn add_member_to_group(state: &mut State, proposal: &Proposals) {
     if let Some(group_to_join) = &proposal.group_to_join {
         if let Some(mut dao_group) = state.dao_groups.get(group_to_join) {
-            if !dao_group.group_members.contains(&proposal.principal_of_action) {
-            dao_group.group_members.push(proposal.principal_of_action);
-                state.dao_groups.insert(dao_group.group_name.clone(), dao_group);
+            if !dao_group
+                .group_members
+                .contains(&proposal.principal_of_action)
+            {
+                dao_group.group_members.push(proposal.principal_of_action);
+                state
+                    .dao_groups
+                    .insert(dao_group.group_name.clone(), dao_group);
             }
         }
     }
@@ -117,8 +161,12 @@ fn remove_member_to_group(state: &mut State, proposal: &Proposals) {
     let dao_groups = &mut state.dao_groups;
     if let Some(group_to_remove) = &proposal.group_to_remove {
         if let Some(mut dao_group) = dao_groups.get(group_to_remove) {
-            dao_group.group_members.retain(|s| s != &proposal.principal_of_action);
-            state.dao_groups.insert(dao_group.group_name.clone(), dao_group);
+            dao_group
+                .group_members
+                .retain(|s| s != &proposal.principal_of_action);
+            state
+                .dao_groups
+                .insert(dao_group.group_name.clone(), dao_group);
         }
     }
 }
@@ -141,6 +189,43 @@ fn change_dao_policy(state: &mut State, proposal: &Proposals) {
         state.dao.cool_down_period = cool_down_period;
     }
     state.dao.required_votes = proposal.required_votes;
+}
+
+async fn bounty_done(proposal: &Proposals) -> Result<String, String> {
+    let principal_id: Principal = api::caller();
+    let balance = icrc_get_balance(principal_id)
+        .await
+        .map_err(|err| format!("Error while fetching user balance: {}", err))?;
+
+    if balance <= 0 as u8 {
+        return Err(String::from("User token balance is less than the required transfer tokens"));
+    }
+
+    let from = match &proposal.token_from {
+        Some(principal) => principal,
+        None => return Err(String::from("Missing 'from' principal")),
+    };
+
+    let to = match &proposal.token_to {
+        Some(principal) => principal,
+        None => return Err(String::from("Missing 'to' principal")),
+    };
+    let tokens = match proposal.tokens {
+        Some(tokens) => tokens,
+        None => return Err(String::from("Missing token amount")),
+    };
+
+    let token_transfer_args = TokenTransferArgs {
+        from: *from,
+        to: *to,
+        tokens,
+    };
+
+    icrc_transfer(token_transfer_args)
+        .await
+        .map_err(|err| format!("Error in transfer of tokens: {}", String::from(err)))?;
+
+        Ok("Bounty has been completed and rewarded tokens have been transferred successfully".to_string())
 }
 
 async fn transfer_token(proposal: &Proposals) -> Result<String, String> {

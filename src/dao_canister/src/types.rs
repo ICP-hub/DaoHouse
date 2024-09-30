@@ -12,6 +12,7 @@ pub enum ProposalState {
     Executing,
     Succeeded,
     Expired,
+    Unreachable,
 }
 
 #[derive(Debug, Clone, CandidType, Deserialize, Serialize, PartialEq, Eq)]
