@@ -93,11 +93,11 @@ const Followers = () => {
   return (
     <div className={`${className} w-full`}>
       <div className="lg:ml-10 tablet:mt-12 mt-5 md:px-0 px-3">
-        <div className="flex justify-between items-center translate-y-[-90px]">
+        <div className="flex flex-col md:flex-row justify-between items-center translate-y-[-90px] space-y-4 md:space-y-0">
           <h3 className="text-[#05212C] tablet:text-[24px] translate-x-[20px] text-[18px] tablet:font-bold font-mulish mb-4">
             {searchTerm ? "Search Results" : "Followed DAO List"}
           </h3>
-          <div className="flex-grow lg:flex justify-end hidden">
+          <div className="w-full md:w-auto flex-grow lg:flex justify-end hidden">
             <SearchProposals
               width="80%"
               bgColor="transparent"
@@ -111,15 +111,21 @@ const Followers = () => {
         {loading ? (
           <MyProfileSkelton />
         ) : displayDAOs.length === 0 ? (
-         <div className=" translate-y-[20px]"> <NoDataComponent text={searchTerm ? "No DAOs found!" : "No DAOs joined yet!"} /></div>
+          <div className="translate-y-[20px]">
+            <NoDataComponent text={searchTerm ? "No DAOs found!" : "No DAOs joined yet!"} />
+          </div>
         ) : (
-          <div className="bg-[#F4F2EC] translate-y-[-20px]">
-            <Container classes="__cards w-[1000px] p-[20px] translate-x-[-18px] rounded-lg overflow-hidden">
-              <div className="grid grid-cols-1 tablet:grid-cols-2 gap-4 max-h-[350px] overflow-y-auto px-4 custom-scrollbar">
+          <div
+            className={`bg-[#F4F2EC] w-full p-2 rounded-lg md:mt-4 mt-2 mb-6 translate-y-[-70px] ${
+              displayDAOs.length === 1 ? "min-h-[200px]" : "min-h-[328px]"
+            }`}
+          >
+            <Container classes="__cards p-[20px] rounded-lg overflow-hidden">
+              <div className="grid grid-cols-1 tablet:grid-cols-2 gap-4 max-h-[350px] overflow-y-auto px-2 custom-scrollbar">
                 {displayDAOs.map((dao, index) => (
                   <div
                     key={index}
-                    className="bg-white shadow-lg rounded-lg flex items-center p-4 space-x-4 transition-transform "
+                    className="bg-white shadow-lg rounded-lg flex items-center p-4 space-x-4 transition-transform"
                   >
                     <img
                       src={getImageUrl(dao?.image_id)}
@@ -132,9 +138,9 @@ const Followers = () => {
                     </div>
                     <button
                       onClick={() => handleViewProfile(dao?.dao_canister_id)}
-                      className="border-2 border-[#0E3746] text-[#0E3746] rounded-full px-4 py-2 hover:bg-[#0E3746] hover:text-white transition duration-300"
+                      className="border-2 border-[#0E3746] text-[#0E3746] rounded-full px-2 py-1 md:px-4 md:py-2 text-sm md:text-base hover:bg-[#0E3746] hover:text-white transition duration-300"
                     >
-                      View Profile
+                      View 
                     </button>
                   </div>
                 ))}
