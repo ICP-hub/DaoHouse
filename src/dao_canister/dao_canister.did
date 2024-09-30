@@ -6,11 +6,9 @@ type AddMemberArgs = record {
 };
 type BountyDone = record {
   to : principal;
-  proposal_expired_at : nat64;
   description : text;
   tokens : nat64;
   action_member : principal;
-  proposal_created_at : nat64;
   bounty_task : text;
 };
 type BountyRaised = record {
@@ -43,11 +41,9 @@ type Comment = record {
   comment_id : text;
 };
 type CreateGeneralPurpose = record {
-  proposal_expired_at : nat64;
   description : text;
   proposal_title : text;
   action_member : principal;
-  proposal_created_at : nat64;
 };
 type CreatePoll = record {
   proposal_expired_at : nat64;

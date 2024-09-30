@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { usePostContext } from "../../../PostProvider";
-import NoPostProfile from "../../Dao/NoPostProfile";
-import NoDataComponent from "../../Dao/NoDataComponent"; // Import NoDataComponent
+import NoDataComponent from "../../Dao/NoDataComponent";
 import { useAuth } from "../../utils/useAuthClient";
 import Pagination from "../../pagignation/Pagignation";
 import MuiSkeleton from "../../SkeletonLoaders/MuiSkeleton";
 import Card from "../../Proposals/Card";
+import SearchProposals from "../../Proposals/SearchProposals";
 
 const MyPosts = () => {
   const { backendActor } = useAuth();
@@ -14,12 +14,16 @@ const MyPosts = () => {
   const [totalItems, setTotalItems] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(""); // Added state for search term
+  const [proposals, setProposals] = useState([]); // Added state for proposals
   const className = "MyPosts";
 
+  const itemsPerPage = 4;
+
   const getPosts = async () => {
-    const itemsPerPage = 4;
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
+
     const paginationPayload = {
       start,
       end,
@@ -27,11 +31,16 @@ const MyPosts = () => {
 
     try {
       setLoading(true);
-      const res = await backendActor.get_my_proposals(paginationPayload);
-      console.log("---res--", res);
+      let res;
+      if (searchTerm.trim() === "") {
+        res = await backendActor.get_my_proposals(paginationPayload);
+      } else {
+        res = await backendActor.search_proposals(searchTerm.trim());
+      }
+
       const dataLength = res.length || 0;
       setTotalItems(Math.ceil(dataLength / itemsPerPage));
-      setMyProposals(res);
+      setMyProposals(res.slice(start, end)); // Slice proposals for pagination
     } catch (error) {
       console.log("Error fetching proposals", error);
     } finally {
@@ -41,20 +50,35 @@ const MyPosts = () => {
 
   useEffect(() => {
     getPosts();
-  }, [currentPage]);
+  }, [currentPage, searchTerm]);
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+    setCurrentPage(1);
+  };
 
   return (
     <div className={className}>
-      <div className="md:ml-10 mx-5 mt-5">
-        <h3 className="text-[#05212C] md:text-[24px] text-[18px] md:font-bold font-semibold ml-4 translate-y-[-65px]">
+      <div className="md:ml-10 mx-5 mt-5 ">
+        <h3 className="text-[#05212C] md:text-[24px] text-[18px] md:font-bold font-mulish ml-4 translate-y-[-65px]">
           Submitted Proposals
         </h3>
+        <div className="flex flex-grow justify-center px-6 mx-2">
+          <SearchProposals
+            onChange={handleSearchChange} 
+            value={searchTerm}
+            width="70%"
+            bgColor="transparent"
+            placeholder="Search by proposal ID"
+            className="border-2 border-[#AAC8D6] w-full max-w-lg translate-y-[-105px] translate-x-[95px] "
+          />
+        </div>
         {loading ? (
           <MuiSkeleton />
-        ) : myProposals.length === 0 ? ( // Check if there are no proposals
-          <div className="translate-y-[52px]"> {/* New class for translate-y */}
-          <NoDataComponent /> {/* Display NoDataComponent when there are no proposals */}
-        </div>
+        ) : myProposals.length === 0 ? (
+          <div className="translate-y-[52px]">
+            <NoDataComponent />
+          </div>
         ) : (
           <div className="grid grid-cols-2 md:mt-4 mt-2 mb-6 bg-[#F4F2EC] p-2 rounded-lg gap-2 h-64">
             {myProposals.map((proposal, index) => (
@@ -64,7 +88,7 @@ const MyPosts = () => {
             ))}
           </div>
         )}
-        {myProposals.length > 0 && ( // Show pagination only if there are proposals
+        {myProposals.length > 0 && (
           <Pagination
             costomClass={"mt-10"}
             totalItems={totalItems}
