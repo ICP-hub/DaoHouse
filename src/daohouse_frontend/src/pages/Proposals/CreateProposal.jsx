@@ -11,7 +11,13 @@ import { CircularProgress } from '@mui/material';
 import { useNavigate, useParams } from "react-router-dom";
 
 import { Principal } from "@dfinity/principal";
-
+import BountyDone from './BountyDone';
+import TokenTransfer from './TokenTransfer';
+import GeneralPurpose from './GeneralPurpose';
+import DaoConfig from './DaoConfig';
+import AddMember from './AddMember';
+import RemoveMember from './RemoveMember';
+import BountyRaised from './BountyRaised';
 function CreateProposal() {
   const navigate = useNavigate();
 
@@ -45,17 +51,34 @@ function CreateProposal() {
     purposeTitle: '',
     proposalCreatedAt: '',
   })
-  const [changeData, setChangeData] = useState({
-    new_dao_name: "",
-    description: "",
-    action_member: "",
+  const [daoConfig, setDaoConfig] = useState({
+    daotype: '',
+    description: '',
+    dao_name: '',
+    action_member: '',
+    purpose: '',
   });
   const [addMember, setAddMember] = useState({
     group_name: "",
     description: "",
     new_member: "",
   });
+  const [removeMember, setRemoveMember] = useState({
+    group_name: "",
+    description: "",
+    action_member: "",
+  });
+  const [bountyRaised, setBountyRaised] = useState({
+    proposal_expired_at: '',
+    description: '',
+    tokens: '',
+    action_member: '',
+    proposal_created_at: '',
+    bounty_task: '',
+  })
   const [groupNames, setGropNames] = useState([]);
+  console.log("group", groupNames);
+
   const [loading, setLoading] = useState(false);
   const { createDaoActor, backendActor, stringPrincipal } = useAuth();
 
@@ -113,9 +136,9 @@ function CreateProposal() {
       [name]: value,
     }));
   };
-  function handleChange(e) {
-    setChangeData({
-      ...changeData,
+  function handleInputDaoConfig(e) {
+    setDaoConfig({
+      ...daoConfig,
       [e.target.name]: e.target.value,
     });
   }
@@ -125,13 +148,27 @@ function CreateProposal() {
       [e.target.name]: e.target.value,
     });
   };
+  const handleInputRemoveMember = (e) => {
+    setRemoveMember({
+      ...removeMember,
+      [e.target.name]: e.target.value,
+    });
+  };
+  const handleInputBountyRaised = (e) => {
+    setBountyRaised({
+      ...bountyRaised,
+      [e.target.name]: e.target.value,
+    });
+  };
   const handleSubmit = async (e) => {
+    console.log("slkadjlksajdlkasj");
+
     e.preventDefault();
     setLoading(true);
 
     try {
       switch (proposalType) {
-        case 'TokenTransfer':
+        case 'tokenTransfer':
           await submitTokenTransferProposal({
             from: Principal.fromText(tokenTransfer.from),
             description: tokenTransfer.description,
@@ -140,7 +177,9 @@ function CreateProposal() {
           });
           break;
 
-        case 'BountyDone':
+        case 'bountyDone':
+          console.log("dfnsdjlflksdfjlksdfjlksd");
+
           await submitBountyDone({
             proposal_expired_at: new Date(bountyDone.proposalExpiredAt).getTime(),
             from: Principal.fromText(bountyDone.from),
@@ -163,9 +202,11 @@ function CreateProposal() {
 
         case 'DaoConfig':
           await submitDaoConfig({
-            new_dao_name: changeData.new_dao_name,
-            description: changeData.description,
-            action_member: Principal.fromText(changeData.action_member),
+            daotype: daoConfig.daotype,
+            description: daoConfig.description,
+            new_dao_name: daoConfig.dao_name,
+            action_member: Principal.fromText(daoConfig.action_member),
+            purpose: daoConfig.purpose,
           });
 
         case 'AddMember':
@@ -173,6 +214,21 @@ function CreateProposal() {
             group_name: addMember.group_name,
             description: addMember.description,
             new_member: Principal.fromText(addMember.new_member),
+          });
+        case 'RemoveMember':
+          await submitRemoveMember({
+            group_name: removeMember.group_name,
+            description: removeMember.description,
+            action_member: Principal.fromText(removeMember.action_member),
+          });
+        case 'BountyRaised':
+          await submitBountyRaised({
+            proposal_expired_at: new Date(bountyRaised.proposal_expired_at).getTime(),
+            description: bountyRaised.description,
+            tokens: Number(bountyRaised.tokens),
+            action_member: Principal.fromText(bountyRaised.action_member),
+            proposal_created_at: new Date(bountyRaised.proposal_created_at).getTime(),
+            bounty_task: bountyRaised.bounty_task,
           });
         // default:
         //     toast.error('Please select a proposal type and fill in the details.');
@@ -190,8 +246,6 @@ function CreateProposal() {
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
       console.log("daocanister iss", daoCanisterId);
-
-
       console.log("Add member proposal : ", daoCanister);
       const response = await daoCanister.proposal_to_transfer_token(tokenTransfer);
       console.log("response of token transfer ", response);
@@ -199,22 +253,16 @@ function CreateProposal() {
       movetodao();
     } catch (error) {
       console.log("error of add", error);
-
     }
-
-
-
   };
 
   const submitBountyDone = async (bountyDone) => {
-
+    console.log("bounty done", bountyDone);
 
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
       console.log("daocanister iss", daoCanisterId);
-
       console.log("bounty done", bountyDone?.proposalExpiredAt);
-
       console.log("bounty done  proposal : ", daoCanister)
       const response = await daoCanister.proposal_to_bounty_done(bountyDone);
       console.log("response of add ", response)
@@ -222,21 +270,13 @@ function CreateProposal() {
       movetodao();
     } catch (error) {
       console.log("error of add", error);
-
     }
-
   };
 
-
   const submitGeneralPurp = async (generalPurp) => {
-
-
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
       console.log("daocanister iss", daoCanisterId);
-
-
-
       console.log("generl purpose  proposal : ", daoCanister)
       const response = await daoCanister.proposal_to_create_general_purpose(generalPurp);
       console.log("response of general ", response)
@@ -244,29 +284,15 @@ function CreateProposal() {
       movetodao();
     } catch (error) {
       console.log("error of add", error);
-
     }
-
   };
 
-  const submitDaoConfig = async () => {
-    const formattedInputData = {
-      new_dao_name: "khasdgkjasgdja",
-      description: "kasgdjagsd",
-      action_member: Principal.fromText("aaaaa-aa"),
-      new_dao_name: changeData.new_dao_name,
-      description: changeData.description,
-      action_member: Principal.fromText(changeData.action_member),
-    };
-
-
+  const submitDaoConfig = async (daoConfig) => {
+    console.log("dao condifg", daoConfig);
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
       console.log("daoCanister ID:", daoCanisterId);
-      console.log("response", formattedInputData);
-
-      // Send the correctly formatted data
-      const response = await daoCanister.proposal_to_chnage_dao_config(formattedInputData);
+      const response = await daoCanister.proposal_to_chnage_dao_config(daoConfig);
       console.log("Response from proposal:", response);
       if (response.Ok) {
         toast.success("DAO configuration proposal created successfully");
@@ -276,25 +302,16 @@ function CreateProposal() {
       else {
         toast.error("Failed to create DAO configruation proposal")
       }
-
-
-
-
     } catch (error) {
-
       console.error("Error during proposal submission:", error);
-
     }
   };
   const submitAddMember = async () => {
-
-
     const formattedInputData = {
       group_name: addMember.group_name,
       description: addMember.description,
       new_member: Principal.fromText(addMember.new_member),
     };
-
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
       const response = await daoCanister.proposal_to_add_member_to_group(formattedInputData);
@@ -312,17 +329,61 @@ function CreateProposal() {
       else {
         toast.error("Failed to create Add Member proposal");
       }
+    } catch (error) {
+      console.error("Error during proposal submission:", error);
 
+    }
+  };
+  const submitRemoveMember = async () => {
+    const formattedInputData = {
+      group_name: removeMember.group_name,
+      description: removeMember.description,
+      action_member: Principal.fromText(removeMember.action_member),
+    };
+
+    try {
+      const daoCanister = await createDaoActor(daoCanisterId);
+      const response = await daoCanister.proposal_to_remove_member_to_group(formattedInputData);
+      console.log("Response from  remove member proposal:", response);
+      if (response.Ok) {
+        toast.success("remove member proposal created successfully");
+        movetodao();
+        setActiveLink("proposals");
+        setAddMember({
+          group_name: "",
+          description: "",
+          new_member: "",
+        });
+      }
+      else {
+        toast.error("Failed to create Add Member proposal");
+      }
     } catch (error) {
       console.error("Error during proposal submission:", error);
 
     }
   };
 
+  const submitBountyRaised = async (bountyRaised) => {
+
+    console.log("raised", bountyRaised);
+
+    try {
+      const daoCanister = await createDaoActor(daoCanisterId);
+      console.log("daocanister iss", daoCanisterId);
+      ;
+
+      const response = await daoCanister.proposal_to_bounty_raised(bountyRaised);
+      console.log("response of bounty raised ", response)
+      toast.success("Bounty Raised  proposal created successfully");
+      movetodao();
+    } catch (error) {
+      console.log("error of add", error);
+    }
+  };
+
   useEffect(() => {
-
     const fetchGroupNames = async () => {
-
       const daoCanister = await createDaoActor(daoCanisterId);
       const daogroups = await daoCanister.get_dao_groups();
       const names = daogroups.map(group => group.group_name);
@@ -401,321 +462,48 @@ function CreateProposal() {
                     className="w-full max-w-[800px] px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                   >
                     <option value="">Select Proposal Type</option>
-
-                    <option value="BountyDone">Bounty Done</option>
-
-                    <option value="TokenTransfer">Token Transfer</option>
-
+                    <option value="bountyDone">Bounty Done</option>
+                    <option value="tokenTransfer">Token Transfer</option>
                     <option value="GeneralPurp">General Purpose</option>
                     <option value="DaoConfig">Dao Config</option>
                     <option value="AddMember">Add Member</option>
+                    <option value="RemoveMember">Remove Member</option>
+                    <option value="BountyRaised">Bounty Raised</option>
                   </select>
                 </div>
 
 
                 {/* Conditional Input Fields Based on Proposal Type */}
-                {proposalType === 'TokenTransfer' && (
-                  <>
-                    <div className="mb-4">
-                      <label>From</label>
-                      <input
-                        type="text"
-                        name="from"
-                        value={tokenTransfer.from}
-                        onChange={handleInputTranferToken}
-                        className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                        placeholder="Enter sender's principal"
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label>Description</label>
-                      <input
-                        type="text"
-                        name="description"
-                        value={tokenTransfer.description}
-                        onChange={handleInputTranferToken}
-                        className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                        placeholder="Enter description"
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label>Tokens</label>
-                      <input
-                        type="number"
-                        name="tokens"
-                        value={tokenTransfer.tokens}
-                        onChange={handleInputTranferToken}
-                        className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                        placeholder="Enter tokens"
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label>Action Member</label>
-                      <input
-                        type="text"
-                        name="actionMember"
-                        value={tokenTransfer.actionMember}
-                        onChange={handleInputTranferToken}
-                        className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                        placeholder="Enter action member principal"
-                      />
-                    </div>
-                  </>
+                {proposalType === "bountyDone" && (
+                  <BountyDone bountyDone={bountyDone}
+                    handleInputBountyDone={handleInputBountyDone}
+                  />
                 )}
 
-                {proposalType === 'BountyDone' && (
-                  <>
-                    <div className="mb-4">
-                      <label>From</label>
-                      <input
-                        type="text"
-                        name="from"
-                        value={bountyDone.from}
-                        onChange={handleInputBountyDone}
-                        className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                        placeholder="Enter description"
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label>Description</label>
-                      <input
-                        type="text"
-                        name="description"
-                        value={bountyDone.description}
-                        onChange={handleInputBountyDone}
-                        className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                        placeholder="Enter description"
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label>Bounty Task</label>
-                      <input
-                        type="text"
-                        name="bountTask"
-                        value={bountyDone.bountTask}
-                        onChange={handleInputBountyDone}
-                        className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                        placeholder="Enter bounty task"
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label>Tokens</label>
-                      <input
-                        type="number"
-                        name="tokens"
-                        value={bountyDone.tokens}
-                        onChange={handleInputBountyDone}
-                        className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                        placeholder="Enter tokens"
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label>Action Member (Principal)</label>
-                      <input
-                        type="text"
-                        name="actionMember"
-                        value={bountyDone.actionMember}
-                        onChange={handleInputBountyDone}
-                        className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                        placeholder="Enter action member principal"
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label>Proposal Expired At</label>
-                      <input
-                        type="date"
-                        name="proposalExpiredAt"
-                        value={bountyDone.proposalExpiredAt}
-                        onChange={handleInputBountyDone}
-                        className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label>Proposal Created At</label>
-                      <input
-                        type="date"
-                        name="proposalCreatedAt"
-                        value={bountyDone.proposalCreatedAt}
-                        onChange={handleInputBountyDone}
-                        className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                      />
-                    </div>
-                  </>
+                {proposalType === "tokenTransfer" && (
+                  <TokenTransfer
+                    tokenTransfer={tokenTransfer}
+                    handleInputTransferToken={handleInputTranferToken} />
                 )}
 
-                {proposalType === 'GeneralPurp' && (
-                  <>
-                    <div className="mb-4">
-                      <label>Purpose Title</label>
-                      <input
-                        type="text"
-                        name="purposeTitle"
-                        value={generalPurp.purposeTitle}
-                        onChange={handleInputGeneralPurp}
-                        className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                        placeholder="Enter purpose title"
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label>Description</label>
-                      <input
-                        type="text"
-                        name="description"
-                        value={generalPurp.description}
-                        onChange={handleInputGeneralPurp}
-                        className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                        placeholder="Enter description"
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label>Action Member (Principal)</label>
-                      <input
-                        type="text"
-                        name="actionMember"
-                        value={generalPurp.actionMember}
-                        onChange={handleInputGeneralPurp}
-                        className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                        placeholder="Enter action member principal"
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label>Proposal Expired At</label>
-                      <input
-                        type="date"
-                        name="proposalExpiredAt"
-                        value={generalPurp.proposalExpiredAt}
-                        onChange={handleInputGeneralPurp}
-                        className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label>Proposal Created At</label>
-                      <input
-                        type="date"
-                        name="proposalCreatedAt"
-                        value={generalPurp.proposalCreatedAt}
-                        onChange={handleInputGeneralPurp}
-                        className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                      />
-                    </div>
-                  </>
+                {proposalType === "GeneralPurp" && (
+                  <GeneralPurpose generalPurp={generalPurp} handleInputGeneralPurp={handleInputGeneralPurp} />
                 )}
 
-                {proposalType === 'DaoConfig' && (
-                  <>
-                    {/* DAO Name */}
-                    <div className="mb-4">
-                      <label htmlFor="new_dao_name" className="font-semibold mobile:text-base text-sm">
-                        New DAO Name
-                      </label>
-                      <input
-                        type="text"
-                        id="new_dao_name"
-                        name="new_dao_name"
-                        required
-                        value={changeData.new_dao_name}
-                        placeholder="Enter New DAO Name"
-                        className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm w-full border border-[#aba9a5] bg-transparent"
-                        onChange={handleChange}
-                      />
-                    </div>
-
-                    {/* Description */}
-                    <div className="mb-4">
-                      <label htmlFor="description" className="font-semibold mobile:text-base text-sm">
-                        Description
-                      </label>
-                      <textarea
-                        id="description"
-                        name="description"
-                        value={changeData.description}
-                        placeholder="Specify the description of the DAO"
-                        className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm w-full border border-[#aba9a5] bg-transparent"
-                        onChange={handleChange}
-                      />
-                    </div>
-
-                    {/* Action Member */}
-                    <div className="mb-4">
-                      <label htmlFor="action_member" className="font-semibold mobile:text-base text-sm">
-                        Action Member (Principal)
-                      </label>
-                      <input
-                        type="text"
-                        id="action_member"
-                        name="action_member"
-                        value={changeData.action_member}
-                        placeholder="Enter Action Member Principal ID"
-                        className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm w-full border border-[#aba9a5] bg-transparent"
-                        onChange={handleChange}
-                      />
-                    </div>
-
-
-
-
-
-
-                  </>
+                {proposalType === "DaoConfig" && (
+                  <DaoConfig daoConfig={daoConfig} handleInputDaoConfig={handleInputDaoConfig} />
                 )}
 
-                {proposalType === 'AddMember' && (
-                  <>
-                    {/* Group Name */}
-                    <div className="mb-4">
-                      <label htmlFor="group_name" className="font-semibold mobile:text-base text-sm">
-                        Group Name
-                      </label>
-                      <select
-                        name="group_name"
-                        required
-                        value={addMember.group_name}
-                        className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm w-full border border-[#aba9a5] bg-transparent"
-                        onChange={handleInputAddMember}
-                      >
-                        <option value="" disabled>Select Group Name</option>
-                        {groupNames.map((name, index) => (
-                          <option key={index} value={name}>
-                            {name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    {/* Description */}
-                    <div className="mb-4">
-                      <label htmlFor="description" className="font-semibold mobile:text-base text-sm">
-                        Description
-                      </label>
-                      <textarea
-                        name="description"
-                        value={addMember.description}
-                        placeholder="Specify the description of the group"
-                        className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm w-full border border-[#aba9a5] bg-transparent"
-                        onChange={handleInputAddMember}
-                      />
-                    </div>
-
-                    {/* New Member (Principal ID) */}
-                    <div className="mb-4">
-                      <label htmlFor="new_member" className="font-semibold mobile:text-base text-sm">
-                        New Member (Principal ID)
-                      </label>
-                      <input
-                        type="text"
-                        name="new_member"
-                        value={addMember.new_member}
-                        placeholder="Enter New Member Principal ID"
-                        className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm w-full border border-[#aba9a5] bg-transparent"
-                        onChange={handleInputAddMember}
-                      />
-                    </div>
-                  </>
+                {proposalType === "AddMember" && (
+                  <AddMember addMember={addMember} handleInputAddMember={handleInputAddMember} groupNames={groupNames} />
                 )}
-
-
-
-
+                {proposalType === "RemoveMember" && (
+                  <RemoveMember removeMember={removeMember} handleInputRemoveMember={handleInputRemoveMember}
+                    groupNames={groupNames} />
+                )}
+                {proposalType === "BountyRaised" && (
+                  <BountyRaised bountyRaised={bountyRaised} handleInputBountyRaised={handleInputBountyRaised} />
+                )}
                 <div className="flex justify-center my-8">
                   {
                     loading ? <CircularProgress /> :
@@ -727,7 +515,6 @@ function CreateProposal() {
                       >
                         Submit
                       </button>
-
                   }
 
                 </div>
@@ -745,3 +532,6 @@ function CreateProposal() {
 }
 
 export default CreateProposal;
+
+
+

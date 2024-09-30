@@ -23,7 +23,7 @@ type ChangeDaoConfigArg = record {
   new_dao_name : text;
   daotype : text;
   description : text;
-  action_member : principal;
+action_member : principal;
   purpose : text;
 };
 type ChangeDaoPolicy = record {
@@ -111,6 +111,7 @@ type ProposalStakes = record {
 type ProposalState = variant {
   Open;
   Executing;
+  Unreachable;
   Rejected;
   Succeeded;
   Accepted;
@@ -140,6 +141,7 @@ type Proposals = record {
   proposal_expired_at : nat64;
   new_dao_name : opt text;
   proposal_submitted_at : nat64;
+  from : opt principal;
   proposal_approved_votes : nat64;
   has_been_processed : bool;
   created_by : principal;
@@ -159,7 +161,7 @@ type Proposals = record {
   group_to_join : opt text;
   comments_list : vec Comment;
   token_from : opt principal;
-  cool_down_period : opt nat32;
+cool_down_period : opt nat32;
   proposal_type : ProposalType;
   required_votes : nat32;
 };
