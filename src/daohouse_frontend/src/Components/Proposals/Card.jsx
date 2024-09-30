@@ -14,12 +14,11 @@ import userImage from "../../../assets/commentUser.jpg";
 import { CircularProgress } from "@mui/material";
 
 
-export default function Card({ proposal, voteApi, showActions, isProposalDetails, isComment, setIsComment, commentCount}) {
+export default function Card({ proposal, voteApi, showActions, isProposalDetails, isComment, setIsComment, commentCount, isSubmittedProposals}) {
 
-
-  console.log("Vote API", proposal);
+  // console.log("Vote API", proposal);
   
-  const {backendActor} = useAuth();
+  const {backendActor, createDaoActor} = useAuth();
   const [voteStatus, setVoteStatus] = useState(""); // Track user vote (Yes/No)
   const [approvedVotes, setApprovedVotes] = useState(Number(proposal?.proposal_approved_votes || 0n));
   const [rejectedVotes, setRejectedVotes] = useState(Number(proposal?.proposal_rejected_votes || 0n));
@@ -28,7 +27,8 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const [userProfile, setUserProfile] = useState({})
   const [profileImg, setProfileImg] = useState("");
   const [isLoading, setIsLoading] = useState(true)
-  const [isDisabled, setIsDisabled] = useState(false)
+  const [isDisabled, setIsDisabled] = useState(false);
+  const [daoName, setDaoName] = useState("")
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
   console.log(votersList);
@@ -61,7 +61,26 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
 
   // console.log(proposal.dao_canister_id);
   const proposalId = proposal.proposal_id
-  const daoCanisterId = proposal.dao_canister_id;
+  const daoCanisterId = proposal.dao_canister_id || proposal.associated_dao_canister_id;
+  console.log(daoCanisterId);
+  
+
+  useEffect(() => {
+    const fetchDaoName = async() => {
+      const daoActor = await createDaoActor(Principal.fromUint8Array(daoCanisterId).toText());
+      console.log(daoActor);
+      
+      const daoDetails = await daoActor.get_dao_detail();
+      console.log("daodetails", daoDetails);
+
+      console.log(daoDetails.dao_name);
+      
+      setDaoName(daoDetails.dao_name)
+      
+    }
+
+    fetchDaoName();
+  }, [ daoCanisterId, createDaoActor, proposal.associated_dao_canister_id])
   
 
   const [isModalOpen,setIsModalOpen]=useState(false)
@@ -222,49 +241,24 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
 
   {
     return (
-      <div className={`bg-white font-mulish ${isProposalDetails ? "rounded-t-xl": "rounded-xl" } shadow-md flex flex-col md:flex-col`}>
+      <div className={`bg-white font-mulish ${isProposalDetails ? "rounded-t-xl": "rounded-xl" } shadow-md ${isSubmittedProposals ? "flex" : "flex flex-col md:flex-col"}`}>
         {/* Top Section */}
-        <div className="w-full flex justify-between items-center bg-[#0E3746] px-[20px] md:px-12 py-6  rounded-t-lg rounded-b-none">
-          <div className="flex gap-[12px] md:gap-8 justify-center items-center">
-          {isLoading ? (
-            <div className="w-8 h-8 md:w-16 md:h-16 rounded-full bg-gray-300 animate-pulse"></div>
-          ) : (
-            <img src={profileImg || avatar} alt="user avatar" className="w-8 h-8 md:w-16 md:h-16 rounded-full" />
-          )}
+        <div className={` bg-[#0E3746] ${isSubmittedProposals ? "w-2/6 flex flex-col justify-center items-center py-6 space-y-6 rounded-l-lg" : "w-full flex justify-between items-center bg-[#0E3746] px-[20px] md:px-12 py-6  rounded-t-lg rounded-b-none"}`}>
+          <div className={`${isSubmittedProposals ? "flex flex-col text-center justify-center items-center space-y-4" : "flex gap-[12px] md:gap-8 justify-center items-center"}`}>
             {isLoading ? (
-            <div className="w-24 h-6 md:w-36 md:h-8 bg-gray-400"></div>
-          ) : (
-            <h4 className="text-white text-sm md:text-xl font-semibold">{userProfile.username || "Username"}</h4>
-          )}
+              <div className="w-8 h-8 md:w-16 md:h-16 rounded-full bg-gray-300 animate-pulse"></div>
+            ) : (
+              <img src={profileImg || avatar} alt="user avatar" className="w-8 h-8 md:w-16 md:h-16 rounded-full" />
+            )}
+            {isLoading ? (
+              <div className="w-24 h-6 md:w-36 md:h-8 bg-gray-400"></div>
+            ) : (
+              <h4 className="text-white text-sm md:text-xl font-semibold">{userProfile.username || "Username"}</h4>
+            )}
           </div>
-          <div className="flex gap-4">
-            <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
-              <CircularProgressBar percentage={Math.floor(approvedProposals/requiredVotes * 100)} color="#4CAF50" />
-              <span className="text-white mt-2 text-center">{approvedProposals} votes</span>
-            </div>
-            <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
-              <CircularProgressBar percentage={Math.floor(rejectedvoters/requiredVotes * 100)} color="red" />
-              <span className="text-white mt-2 text-center">{rejectedvoters} votes</span>
-            </div>
-          </div>
-        </div>
 
-        {/* Bottom Section */}
-        <div className="w-full px-4 lg:px-12 py-4 md:py-8">
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-4 gap-4">
-            <div className="max-w-full lg:max-w-full">
-              <h4 className="text-xl font-bold text-[#0E3746] overflow-hidden text-ellipsis whitespace-normal">
-                {proposal.proposal_title} | <span className="md:text-[1rem] text-[1rem] block"> Proposal ID: #{proposal?.proposal_id}</span>
-              </h4>
-            </div>
-    
-
-
-
-            <div className="flex gap-4">
-              <span className="md:py-1 px-4 w-[190px] rounded-full bg-[#4993B0] text-white font-semibold text-sm small_phone:text-base">
-                {timeRemaining}
-              </span>
+          {isSubmittedProposals && (
+            <div className="flex justify-center">
               <span
                 className={`px-4 md:py-1 rounded-full text-white font-semibold text-sm small_phone:text-base ${
                   status === "Approved" ? "bg-[#4CAF50]" : status === "Rejected" ? "bg-red-500" : "bg-[#4993B0]"
@@ -273,9 +267,55 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                 {status}
               </span>
             </div>
+          )}
+
+          <div className={`${isSubmittedProposals ? "flex justify-center items-center gap-6" : "flex gap-4"}`}>
+            <div className={`${isSubmittedProposals ? "flex flex-col items-center gap-2" : "flex flex-col md:flex-row items-center gap-2 md:gap-4"}`}>
+              <CircularProgressBar percentage={Math.floor(approvedProposals / requiredVotes * 100)} color="#4CAF50" />
+              <span className="text-white mt-2 text-center">{approvedProposals} votes</span>
+            </div>
+            <div className={`${isSubmittedProposals ? "flex flex-col items-center gap-2" : "flex flex-col md:flex-row items-center gap-2 md:gap-4"}`}>
+              <CircularProgressBar percentage={Math.floor(rejectedvoters / requiredVotes * 100)} color="red" />
+              <span className="text-white mt-2 text-center">{rejectedvoters} votes</span>
+            </div>
+          </div>
+        </div>
+
+
+        {/* Bottom Section */}
+        <div className={`${isSubmittedProposals ? "w-4/6 px-12 py-8 flex-col space-y-4" : "w-full px-4 lg:px-12 py-4 md:py-8"}`}>
+          <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-4 gap-4">
+            <div className="max-w-full lg:max-w-full">
+              <h4 className={`text-xl font-bold text-[#0E3746] ${isSubmittedProposals ? "overflow-hidden truncate w-64 " : "overflow-hidden text-ellipsis whitespace-normal"}`}>
+                {proposal.proposal_title || proposal.propsal_title} | <span className={`md:text-[1rem] text-[1rem] block `}> Proposal ID: #{proposal?.proposal_id}</span>
+              </h4>
+            </div>
+    
+
+
+
+            <div className="flex gap-4">
+              <span className="md:py-1 px-2 md:px-4 md:w-[190px] rounded-full bg-[#4993B0] text-white font-semibold text-sm small_phone:text-base">
+                {timeRemaining}
+              </span>
+              <span
+                className={`px-4 md:py-1 rounded-full text-white font-semibold text-sm small_phone:text-base ${
+                  status === "Approved" ? "bg-[#4CAF50]" : status === "Rejected" ? "bg-red-500" : "bg-[#4993B0]"
+                } ${isSubmittedProposals ? "hidden": "flex"}`}
+              >
+                {status}
+              </span>
+            </div>
           </div>
 
-          <p className="text-gray-900 text-sm mobile:text-xl mb-4">{proposal?.proposal_description}</p>
+          <p className={`text-gray-900 text-sm mobile:text-xl mb-4`}>{proposal?.proposal_description}</p>
+          {isSubmittedProposals && (
+            <div>
+              <span className="px-8 py-2 bg-[#4993B0] text-white rounded-full text-lg ">
+            {daoName || "DaoName"}
+          </span>
+            </div>
+          )}
           <div className="flex flex-wrap gap-4 flex-col md:flex-row md:justify-between items-start md:items-center space-y-4 md:space-y-0 xl:space-x-8">
             <div className="flex flex-col gap-4 items-start justify-start">
                 <div className=" flex mobile:space-x-2 xl:space-x-8">

@@ -56,10 +56,10 @@ const MyPosts = () => {
           <NoDataComponent /> {/* Display NoDataComponent when there are no proposals */}
         </div>
         ) : (
-          <div className="grid grid-cols-2 md:mt-4 mt-2 mb-6 bg-[#F4F2EC] p-2 rounded-lg gap-2 h-64">
+          <div className="flex flex-col md:mt-4 mt-2 mb-6 bg-[#F4F2EC] p-2 rounded-lg gap-2 h-64 w-[1100px]">
             {myProposals.map((proposal, index) => (
               <div key={index} className="proposal relative w-full">
-                <Card proposal={proposal} />
+                <Card proposal={proposal} isSubmittedProposals={true} />
               </div>
             ))}
           </div>
