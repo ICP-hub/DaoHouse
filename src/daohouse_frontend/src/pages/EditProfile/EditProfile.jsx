@@ -129,7 +129,7 @@ const EditProfile = () => {
     const canisterId = process.env.CANISTER_ID_IC_ASSET_HANDLER;
 
     try {
-      const response = await backendActor.update_profile(canisterId, profilePayload);
+      const response = await backendActor.update_profile( profilePayload);
       if (response.Err) {
         toast.error(`${response.Err}`);
       } else {
@@ -280,7 +280,7 @@ const EditProfile = () => {
   }, [isModalOpen]); // STOP SCROLLING 
 
   return (
-    <div className="bg-zinc-200 w-full mt-[90px] pb-20 relative">
+    <div className="bg-zinc-200 w-full  pb-20 relative">
       <div
         style={{
           backgroundImage: `url("${MyProfileRectangle}")`,

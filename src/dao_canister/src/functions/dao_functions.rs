@@ -18,6 +18,7 @@ async fn get_members_of_group(group: String) -> Result<Vec<Principal>, String> {
     })
 }
 
+
 #[update(guard=guard_check_members)]
 async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, String> {
     // check_user_in_group(&args.group_name)?;

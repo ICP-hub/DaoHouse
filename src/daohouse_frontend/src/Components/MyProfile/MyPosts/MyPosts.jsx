@@ -1,138 +1,94 @@
 import React, { useEffect, useState } from "react";
-import { FaHeart } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import { FaTelegramPlane } from "react-icons/fa";
-import { BiSolidCommentDetail } from "react-icons/bi";
 import { usePostContext } from "../../../PostProvider";
-import NoPostProfile from "../../Dao/NoPostProfile";
+import NoDataComponent from "../../Dao/NoDataComponent";
 import { useAuth } from "../../utils/useAuthClient";
-import Pagination from "../../pagignation/Pagignation";
-import MuiSkeleton from "../../Skeleton/MuiSkeleton";
+import MuiSkeleton from "../../SkeletonLoaders/MuiSkeleton";
+import Card from "../../Proposals/Card";
+import SearchProposals from "../../Proposals/SearchProposals";
 
 const MyPosts = () => {
   const { backendActor } = useAuth();
-  const [hoverIndex, setHoverIndex] = useState(null);
-  const [readMoreIndex, setReadMoreIndex] = useState(null);
   const { setSelectedPost } = usePostContext();
-  const [myPost, setMyPost] = useState([]);
+  const [myProposals, setMyProposals] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const className = "MyPosts";
-  const canisterId = process.env.CANISTER_ID_IC_ASSET_HANDLER;
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(""); // Added state for search term
+  const [proposals, setProposals] = useState([]); // Added state for proposals
+  const className = "MyPosts";
 
-  const getpost = async () => {
-    const itemsPerPage = 4;
+  const itemsPerPage = 4;
+
+  const getPosts = async () => {
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
+
     const paginationPayload = {
       start,
       end,
     };
+
     try {
       setLoading(true);
-      const res = await backendActor.get_my_post(paginationPayload);
-      console.log("---res--", res?.Ok?.posts);
-      const dataLength = res?.Ok?.size || 0;
-      setTotalItems(Math.ceil(dataLength / 4));
-      setMyPost(res?.Ok?.posts);
+      let res;
+      if (searchTerm.trim() === "") {
+        res = await backendActor.get_my_proposals(paginationPayload);
+      } else {
+        res = await backendActor.search_proposals(searchTerm.trim());
+      }
+
+      const dataLength = res.length || 0;
+      setTotalItems(Math.ceil(dataLength / itemsPerPage));
+      setMyProposals(res.slice(start, end)); // Slice proposals for pagination
     } catch (error) {
-      console.log("error fetching post", error);
+      console.log("Error fetching proposals", error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    getpost();
-  }, [currentPage]);
+    getPosts();
+  }, [currentPage, searchTerm]);
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+    setCurrentPage(1);
+  };
 
   return (
     <div className={className}>
       <div className="md:ml-10 mx-5 mt-5">
-        <h3 className="text-[#05212C] md:text-[24px] text-[18px] md:font-bold font-semibold ml-4 translate-y-[-70px]" onClick={getpost}>
+        <h3 className="text-[#05212C] md:text-[24px] text-[18px] md:font-bold font-mulish ml-4 translate-y-[-65px]">
           Submitted Proposals
         </h3>
+        <div className="flex justify-center px-2 md:px-6 mx-2">
+          <SearchProposals
+            onChange={handleSearchChange}
+            value={searchTerm}
+            width="70%"
+            bgColor="transparent"
+            placeholder="Search by proposal ID"
+            className="border-2 border-[#AAC8D6] w-full md:max-w-lg translate-y-[-105px] translate-x-0 md:translate-x-[95px] "
+          />
+        </div>
         {loading ? (
           <MuiSkeleton />
-        ) : myPost?.length === 0 ? (
-          <NoPostProfile />
+        ) : myProposals.length === 0 ? (
+          <div className="translate-y-[52px]">
+            <NoDataComponent />
+          </div>
         ) : (
-          <div className="grid grid-cols-2 md:mt-4 mt-2 mb-6 bg-[#F4F2EC] p-2 rounded-lg gap-2">
-            {myPost?.map((post, index) => (
-              <div
-                key={index}
-                className="post relative w-full"
-                onMouseEnter={() => setHoverIndex(index)}
-                onMouseLeave={() => {
-                  setHoverIndex(null);
-                  setReadMoreIndex(null);
-                }}
-              >
-                <Link to={`/post/${post.post_id}`} onClick={() => setSelectedPost(post)}>
-                  <div className="h-64 w-full relative">
-                    <img
-                      src={`http://${canisterId}.localhost:4943/f/${post.post_img}`}
-                      alt="Post"
-                      className="postImage w-full h-full rounded object-cover"
-                    />
-                  </div>
-                </Link>
-
-                <div
-                  style={{ opacity: hoverIndex === index ? 1 : 0 }}
-                  className="postContant w-full max-h-full flex flex-col gap-4 p-2 overflow-y-auto bg-[#05212C80] backdrop-blur absolute bottom-0 text-white rounded-b-lg transition-opacity duration-500"
-                >
-                  <p className="laptop:text-base text-sm">
-                    {readMoreIndex === index
-                      ? post?.post_description
-                      : post?.post_description?.slice(0, 50)}
-
-                    {post.post_description?.length > 120 && readMoreIndex !== index && (
-                      <span
-                        id="readMore"
-                        className="text-blue-500 cursor-pointer"
-                        onClick={() => setReadMoreIndex(index)}
-                      >
-                        ..more
-                      </span>
-                    )}
-                    {post.post_description?.length > 120 && readMoreIndex === index && (
-                      <span
-                        id="readMore"
-                        className="text-blue-500 cursor-pointer"
-                        onClick={() => setReadMoreIndex(null)}
-                      >
-                        ..close
-                      </span>
-                    )}
-                  </p>
-
-                  <div className="w-full flex flex-row items-center justify-evenly">
-                    <span className="flex flex-row gap-2 items-center text-lg">
-                      <FaHeart />
-                      {post.like_count}
-                    </span>
-                    <span className="flex flex-row gap-2 items-center text-lg">
-                      <FaTelegramPlane />
-                      {post.comment_count}
-                    </span>
-                    <span className="flex flex-row gap-2 items-center text-lg">
-                      <BiSolidCommentDetail />
-                    </span>
-                  </div>
-                </div>
+          <div
+            className="flex flex-col md:mt-4 mt-2 mb-6 bg-[#F4F2EC] translate-y-[-82px] p-2 rounded-lg gap-2 h-auto md:h-73 w-full md:w-[1000px] overflow-y-auto"
+            style={{ maxHeight: "390px" }}
+          >
+            {myProposals.map((proposal, index) => (
+              <div key={index} className="proposal relative w-full">
+                <Card proposal={proposal} isSubmittedProposals={true} />
               </div>
             ))}
           </div>
-        )}
-        {myPost?.length > 0 && (
-          <Pagination
-            costomClass={"mt-10"}
-            totalItems={totalItems}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-          />
         )}
       </div>
     </div>

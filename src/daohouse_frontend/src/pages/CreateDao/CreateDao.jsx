@@ -129,9 +129,6 @@ const CreateDao = () => {
     councilMembers.forEach(member => allMembers.add(Principal.fromText(member).toText()));
   
     // Add members from each group
-    step3.groups?.forEach(group => {
-      group.members.forEach(member => allMembers.add(Principal.fromText(member).toText()));
-    });
   
     const principalMembers = Array.from(allMembers).map(member => Principal.fromText(member));
 
@@ -152,7 +149,7 @@ const CreateDao = () => {
       token_symbol: step2.TokenSymbol || "TKN",
       tokens_required_to_vote: 12,
       linksandsocials: ["just send f"],
-      required_votes: 9,
+      required_votes: parseInt(step2.VotesRequired, 10) || 1,
       image_content: step6.image_content ? Array.from(new Uint8Array(step6.image_content)) : 
       Array.from(new Uint8Array()),
       image_title: step6.image_title || "this is just my title",

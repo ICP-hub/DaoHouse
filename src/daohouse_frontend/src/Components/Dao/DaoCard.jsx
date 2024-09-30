@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { Principal } from "@dfinity/principal";
 import { useAuth } from "../utils/useAuthClient";
 import { toast } from 'react-toastify';
+import { CircularProgress } from "@mui/material";
 
 const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoCanisterId }) => {
+
   const navigate = useNavigate();
   const { backendActor } = useAuth();
   const canisterId = process.env.CANISTER_ID_IC_ASSET_HANDLER;
@@ -12,12 +14,13 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
   const [followersCount, setFollowersCount] = useState(0);
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [joinStatus, setJoinStatus] = useState("Join DAO"); // 'Join DAO', 'Requested', 'Joined'
+  const [joinStatus, setJoinStatus] = useState("Join Dao"); // 'Join DAO', 'Requested', 'Joined'
   const [isMember, setIsMember] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false); 
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
   const imageUrl = `${protocol}://${canisterId}.${domain}/f/${image_id}`;
+  const backendCanisterId = Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND)  
 
   useEffect(() => {
     const fetchDaoDetails = async () => {
@@ -30,6 +33,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
             const currentUserId = Principal.fromText(profileResponse.Ok.user_id.toString());
 
             const daoFollowers = await daoCanister.get_dao_followers();
+            
             setFollowersCount(daoFollowers.length);
             setIsFollowing(daoFollowers.some(follower => follower.toString() === currentUserId.toString()));
 
@@ -39,8 +43,6 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
 
             if (isCurrentUserMember) {
               setJoinStatus('Joined');
-            } else {
-              setJoinStatus('Join DAO');
             }
           }
         } catch (error) {
@@ -55,16 +57,19 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
   }, [daoCanisterId, backendActor]);
 
   const toggleFollow = async () => {
+    
     try {
       if (!userProfile) return;
       setIsFollowing(!isFollowing);
       const response = isFollowing
-        ? await daoCanister.unfollow_dao()
-        : await daoCanister.follow_dao();
+        ? await daoCanister.unfollow_dao(backendCanisterId)
+        : await daoCanister.follow_dao(backendCanisterId);
 
       if (response?.Ok) {
         const updatedFollowers = await daoCanister.get_dao_followers();
         setFollowersCount(updatedFollowers.length);
+        console.log(followersCount);
+        
         toast.success(isFollowing ? "Successfully unfollowed" : "Successfully followed");
       } else if (response?.Err) {
         setIsFollowing(!isFollowing);
@@ -85,8 +90,12 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
   }
     
   const confirmJoinDao = async () => {
+    setLoading(true)
     try {
-      const response = await daoCanister.ask_to_join_dao(daoCanisterId);
+      let a = Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND)
+      const response = await daoCanister.ask_to_join_dao(a);
+      console.log(response);
+      
       if (response.Ok) {
         setJoinStatus("Requested");
         toast.success("Join request sent successfully");
@@ -95,10 +104,12 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
         toast.error(`Failed to send join request: ${response.Err || "Unknown error"}`);
       }
     } catch (error) {
+      setLoading(false)
       console.error('Error sending join request:', error);
       toast.error('Error sending join request');
     } finally {
       setShowConfirmModal(false);
+      setLoading(false)
     }
   };
 
@@ -200,15 +211,19 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
       <div className="flex justify-center gap-4 mt-4">
         <button
           onClick={() => setShowConfirmModal(false)}
-          className="px-8 py-3 text-[12px] lg:text-[16px] text-black font-normal rounded-full shadow-md hover:bg-gray-200 hover:text-blue-900"
+          className="px-8 py-3 text-[12px] lg:text-[16px] text-black font-normal rounded-full shadow-md hover:bg-gray-200 hover:text-[#0d2933]"
         >
           Cancel
         </button>
         <button
           onClick={confirmJoinDao}
-          className="px-6 md:px-8 py-3 text-center text-[12px] lg:text-[16px] bg-[#0E3746] text-white rounded-full shadow-xl hover:bg-blue-800 hover:text-white"
+          className="px-6 md:px-8 py-3 text-center text-[12px] lg:text-[16px] bg-[#0E3746] text-white rounded-full shadow-xl hover:bg-[#0d2933] hover:text-white"
         >
-          Join Dao
+          {loading ? (
+              <CircularProgress size={24} />
+            ) : (
+              "Join DAO"
+            )}
         </button>
       </div>
     </div>
