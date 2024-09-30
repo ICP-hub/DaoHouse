@@ -14,7 +14,7 @@ import userImage from "../../../assets/commentUser.jpg";
 import { CircularProgress } from "@mui/material";
 
 
-export default function Card({ proposal, voteApi, showActions, isProposalDetails, isComment, setIsComment, commentCount, isSubmittedProposals}) {
+export default function Card({ proposal, voteApi, daoCanisterId, showActions, isProposalDetails, isComment, setIsComment, commentCount, isSubmittedProposals}) {
 
   // console.log("Vote API", proposal);
   
@@ -28,7 +28,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const [profileImg, setProfileImg] = useState("");
   const [isLoading, setIsLoading] = useState(true)
   const [isDisabled, setIsDisabled] = useState(false);
-  const [daoName, setDaoName] = useState("")
+  const [daoName, setDaoName] = useState("");
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
   console.log(votersList);
@@ -61,7 +61,8 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
 
   // console.log(proposal.dao_canister_id);
   const proposalId = proposal.proposal_id
-  const daoCanisterId = proposal.dao_canister_id || proposal.associated_dao_canister_id;
+  const daoId = proposal.dao_canister_id || proposal.associated_dao_canister_id || daoCanisterId;
+    
   console.log(daoCanisterId);
   
 
@@ -178,7 +179,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   }
 
   const handleViewMore = () => {
-    navigate(`/social-feed/proposal/${proposalId}/dao/${daoCanisterId}`)
+    navigate(`/social-feed/proposal/${proposalId}/dao/${daoId}`)
   }
 
 

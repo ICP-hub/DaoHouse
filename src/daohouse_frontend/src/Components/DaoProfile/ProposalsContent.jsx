@@ -6,9 +6,8 @@ import { useAuth } from "../../Components/utils/useAuthClient";
 import { useParams } from "react-router-dom";
 import nodata from "../../../assets/nodata.png";
 
-const ProposalsContent = ({ proposals, isMember, showActions=true, voteApi }) => {
+const ProposalsContent = ({ proposals, isMember, showActions=true, voteApi, daoCanisterId }) => {
   const { backendActor, createDaoActor } = useAuth();
-  const { daoCanisterId } = useParams();
   const [searchTerm, setSearchTerm] = useState("");
   const [fetchedProposals, setFetchedProposals] = useState([]);
 
@@ -92,7 +91,7 @@ const ProposalsContent = ({ proposals, isMember, showActions=true, voteApi }) =>
                 </p>
             ) : (
               displayedProposals.map((proposal, index) => (
-                <Card key={index} proposal={proposal} voteApi={voteApi} />
+                <Card key={index} proposal={proposal} voteApi={voteApi} daoCanisterId={daoCanisterId} />
               ))
             )}
           </div>
