@@ -190,9 +190,9 @@ const CreateDao = () => {
         setLoadingNext(false);
         toast.success("DAO created successfully");
         clearLocalStorage();
-        // setTimeout(() => {
-        //   window.location.href = '/dao';
-        // }, 500);
+        setTimeout(() => {
+          window.location.href = '/dao';
+        }, 500);
       }
     } catch (error) {
       setLoadingNext(false);
