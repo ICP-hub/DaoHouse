@@ -33,7 +33,7 @@ const ProposalsDetails = () => {
   const [isComment, setIsComment] = useState(true);
   const [commentCount, setCommentCount] = useState(0);  // State for comment count
 
-  const maxWords = 250;
+  const maxWords = 90;
 
   const principalString = proposal?.created_by
     ? Principal.fromUint8Array(new Uint8Array(proposal.created_by)).toText()
@@ -132,8 +132,8 @@ const ProposalsDetails = () => {
     try {
       const daoActor = createDaoActor(daoCanisterId);
       const response = isFollowing
-        ? await daoActor.unfollow_dao()
-        : await daoActor.follow_dao();
+        ? await daoActor.unfollow_dao(backendActor)
+        : await daoActor.follow_dao(backendActor);
 
       if (response?.Ok) {
         toast.success(newIsFollowing ? "Successfully followed" : "Successfully unfollowed");
@@ -171,73 +171,98 @@ const ProposalsDetails = () => {
 
   return (
     <div className={`${className} bg-zinc-200 w-full relative`}>
-      {/* <div className=""> */}
-        <Container classes="__mainComponent mt-4 lg:mt-[54px] lg:pb-20 py-6 big_phone:px-16 px-6 tablet:flex-row flex-col w-full">
-          <div className="flex md:flex-row flex-col md:justify-between w-full items-center mb-12">
-          <div className="flex flex-col md:flex-row items-center">
-              <div className="w-[320px] h-[160px] lg:w-[240px] lg:h-[136px] bg-[#C2C2C2] md:w-[150px] md:h-[100px] rounded overflow-hidden">
-                <img className="w-full h-full object-cover" src={getImageUrl(dao.image_id)} alt="profile-pic" />
-              </div>
-              <div className="lg:ml-10 ml-4 py-4 md:mt-0 w-full md:w-72 xl:w-96 text-center md:text-left font-mulish font-semibold big_phone:text-lg">
-                <h2 className="lg:text-xl big_phone:text-2xl text-[16px] tablet:font-normal font-medium truncate">
-                  {dao.dao_name || 'Dao Name'}
-                </h2>
-                <div className="relative w-full md:w-[40vw] lg:w-[50vw]">
-                  <p className="text-[12px] md:text-lg desktop:text-xl font-normal break-words">
-                    {isExpanded ? dao?.purpose : truncated}
-                    {isTruncated && (
-                      <button onClick={toggleExpanded} className="text-[#0E3746] text-[12px] tablet:text-[16px] underline">
-                        {isExpanded ? 'See less' : 'See more'}
-                      </button>
-                    )}
-                  </p>
-                </div>
-                <p className="text-gray-500 text-xs md:text-sm">Creation Date: March 1, 2023</p>
-              </div>
-            </div>
-
-            <div className="flex flex-row-reverse md:flex-row justify-center md:justify-end md:items-center gap-4 w-full md:w-auto font-inter">
-              <button
-                onClick={toggleFollow}
-                className="bg-[#0E3746] text-[16px] text-white shadow-xl lg:py-4 lg:px-3 rounded-[27px] lg:w-[131px] lg:h-[40px] md:w-[112px] md:h-[38px] w-[98px] h-[35px] flex items-center justify-center"
-                style={{
-                  boxShadow:
-                    "0px 0.26px 1.22px 0px #0000000A, 0px 0.68px 2.21px 0px #00000014, 0px 1.51px 3.63px 0px #0000001D",
-                }}
-              >
-                {isFollowing ? "Unfollow" : "Follow"}
-              </button>
-              <button
-                onClick={handleJoinDao}
-                className="bg-white text-[#0E3746] shadow-xl lg:py-4 lg:px-3 rounded-[27px] lg:w-[131px] lg:h-[40px] md:w-[112px] md:h-[38px] w-[98px] h-[35px] flex items-center justify-center"
-                style={{
-                  boxShadow:
-                    "0px 0.26px 1.22px 0px #0000000A, 0px 0.68px 2.21px 0px #00000014, 0px 1.51px 3.63px 0px #0000001D",
-                }}
-              >
-                {joinStatus}
-              </button>
-            </div>
+  <Container classes="${className} __mainComponent lg:py-8 lg:pb-20 py-6 big_phone:px-8 px-6 tablet:flex-row gap-2 flex-col w-full">
+    <div className="w-full md:gap-2 gap-10 z-50 relative">
+      <div className="flex flex-col md:flex-row md:justify-between items-start">
+        {/* Left Side: Proposal Details */}
+        <div className="flex flex-col md:flex-row items-center flex-grow">
+          <div
+            className="w-full md:w-[145px] h-[200px] lg:w-[207px] lg:h-[120px] bg-[#C2C2C2] md:h-[84px] rounded overflow-hidden flex-shrink-0"
+            style={{
+              boxShadow:
+                "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
+            }}
+          >
+            <img
+              className="w-full h-full object-cover"
+              src={getImageUrl(dao?.image_id)}
+              alt="profile-pic"
+            />
           </div>
-        {/* </Container> */}
-      {/* </div> */}
 
-      {/* <Container classes="__mainComponent lg:pt-0 lg:pb-20 py-6 big_phone:px-8 px-6 tablet:flex-row gap-2 flex-col w-full bg-zinc-200"> */}
+          <div className="lg:ml-10 ml-4 md:mt-0 mt-4">
+            <h2 className="lg:text-[40px] md:text-[24px] text-[16px] tablet:font-normal font-medium md:text-left text-[#05212C] truncate md:w-[50%] w-full text-center">
+              {dao?.dao_name || 'Dao Name'}
+            </h2>
+            <div className="relative w-full md:w-[65%] lg:w-[80%] mt-2">
+              <p className="text-[12px] tablet:text-[16px] font-normal md:text-left text-[#646464] break-words text-center">
+                {isExpanded ? dao?.purpose : truncated}
+                {isTruncated && (
+                  <button
+                    onClick={toggleExpanded}
+                    className="text-[#0E3746] text-[12px] tablet:text-[16px] underline"
+                  >
+                    {isExpanded ? 'See less' : 'See more'}
+                  </button>
+                )}
+              </p>
+            </div>
 
-        
-                <div>
+            <p className="mt-2 text-gray-500 text-xs md:text-sm text-center md:text-start">
+              Creation Date: March 1, 2023
+            </p>
+          </div>
+        </div>
 
-                  <Card proposal={proposal} showActions={true} isProposalDetails={true} voteApi={voteApi} isComment={isComment} setIsComment={setIsComment} commentCount={commentCount}  />
-
-                  { isComment && (
-                    <Comments daoId={daoCanisterId} proposalId={proposalId} commentCount={commentCount} setCommentCount={setCommentCount} />
-                  )
-                  }
-
-                </div>
-        
-      </Container>
+        {/* Right Side: Follow & Join Buttons */}
+        <div className="flex justify-center gap-4 mt-4 md:mt-0 md:ml-4 tablet:mr-4 w-64 self-center">
+          <button
+            onClick={toggleFollow}
+            className="bg-[#0E3746] text-[16px] text-white shadow-xl py-1 px-3 rounded-[27px] lg:w-[131px] lg:h-[40px] md:w-[112px] md:h-[38px] w-full flex items-center justify-center"
+            style={{
+              boxShadow:
+                "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
+            }}
+          >
+            {isFollowing ? 'Unfollow' : 'Follow'}
+          </button>
+          <button
+            onClick={handleJoinDao}
+            className="bg-white text-[16px] text-[#05212C] shadow-xl px-3 rounded-[27px] lg:w-[131px] lg:h-[40px] md:w-[112px] md:h-[38px] w-full flex items-center justify-center"
+            style={{
+              boxShadow:
+                "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
+            }}
+          >
+            {joinStatus}
+          </button>
+        </div>
+      </div>
     </div>
+
+    {/* Comments and Proposal Details */}
+    <div className="mt-12">
+      <Card
+        proposal={proposal}
+        showActions={true}
+        isProposalDetails={true}
+        voteApi={voteApi}
+        isComment={isComment}
+        setIsComment={setIsComment}
+        commentCount={commentCount}
+      />
+      {isComment && (
+        <Comments
+          daoId={daoCanisterId}
+          proposalId={proposalId}
+          commentCount={commentCount}
+          setCommentCount={setCommentCount}
+        />
+      )}
+    </div>
+  </Container>
+</div>
+
   );
 };
 
