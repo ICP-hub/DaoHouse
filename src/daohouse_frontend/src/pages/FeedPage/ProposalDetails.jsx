@@ -226,11 +226,14 @@ const ProposalsDetails = () => {
 
         
                 <div>
+
                   <Card proposal={proposal} showActions={true} isProposalDetails={true} voteApi={voteApi} isComment={isComment} setIsComment={setIsComment} commentCount={commentCount}  />
+
                   { isComment && (
                     <Comments daoId={daoCanisterId} proposalId={proposalId} commentCount={commentCount} setCommentCount={setCommentCount} />
                   )
                   }
+
                 </div>
         
       </Container>

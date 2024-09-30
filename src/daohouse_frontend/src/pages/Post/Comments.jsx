@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../Components/utils/useAuthClient';
+
+
 import userImage from "../../../assets/commentUser.jpg";
 import { FaReply } from "react-icons/fa6";
 import CommentsSkeletonLoader from '../../Components/SkeletonLoaders/CommentsSkeletonLoader/CommentsSkeletonLoader';
@@ -39,12 +41,15 @@ const Comment = ({ comment, proposalId, daoId }) => {
     fetchProfile();
   }, [comment.author_principal]);
 
+
   const handleReplyChange = (e) => {
     setReplyText(e.target.value);
   };
 
   const submitReply = async () => {
+
     console.log("submitReply called");
+
     if (!replyText.trim()) return;
     try {
       const replyArgs = {
@@ -52,6 +57,7 @@ const Comment = ({ comment, proposalId, daoId }) => {
         proposal_id: proposalId,
         comment_id: comment.comment_id,
       };
+
 
       console.log("Commentid", comment);
       
@@ -98,6 +104,7 @@ const Comment = ({ comment, proposalId, daoId }) => {
         {/* Comment text with proper text wrapping */}
         <p className="mt-2 break-words text-base">{comment?.comment_text}</p>
         {comment?.replies?.length > 0 && (
+
           <p
             className="text-black cursor-pointer mt-2 underline text-sm"
             onClick={() => setShowReplies(!showReplies)}
@@ -112,6 +119,7 @@ const Comment = ({ comment, proposalId, daoId }) => {
             ))}
           </div>
         )}
+
 
         {/* Toggle button to show/hide reply input */}
         <div className="mt-4">
@@ -140,6 +148,7 @@ const Comment = ({ comment, proposalId, daoId }) => {
             </button>
           </div>
         )}
+
       </div>
     </div>
     )}
@@ -152,9 +161,11 @@ const Reply = ({ reply }) => {
   console.log(reply);
   
   return (
+
     <div className="flex mb-4 font-mulish pl-3" style={{ borderLeft: '2px solid #E0E0E0' }}>
       <div className="w-full">
         <p className="mt-2 break-words text-base">{reply}</p>
+
       </div>
     </div>
   );
@@ -239,12 +250,14 @@ console.log("newComment:", typeof newComment, newComment);
 
 
   return (
+
     <>
     {isLoading ? (
       <CommentsSkeletonLoader />
     ) : (
     <div className='bg-white mt-1 rounded-t-sm rounded-b-lg px-12 py-12 font-mulish bg'>
       <h3 className="font-bold mb-6 text-[#234A5A] text-xl">Comments</h3>
+
       {comments.slice(0, visibleComments).map((comment, index) => (
         <Comment key={index} comment={comment} proposalId={proposalId} daoActor={daoActor} daoId={daoId} />
       ))}

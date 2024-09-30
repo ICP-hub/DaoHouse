@@ -31,16 +31,17 @@ async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, 
         new_dao_name: None,
         dao_purpose: None,
         tokens: None,
-        token_from: None,
+      token_from: None,
         token_to : None,
-        proposal_created_at: Some(ic_cdk::api::time()),
+      proposal_created_at: Some(ic_cdk::api::time()),
         proposal_expired_at: None,
         bounty_task: None,
         poll_title: None,
         required_votes: None,
-        cool_down_period : None,
+      cool_down_period : None,
         new_dao_type : None,
         group_to_remove : None,
+
     };
 
     with_state(|state| {
@@ -143,7 +144,6 @@ async fn proposal_to_remove_member_to_dao(args: RemoveDaoMemberArgs) -> Result<S
 
 #[update(guard=guard_check_members)]
 async fn proposal_to_chnage_dao_config(args: ChangeDaoConfigArg) -> Result<String, String> {
-
     let proposal = ProposalInput {
         principal_of_action: Some(args.action_member),
         proposal_description: args.description,
@@ -247,6 +247,9 @@ async fn proposal_to_transfer_token(args: TokenTransferPolicy) -> Result<String,
 
 #[update(guard=guard_check_members)]
 async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String> {
+    // let proposal_expired_at = args.proposal_expired_at * 60 * 60 * 1_000_000_000;
+    const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
+
     let proposal = ProposalInput {
         principal_of_action: Some(args.action_member),
         proposal_description: args.description,
@@ -259,7 +262,7 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
         token_from: None,
         token_to : None,
         proposal_created_at: Some(args.proposal_created_at),
-        proposal_expired_at: Some(args.proposal_expired_at),
+        proposal_expired_at: Some(EXPIRATION_TIME),
         bounty_task: Some(args.bounty_task),
         poll_title: None,
         required_votes: None,
@@ -321,6 +324,8 @@ async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
 
 #[update(guard=guard_check_members)]
 async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
+    // let proposal_expired_at = args.proposal_expired_at * 60 * 60 * 1_000_000_000;
+    const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
     let proposal = ProposalInput {
         principal_of_action: Some(args.action_member),
         proposal_description: args.description,
@@ -333,7 +338,7 @@ async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
         token_from: None,
         token_to : None,
         proposal_created_at: Some(args.proposal_created_at),
-        proposal_expired_at: Some(args.proposal_expired_at),
+        proposal_expired_at: Some(EXPIRATION_TIME),
         bounty_task: None,
         poll_title: Some(args.poll_title),
         required_votes: None,
