@@ -94,12 +94,12 @@ const Followers = () => {
     <div className={`${className} w-full`}>
       <div className="lg:ml-10 tablet:mt-12 mt-5 md:px-0 px-3">
         <div className="flex justify-between items-center translate-y-[-90px]">
-          <h3 className="text-[#05212C] tablet:text-[24px] text-[18px] tablet:font-bold font-mulish mb-4">
+          <h3 className="text-[#05212C] tablet:text-[24px] translate-x-[20px] text-[18px] tablet:font-bold font-mulish mb-4">
             {searchTerm ? "Search Results" : "Followed DAO List"}
           </h3>
           <div className="flex-grow lg:flex justify-end hidden">
             <SearchProposals
-              width="90%"
+              width="80%"
               bgColor="transparent"
               placeholder="Search here"
               className="border-2 border-[#AAC8D6] w-full max-w-lg"
@@ -111,7 +111,7 @@ const Followers = () => {
         {loading ? (
           <MyProfileSkelton />
         ) : displayDAOs.length === 0 ? (
-          <NoDataComponent text={searchTerm ? "No DAOs found!" : "No DAOs joined yet!"} />
+         <div className=" translate-y-[20px]"> <NoDataComponent text={searchTerm ? "No DAOs found!" : "No DAOs joined yet!"} /></div>
         ) : (
           <div className="bg-[#F4F2EC] translate-y-[-20px]">
             <Container classes="__cards w-[1000px] p-[20px] translate-x-[-18px] rounded-lg overflow-hidden">
