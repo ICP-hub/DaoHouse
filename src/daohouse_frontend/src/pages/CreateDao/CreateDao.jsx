@@ -149,7 +149,7 @@ const CreateDao = () => {
       token_symbol: step2.TokenSymbol || "TKN",
       tokens_required_to_vote: 12,
       linksandsocials: ["just send f"],
-      required_votes: parseInt(step2.VotesRequired, 10) || 1,
+      required_votes: parseInt(step2.VotesRequired, 10) || 3,
       image_content: step6.image_content ? Array.from(new Uint8Array(step6.image_content)) : 
       Array.from(new Uint8Array()),
       image_title: step6.image_title || "this is just my title",
@@ -265,7 +265,7 @@ export default CreateDao;
 
 const steps = [
   { step: 1, name: "Basic Info" },
-  { step: 2, name: "Settle Down Period" },
+  { step: 2, name: "Token Info" },
   { step: 3, name: "Add members & Groups" },
   { step: 4, name: "Permissions" },
   { step: 5, name: "Quorum" },

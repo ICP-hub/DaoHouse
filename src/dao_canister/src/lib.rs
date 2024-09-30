@@ -53,8 +53,9 @@ fn check_proposals() {
 
             let user_propsal_expire_date = proposal.proposal_expired_at;
             let min_require_vote = state.dao.required_votes;
-            // let min_threadshold = state.dao.min_treadshold;
-
+            
+            let min_threadshold = proposal.minimum_threadsold;
+            
             let mut proposal = proposal.clone();
             if proposal.proposal_type == ProposalType::Polls
                 || proposal.proposal_type == ProposalType::BountyRaised
@@ -62,7 +63,7 @@ fn check_proposals() {
                 if time_diff >= user_propsal_expire_date && !proposal.has_been_processed {
                     proposal.has_been_processed = true;
                     if total_votes >= min_require_vote as f64 {
-                        if total_percentage >= 51.0 {
+                        if total_percentage >= min_threadshold as f64 {
                             proposal.proposal_status = ProposalState::Accepted;
                             proposals_to_update.push(proposal.clone());
                         } else if total_percentage > 0.0 {
@@ -80,7 +81,7 @@ fn check_proposals() {
                 if time_diff >= EXPIRATION_TIME && !proposal.has_been_processed {
                     proposal.has_been_processed = true;
                     if total_votes >= min_require_vote as f64 {
-                        if total_percentage >= 51.0 {
+                        if total_percentage >=  min_threadshold as f64 {
                             proposal.proposal_status = ProposalState::Accepted;
                             proposals_to_update.push(proposal.clone());
                         } else if total_percentage > 0.0 {
@@ -274,6 +275,13 @@ async fn init(dao_input: DaoInput) {
     // ic_cdk::println!("data is {:?}", dao_input);
 
     // let principal_id = api::caller();
+    let proposal_entiry: Vec<crate::ProposalPlace> = dao_input.proposal_entiry.iter().map(|proposal| {
+        crate::ProposalPlace {
+            place_name: proposal.place_name.clone(),
+            min_required_thredshold: proposal.min_required_thredshold,
+        }
+    }).collect();
+
     let new_dao = Dao {
         dao_id: ic_cdk::api::id(),
         dao_name: dao_input.dao_name,
@@ -302,6 +310,7 @@ async fn init(dao_input: DaoInput) {
         total_tokens: dao_input.token_supply,
         daohouse_canister_id: dao_input.daohouse_canister_id,
         token_symbol: dao_input.token_symbol,
+        proposal_entiry : proposal_entiry,
     };
 
     // let permission = Votingandpermissions {

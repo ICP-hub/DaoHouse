@@ -12,6 +12,14 @@ pub type CanisterId = Principal;
 #[derive(
     CandidType, Serialize, Deserialize, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone, Default,
 )]
+pub struct ProposalPlace {
+    pub place_name : String,
+    pub min_required_thredshold : u64,
+}
+
+#[derive(
+    CandidType, Serialize, Deserialize, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone, Default,
+)]
 pub struct CanisterSettings {
     pub controllers: Option<Vec<Principal>>,
 
@@ -643,6 +651,7 @@ pub struct DaoInput {
     pub image_title: String,
     pub image_content_type: String,
     pub members_permissions: Vec<String>,
+    pub proposal_entiry : Vec<ProposalPlace>,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
@@ -665,6 +674,7 @@ pub struct DaoCanisterInput {
     pub tokens_required_to_vote: u32,
     pub image_canister: Principal,
     pub daohouse_canister_id: Principal,
+    pub proposal_entiry : Vec<ProposalPlace>,
 
 }
 
@@ -869,6 +879,8 @@ pub struct ProposalValueStore {
     pub principal_action: Principal,
     // pub total_tokens: u32,
     pub dao_members: Vec<Principal>, // pub votes:
+    // pub proposal_entiry : ProposalPlace,
+    pub minimum_threadsold : u64,
 }
 
 #[derive(Debug, Clone, CandidType, Deserialize, Serialize, PartialEq, Eq)]

@@ -3,11 +3,11 @@ import React from "react";
 const GeneralPurpose = ({ generalPurp, handleInputGeneralPurp }) => (
   <>
     <div className="mb-4">
-      <label>Purpose Title</label>
+      <label>Proposal Title</label>
       <input
         type="text"
-        name="purposeTitle"
-        value={generalPurp.purposeTitle}
+        name="proposalTitle"
+        value={generalPurp.proposalTitle}
         onChange={handleInputGeneralPurp}
         className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
         placeholder="Enter purpose title"

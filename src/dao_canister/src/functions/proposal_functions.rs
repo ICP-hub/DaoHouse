@@ -2,6 +2,7 @@ use crate::proposal_route::check_proposal_state;
 use crate::types::{Dao, Proposals};
 use crate::{guards::*, Comment, DaoGroup, Pagination, ProposalStakes, ReplyCommentArgs};
 use crate::{with_state, ProposalState, VoteParam};
+use candid::Principal;
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::api::{self};
 use ic_cdk::{query, update};
@@ -354,6 +355,22 @@ fn search_proposal(proposal_id: String) -> Vec<Proposals> {
         propo
     })
 }
+
+#[query(guard = prevent_anonymous)]
+fn search_follower(dao_follower: Principal) -> Vec<Principal> {
+    let mut daos_follower = Vec::new();
+
+    with_state(|state| {
+        for follower in state.dao.followers.iter() {
+            if state.dao.followers.contains(&dao_follower) {
+                daos_follower.push(follower.clone());
+            }
+        }
+    });
+    
+    daos_follower
+}
+
 
 // #[query]
 fn execute_add_proposals(id: &String) {

@@ -1,17 +1,17 @@
 import React from "react";
 
-const DaoConfig = ({ daoConfig, handleInputDaoConfig }) => (
+const Poll = ({ poll, handleInputPoll }) => (
     <form className="space-y-4">
         <div className="mb-4">
-            <label htmlFor="daoType">DAO Type</label>
+            <label htmlFor="pollTitle">Poll Title</label>
             <input
-                id="daoType"
+                id="pollTitle"
                 type="text"
-                name="daotype"
-                value={daoConfig.daotype}
-                onChange={handleInputDaoConfig}
+                name="poll_title"
+                value={poll.poll_title}
+                onChange={handleInputPoll}
                 className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                placeholder="Enter DAO Type"
+                placeholder="Enter Poll Title"
             />
         </div>
 
@@ -21,23 +21,10 @@ const DaoConfig = ({ daoConfig, handleInputDaoConfig }) => (
                 id="description"
                 type="text"
                 name="description"
-                value={daoConfig.description}
-                onChange={handleInputDaoConfig}
+                value={poll.description}
+                onChange={handleInputPoll}
                 className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                 placeholder="Enter Description"
-            />
-        </div>
-
-        <div className="mb-4">
-            <label htmlFor="daoName"> New DAO Name</label>
-            <input
-                id="NewdaoName"
-                type="text"
-                name="new_dao_name"
-                value={daoConfig.new_dao_name}
-                onChange={handleInputDaoConfig}
-                className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                placeholder="Enter DAO Name"
             />
         </div>
 
@@ -47,26 +34,37 @@ const DaoConfig = ({ daoConfig, handleInputDaoConfig }) => (
                 id="actionMember"
                 type="text"
                 name="action_member"
-                value={daoConfig.action_member}
-                onChange={handleInputDaoConfig}
+                value={poll.action_member}
+                onChange={handleInputPoll}
                 className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                 placeholder="Enter Action Member Principal"
             />
         </div>
 
         <div className="mb-4">
-            <label htmlFor="purpose">Purpose</label>
+            <label htmlFor="proposalCreatedAt">Proposal Created At</label>
             <input
-                id="purpose"
-                type="text"
-                name="purpose"
-                value={daoConfig.purpose}
-                onChange={handleInputDaoConfig}
+                id="proposalCreatedAt"
+                type="date"
+                name="proposal_created_at"
+                value={poll.proposal_created_at}
+                onChange={handleInputPoll}
                 className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                placeholder="Enter Purpose"
+            />
+        </div>
+
+        <div className="mb-4">
+            <label htmlFor="proposalExpiredAt">Proposal Expired At</label>
+            <input
+                id="proposalExpiredAt"
+                type="date"
+                name="proposal_expired_at"
+                value={poll.proposal_expired_at}
+                onChange={handleInputPoll}
+                className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
             />
         </div>
     </form>
 );
 
-export default DaoConfig;
+export default Poll;

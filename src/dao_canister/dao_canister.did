@@ -1,6 +1,7 @@
 type AccountBalance = record { id : principal; staked : nat32 };
 type AddMemberArgs = record {
   description : text;
+  proposal_entiry : text;
   group_name : text;
   new_member : principal;
 };
@@ -9,6 +10,7 @@ type BountyDone = record {
   description : text;
   tokens : nat64;
   action_member : principal;
+  proposal_entiry : text;
   bounty_task : text;
 };
 type BountyRaised = record {
@@ -16,6 +18,7 @@ type BountyRaised = record {
   description : text;
   tokens : nat64;
   action_member : principal;
+  proposal_entiry : text;
   proposal_created_at : nat64;
   bounty_task : text;
 };
@@ -24,11 +27,13 @@ type ChangeDaoConfigArg = record {
   daotype : text;
   description : text;
   action_member : principal;
+  proposal_entiry : text;
   purpose : text;
 };
 type ChangeDaoPolicy = record {
   description : text;
   action_member : principal;
+  proposal_entiry : text;
   cool_down_period : nat32;
   required_votes : nat32;
 };
@@ -44,12 +49,14 @@ type CreateGeneralPurpose = record {
   description : text;
   proposal_title : text;
   action_member : principal;
+  proposal_entiry : text;
 };
 type CreatePoll = record {
   proposal_expired_at : nat64;
   poll_title : text;
   description : text;
   action_member : principal;
+  proposal_entiry : text;
   proposal_created_at : nat64;
 };
 type Dao = record {
@@ -67,6 +74,7 @@ type Dao = record {
   proposal_ids : vec text;
   image_id : text;
   groups_count : nat64;
+  proposal_entiry : vec ProposalPlace;
   members_permissions : vec text;
   link_of_document : text;
   members_count : nat32;
@@ -94,6 +102,7 @@ type DaoInput = record {
   dao_groups : vec DaoGroup;
   dao_name : text;
   image_id : text;
+  proposal_entiry : vec ProposalPlace;
   members_permissions : vec text;
   link_of_document : text;
   followers : vec principal;
@@ -104,6 +113,10 @@ type DaoInput = record {
 };
 type LedgerCanisterId = record { id : principal };
 type Pagination = record { end : nat32; start : nat32 };
+type ProposalPlace = record {
+  place_name : text;
+  min_required_thredshold : nat64;
+};
 type ProposalStakes = record {
   proposal_id : text;
   balances : vec AccountBalance;
@@ -139,6 +152,7 @@ type Proposals = record {
   share_count : nat64;
   token_to : opt principal;
   proposal_expired_at : nat64;
+  minimum_threadsold : nat64;
   new_dao_name : opt text;
   proposal_submitted_at : nat64;
   proposal_approved_votes : nat64;
@@ -167,10 +181,12 @@ type Proposals = record {
 type RemoveDaoMemberArgs = record {
   description : text;
   action_member : principal;
+  proposal_entiry : text;
 };
 type RemoveMemberArgs = record {
   description : text;
   action_member : principal;
+  proposal_entiry : text;
   group_name : text;
 };
 type ReplyCommentArgs = record {
@@ -193,6 +209,7 @@ type TokenTransferPolicy = record {
   description : text;
   tokens : nat64;
   action_member : principal;
+  proposal_entiry : text;
 };
 type UpdateDaoSettings = record {
   members : vec principal;
@@ -233,6 +250,7 @@ service : (DaoInput) -> {
   proposal_to_remove_member_to_group : (RemoveMemberArgs) -> (Result_1);
   proposal_to_transfer_token : (TokenTransferPolicy) -> (Result_1);
   reply_comment : (ReplyCommentArgs) -> (Result_1);
+  search_follower : (principal) -> (vec principal) query;
   search_proposal : (text) -> (vec Proposals) query;
   unfollow_dao : (principal) -> (Result_1);
   update_dao_settings : (UpdateDaoSettings) -> (Result_1);
