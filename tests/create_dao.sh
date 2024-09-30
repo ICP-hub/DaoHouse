@@ -37,6 +37,24 @@ for ((i = 1; i <= COUNT; i++)); do
         members_permissions=vec{
         "permission";
     };
+    proposal_entiry = vec {
+        record {
+            place_name = "Council";
+            min_required_thredshold = 53;
+        };
+        record {
+            place_name = "Example Group";
+            min_required_thredshold = 94;
+        };
+        record {
+            place_name = "Example Group2";
+            min_required_thredshold = 56;
+        };
+        record {
+            place_name = "Example Group3";
+            min_required_thredshold = 65;
+        };
+    };
      dao_groups = vec {
         record {
             group_name = "Example Group";

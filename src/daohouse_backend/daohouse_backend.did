@@ -32,6 +32,7 @@ type DaoInput = record {
   dao_groups : vec DaoGroup;
   dao_name : text;
   image_id : text;
+  proposal_entiry : vec ProposalPlace;
   members_permissions : vec text;
   link_of_document : text;
   image_content_type : text;
@@ -70,6 +71,10 @@ type Profileinput = record {
   telegram : text;
   tag_defines : vec text;
 };
+type ProposalPlace = record {
+  place_name : text;
+  min_required_thredshold : nat64;
+};
 type ProposalType = variant {
   RemoveMemberToDaoProposal;
   ChangeDaoConfig;
@@ -88,6 +93,7 @@ type ProposalType = variant {
 };
 type ProposalValueStore = record {
   proposal_expired_at : nat64;
+  minimum_threadsold : nat64;
   proposal_submitted_at : nat64;
   principal_action : principal;
   created_by : principal;
