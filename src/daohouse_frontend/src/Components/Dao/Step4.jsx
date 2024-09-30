@@ -72,13 +72,17 @@ const Step4 = ({ data, setData, setActiveStep }) => {
   const permissionList = [
     "ChangeDAOConfig",
     "ChangeDAOPolicy",
-    "Transfer",
-    // "Polls",
-    "AddMembers",
+    "TokenTransfer",
+    "Polls",
+    "AddMemberToGroup",
     // "FunctionCalls",
     // "UpgradeSelf",
     // "UpgradeRemote",
-    "setVoteToken",
+    "BountyDone",
+    "BountyRaised",
+    "GeneralPurpose",
+    "RemoveMemberToGroup",
+    "RemoveDaoMember",
   ];
 
 
@@ -188,11 +192,11 @@ const Step4 = ({ data, setData, setActiveStep }) => {
           >
             Proposal Creation
           </li>
-          <li
+          {/* <li
             className={`list-disc mobile:text-lg text-sm font-semibold ${activeStage === 1 ? "" : "opacity-50"}`}
           >
             Voting Permission
-          </li>
+          </li> */}
         </ul>
 
         <section>
@@ -247,7 +251,7 @@ const Step4 = ({ data, setData, setActiveStep }) => {
                 ))}
               </tbody>
             </table>
-            <section className="flex w-full justify-end items-center">
+            {/* <section className="flex w-full justify-end items-center">
               <button
                 type="submit"
                 onClick={() => setActiveStage(1)}
@@ -255,7 +259,7 @@ const Step4 = ({ data, setData, setActiveStep }) => {
               >
                 Next
               </button>
-            </section>
+            </section> */}
           </React.Fragment>
         )}
 
@@ -326,8 +330,8 @@ const Step4 = ({ data, setData, setActiveStep }) => {
         <button
           type="submit"
           onClick={handleSaveAndNext}
-          disabled={activeStage === 0}
-          className={`flex mobile:m-4 my-4 flex-row items-center gap-2 ${activeStage === 0 ? "bg-gray-400" : "bg-[#0E3746]"} px-4 py-2 rounded-[2rem] text-white mobile:text-base text-sm`}
+          // disabled={activeStage === 0}
+          className={`flex mobile:m-4 my-4 flex-row items-center gap-2 cursor-pointer bg-[#0E3746] px-4 py-2 rounded-[2rem] text-white mobile:text-base text-sm`}
         >
           Save & Next <FaArrowRightLong />
         </button>

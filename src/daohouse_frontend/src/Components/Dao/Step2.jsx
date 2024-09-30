@@ -15,7 +15,7 @@ const Step2 = ({ setData, setActiveStep, data }) => {
     TokenName: data.Tokenname || " ",
     TokenSymbol: data.Tokensymbol || " ",
     TokenSupply: data.TokenSupply || " ",
-    VotesRequired: data.VotesRequired || 1,
+    VotesRequired: data.VotesRequired || 3,
   });
 
   console.log("inputData", inputData)
@@ -39,7 +39,7 @@ const Step2 = ({ setData, setActiveStep, data }) => {
         TokenName: data.TokenName,
         TokenSymbol: data.TokenSymbol,
         TokenSupply: data.TokenSupply,
-        VotesRequired: data.VotesRequired || 1,
+        VotesRequired: data.VotesRequired || 3,
       });
 
     }
