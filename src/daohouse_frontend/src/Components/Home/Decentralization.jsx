@@ -98,37 +98,32 @@ const Decentralization = () => {
           </div>
         </div>
 
-        {/* Statistics Section */}
-        <div className="w-full bg-transparent py-8 z-10 overflow-x-auto translate-y-[10px]">
-          <div className="w-full max-w-8xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-4 sm:px-4 md:px-8 py-4 text-center text-white">
-            {/* Members */}
-            <div className="stat-card bg-transparent border border-white rounded-lg py-2 flex justify-start pl-4 relative overflow-hidden">
-              <div className="text-left">
-                <h1 className="text-lg md:text-2xl translate-x-[20px] translate-y-[20px] font-mulish">Members</h1>
-                <p className="stat-number ml-10 text-5xl translate-x-[-10px] font-mulish md:text-7xl mt-2">
-                  {membersdata}
-
-                </p>
-              </div>
-            </div>
-            {/* Proposals */}
-            <div className="stat-card bg-transparent border border-white rounded-lg py-2 flex justify-start pl-4 relative overflow-hidden">
-              <div className="text-left">
-                <h1 className="text-lg md:text-2xl translate-x-[20px] translate-y-[20px] font-mulish">Proposals</h1>
-                <p className="stat-number ml-10 text-5xl translate-x-[-10px] font-mulish md:text-7xl mt-2">
-                  {propsaldata}
-                </p>
-              </div>
-            </div>
-            {/* DAOs */}
-            <div className="stat-card bg-transparent border border-white rounded-lg py-2 flex justify-start pl-4 relative overflow-hidden">
-              <div className="text-left">
-                <h1 className="text-lg md:text-2xl translate-x-[20px] translate-y-[20px] font-mulish">DAOs</h1>
-                <p className="stat-number ml-10 text-5xl translate-x-[-10px] translate-x-0 font-mulish md:text-7xl mt-2">{daosdata}</p>
-              </div>
-            </div>
-          </div>
-        </div>
+       {/* Statistics Section */}
+<div className="w-full bg-transparent py-8 z-10 overflow-x-auto translate-y-[10px]">
+  <div className="w-full max-w-8xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-4 sm:px-4 md:px-8 py-4 text-center text-white">
+    {/* Members */}
+    <div className="stat-card bg-transparent border border-white rounded-lg py-2 flex justify-center relative overflow-hidden">
+      <div className="text-center">
+        <h1 className="text-lg md:text-2xl font-mulish mb-2">Members</h1>
+        <p className="stat-number text-5xl font-mulish md:text-7xl">{membersdata}</p>
+      </div>
+    </div>
+    {/* Proposals */}
+    <div className="stat-card bg-transparent border border-white rounded-lg py-2 flex justify-center relative overflow-hidden">
+      <div className="text-center">
+        <h1 className="text-lg md:text-2xl font-mulish mb-2">Proposals</h1>
+        <p className="stat-number text-5xl font-mulish md:text-7xl">{propsaldata}</p>
+      </div>
+    </div>
+    {/* DAOs */}
+    <div className="stat-card bg-transparent border border-white rounded-lg py-2 flex justify-center relative overflow-hidden">
+      <div className="text-center">
+        <h1 className="text-lg md:text-2xl font-mulish mb-2">DAOs</h1>
+        <p className="stat-number text-5xl font-mulish md:text-7xl">{daosdata}</p>
+      </div>
+    </div>
+  </div>
+</div>
       </Container>
     </div>
   );
