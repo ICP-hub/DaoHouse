@@ -41,8 +41,8 @@ const HeroSection = () => {
       alt="hero section gradient"
       className="absolute right-[86px] top-[53px] w-[70px] mini_phone:right-[94px] iphone_SE:right-[103px] iphone12_pro:right-[109px] iphone14_pro_max:right-[129px] small_phone:w-[70px] small_phone:right-[121px]  mobile:left-[286px] md:top-[50px] md:mb-0 md:mt-[36px] md:left-[345px] md:w-[174px] tablet:top-[126px] tablet:mb-0 tablet:mt-8 tablet:left-[338px] tablet:w-[210px] z-[-1]"
     />
-    <div className="md:ml-[60px] lg:ml-[0px] mt-[-16px] md:mt-0 lg:mt-16 flex flex-col gap-0 md:gap-2">
-    <p className="text-[#0E3746] font-mulish font-bold text-center text-2xl  md:text-6xl lg:text-[72px]">
+    <div className="md:ml-[60px] lg:ml-[0px] mt-[-16px] md:mt-0 lg:mt-16 flex flex-col gap-0 md:gap-2 justify-center">
+    <p className="text-[#0E3746] font-mulish font-bold text-center text-2xl  md:text-6xl lg:text-[72px] justify-center">
     Building Better 
   </p>
   <p className="text-[#0E3746] font-mulish font-bold text-center text-2xl  md:text-6xl lg:text-[72px]">

@@ -14,6 +14,7 @@ const Following = () => {
   const [fetchedDAOs, setFetchedDAOs] = useState([]); // State for search results
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState(""); // State for search term
+  const [searchLoading, setSearchLoading] = useState(false); // State for search loading
   const canisterId = process.env.CANISTER_ID_IC_ASSET_HANDLER;
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
@@ -74,12 +75,15 @@ const Following = () => {
   const getSearchDao = async () => {
     if (!searchTerm.trim()) return setFetchedDAOs([]); // Clear the search results if input is empty
 
+    setSearchLoading(true); // Set searchLoading to true when search starts
     try {
       const response = await backendActor.search_dao(searchTerm); // Fetch the searched DAOs
       const combinedSearchDaoDetails = await fetchDaoDetails(response);
       setFetchedDAOs(combinedSearchDaoDetails); // Update state with search results
     } catch (error) {
       console.error("Error searching DAOs:", error);
+    } finally {
+      setSearchLoading(false); // Set searchLoading to false when search is complete
     }
   };
 
@@ -96,7 +100,7 @@ const Following = () => {
 
   return (
     <div className={`${className} w-full`}>
-      <div className="lg:ml-10 tablet:mt-12 mt-5 md:px-0 px-3">
+      <div className="lg:ml-10 tablet:mt-12 mt-5 md:px-0 px- 3">
         <div className="flex justify-between items-center translate-y-[-90px]">
           <h3 className="text-[#05212C] tablet:text-[24px] translate-x-[20px] text-[18px] tablet:font-bold font-mulish mb-4">
             {searchTerm ? "Search Results" : "DAOs Joined"}
@@ -112,7 +116,9 @@ const Following = () => {
           </div>
         </div>
 
-        {loading ? (
+        {searchTerm && searchLoading ? ( // Show skeleton loading when search is in progress
+          <MyProfileSkelton />
+        ) : loading ? (
           <MyProfileSkelton />
         ) : displayDAOs.length === 0 ? (
           <div className=" translate-y-[20px]"> 
