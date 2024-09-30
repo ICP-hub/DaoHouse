@@ -855,6 +855,12 @@ pub struct ProposalKeyStore {
     pub proposal_id: String,
 }
 
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct ProposalPlace {
+    pub place_name : String,
+    pub min_required_thredshold : u64,
+}
+
 #[derive(CandidType, Serialize, Deserialize, Debug, Clone)]
 pub struct ProposalValueStore {
     pub associated_dao_canister_id: Principal,
@@ -869,6 +875,7 @@ pub struct ProposalValueStore {
     pub principal_action: Principal,
     // pub total_tokens: u32,
     pub dao_members: Vec<Principal>, // pub votes:
+    pub proposal_entiry : ProposalPlace,
 }
 
 #[derive(Debug, Clone, CandidType, Deserialize, Serialize, PartialEq, Eq)]

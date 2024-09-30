@@ -66,6 +66,7 @@ pub async fn create_proposal_controller(
         token_to : proposal.token_to,
         has_been_processed: false, 
         has_been_processed_secound : false,
+        proposal_entiry : proposal.proposal_entiry.clone(),
     };
 
     // to record proposals on Parent canister
@@ -80,6 +81,7 @@ pub async fn create_proposal_controller(
         required_votes: proposal.required_votes.unwrap_or(required_votes),
         proposal_submitted_at: ic_cdk::api::time(),
         propsal_title: proposal.proposal_title,
+        proposal_entiry : proposal.proposal_entiry,
         dao_members,
     };
 

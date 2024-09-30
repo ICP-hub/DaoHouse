@@ -53,7 +53,7 @@ fn check_proposals() {
 
             let user_propsal_expire_date = proposal.proposal_expired_at;
             let min_require_vote = state.dao.required_votes;
-            // let min_threadshold = state.dao.min_treadshold;
+            // let min_threadshold = proposal.proposal_entiry.min_required_thredshold;
 
             let mut proposal = proposal.clone();
             if proposal.proposal_type == ProposalType::Polls
