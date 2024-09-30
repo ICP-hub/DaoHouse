@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import proposals from "../../../assets/proposals.png";
 import createProposalNew from "../../../assets/createProposalNew.png";
@@ -18,6 +17,9 @@ import DaoConfig from './DaoConfig';
 import AddMember from './AddMember';
 import RemoveMember from './RemoveMember';
 import BountyRaised from './BountyRaised';
+import DaoPolicy from './DaoPolicy';
+import Poll from './Poll';
+import RemoveDaoMember from './RemoveDaoMember';
 function CreateProposal() {
   const navigate = useNavigate();
 
@@ -27,36 +29,35 @@ function CreateProposal() {
   const [requiredVotes, setRequiredVotes] = useState('');
   const [proposalType, setProposalType] = useState('');
   const [tokenTransfer, setTokenTransfer] = useState({
-    from: '',
+    to: '',
     description: '',
     tokens: '',
-    actionMember: '',
-  })
+    action_member: '',
+  });
 
 
   const [bountyDone, setBountyDone] = useState({
-    proposalExpiredAt: '',
-    from: '',
+    to: '',
     description: '',
     tokens: '',
-    actionMember: '',
-    proposalCreatedAt: '',
-    bountTask: '',
+    action_member: '',
+    bounty_task: '',
   })
 
   const [generalPurp, setGeneralPurp] = useState({
     proposalExpiredAt: '',
     description: '',
     actionMember: '',
-    purposeTitle: '',
+    proposalTitle: '',
     proposalCreatedAt: '',
   })
   const [daoConfig, setDaoConfig] = useState({
     daotype: '',
     description: '',
-    dao_name: '',
+    new_dao_name: '',
     action_member: '',
     purpose: '',
+
   });
   const [addMember, setAddMember] = useState({
     group_name: "",
@@ -75,6 +76,23 @@ function CreateProposal() {
     action_member: '',
     proposal_created_at: '',
     bounty_task: '',
+  });
+  const [changePolicy, setChangePolicy] = useState({
+    description: '',
+    action_member: '',
+    cool_down_period: '',
+    required_votes: '',
+  });
+  const [poll, setPoll] = useState({
+    proposal_expired_at: '',
+    poll_title: '',
+    description: '',
+    action_member: '',
+    proposal_created_at: '',
+  });
+  const [removeDaoMember, setRemoveDaoMember] = useState({
+    description: '',
+    action_member: '',
   })
   const [groupNames, setGropNames] = useState([]);
   console.log("group", groupNames);
@@ -160,6 +178,24 @@ function CreateProposal() {
       [e.target.name]: e.target.value,
     });
   };
+  const handleInputDaoPolicy = (e) => {
+    setChangePolicy({
+      ...changePolicy,
+      [e.target.name]: e.target.value,
+    });
+  };
+  const handleInputPoll = (e) => {
+    setPoll({
+      ...poll,
+      [e.target.name]: e.target.value,
+    });
+  };
+  const handleInputRemoveDaoMember = (e) => {
+    setRemoveDaoMember({
+      ...removeDaoMember,
+      [e.target.name]: e.target.value,
+    });
+  };
   const handleSubmit = async (e) => {
     console.log("slkadjlksajdlkasj");
 
@@ -170,7 +206,7 @@ function CreateProposal() {
       switch (proposalType) {
         case 'tokenTransfer':
           await submitTokenTransferProposal({
-            from: Principal.fromText(tokenTransfer.from),
+            to: Principal.fromText(tokenTransfer.to),
             description: tokenTransfer.description,
             tokens: Number(tokenTransfer.tokens),
             action_member: Principal.fromText(tokenTransfer.actionMember),
@@ -181,13 +217,11 @@ function CreateProposal() {
           console.log("dfnsdjlflksdfjlksdfjlksd");
 
           await submitBountyDone({
-            proposal_expired_at: new Date(bountyDone.proposalExpiredAt).getTime(),
-            from: Principal.fromText(bountyDone.from),
+            to: Principal.fromText(bountyDone.to),
             description: bountyDone.description,
             tokens: Number(bountyDone.tokens),
-            action_member: Principal.fromText(bountyDone.actionMember),
-            proposal_created_at: 12,
-            bounty_task: bountyDone.bountTask,
+            action_member: Principal.fromText(bountyDone.action_member),
+            bounty_task: bountyDone.bounty_task,
           });
           break;
         case 'GeneralPurp':
@@ -195,7 +229,7 @@ function CreateProposal() {
             proposal_expired_at: new Date(generalPurp.proposalExpiredAt).getTime(),
             description: generalPurp.description,
             action_member: Principal.fromText(generalPurp.actionMember),
-            purpose_title: generalPurp.purposeTitle,
+            proposal_title: generalPurp.proposalTitle,
             proposal_created_at: new Date(generalPurp.proposalCreatedAt).getTime(),
           });
           break;
@@ -204,7 +238,7 @@ function CreateProposal() {
           await submitDaoConfig({
             daotype: daoConfig.daotype,
             description: daoConfig.description,
-            new_dao_name: daoConfig.dao_name,
+            new_dao_name: daoConfig.new_dao_name,
             action_member: Principal.fromText(daoConfig.action_member),
             purpose: daoConfig.purpose,
           });
@@ -229,6 +263,26 @@ function CreateProposal() {
             action_member: Principal.fromText(bountyRaised.action_member),
             proposal_created_at: new Date(bountyRaised.proposal_created_at).getTime(),
             bounty_task: bountyRaised.bounty_task,
+          });
+        case 'ChangePolicy':
+          await submitChangePolicy({
+            description: changePolicy.description,
+            action_member: Principal.fromText(changePolicy.action_member),
+            cool_down_period: Number(changePolicy.cool_down_period),
+            required_votes: Number(changePolicy.required_votes),
+          });
+        case 'Poll':
+          await submitPoll({
+            proposal_expired_at: new Date(poll.proposal_expired_at).getTime(),
+            poll_title: '',
+            description: '',
+            action_member: Principal.fromText(poll.action_member),
+            proposal_created_at: new Date(poll.proposal_created_at).getTime(),
+          });
+        case 'RemoveDaoMember':
+          await submitRemoveDaoMember({
+            description: removeDaoMember.description,
+            action_member: Principal.fromText(removeDaoMember.action_member),
           });
         // default:
         //     toast.error('Please select a proposal type and fill in the details.');
@@ -274,6 +328,8 @@ function CreateProposal() {
   };
 
   const submitGeneralPurp = async (generalPurp) => {
+    console.log("general purpose payload", generalPurp);
+
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
       console.log("daocanister iss", daoCanisterId);
@@ -363,10 +419,9 @@ function CreateProposal() {
 
     }
   };
-
   const submitBountyRaised = async (bountyRaised) => {
 
-    console.log("raised", bountyRaised);
+    console.log("bounty Raised", bountyRaised);
 
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
@@ -374,13 +429,68 @@ function CreateProposal() {
       ;
 
       const response = await daoCanister.proposal_to_bounty_raised(bountyRaised);
-      console.log("response of bounty raised ", response)
-      toast.success("Bounty Raised  proposal created successfully");
+      console.log("response of bounty rasied ", response)
+      toast.success("bounty raised proposal created successfully");
       movetodao();
     } catch (error) {
       console.log("error of add", error);
     }
   };
+
+  const submitChangePolicy = async (changePolicy) => {
+
+    console.log("change plicy", changePolicy);
+
+    try {
+      const daoCanister = await createDaoActor(daoCanisterId);
+      console.log("daocanister iss", daoCanisterId);
+      ;
+
+      const response = await daoCanister.proposal_to_change_dao_policy(changePolicy);
+      console.log("response of change policy ", response)
+      toast.success("ChnageDaoPolicy  proposal created successfully");
+      movetodao();
+    } catch (error) {
+      console.log("error of add", error);
+    }
+  };
+
+  const submitPoll = async (poll) => {
+
+    console.log("poll paylaod", poll);
+
+    try {
+      const daoCanister = await createDaoActor(daoCanisterId);
+      console.log("daocanister iss", daoCanisterId);
+      ;
+
+      const response = await daoCanister.proposal_to_create_poll(poll);
+      console.log("response of create poll proposal ", response)
+      toast.success("Poll proposal created successfully");
+      movetodao();
+    } catch (error) {
+      console.log("error of add", error);
+    }
+  };
+
+  const submitRemoveDaoMember = async (removeDaoMember) => {
+
+    console.log("remove dao member paylaod", removeDaoMember);
+
+    try {
+      const daoCanister = await createDaoActor(daoCanisterId);
+      console.log("daocanister iss", daoCanisterId);
+      ;
+
+      const response = await daoCanister.proposal_to_remove_member_to_dao(removeDaoMember);
+      console.log("response of remove dao member ", response)
+      toast.success("Remove Dao Member proposal created successfully");
+      movetodao();
+    } catch (error) {
+      console.log("error of add", error);
+    }
+  };
+
 
   useEffect(() => {
     const fetchGroupNames = async () => {
@@ -466,9 +576,13 @@ function CreateProposal() {
                     <option value="tokenTransfer">Token Transfer</option>
                     <option value="GeneralPurp">General Purpose</option>
                     <option value="DaoConfig">Dao Config</option>
-                    <option value="AddMember">Add Member</option>
-                    <option value="RemoveMember">Remove Member</option>
+                    <option value="AddMember">Add Member in Group</option>
+                    <option value="RemoveMember">Remove Member from Group</option>
                     <option value="BountyRaised">Bounty Raised</option>
+                    <option value="ChangePolicy">Change Dao Policy</option>
+                    <option value="Poll">Polls</option>
+                    <option value="RemoveDaoMember">RemoveMemberToDaoProposal</option>
+
                   </select>
                 </div>
 
@@ -504,6 +618,16 @@ function CreateProposal() {
                 {proposalType === "BountyRaised" && (
                   <BountyRaised bountyRaised={bountyRaised} handleInputBountyRaised={handleInputBountyRaised} />
                 )}
+                {proposalType === "ChangePolicy" && (
+                  <DaoPolicy changePolicy={changePolicy} handleInputDaoPolicy={handleInputDaoPolicy} />
+                )}
+                {proposalType === "Poll" && (
+                  <Poll poll={poll} handleInputPoll={handleInputPoll} />
+                )}
+                {proposalType === "RemoveDaoMember" && (
+                  <RemoveDaoMember removeDaoMember={removeDaoMember} handleInputRemoveDaoMember={handleInputRemoveDaoMember} />
+                )}
+
                 <div className="flex justify-center my-8">
                   {
                     loading ? <CircularProgress /> :
