@@ -3,12 +3,12 @@ import React from "react";
 const BountyDone = ({ bountyDone, handleInputBountyDone }) => (
   <>
     <div className="mb-4">
-      <label htmlFor="from">From</label>
+      <label htmlFor="to">To</label>
       <input
-        id="from"
-        type="text"
-        name="from"
-        value={bountyDone.from}
+        id="to"
+        type="to"
+        name="to"
+        value={bountyDone.to}
         onChange={handleInputBountyDone}
         className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
         placeholder="Enter description"
@@ -26,18 +26,7 @@ const BountyDone = ({ bountyDone, handleInputBountyDone }) => (
         placeholder="Enter description"
       />
     </div>
-    <div className="mb-4">
-      <label htmlFor="bountyTask">Bounty Task</label>
-      <input
-        id="bountyTask"
-        type="text"
-        name="bountyTask"
-        value={bountyDone.bountyTask} // Corrected name attribute
-        onChange={handleInputBountyDone}
-        className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-        placeholder="Enter bounty task"
-      />
-    </div>
+
     <div className="mb-4">
       <label htmlFor="tokens">Tokens</label>
       <input
@@ -53,37 +42,27 @@ const BountyDone = ({ bountyDone, handleInputBountyDone }) => (
     <div className="mb-4">
       <label htmlFor="actionMember">Action Member (Principal)</label>
       <input
-        id="actionMember"
+        id="action_member"
         type="text"
-        name="actionMember"
-        value={bountyDone.actionMember}
+        name="action_member"
+        value={bountyDone.action_member}
         onChange={handleInputBountyDone}
         className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
         placeholder="Enter action member principal"
       />
     </div>
     <div className="mb-4">
-      <label htmlFor="proposalExpiredAt">Proposal Expired At</label>
+      <label htmlFor="Bounty Task">Bounty Task</label>
       <input
-        id="proposalExpiredAt"
-        type="date"
-        name="proposalExpiredAt"
-        value={bountyDone.proposalExpiredAt}
+        id="bounty_task"
+        type="text"
+        name="bounty_task"
+        value={bountyDone.bounty_task}
         onChange={handleInputBountyDone}
         className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
       />
     </div>
-    <div className="mb-4">
-      <label htmlFor="proposalCreatedAt">Proposal Created At</label>
-      <input
-        id="proposalCreatedAt"
-        type="date"
-        name="proposalCreatedAt"
-        value={bountyDone.proposalCreatedAt}
-        onChange={handleInputBountyDone}
-        className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-      />
-    </div>
+
   </>
 );
 

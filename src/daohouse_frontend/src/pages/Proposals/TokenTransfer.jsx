@@ -3,11 +3,11 @@ import React from "react";
 const TokenTransfer = ({ tokenTransfer, handleInputTransferToken }) => (
   <>
     <div className="mb-4">
-      <label>From</label>
+      <label>To</label>
       <input
         type="text"
-        name="from"
-        value={tokenTransfer.from}
+        name="to"
+        value={tokenTransfer.to}
         onChange={handleInputTransferToken}
         className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
         placeholder="Enter sender's principal"
