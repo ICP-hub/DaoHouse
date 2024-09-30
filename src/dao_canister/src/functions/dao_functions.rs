@@ -31,16 +31,17 @@ async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, 
         new_dao_name: None,
         dao_purpose: None,
         tokens: None,
-        token_from: None,
+      token_from: None,
         token_to : None,
-        proposal_created_at: Some(ic_cdk::api::time()),
+      proposal_created_at: Some(ic_cdk::api::time()),
         proposal_expired_at: None,
         bounty_task: None,
         poll_title: None,
         required_votes: None,
-        cool_down_period : None,
+      cool_down_period : None,
         new_dao_type : None,
         group_to_remove : None,
+
     };
 
     with_state(|state| {
@@ -143,7 +144,6 @@ async fn proposal_to_remove_member_to_dao(args: RemoveDaoMemberArgs) -> Result<S
 
 #[update(guard=guard_check_members)]
 async fn proposal_to_chnage_dao_config(args: ChangeDaoConfigArg) -> Result<String, String> {
-
     let proposal = ProposalInput {
         principal_of_action: Some(args.action_member),
         proposal_description: args.description,

@@ -78,7 +78,7 @@ pub async fn create_proposal_controller(
         proposal_id: proposal_id.clone(),
         proposal_type: proposal.proposal_type,
         required_votes: proposal.required_votes.unwrap_or(required_votes),
-        proposal_submitted_at: ic_cdk::api::time(),
+   proposal_submitted_at: ic_cdk::api::time(),
         propsal_title: proposal.proposal_title,
         dao_members,
     };

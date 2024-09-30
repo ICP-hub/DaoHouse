@@ -13,7 +13,9 @@ import { useAuth } from "../utils/useAuthClient";
 import userImage from "../../../assets/commentUser.jpg";
 import { CircularProgress } from "@mui/material";
 
+
 export default function Card({ proposal, voteApi, showActions, isProposalDetails, isComment, setIsComment, commentCount}) {
+
 
   console.log("Vote API", proposal);
   
@@ -32,6 +34,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   console.log(votersList);
   
   // console.log("voters", proposal?.approved_votes_list + proposal?.rejected_votes_list); 
+
 
   useEffect(() => {
     async function fetchUserProfile() {
@@ -188,6 +191,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
     } catch (error) {
       console.error("Error submitting vote:", error);
       toast.error("Error submitting vote:", error)
+
     } finally {
       setIsDisabled(false);
     }
@@ -200,6 +204,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
       rejectedVotes: rejectedVotersList,
     });
   };
+
 
   const handleCommentToggle = () => {
     setIsComment(!isComment);
