@@ -254,12 +254,14 @@ const ProposalsDetails = () => {
         commentCount={commentCount}
       />
       {isComment && (
-        <Comments
+        <div className="mx-20">
+          <Comments
           daoId={daoCanisterId}
           proposalId={proposalId}
           commentCount={commentCount}
           setCommentCount={setCommentCount}
         />
+        </div>
       )}
     </div>
   </Container>
