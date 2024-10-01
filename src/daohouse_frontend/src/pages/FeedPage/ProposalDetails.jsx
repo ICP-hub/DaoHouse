@@ -61,6 +61,8 @@ const ProposalsDetails = () => {
     return daoCanisterId ? createDaoActor(daoCanisterId) : null;
   }, [daoCanisterId, createDaoActor]);
 
+  // setVoteApi(daoActor)
+
   useEffect(() => {
     const fetchDaoDetails = async () => {
       if (!daoActor) return;
@@ -246,7 +248,7 @@ const ProposalsDetails = () => {
         proposal={proposal}
         showActions={true}
         isProposalDetails={true}
-        voteApi={voteApi}
+        voteApi={daoActor}
         isComment={isComment}
         setIsComment={setIsComment}
         commentCount={commentCount}
