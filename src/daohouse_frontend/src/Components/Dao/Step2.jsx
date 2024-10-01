@@ -15,7 +15,7 @@ const Step2 = ({ setData, setActiveStep, data }) => {
     TokenName: data.Tokenname || " ",
     TokenSymbol: data.Tokensymbol || " ",
     TokenSupply: data.TokenSupply || " ",
-    VotesRequired: data.VotesRequired || " ",
+    VotesRequired: data.VotesRequired || 1,
   });
 
   console.log("inputData", inputData)
@@ -39,7 +39,7 @@ const Step2 = ({ setData, setActiveStep, data }) => {
         TokenName: data.TokenName,
         TokenSymbol: data.TokenSymbol,
         TokenSupply: data.TokenSupply,
-        VotesRequired: data.VotesRequired,
+        VotesRequired: data.VotesRequired || 1,
       });
 
     }
@@ -173,7 +173,7 @@ const Step2 = ({ setData, setActiveStep, data }) => {
 
               <input
                 required
-                type="text"
+                type="number"
                 name="VotesRequired"
                 value={inputData.VotesRequired}
                  onChange={handleChange}

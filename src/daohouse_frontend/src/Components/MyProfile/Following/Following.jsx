@@ -1,137 +1,160 @@
 import React, { useState, useEffect } from "react";
-import { RxArrowTopRight } from "react-icons/rx";
-import MuiSkeleton from "../../Skeleton/MuiSkeleton";
 import { useAuth } from "../../utils/useAuthClient";
-import Avatar from "../../../../assets/Avatar.png"
+import MyProfileSkelton from "../../SkeletonLoaders/MyProfileSkelton";
+import NoDataComponent from "../../Dao/NoDataComponent";
+import { Principal } from "@dfinity/principal";
+import Container from "../../Container/Container";
+import SearchProposals from "../../../Components/Proposals/SearchProposals"; // Import search component
+import "./Following.scss"; // Custom scrollbar styling
 
 const Following = () => {
   const className = "Following";
-  const { backendActor, frontendCanisterId, identity } = useAuth();
-  const [data, setdata] = useState([])
+  const { backendActor, createDaoActor, stringPrincipal } = useAuth();
+  const [joinedDAO, setJoinedDAO] = useState([]);
+  const [fetchedDAOs, setFetchedDAOs] = useState([]); // State for search results
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(""); // State for search term
+  const canisterId = process.env.CANISTER_ID_IC_ASSET_HANDLER;
+  const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
+  const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
 
-  const getdata = async () => {
+  const getJoinedDaos = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const response = await backendActor.get_my_following();
-      console.log("following api:", response);
-      if (Array.isArray(response.Ok)) {
-        setdata(response.Ok);
-      } else {
-        setdata([]);
-      }
+      const profile = await backendActor.get_profile_by_id(Principal.fromText(stringPrincipal));
+      const joinedDaoPrincipals = profile?.Ok?.join_dao || [];
+      const joinedDaoDetails = await Promise.all(
+        joinedDaoPrincipals.map(async (daoPrincipal) => {
+          try {
+            const daoCanisterPrincipal = Principal.fromUint8Array(daoPrincipal._arr);
+            const daoCanister = await createDaoActor(daoCanisterPrincipal);
+            const daoDetails = await daoCanister.get_dao_detail();
+            return { ...daoDetails, dao_canister_id: daoCanisterPrincipal.toText() };
+          } catch (error) {
+            console.error(`Error fetching details for DAO: ${daoPrincipal._arr}`, error);
+            return null;
+          }
+        })
+      );
+      const validDaoDetails = joinedDaoDetails.filter((dao) => dao !== null);
+      setJoinedDAO(validDaoDetails);
     } catch (error) {
-      console.error("Error :", error);
-      setdata([]);
+      console.error("Error fetching joined DAOs:", error);
     } finally {
       setLoading(false);
     }
-  }
+  };
+  
+  const fetchDaoDetails = async (daoList) => {
+    const allDaoDetails = await Promise.all(
+      daoList.map(async (data) => {
+        try {
+          const daoCanister = await createDaoActor(data.dao_canister_id);
+          const dao_details = await daoCanister.get_dao_detail();
+          return { ...dao_details, dao_canister_id: data.dao_canister_id };
+        } catch (err) {
+          console.error(`Error fetching details for DAO ${data.dao_canister_id}:`, err);
+          return null;
+        }
+      })
+    );
+    return allDaoDetails.filter(Boolean);
+  };
+
+
+  const getImageUrl = (imageId) => {
+    return `${protocol}://${canisterId}.${domain}/f/${imageId}`;
+  };
+
+  const handleViewProfile = (daoCanisterId) => {
+    window.location.href = `dao/profile/${daoCanisterId}`;
+  };
+
+  // Search DAO function
+  const getSearchDao = async () => {
+    if (!searchTerm.trim()) return setFetchedDAOs([]); // Clear the search results if input is empty
+
+    try {
+      const response = await backendActor.search_dao(searchTerm); // Fetch the searched DAOs
+      const combinedSearchDaoDetails = await fetchDaoDetails(response);
+      setFetchedDAOs(combinedSearchDaoDetails); // Update state with search results
+    } catch (error) {
+      console.error("Error searching DAOs:", error);
+    }
+  };
 
   useEffect(() => {
-    getdata();
-
+    getJoinedDaos();
   }, [backendActor]);
 
+  // Fetch search results when searchTerm changes
+  useEffect(() => {
+    if (searchTerm) getSearchDao();
+  }, [searchTerm]);
+
+  const displayDAOs = searchTerm ? fetchedDAOs : joinedDAO; // Show search results if searchTerm is present, otherwise show joined DAOs
+
   return (
-    <div className={className + " " + "w-full"}>
+    <div className={`${className} w-full`}>
       <div className="lg:ml-10 tablet:mt-12 mt-5 md:px-0 px-3">
-        <h3 className="text-[#05212C] tablet:text-[24px] text-[18px] translate-x-[12px] translate-y-[-90px] tablet:font-bold font-semibold mb-4">
-          Dao Joined
-        </h3>
+        <div className="flex justify-between items-center translate-y-[-90px]">
+          <h3 className="text-[#05212C] tablet:text-[24px] translate-x-[20px] text-[18px] tablet:font-bold font-mulish mb-4">
+            {searchTerm ? "Search Results" : "DAOs Joined"}
+          </h3>
+          <div className="flex-grow lg:flex justify-end hidden">
+            <SearchProposals
+              width="80%"
+              bgColor="transparent"
+              placeholder="Search here"
+              className="border-2 border-[#AAC8D6] w-full max-w-lg"
+              onChange={(e) => setSearchTerm(e.target.value)} // Update search term on input
+            />
+          </div>
+        </div>
+
         {loading ? (
-          <MuiSkeleton />
-        ) :
-          data.length === 0 ? (
-            <p className=" text-black mt-10 "></p>
-          ) :
-            (
-              <>
-                <div className="flex gap-5 md:w-[50%]">
-                  <div className="flex flex-1 flex-col gap-4 bg-[#F4F2EC] p-4 rounded-[10px] overflow-y-auto max-h-[300px]">
-                    {data.map((principal, index) => (
-                      <div
-                        key={index}
-                        className="w-full flex flex-row items-center justify-between"
-                      >
-                        <div className="flex flex-row tablet:gap-4 gap-2 items-center">
-                          <section className="border border-cyan-200 rounded-[50%]">
-                            <img
-                              src={Avatar}
-                              alt="Following"
-                              className="tablet:w-16 w-16 h-full object-contain border-4 border-white rounded-[50%]"
-                            />
-                          </section>
-
-                          <section className="flex flex-col items-start">
-                            <p className="tablet:text-lg text-sm truncate ... w-40 lg:w-80">
-                              {principal.toString()}
-                            </p>
-                            <p className="text-slate-500 tablet:text-sm text-xs truncate ... lg:w-80 w-40">
-                              {principal.toString()}
-                            </p>
-                          </section>
-                        </div>
-
-                        {/* <button className="border border-cyan-500 tablet:px-4 px-2 py-1 tablet:text-sm text-xs rounded-2xl text-cyan-500">
-                    Remove
-                  </button> */}
-                      </div>
-                    ))}
-                  </div>
-                  {/* <div className="w-[40%] p-3 bg-[#F4F2EC] rounded-[10px] overflow-y-auto max-h-[300px] hidden md:block">
-              <h1 className="text-[#05212C] text-[20px] font-bold">More People</h1>
-              <div className="w-full bg-[#0000004D] h-[1px] my-3"></div>
-              <div>
-                {morePeopleList.map(({ userName, image, gmail, key }) => (
+          <MyProfileSkelton />
+        ) : displayDAOs.length === 0 ? (
+          <div className=" translate-y-[20px]"> 
+            <NoDataComponent text={searchTerm ? "No DAOs found!" : "No DAOs joined yet!"} />
+          </div>
+        ) : (
+          <div
+          className={`bg-[#F4F2EC] w-full p-2 rounded-lg md:mt-4 mt-2 mb-6 translate-y-[-70px] ${
+            displayDAOs.length === 1 ? "min-h-[200px]" : "min-h-[328px]"
+          }`}
+          >
+            <Container classes="__cards p-[20px] rounded-lg overflow-hidden">
+            <div className="grid grid-cols-1 tablet:grid-cols-2 gap-4 max-h-[350px] overflow-y-auto px-2 custom-scrollbar">
+                {displayDAOs.map((dao, index) => (
                   <div
-                    key={key}
-                    className="flex justify-between items-center mb-4"
+                    key={index}
+                    className="bg-white shadow-lg rounded-lg flex items-center p-4 space-x-4 transition-transform"
                   >
-                    <span className="flex gap-4">
-                      <img
-                        src={image}
-                        alt="Follower"
-                        className="tablet:w-10 w-8 object-contain rounded-[50%]"
-                      />
-                      <span>
-                        <p className="tablet:text-1xl text-sm">{userName}</p>
-                        <p className="text-slate-500 tablet:text-xs text-xs">
-                          {gmail}
-                        </p>
-                      </span>
-                    </span>
-                    <RxArrowTopRight className="tablet:text-2xl text-lg" />
+                    <img
+                      src={getImageUrl(dao?.image_id)}
+                      alt={dao?.dao_name}
+                      className="w-16 h-16 rounded-full border-2 border-black"
+                    />
+                    <div className="flex-1">
+                      <h4 className="text-lg font-mulish">{dao?.dao_name || "No Name"}</h4>
+                      <p className="text-gray-500 truncate max-w-[200px]">{dao?.purpose || "No Purpose"}</p>
+                    </div>
+
+                    <button
+                      onClick={() => handleViewProfile(dao?.dao_canister_id)}
+                      className="border-2 border-[#0E3746] text-[#0E3746] rounded-full px-4 py-2 hover:bg-[#0E3746] hover:text-white transition duration-300"
+                    >
+                      View
+                    </button>
                   </div>
                 ))}
               </div>
-            </div> */}
-                </div>
-                {/* <div className="mt-4 md:hidden">
-            <h1 className="text-[#05212C] text-[16px] font-bold ml-2">More People</h1>
-            <div className="w-full bg-[#0000004D] h-[2px] mb-4 mt-2"></div>
-            <div className="flex gap-3 overflow-x-auto max-w-full">
-              {morePeopleList.map(({ userName, image, gmail, key }) => (
-                <div
-                  key={key}
-                  className="flex flex-col justify-between items-center mb-4 bg-[#FFFFFF] py-4 px-6 rounded-[10px]"
-                >
-                  <img
-                    src={image}
-                    alt="Follower"
-                    className="tablet:w-10 w-8 object-contain rounded-[50%]"
-                  />
-                  <p className="tablet:text-1xl text-sm">{userName}</p>
-                  <p className="text-slate-500 tablet:text-xs text-xs">{gmail}</p>
-                </div>
-              ))}
-            </div>
-          </div> */}
-              </>
-            )}
+            </Container>
+          </div>
+        )}
       </div>
     </div>
-
   );
 };
 

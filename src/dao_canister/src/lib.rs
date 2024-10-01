@@ -188,7 +188,7 @@ fn chnage_dao_config(state: &mut State, proposal: &Proposals) {
 fn change_dao_policy(state: &mut State, proposal: &Proposals) {
     if let Some(cool_down_period) = proposal.cool_down_period {
         state.dao.cool_down_period = cool_down_period;
-    }
+ }
     state.dao.required_votes = proposal.required_votes;
 }
 
@@ -241,10 +241,12 @@ async fn transfer_token(proposal: &Proposals) -> Result<String, String> {
         ));
     }
 
+
     let from = match &proposal.token_from {
         Some(principal) => principal,
         None => return Err(String::from("Missing 'from' principal")),
     };
+
 
     let to = match &proposal.token_to {
         Some(principal) => principal,

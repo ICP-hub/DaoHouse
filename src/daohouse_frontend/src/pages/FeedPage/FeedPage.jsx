@@ -262,12 +262,13 @@ import Pagignation from "../../Components/pagignation/Pagignation";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import NoPostProfile from "../../Components/Dao/NoPostProfile";
 import nodata from "../../../assets/nodata.png";
-import MuiSkeleton from "../../Components/Skeleton/MuiSkeleton";
+import MuiSkeleton from "../../Components/SkeletonLoaders/MuiSkeleton";
 import LoginModal from "../../Components/Auth/LoginModal";
 import { useNavigate } from "react-router-dom";
 import Proposals from "../Proposals/Proposals";
 import ProposalsContent from "../../Components/DaoProfile/ProposalsContent";
 import SearchProposals from "../../Components/Proposals/SearchProposals";
+import ProposalLoaderSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/ProposalLoaderSkeleton";
 
 const FeedPage = () => {
   const [active, setActive] = useState({ all: false, latest: true });
@@ -405,7 +406,7 @@ const FeedPage = () => {
   };
 
   return (
-    <div className={className + " " + "w-full mt-[90px]"}>
+    <div className={className + " " + "w-full "}>
       {showPopup && (
         <div className="fixed inset-0 bg-black opacity-40 z-40"></div>
       )}
@@ -454,7 +455,7 @@ const FeedPage = () => {
         }>
         {
           loading ?
-            <MuiSkeleton />
+            <ProposalLoaderSkeleton />
             :
             ( proposals).length === 0 ?
               <Container classes="w-full flex flex-col items-center justify-center ">

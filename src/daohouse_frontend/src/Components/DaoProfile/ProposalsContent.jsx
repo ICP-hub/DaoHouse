@@ -6,9 +6,8 @@ import { useAuth } from "../../Components/utils/useAuthClient";
 import { useParams } from "react-router-dom";
 import nodata from "../../../assets/nodata.png";
 
-const ProposalsContent = ({ proposals, isMember, showActions=true, voteApi }) => {
+const ProposalsContent = ({ proposals, isMember, showActions=true, voteApi, daoCanisterId }) => {
   const { backendActor, createDaoActor } = useAuth();
-  const { daoCanisterId } = useParams();
   const [searchTerm, setSearchTerm] = useState("");
   const [fetchedProposals, setFetchedProposals] = useState([]);
 
@@ -65,7 +64,7 @@ const ProposalsContent = ({ proposals, isMember, showActions=true, voteApi }) =>
         
       </div>
     )}
-      <div className={`${showActions ? "bg-[#F4F2EC] pt-3 pb-8 mt-4 mb-8 rounded-[10px] hidden md:block" : ""} `}>
+      <div className={`${showActions ? "bg-[#F4F2EC] pt-3 pb-8 mt-4 mb-8 rounded-[10px] " : ""} `}>
       {showActions && (
         <div className="flex justify-between items-center px-6 mb-3">
           <span className="text-[20px] text-[#05212C] font-semibold">All</span>
@@ -92,7 +91,7 @@ const ProposalsContent = ({ proposals, isMember, showActions=true, voteApi }) =>
                 </p>
             ) : (
               displayedProposals.map((proposal, index) => (
-                <Card key={index} proposal={proposal} voteApi={voteApi} />
+                <Card key={index} proposal={proposal} voteApi={voteApi} daoCanisterId={daoCanisterId} />
               ))
             )}
           </div>
