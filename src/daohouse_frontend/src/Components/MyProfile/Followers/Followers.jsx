@@ -140,7 +140,7 @@ const Followers = () => {
                     />
                     <div className="flex-1">
                       <h4 className="text-lg font-mulish">{dao?.dao_name || "No Name"}</h4>
-                      <p className="text-gray-500">{dao?.purpose || "No Purpose"}</p>
+                      <p className="text-gray-500 truncate max-w-[200px]">{dao?.purpose || "No Purpose"}</p>
                     </div>
                     <button
                       onClick={() => handleViewProfile(dao?.dao_canister_id)}
