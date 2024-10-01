@@ -816,8 +816,22 @@ async fn ask_to_join_dao(daohouse_backend_id: Principal) -> Result<String, Strin
 
 #[query]
 fn get_dao_members() -> Vec<Principal> {
-    with_state(|state| state.dao.members.clone())
+    let mut all_members: Vec<Principal> = Vec::new();
+
+    with_state(|state| {
+        all_members = state.dao.members.clone();
+        for (_, group) in state.dao_groups.iter() {
+            for member in &group.group_members {
+                if !all_members.contains(member) {
+                    all_members.push(*member);
+                }
+            }
+        }
+    });
+
+    all_members
 }
+
 
 #[query]
 fn get_dao_followers() -> Vec<Principal> {
