@@ -85,6 +85,7 @@ type ProposalType = variant {
   AddMemberToDaoProposal;
   RemoveMemberToGroupProposal;
   ChnageDaoPolicy;
+  BountyClaim;
   BountyRaised;
   AddMemberToGroupProposal;
   FunctionCall;

@@ -1,7 +1,7 @@
 use crate::icrc_get_balance;
 use crate::{
     guards::*, AddMemberArgs, BountyDone, BountyRaised, ChangeDaoConfigArg, ChangeDaoPolicy,
-    CreateGeneralPurpose, CreatePoll, DaoGroup, LedgerCanisterId, ProposalInput, ProposalPlace,
+    CreateGeneralPurpose, CreatePoll, DaoGroup, LedgerCanisterId, ProposalInput,BountyClaim,
     RemoveDaoMemberArgs, RemoveMemberArgs, TokenTransferPolicy, UpdateDaoSettings,
 };
 use crate::{with_state, ProposalType};
@@ -55,7 +55,7 @@ async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, 
         new_dao_type: None,
         group_to_remove: None,
         minimum_threadsold: required_thredshold,
-        
+        link_of_task : None,
     };
 
     with_state(|state| {
@@ -117,6 +117,7 @@ async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<St
         cool_down_period: None,
         new_dao_type: None,
        minimum_threadsold: required_thredshold,
+       link_of_task : None,
         
     };
 
@@ -179,6 +180,7 @@ async fn proposal_to_remove_member_to_dao(args: RemoveDaoMemberArgs) -> Result<S
         new_dao_type: None,
         group_to_remove: None,
        minimum_threadsold: required_thredshold,
+       link_of_task : None,
         
     };
 
@@ -237,6 +239,7 @@ async fn proposal_to_chnage_dao_config(args: ChangeDaoConfigArg) -> Result<Strin
         cool_down_period: None,
         group_to_remove: None,
        minimum_threadsold: required_thredshold,
+       link_of_task : None,
         
     };
 
@@ -288,6 +291,7 @@ async fn proposal_to_change_dao_policy(args: ChangeDaoPolicy) -> Result<String, 
         required_votes: Some(args.required_votes),
         cool_down_period: Some(args.cool_down_period),
         minimum_threadsold  : required_thredshold ,
+        link_of_task : None,
     };
     crate::proposal_route::create_proposal_controller(
         with_state(|state| state.dao.daohouse_canister_id),
@@ -353,6 +357,7 @@ async fn proposal_to_transfer_token(args: TokenTransferPolicy) -> Result<String,
         new_dao_type: None,
         group_to_remove: None,
        minimum_threadsold: required_thredshold,
+       link_of_task : None,
         
     };
     crate::proposal_route::create_proposal_controller(
@@ -406,6 +411,61 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
         group_to_remove: None,
         new_dao_type: None,
        minimum_threadsold: required_thredshold,
+       link_of_task : None,
+        
+    };
+    crate::proposal_route::create_proposal_controller(
+        with_state(|state| state.dao.daohouse_canister_id),
+        proposal,
+    )
+    .await;
+    Ok(String::from(crate::utils::MESSAGE_BOUNTY_RAISED))
+}
+
+#[update(guard=guard_check_members)]
+async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
+    // let proposal_expired_at = args.proposal_expired_at * 60 * 60 * 1_000_000_000;
+    const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
+
+    // let proposal_entiry = ProposalPlace {
+    //     place_name: args.proposal_entiry,
+    //     min_required_thredshold: 12,
+    // };
+    let mut required_thredshold = 0;
+
+    let _ = with_state(|state| {
+        match state.dao.proposal_entiry.iter().find(|place| 
+            place.place_name == args.proposal_entiry) {
+            Some(val) => {
+                ic_cdk::println!("this is dao proposal place : {:?} ", val);
+
+                required_thredshold = val.min_required_thredshold;
+            }
+            None => {eprintln!("No Data Found");}
+        }
+    });
+
+    let proposal = ProposalInput {
+        principal_of_action: Some(api::caller()),
+        proposal_description: args.description,
+        proposal_title: String::from(crate::utils::TITLE_BOUNTY_CLAIM),
+        proposal_type: ProposalType::BountyClaim,
+        new_dao_name: None,
+        group_to_join: None,
+        dao_purpose: None,
+        tokens: None,
+        token_from: None,
+        token_to: None,
+        proposal_created_at: None,
+        proposal_expired_at: Some(EXPIRATION_TIME),
+        bounty_task: Some(args.bounty_task),
+        poll_title: None,
+        required_votes: None,
+        cool_down_period: None,
+        group_to_remove: None,
+        new_dao_type: None,
+       minimum_threadsold: required_thredshold,
+       link_of_task : Some(args.link_of_task)
         
     };
     crate::proposal_route::create_proposal_controller(
@@ -475,6 +535,7 @@ async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
         group_to_remove: None,
         new_dao_type: None,
        minimum_threadsold: required_thredshold,
+       link_of_task : None,
         
     };
     crate::proposal_route::create_proposal_controller(
@@ -528,6 +589,7 @@ async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
         new_dao_type: None,
         group_to_remove: None,
        minimum_threadsold: required_thredshold,
+       link_of_task : None,
         
     };
     crate::proposal_route::create_proposal_controller(
@@ -578,6 +640,7 @@ async fn proposal_to_create_general_purpose(args: CreateGeneralPurpose) -> Resul
         new_dao_type: None,
         group_to_remove: None,
        minimum_threadsold: required_thredshold,
+       link_of_task : None,
         
     };
     crate::proposal_route::create_proposal_controller(
@@ -720,6 +783,7 @@ async fn ask_to_join_dao(daohouse_backend_id: Principal) -> Result<String, Strin
         new_dao_type: None,
         group_to_remove: None,
        minimum_threadsold: required_thredshold,
+       link_of_task : None,
         
     };
 
