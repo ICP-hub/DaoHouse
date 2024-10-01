@@ -13,6 +13,7 @@ pub const TITLE_CHANGE_DAO_CONFIG : &str = "Chnage dao config";
 pub const TITLE_CHANGE_DAO_POLICY : &str = "Chnage dao policy";
 pub const TITLE_TOKEN_TRANSFER_POLICY : &str = "Token transfer policy";
 pub const TITLE_BOUNTY_RAISED : &str = "Bounty raised";
+pub const TITLE_BOUNTY_CLAIM : &str = "Bounty claim";
 pub const TITLE_BOUNTY_DONE : &str = "Bounty done";
 pub const TITLE_CREATE_POLL : &str = "Create poll";
 pub const TITLE_CREATE_GENERAL_PURPOSE : &str = "Create general purpose";

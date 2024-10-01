@@ -67,6 +67,7 @@ pub async fn create_proposal_controller(
         has_been_processed: false, 
         has_been_processed_secound : false,
         minimum_threadsold : proposal.minimum_threadsold.clone(),
+        link_of_task : proposal.link_of_task,
     };
 
     // to record proposals on Parent canister

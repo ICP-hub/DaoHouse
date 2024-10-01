@@ -898,7 +898,8 @@ pub enum ProposalType {
     UpdateSelf,
     FunctionCall,
     TokenTransfer,
-    GeneralPurpose
+    GeneralPurpose,
+    BountyClaim,
 }
 
 // const MAX_VALUE_SIZE: u32 = 800;

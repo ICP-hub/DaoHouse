@@ -5,6 +5,12 @@ type AddMemberArgs = record {
   group_name : text;
   new_member : principal;
 };
+type BountyClaim = record {
+  description : text;
+  link_of_task : text;
+  proposal_entiry : text;
+  bounty_task : text;
+};
 type BountyDone = record {
   to : principal;
   description : text;
@@ -140,6 +146,7 @@ type ProposalType = variant {
   AddMemberToDaoProposal;
   RemoveMemberToGroupProposal;
   ChnageDaoPolicy;
+  BountyClaim;
   BountyRaised;
   AddMemberToGroupProposal;
   FunctionCall;
@@ -158,6 +165,7 @@ type Proposals = record {
   proposal_approved_votes : nat64;
   has_been_processed : bool;
   created_by : principal;
+  link_of_task : opt text;
   new_dao_purpose : opt text;
   likes : nat32;
   proposal_rejected_votes : nat64;
@@ -240,6 +248,7 @@ service : (DaoInput) -> {
   icrc_transfer : (TokenTransferArgs) -> (Result_4);
   proposal_refresh : () -> (Result_1);
   proposal_to_add_member_to_group : (AddMemberArgs) -> (Result_1);
+  proposal_to_bounty_claim : (BountyClaim) -> (Result_1);
   proposal_to_bounty_done : (BountyDone) -> (Result_1);
   proposal_to_bounty_raised : (BountyRaised) -> (Result_1);
   proposal_to_change_dao_policy : (ChangeDaoPolicy) -> (Result_1);

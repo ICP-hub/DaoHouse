@@ -39,7 +39,8 @@ pub enum ProposalType {
     UpdateSelf,
     FunctionCall,
     TokenTransfer,
-    GeneralPurpose
+    GeneralPurpose,
+    BountyClaim,
 }
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
@@ -92,6 +93,7 @@ pub struct Proposals {
     pub has_been_processed_secound : bool,
     // pub proposal_entiry : ProposalPlace,
     pub minimum_threadsold : u64,
+    pub link_of_task : Option<String>,
 }
 
 // for proposal comments
@@ -126,6 +128,7 @@ pub struct ProposalInput {
     pub poll_title : Option<String>, 
     pub cool_down_period : Option<u32>,
     pub minimum_threadsold : u64,
+    pub link_of_task : Option<String>,
     // pub proposal_amount:String,
     // pub proposal_receiver_id:String,
     // pub created_by: Principal,
@@ -311,6 +314,14 @@ pub struct BountyRaised{
     pub bounty_task : String,
     pub proposal_created_at: u64,
     pub proposal_expired_at: u64,
+    pub proposal_entiry : String,
+}
+
+#[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
+pub struct BountyClaim{
+    pub description: String,
+    pub bounty_task : String,
+    pub link_of_task : String,
     pub proposal_entiry : String,
 }
 
