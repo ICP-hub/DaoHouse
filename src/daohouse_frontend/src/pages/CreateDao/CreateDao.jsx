@@ -113,7 +113,9 @@ const CreateDao = () => {
 
   const handleDaoClick = async () => {
     setLoadingNext(true);
-    const { step1, step2, step3, step4, step6 } = data;
+    const { step1, step2, step3, step4, step5, step6 } = data;
+    console.log("Data", data);
+    
     const council = step4.voting?.Council;
     const councilArray = Object.entries(council)
       .filter(([permission, hasPermission]) => hasPermission)
@@ -135,6 +137,12 @@ const CreateDao = () => {
     console.log(step2);
     console.log(data.dao_groups);
     
+    const proposalEntity = step5.map(q => ({
+      place_name: q.name,
+      min_required_thredshold: BigInt(q.vote), // Ensure it's a nat64
+    }));
+
+    console.log(proposalEntity);
     
   
     const daoPayload = {
@@ -149,13 +157,14 @@ const CreateDao = () => {
       token_symbol: step2.TokenSymbol || "TKN",
       tokens_required_to_vote: 12,
       linksandsocials: ["just send f"],
-      required_votes: parseInt(step2.VotesRequired, 10) || 1,
+      required_votes: parseInt(step2.VotesRequired, 10) || 3,
       image_content: step6.image_content ? Array.from(new Uint8Array(step6.image_content)) : 
       Array.from(new Uint8Array()),
       image_title: step6.image_title || "this is just my title",
       image_content_type: step6.image_content_type || "just image content bro",
       image_id: "12",
       dao_groups: data.dao_groups,
+      proposal_entiry: proposalEntity,
       // [{
       //   group_members: [Principal.fromText("aaaaa-aa")],
       //   quorem: 5,
@@ -265,7 +274,7 @@ export default CreateDao;
 
 const steps = [
   { step: 1, name: "Basic Info" },
-  { step: 2, name: "Settle Down Period" },
+  { step: 2, name: "Token Info" },
   { step: 3, name: "Add members & Groups" },
   { step: 4, name: "Permissions" },
   { step: 5, name: "Quorum" },

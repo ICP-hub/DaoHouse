@@ -19,7 +19,7 @@ const Footer = () => {
       <Container>
         {/* Main Content */}
         {/* <div className="w-full flex flex-col md:flex-row items-center justify-between small_phone:mb-8 lg:gap-[270px] md:gap-[200px] gap-8 border border-red-300"> */}
-        <div className="w-full flex flex-col md:flex-row items-center justify-between small_phone:mb-8 lg:gap-[200px] md:gap-[80px] gap-8 ">
+        <div className="w-full flex flex-col md:flex-row  px-20px   items-center justify-between small_phone:mb-8 lg:gap-[200px] md:gap-[80px] gap-8 ">
           {/* Logo Section */}
           <Link to="/" onClick={handleLogoClick}>
             <img

@@ -26,6 +26,7 @@ const EditPersonalLinksAndContactInfo = ({
                 value={profileData.contact_number}
                 onChange={handleInputChange}
                 placeholder="0123456789"
+                pattern="[0-9]{10,}"
                 className="py-2 px-3 w-full md:w-full lg:w-[50%] border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-[#05212C] focus:border-[#05212C] sm:text-sm text-[12px]"
               />
             </div>
@@ -33,6 +34,18 @@ const EditPersonalLinksAndContactInfo = ({
           {errors.contact_number && (
             <p className="text-red-500 text-xs mt-1">{errors.contact_number}</p>
           )}
+          {profileData.contact_number && profileData.contact_number.length < 10 && (
+            <p className="text-red-500 text-xs mt-1">
+              Please enter a valid 10-digit contact number.
+            </p>
+          )}
+          {!errors.contact_number &&
+            !profileData.contact_number &&
+            profileData.contact_number !== "" && (
+              <p className="text-gray-500 text-xs mt-1">
+                Please enter a valid contact number with at least 10 digits.
+              </p>
+            )}
         </div>
 
         {/* Email */}
@@ -97,7 +110,7 @@ const EditPersonalLinksAndContactInfo = ({
               type="url"
               value={profileData.telegram}
               onChange={handleInputChange}
-              placeholder="http://www.example.com"
+              placeholder ="http://www.example.com"
               className="py-2 px-3 w-full md:w-full sm:w-full  md:w-[80%] lg:w-[50%] border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-[#05212C] focus:border-[#05212C] sm:text-sm text-[12px]"
             />
           </div>

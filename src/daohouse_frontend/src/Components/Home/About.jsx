@@ -47,8 +47,9 @@ const About = () => {
       </div>
 
       {/* Desktop view */}
-      <div className="hidden lg:flex justify-center w-[75%] bg-[#0F3746] rounded-2xl  translate-y-[-50px] shadow-lg p-10">
+     
         <Container>
+        <div className="hidden lg:flex justify-center w-[1142px] bg-[#0F3746] rounded-2xl  translate-y-[-50px] shadow-lg p-10">
           <div className="w-full text-white flex flex-col items-center relative text-center">
             {/* Title */}
             <div className="mb-4">
@@ -85,8 +86,8 @@ const About = () => {
               </button>
             </div>
           </div>
-        </Container>
-      </div>
+       </div>
+      </Container>
     </div>
   );
 };

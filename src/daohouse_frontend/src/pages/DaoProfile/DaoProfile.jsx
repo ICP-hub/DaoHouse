@@ -450,7 +450,7 @@ const DaoProfile = () => {
           >
             Followers
           </button>
-          <button
+          {/* <button
             onClick={(e) => {
               e.preventDefault();
               handleClick("settings");
@@ -462,14 +462,14 @@ const DaoProfile = () => {
             }`}
           >
             Settings
-          </button>
+          </button> */}
         </div>
         {activeLink === "proposals" && ( <div>{ loadingProposals ? ( <ProposalLoaderSkeleton />) : (<ProposalsContent proposals={proposals} isMember={isMember} voteApi={voteApi} daoCanisterId={daoCanisterId} />)}</div> ) }
         {activeLink === "feeds" && <FeedsContent  />}
         {activeLink === "member_policy" && <Members daoGroups={daoGroups} daoMembers={daoMembers} />}
         {activeLink === "followers" && <FollowersContent daoFollowers={daoFollowers}/>}
         {activeLink === "funds" && <FundsContent />}
-        {activeLink === "settings" && <DaoSettings />}
+        {/* {activeLink === "settings" && <DaoSettings />} */}
 
         </Container>
       </div>
