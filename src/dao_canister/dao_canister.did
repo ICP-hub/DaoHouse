@@ -162,7 +162,6 @@ type Proposals = record {
   minimum_threadsold : nat64;
   new_dao_name : opt text;
   proposal_submitted_at : nat64;
-  from : opt principal;
   proposal_approved_votes : nat64;
   has_been_processed : bool;
   created_by : principal;
@@ -183,7 +182,7 @@ type Proposals = record {
   group_to_join : opt text;
   comments_list : vec Comment;
   token_from : opt principal;
-cool_down_period : opt nat32;
+  cool_down_period : opt nat32;
   proposal_type : ProposalType;
   required_votes : nat32;
 };
