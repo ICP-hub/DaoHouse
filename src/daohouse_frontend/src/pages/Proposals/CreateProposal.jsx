@@ -210,6 +210,7 @@ function CreateProposal() {
             description: tokenTransfer.description,
             tokens: Number(tokenTransfer.tokens),
             action_member: Principal.fromText(tokenTransfer.actionMember),
+            proposal_entiry : "Council",
           });
           break;
 
@@ -222,6 +223,7 @@ function CreateProposal() {
             tokens: Number(bountyDone.tokens),
             action_member: Principal.fromText(bountyDone.action_member),
             bounty_task: bountyDone.bounty_task,
+            proposal_entiry : "Council",
           });
           break;
         case 'GeneralPurp':
@@ -231,6 +233,7 @@ function CreateProposal() {
             action_member: Principal.fromText(generalPurp.actionMember),
             proposal_title: generalPurp.proposalTitle,
             proposal_created_at: new Date(generalPurp.proposalCreatedAt).getTime(),
+            proposal_entiry : "Council",
           });
           break;
 
@@ -241,6 +244,7 @@ function CreateProposal() {
             new_dao_name: daoConfig.new_dao_name,
             action_member: Principal.fromText(daoConfig.action_member),
             purpose: daoConfig.purpose,
+            proposal_entiry : "Council",
           });
 
         case 'AddMember':
@@ -248,12 +252,14 @@ function CreateProposal() {
             group_name: addMember.group_name,
             description: addMember.description,
             new_member: Principal.fromText(addMember.new_member),
+            proposal_entiry : "Council",
           });
         case 'RemoveMember':
           await submitRemoveMember({
             group_name: removeMember.group_name,
             description: removeMember.description,
             action_member: Principal.fromText(removeMember.action_member),
+            proposal_entiry : "Council",
           });
         case 'BountyRaised':
           await submitBountyRaised({
@@ -270,6 +276,7 @@ function CreateProposal() {
             action_member: Principal.fromText(changePolicy.action_member),
             cool_down_period: Number(changePolicy.cool_down_period),
             required_votes: Number(changePolicy.required_votes),
+            proposal_entiry : "Council",
           });
         case 'Poll':
           await submitPoll({
@@ -278,11 +285,13 @@ function CreateProposal() {
             description: '',
             action_member: Principal.fromText(poll.action_member),
             proposal_created_at: new Date(poll.proposal_created_at).getTime(),
+            proposal_entiry : "Council",
           });
         case 'RemoveDaoMember':
           await submitRemoveDaoMember({
             description: removeDaoMember.description,
             action_member: Principal.fromText(removeDaoMember.action_member),
+            proposal_entiry : "Council",
           });
         // default:
         //     toast.error('Please select a proposal type and fill in the details.');

@@ -244,7 +244,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
       }));
       
       setIsModalOpen(true);
-  
+      handleDaoClick();
     } catch (error) {
       toast.error("Error reading image content.");
       setLoadingNext(false);
@@ -382,7 +382,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
       </div>
     </div>
     </Container>
-    <PaymentModal
+    {/* <PaymentModal
          data={data}
         open={isModalOpen}
         onClose={handleCancel}
@@ -392,7 +392,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
         }}
         loading={loadingPayment}
         fileURL={fileURL}
-      />
+      /> */}
     </React.Fragment>
   );
 };
