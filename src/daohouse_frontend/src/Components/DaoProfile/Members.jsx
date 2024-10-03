@@ -84,6 +84,7 @@ const Members = ({ daoGroups, daoMembers }) => {
       <div className="bg-[#F4F2EC] rounded-[10px] mt-4">
         {/* Council Members */}
         <div className="mobile:p-4 p-2 bg-[#F4F2EC] rounded-lg flex flex-col gap-4">
+          <div className="bg-white">
           <header
             onClick={toggleCouncil}
             className="cursor-pointer flex flex-row items-center justify-between bg-[#AAC8D6] p-3 rounded-lg"
@@ -96,7 +97,7 @@ const Members = ({ daoGroups, daoMembers }) => {
           </header>
 
           {isCouncilOpen && (
-            <div className="bg-white rounded-lg">
+            <div className="bg-white rounded-lg p-8">
               <div style={gridView ? gridContainerStyle : listContainerStyle}>
                 {councilMembers.map((member, index) => (
                   <React.Fragment key={index}>
@@ -106,6 +107,7 @@ const Members = ({ daoGroups, daoMembers }) => {
               </div>
             </div>
           )}
+          </div>
 
           {/* Groups Section */}
           {daoGroups?.map((group, index) => (
