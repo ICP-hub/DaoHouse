@@ -34,7 +34,7 @@ for ((i = 1; i <= COUNT; i++)); do
       image_content = vec {10};
       image_title = "sample.jpg";
       image_content_type = "image/jpg";
-        members_permissions=vec{
+      members_permissions = vec{
         "permission";
     };
     proposal_entiry = vec {
@@ -59,7 +59,7 @@ for ((i = 1; i <= COUNT; i++)); do
         record {
             group_name = "Example Group";
             group_members = vec {
-            principal "xtbxv-f7q6j-ophog-cryki-6oaez-j7agl-i74rt-wnpbm-bywl2-62j32-vqe";
+            principal "djmzr-2qs7j-o7c4m-d6oxi-inbny-ehubg-c5xxb-hagnv-rdqj6-wmkbb-uqe";
             principal "rmehg-adw5r-6trpq-epk4r-tyl4c-dd2u4-erbw4-kcjzr-rrjpf-dfvi2-oae";
             principal "yxtej-lmfuu-rp3yv-xzu2h-6q43c-7iast-yiwff-z552q-6ugas-pyd6b-fae";  
            };
@@ -69,9 +69,9 @@ for ((i = 1; i <= COUNT; i++)); do
         record {
             group_name = "Example Group2";
             group_members = vec {
-            principal "xtbxv-f7q6j-ophog-cryki-6oaez-j7agl-i74rt-wnpbm-bywl2-62j32-vqe";
-            principal "rmehg-adw5r-6trpq-epk4r-tyl4c-dd2u4-erbw4-kcjzr-rrjpf-dfvi2-oae";
-            principal "yxtej-lmfuu-rp3yv-xzu2h-6q43c-7iast-yiwff-z552q-6ugas-pyd6b-fae";  
+            principal "djmzr-2qs7j-o7c4m-d6oxi-inbny-ehubg-c5xxb-hagnv-rdqj6-wmkbb-uqe";
+            principal "6ydm4-srext-xsaic-y3v2x-cticp-5n6pf-2meh7-j43r6-rghg7-pt5nd-bqe";
+            principal "ui2dz-muwb7-dhwzj-545cc-ets5d-wc3gr-hi5qi-zavzz-arybg-fsh6r-eae";  
            };
             group_permissions = vec { "example_permission" };
             quorem = 65;

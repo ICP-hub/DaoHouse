@@ -259,7 +259,7 @@ service : (DaoInput) -> {
   proposal_to_remove_member_to_group : (RemoveMemberArgs) -> (Result_1);
   proposal_to_transfer_token : (TokenTransferPolicy) -> (Result_1);
   reply_comment : (ReplyCommentArgs) -> (Result_1);
-  search_follower : (principal) -> (vec principal) query;
+  search_follower : (text) -> (vec principal) query;
   search_proposal : (text) -> (vec Proposals) query;
   unfollow_dao : (principal) -> (Result_1);
   update_dao_settings : (UpdateDaoSettings) -> (Result_1);

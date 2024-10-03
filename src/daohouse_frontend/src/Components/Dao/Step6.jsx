@@ -244,7 +244,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
       }));
       
       setIsModalOpen(true);
-  
+
     } catch (error) {
       toast.error("Error reading image content.");
       setLoadingNext(false);
