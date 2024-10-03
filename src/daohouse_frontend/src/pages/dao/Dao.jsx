@@ -6,10 +6,8 @@ import NoDataComponent from "../../Components/Dao/NoDataComponent";
 import TopComponent from "../../Components/Dao/TopComponent";
 import Container from "../../Components/Container/Container";
 import { useAuth } from "../../Components/utils/useAuthClient";
-import MuiSkeleton from "../../Components/SkeletonLoaders/MuiSkeleton";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import LoginModal from "../../Components/Auth/LoginModal";
-import nodata1 from "../../../assets/nodata.png";
 import SearchProposals from "../../Components/Proposals/SearchProposals";
 import { Principal } from "@dfinity/principal";
 import DaoCardLoaderSkeleton from "../../Components/SkeletonLoaders/DaoCardLoaderSkeleton/DaoCardLoaderSkeleton";
@@ -66,7 +64,7 @@ const Dao = () => {
     setLoading(true);
     try {
       const response = await backendActor.search_dao(searchTerm);
- const combinedSearchDaoDetails = await fetchDaoDetails(response);
+      const combinedSearchDaoDetails = await fetchDaoDetails(response);
       setFetchedDAOs(combinedSearchDaoDetails);
     } catch (error) {
       console.error("Error searching DAOs:", error);
@@ -78,25 +76,15 @@ const Dao = () => {
   const getJoinedDaos = async () => {
     try {
       setLoaadingJoinedDao(true);
-      console.log("Fetching joined DAOs...");
-
       const profile = await backendActor.get_profile_by_id(Principal.fromText(stringPrincipal));
-      console.log("Profile:", profile);
-
       const joinedDaoPrincipals = profile?.Ok?.join_dao || [];
-      console.log("Joined DAO Principals:", joinedDaoPrincipals);
 
       const joinedDaoDetails = await Promise.all(
         joinedDaoPrincipals.map(async (daoPrincipal) => {
           try {
             const daoCanisterPrincipal = Principal.fromUint8Array(daoPrincipal._arr);
-
-            console.log("DAO Canister Principal:", daoCanisterPrincipal.toText());
-
             const daoCanister = await createDaoActor(daoCanisterPrincipal);
-
             const daoDetails = await daoCanister.get_dao_detail();
-
             return { ...daoDetails, dao_canister_id: daoCanisterPrincipal.toText() };
           } catch (error) {
             console.error(`Error fetching details for DAO: ${daoPrincipal._arr}`, error);
@@ -105,9 +93,7 @@ const Dao = () => {
         })
       );
 
-      const validDaoDetails = joinedDaoDetails.filter((dao) => dao !== null);
-
-      setJoinedDAO(validDaoDetails);
+      setJoinedDAO(joinedDaoDetails.filter((dao) => dao !== null));
     } catch (error) {
       console.error("Error fetching joined DAOs:", error);
     } finally {
@@ -149,14 +135,6 @@ const Dao = () => {
 
   const noDaoFound = searchTerm && fetchedDAOs.length === 0;
 
-  if (!dao) {
-    return (
-      <div>
-        <NoDataComponent />
-      </div>
-    );
-  }
-
   return (
     <div className="bg-zinc-200">
       <TopComponent showAll={showAll} setShowAll={setShowAll} showButtons />
@@ -195,16 +173,16 @@ const Dao = () => {
         />
       )}
 
-      {showAll ? (
-        loading ? (
-          <DaoCardLoaderSkeleton />
-        ) : noDaoFound || dao.length === 0 ? (
+      {loading ? (
+        <DaoCardLoaderSkeleton />
+      ) : showAll ? (
+        noDaoFound || dao.length === 0 ? (
           <div className="flex justify-center items-center h-full mb-10 md:mt-40 mx-10">
             <NoDataComponent />
           </div>
         ) : (
           <div className="bg-gray">
-            <Container classes="__cards tablet:px-10 px-4 pb-10 grid grid-cols -1 big_phone:grid-cols-2 tablet:gap-6 gap-4">
+            <Container classes="__cards tablet:px-10 px-4 pb-10 grid grid-cols-1 big_phone:grid-cols-2 tablet:gap-6 gap-4">
               {(searchTerm ? fetchedDAOs : dao).map((daos, index) => (
                 <DaoCard
                   key={index}
@@ -235,7 +213,7 @@ const Dao = () => {
                 {...{
                   name: daos.dao_name || "No Name",
                   followers: daos.followers_count || "0",
-                  members: daos.members_count ? Number(BigInt(daos .members_count)) : "0",
+                  members: daos.members_count ? Number(BigInt(daos.members_count)) : "0",
                   groups: daos.groups_count ? Number(BigInt(daos.groups_count)) : "0",
                   proposals: daos.proposals_count || "0",
                   image_id: daos.image_id || "No Image",
@@ -245,76 +223,55 @@ const Dao = () => {
               />
             ))}
           </Container>
+          <Pagignation currentPage={currentPage} setCurrentPage={setCurrentPage} hasMore={hasMore} />
         </div>
       ) : (
-        <div className="mt-10 mb-10 md:mt-40 mobile:mx-10">
-          <NoDataComponent />
-        </div>
+        <NoDataComponent />
       )}
-      {searchTerm && !loading ? (
-        fetchedDAOs.length === 0 ? (
-          <div className="flex justify-center items-center h-full mb-10 md:mt-40 mx-10">
-            <NoDataComponent />
-          </div>
-        ) : (
-          <div className="bg-gray">
-            <Container classes="__cards tablet:px-10 px-4 pb-10 grid grid-cols-1 big_phone:grid-cols-2 tablet:gap-6 gap-4">
-              {fetchedDAOs.map((daos, index) => (
-                <DaoCard
-                  key={index}
-                  {...{
-                    name: daos.dao_name || "No Name",
-                    followers: daos.followers_count || "0",
-                    members: daos.members_count ? Number(BigInt(daos.members_count)) : "0",
-                    groups: daos.groups_count ? Number(BigInt(daos.groups_count)) : "0",
-                    proposals: daos.proposals_count || "0",
-                    image_id: daos.image_id || "No Image",
-                    daoCanister: daos.daoCanister,
-                    daoCanisterId: daos.dao_canister_id || "No ID",
-                  }}
-                />
-              ))}
-            </Container>
-          </div>
-        )
-      ) : (
-        <DaoCardLoaderSkeleton />
-      )}
+    </div>
+  );
+};
+
+const Pagignation = ({ currentPage, setCurrentPage, hasMore }) => {
+  const handleNext = () => {
+    if (hasMore) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  };
+
+  return (
+    <div className="pagination-container flex justify-center gap-10 items-center pb-10">
+      <button
+className={`text-xl flex items-center ml-1 ${currentPage === 1
+  ? "text-gray-400 cursor-not-allowed"
+  : "text-black hover:text-gray-500 cursor-pointer"
+  }`}
+onClick={() => handlePageChange(currentPage - 1)}
+disabled={currentPage === 1}
+>
+<FaArrowLeft /> Prev
+</button>
+<button
+className={`text-xl flex items-center px-3 py-1 transition duration-300 ease-in-out ${!hasMore
+  ? "text-gray-400 cursor-not-allowed"
+  : "text-black hover:text-gray-500 cursor-pointer"
+  }`}
+onClick={() => handlePageChange(currentPage + 1)}
+disabled={!hasMore}
+>
+Next <FaArrowRight />
+</button>
     </div>
   );
 };
 
 export default Dao;
 
-export const Pagignation = ({ currentPage, setCurrentPage, hasMore }) => {
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
 
-  return (
-    <div className="pagination">
-      <div className="flex items-center gap-12 justify-center mt-3">
-        <button
-          className={`text-xl flex items-center ml-1 ${currentPage === 1
-            ? "text-gray-400 cursor-not-allowed"
-            : "text-black hover:text-gray-500 cursor-pointer"
-            }`}
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          <FaArrowLeft /> Prev
-        </button>
-        <button
-          className={`text-xl flex items-center px-3 py-1 transition duration-300 ease-in-out ${!hasMore
-            ? "text-gray-400 cursor-not-allowed"
-            : "text-black hover:text-gray-500 cursor-pointer"
-            }`}
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={!hasMore}
-        >
-          Next <FaArrowRight />
-        </button>
-      </div>
-    </div>
-  );
-};
+
