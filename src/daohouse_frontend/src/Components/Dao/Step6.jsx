@@ -364,13 +364,11 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
           <FaArrowLeftLong /> Back
         </button>
 
-        {loadingNext ? (
-          <CircularProgress className="m-4 my-4" />
-        ) : (
+       
           <button
             type="submit"
             onClick={createDAO}
-            className="flex mobile:m-4 my-4 flex-row items-center gap-2 bg-[#0E3746] px-4 py-2 rounded-[2rem] text-white mobile:text-base text-sm whitespace-nowrap"
+            className="flex mobile:m-4 my-4 flex-row items-center gap-2 bg-[#0E3746] sm:px-6 lg:px-16 py-2 rounded-[2rem] text-white mobile:text-base text-sm whitespace-nowrap"
           >
             {loadingNext ? (
               <CircularProgress size={24} />
@@ -378,7 +376,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
               "Create DAO"
             )}
           </button>
-        )}
+        
       </div>
     </div>
     </Container>
