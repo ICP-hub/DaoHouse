@@ -95,8 +95,8 @@ function ViewModal({ open, onClose, users = [], approvedVotesList = [], rejected
             className="flex items-center justify-center backdrop-blur-md bg-black/50"
             closeAfterTransition
         >
-            <Box className="relative p-4 bg-white rounded-lg shadow-2xl max-w-3xl w-full md:w-3/4 sm:w-full mx-4">
-                <div className="absolute top-0 right-2">
+            <Box className="relative p-4 bg-white rounded-lg shadow-4xl max-w-2xl w-full md:w-3/4 sm:w-full mx-4">
+                <div className="absolute md:top-2 right-2">
                     <IconButton onClick={onClose} className="text-gray-500 hover:text-black z-10">
                         <CloseIcon />
                     </IconButton>
@@ -153,11 +153,11 @@ function ViewModal({ open, onClose, users = [], approvedVotesList = [], rejected
                                     <img
                                         src={member.profileImage || avatar}
                                         alt={`${member.profileData?.username || member.name}'s profile`}
-                                        className="w-12 h-12 mr-4 rounded-full"
+                                        className="w-16 h-16 mr-6 rounded-full"
                                     />
                                     <div>
                                         <div className="flex flex-col items-start">
-                                            <p className="m-0 font-bold text-left">{member.profileData?.username || member.name}</p>
+                                            <p className="m-0 font-bold  text-[25px] font-mulish text-left">{member.profileData?.username || member.name}</p>
                                             <span className="block m-0 text-xs text-gray-600">{member.user}</span>
                                         </div>
                                     </div>

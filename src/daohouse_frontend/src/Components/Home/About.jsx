@@ -46,8 +46,8 @@ const About = () => {
         </Container>
       </div>
 
-      {/* Desktop view */}
-     
+      {/* Desktop view  add container with in div */}
+      <div className="flex justify-center  items-center  ">
         <Container>
         <div className="hidden lg:flex justify-center w-[1142px] bg-[#0F3746] rounded-2xl  translate-y-[-50px] shadow-lg p-10">
           <div className="w-full text-white flex flex-col items-center relative text-center">
@@ -88,6 +88,7 @@ const About = () => {
           </div>
        </div>
       </Container>
+      </div>
     </div>
   );
 };
