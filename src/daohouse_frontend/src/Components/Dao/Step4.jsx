@@ -61,18 +61,19 @@ const Step4 = ({ data, setData, setActiveStep }) => {
     ChangeDAOPolicy: groupName === "Council" ? true : false,
     Transfer: groupName === "Council" ? true : false,
     Polls: groupName === "Council" ? true : false,
-    AddMembers: groupName === "Council" ? true : false,
-    FunctionCalls: groupName === "Council" ? true : false,
-    UpgradeSelf: groupName === "Council" ? true : false,
-    UpgradeRemote: groupName === "Council" ? true : false,
-    setVoteToken: groupName === "Council" ? true : false,
+    AddMemberToGroup: groupName === "Council" ? true : false,
+    BountyDone: groupName === "Council" ? true : false,
+    BountyRaised: groupName === "Council" ? true : false,
+    GeneralPurpose: groupName === "Council" ? true : false,
+    RemoveMemberToGroup: groupName === "Council" ? true : false,
+    RemoveDaoMember: groupName === "Council" ? true : false,
   });
   
 
   const permissionList = [
     "ChangeDAOConfig",
     "ChangeDAOPolicy",
-    "TokenTransfer",
+    "Transfer",
     "Polls",
     "AddMemberToGroup",
     // "FunctionCalls",
