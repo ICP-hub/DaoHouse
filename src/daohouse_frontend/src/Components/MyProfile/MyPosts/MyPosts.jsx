@@ -80,8 +80,8 @@ const MyPosts = () => {
           </div>
         ) : (
           <div
-            className="flex flex-col md:mt-4 mt-2 mb-6 bg-[#F4F2EC] translate-y-[-82px] p-2 rounded-lg gap-2 h-auto md:h-73 w-full md:w-[1000px] overflow-y-auto"
-            style={{ maxHeight: "390px" }}
+            className="flex flex-col md:mt-4 mt-2 mb-6  translate-y-[-82px] p-2 rounded-lg gap-2 h-auto md:h-73 w-full md:w-[1000px] overflow-y-auto"
+            style={{ maxHeight: "490px" }}
           >
             {myProposals.map((proposal, index) => (
               <div key={index} className="proposal relative w-full">
