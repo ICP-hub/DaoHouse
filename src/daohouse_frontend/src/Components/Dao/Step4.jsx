@@ -195,7 +195,7 @@ const Step4 = ({ data, setData, setActiveStep }) => {
           {activeStage === 0 && (
             <React.Fragment>
               <div className="overflow-x-auto">
-                <table className="table-auto min-w-max">
+                <table className="table-auto w-full">
                   <thead>
                     <tr>
                       <th className="font-semibold big_phone:w-2/5 big_phone:p-4 p-2 pb-4 flex justify-left mobile:text-base text-sm">
