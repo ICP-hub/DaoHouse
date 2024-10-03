@@ -467,7 +467,7 @@ const DaoProfile = () => {
         {activeLink === "proposals" && ( <div>{ loadingProposals ? ( <ProposalLoaderSkeleton />) : (<ProposalsContent proposals={proposals} isMember={isMember} voteApi={voteApi} daoCanisterId={daoCanisterId} />)}</div> ) }
         {activeLink === "feeds" && <FeedsContent  />}
         {activeLink === "member_policy" && <Members daoGroups={daoGroups} daoMembers={daoMembers} />}
-        {activeLink === "followers" && <FollowersContent daoFollowers={daoFollowers}/>}
+        {activeLink === "followers" && <FollowersContent daoFollowers={daoFollowers} daoCanisterId={daoCanisterId}/>}
         {activeLink === "funds" && <FundsContent />}
         {/* {activeLink === "settings" && <DaoSettings />} */}
 

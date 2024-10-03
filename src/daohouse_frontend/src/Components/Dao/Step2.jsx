@@ -6,22 +6,27 @@ import Container from "../Container/Container";
 const Step2 = ({ setData, setActiveStep, data }) => {
 
   const [localData, setLocalData] = useState(data);
+  const [tokenNameError, setTokenNameError] = useState("");
+  const [tokenSymbolError, setTokenSymbolError] = useState("");
+  const [tokenSupplyError, setTokenSupplyError] = useState("");
+  const [votesRequiredError, setVotesRequiredError] = useState("");
+  const [loadingNext, setLoadingNext] = useState(false);
+  const [loadingBack, setLoadingBack] = useState(false);
+  const className = "DAO__Step2";
+
+  const [inputData, setInputData] = useState({
+    TokenName: data.TokenName || "",
+    TokenSymbol: data.TokenSymbol || "",
+    TokenSupply: data.TokenSupply || 0,
+    VotesRequired: data.VotesRequired || 3,
+  });
 
 
   useEffect(() => {
     setLocalData(data);
   }, [data]);
-  const [inputData, setInputData] = useState({
-    TokenName: data.Tokenname || " ",
-    TokenSymbol: data.Tokensymbol || " ",
-    TokenSupply: data.TokenSupply || " ",
-    VotesRequired: data.VotesRequired || 3,
-  });
 
   console.log("inputData", inputData)
-  const [loadingNext, setLoadingNext] = useState(false);
-  const [loadingBack, setLoadingBack] = useState(false);
-  const className = "DAO__Step2";
   // useEffect(() => {
   //   if (data?.setUpPeriod !== undefined) {
   //     setInputData({ setUpPeriod: data.setUpPeriod });
@@ -50,22 +55,61 @@ const Step2 = ({ setData, setActiveStep, data }) => {
     localStorage.setItem('step2Data', JSON.stringify(inputData));
   }, [inputData]);
 
-  function handleSaveAndNext() {
-    setData((prev) => ({
-      ...prev,
-      step2: { ...inputData },
-    }));
-    setActiveStep(2);
-  }
+  const handleSaveAndNext = () => {
+    // Reset error messages
+    setTokenNameError("");
+    setTokenSymbolError("");
+    setTokenSupplyError("");
+    setVotesRequiredError("");
+
+    let isValid = true;
+
+    if (inputData.TokenName.trim() === "") {
+      setTokenNameError("Token Name cannot be empty.");
+      isValid = false;
+    }
+
+    if (inputData.TokenSymbol.trim() === "") {
+      setTokenSymbolError("Token Symbol cannot be empty or contain only spaces.");
+      isValid = false;
+    }
+
+    if (inputData.TokenSupply <= 0) {
+      setTokenSupplyError("Token Supply must be a positive number.");
+      isValid = false;
+    }
+
+    if (inputData.VotesRequired < 3) {
+      setVotesRequiredError("Votes Required must be at least 3.");
+      isValid = false;
+    }
+
+    if (isValid) {
+      setData((prev) => ({
+        ...prev,
+        step2: { ...inputData },
+      }));
+      setActiveStep(2);
+    }
+  };
 
   function handleBack() {
     setActiveStep(0);
   }
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   const trimmedValue = name === "TokenSymbol" ? value.trim() : value; // Trim spaces only for TokenSymbol
+  //   setInputData((prevData) => ({
+  //     ...prevData,
+  //     [name]: trimmedValue,
+  //   }));
+  // };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setInputData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: name === "TokenSupply" || name === "VotesRequired" ? Math.max(0, value) : name === "TokenSymbol" ? value.trim() : value,
     }));
   };
 
@@ -101,14 +145,10 @@ const Step2 = ({ setData, setActiveStep, data }) => {
           <div className="flex flex-wrap  gap-4">
 
             {/* token name */}
-            <div className="w-full lg:w-1/5 flex flex-col gap-4 ">
-              <label
-                htmlFor="tokenName"
-                className="font-semibold mobile:text-base text-xs"
-              >
+            <div className="w-full lg:w-1/5 flex flex-col gap-4">
+              <label htmlFor="tokenName" className="font-semibold mobile:text-base text-xs">
                 Token Name
               </label>
-
               <input
                 required
                 type="text"
@@ -117,17 +157,14 @@ const Step2 = ({ setData, setActiveStep, data }) => {
                 onChange={handleChange}
                 className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm"
               />
+              {tokenNameError && <p className="text-red-500 text-xs">{tokenNameError}</p>}
             </div>
 
             {/* token symbol */}
             <div className="w-full lg:w-1/5 flex flex-col gap-4">
-              <label
-                htmlFor="tokenSymbol"
-                className="font-semibold mobile:text-base text-xs"
-              >
+              <label htmlFor="tokenSymbol" className="font-semibold mobile:text-base text-xs">
                 Token Symbol
               </label>
-
               <input
                 required
                 type="text"
@@ -136,50 +173,39 @@ const Step2 = ({ setData, setActiveStep, data }) => {
                 onChange={handleChange}
                 className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm"
               />
-
-
-
+              {tokenSymbolError && <p className="text-red-500 text-xs">{tokenSymbolError}</p>}
             </div>
 
             {/* TokenSupply */}
-            <div className="w-full lg:w-1/5 flex flex-col gap-4 ">
-
-              <label
-                htmlFor="tokenSymbol"
-                className="font-semibold mobile:text-base text-xs"
-              >
+            <div className="w-full lg:w-1/5 flex flex-col gap-4">
+              <label htmlFor="tokenSupply" className="font-semibold mobile:text-base text-xs">
                 Token Supply
               </label>
-
               <input
                 required
                 type="number"
                 name="TokenSupply"
-                value={inputData.TokenSupply || 1000}
+                value={inputData.TokenSupply || 0}
                 onChange={handleChange}
                 className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm"
               />
+              {tokenSupplyError && <p className="text-red-500 text-xs">{tokenSupplyError}</p>}
             </div>
 
             {/* Votes Required */}
-            <div className="w-full lg:w-1/5 flex flex-col gap-4 ">
-
-              <label
-                htmlFor="tokenSymbol"
-                className="font-semibold mobile:text-base text-xs"
-              >
+            <div className="w-full lg:w-1/5 flex flex-col gap-4">
+              <label htmlFor="votesRequired" className="font-semibold mobile:text-base text-xs">
                 Votes Required
               </label>
-
               <input
                 required
                 type="number"
                 name="VotesRequired"
                 value={inputData.VotesRequired}
-                 onChange={handleChange}
-               // onChange={(e) => changePeriod(e.target.value)}
+                onChange={handleChange}
                 className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm"
               />
+              {votesRequiredError && <p className="text-red-500 text-xs">{votesRequiredError}</p>}
             </div>
           </div>
           {/* <label htmlFor="purpose" className="font-semibold mobile:text-base text-sm">
