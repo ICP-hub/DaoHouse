@@ -859,16 +859,17 @@ function CreateProposal() {
 
                   {/* Submit Button */}
                   <div className="flex justify-center my-8">
-                    {
-                      loading ? <CircularProgress /> :
                         <button
                           className="bg-[#0E3746] hover:bg-[#819499] text-white font-normal text-center rounded-full text-[16px] py-2 px-6 rounded focus:outline-none focus:shadow-outline"
                           type="submit"
                           disabled={loading || !proposalEntry} // Disable if loading or proposalEntry not selected
                         >
-                          Submit
+                          {loading ? (
+                            <CircularProgress size={24} />
+                          ) : (
+                            "Submit"
+                          )}
                         </button>
-                    }
                   </div>
                 </div>
 
