@@ -4,7 +4,7 @@ import Container from '../../Container/Container'; // Import your Container comp
 const ProposalLoaderSkeleton = ({ isProposalDetails = false, showActions = false }) => {
   return (
     // Container for Loader Skeleton
-    <Container classes="max-w-screen-lg mx-auto px-4">
+    <Container classes="w-[1200px] ">
       <div className={`bg-white font-mulish ${isProposalDetails ? "rounded-t-xl" : "rounded-xl"} shadow-md flex flex-col md:flex-col animate-pulse`}>
         {/* Top Section */}
         <div className="w-full flex justify-between items-center bg-gray-300 px-[20px] md:px-12 py-6 rounded-t-lg rounded-b-none">

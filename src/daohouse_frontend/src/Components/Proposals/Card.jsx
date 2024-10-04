@@ -252,7 +252,7 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
 
   {
     return (
-      <div className={`bg-white mx-[80px] font-mulish ${isProposalDetails ? "rounded-t-xl": "rounded-xl" } shadow-md ${isSubmittedProposals ? "flex" : "flex flex-col md:flex-col"}`}>
+      <div className={`bg-white desktop:mx-[80px] font-mulish ${isProposalDetails ? "rounded-t-xl": "rounded-xl" } shadow-md ${isSubmittedProposals ? "flex" : "flex flex-col md:flex-col"}`}>
         {/* Top Section */}
         <div className={` bg-[#0E3746] ${isSubmittedProposals ? "w-2/6 flex flex-col justify-center items-center py-6 space-y-6 rounded-l-lg" : "w-full flex justify-between items-center bg-[#0E3746] px-[20px] md:px-12 py-6  rounded-t-lg rounded-b-none"}`}>
           <div className={`${isSubmittedProposals ? "flex flex-col text-center justify-center items-center space-y-4" : "flex gap-[12px] md:gap-8 justify-center items-center"}`}>
