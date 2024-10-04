@@ -1,11 +1,11 @@
 use crate::proposal_route::check_proposal_state;
 use crate::types::{Dao, Proposals};
-use crate::{guards::*, Comment, DaoGroup, Pagination, ProposalStakes, ReplyCommentArgs};
+use crate::{guards::*, Comment, DaoGroup, Pagination, ProposalStakes, ReplayComment, ReplyCommentArgs};
 use crate::{with_state, ProposalState, VoteParam};
 use candid::Principal;
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::api::{self};
-use ic_cdk::{query, update};
+use ic_cdk::{caller, query, update};
 use sha2::{Digest, Sha256};
 use std::collections::HashSet;
 
@@ -134,6 +134,7 @@ async fn comment_on_proposal(comment: String, proposal_id: String) -> Result<Str
 
 #[update(guard = prevent_anonymous)]
 async fn reply_comment(args: ReplyCommentArgs) -> Result<String, String> {
+    let commented_by = ic_cdk::api::caller();
     let proposal = match with_state(|state| state.proposals.get(&args.proposal_id)) {
         Some(val) => val,
         None => {
@@ -145,13 +146,16 @@ async fn reply_comment(args: ReplyCommentArgs) -> Result<String, String> {
 
     let mut updated_comment_list = proposal.comments_list.clone();
 
-    for com in updated_comment_list.iter_mut() {
-        if com.comment_id == args.comment_id.clone() {
-            com.replies.push(args.comment.clone());
+    for comment in updated_comment_list.iter_mut() {
+        if comment.comment_id == args.comment_id.clone() {
+            comment.replies.push(ReplayComment {
+                reply_comment: args.comment.clone(), 
+                commented_by,
+            });
             break;
         }
     }
-
+    
     let updated_proposal = Proposals {
         comments: proposal.comments + 1,
         comments_list: updated_comment_list,
