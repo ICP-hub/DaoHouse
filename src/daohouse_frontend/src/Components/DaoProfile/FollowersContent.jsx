@@ -10,10 +10,6 @@ import nodata from "../../../assets/nodata.png";
 import FollowersSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/FollowersSkeleton";
 
 
-import Container from "../../Components/Container/Container";
-import NoDataComponent from "../Dao/NoDataComponent";
-
-
 const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
   console.log("daocanisterid", daoCanisterId);
 
@@ -135,28 +131,18 @@ const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
           <LuSearch className="ml-4 absolute left-0 bottom-3 text-slate-400" />
         </div>
         <div className="md:max-h-[400px] max-h-[300px] overflow-y-scroll">
-         
           <div
-            className="flex md:flex-row flex-col md:justify-center lg:justify-start flex-wrap  md:mx-7 md:mt-2 mx-2 rounded-[10px] md:p-8 lg:p-6 mobile:p-4 p-2"
+            className="flex md:flex-row flex-col md:justify-center lg:justify-start flex-wrap bg-white md:mx-7 md:mt-2 mx-2 rounded-[10px] md:p-8 lg:p-6 mobile:p-4 p-2"
             style={listContainerStyle}
           >
             {loading ? (
               <FollowersSkeleton />
             ) : searchTerm.trim() === "" ? (
-
- 
-
-            {searchTerm.trim() === "" ? (
-
               followerProfiles.map((follower, index) => (
                 <div
                   key={index}
                   className="flex w-full flex-row items-center justify-between border border-[#97C3D3] rounded-lg big_phone:p-4 p-2"
-
                 >
-
-
-
                   <section className="flex flex-row items-center gap-2">
                     <img
                       src={
@@ -204,11 +190,9 @@ const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
                 </div>
               ))
             ) : (
-
               <div style={noDataContainerStyle} className="col-span-5">
                 <img src={nodata} alt="nodata" />
                 <p className="text-xl mt-5">No Follower</p>
-
               </div>
             )}
 
