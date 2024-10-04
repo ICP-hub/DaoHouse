@@ -3,7 +3,7 @@ import React from "react";
 const RemoveMember = ({ removeMember, handleInputRemoveMember, groupNames }) => (
     <>
         <div className="mb-4">
-            <label className="block">Group Name</label>
+            <label className="block mb-2 font-semibold text-xl">Group Name</label>
             {/* <input
             type="text"
             name="group_name"
@@ -29,7 +29,7 @@ const RemoveMember = ({ removeMember, handleInputRemoveMember, groupNames }) => 
             </select>
         </div>
         <div className="mb-4">
-            <label className="block">Description</label>
+            <label className="block mb-2 font-semibold text-xl">Description</label>
             <input
                 type="text"
                 name="description"
@@ -41,7 +41,7 @@ const RemoveMember = ({ removeMember, handleInputRemoveMember, groupNames }) => 
             />
         </div>
         <div className="mb-4">
-            <label className="block">New Member (Principal)</label>
+            <label className="block mb-2 font-semibold text-xl">New Member (Principal)</label>
             <input
                 type="text"
                 name="action_member"
