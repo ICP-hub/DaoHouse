@@ -6,16 +6,9 @@ type AddMemberArgs = record {
   new_member : principal;
 };
 type BountyClaim = record {
+  associated_proposal_id : text;
   description : text;
   link_of_task : text;
-  proposal_entiry : text;
-  bounty_task : text;
-};
-type BountyDone = record {
-  to : principal;
-  description : text;
-  tokens : nat64;
-  action_member : principal;
   proposal_entiry : text;
   bounty_task : text;
 };
@@ -23,7 +16,6 @@ type BountyRaised = record {
   proposal_expired_at : nat64;
   description : text;
   tokens : nat64;
-  action_member : principal;
   proposal_entiry : text;
   proposal_created_at : nat64;
   bounty_task : text;
@@ -32,13 +24,11 @@ type ChangeDaoConfigArg = record {
   new_dao_name : text;
   daotype : text;
   description : text;
-  action_member : principal;
   proposal_entiry : text;
   purpose : text;
 };
 type ChangeDaoPolicy = record {
   description : text;
-  action_member : principal;
   proposal_entiry : text;
   cool_down_period : nat32;
   required_votes : nat32;
@@ -54,14 +44,12 @@ type Comment = record {
 type CreateGeneralPurpose = record {
   description : text;
   proposal_title : text;
-  action_member : principal;
   proposal_entiry : text;
 };
 type CreatePoll = record {
   proposal_expired_at : nat64;
   poll_title : text;
   description : text;
-  action_member : principal;
   proposal_entiry : text;
   proposal_created_at : nat64;
 };
@@ -142,10 +130,10 @@ type ProposalType = variant {
   BountyDone;
   UpgradeRemote;
   Polls;
+  ChangeDaoPolicy;
   TokenTransfer;
   AddMemberToDaoProposal;
   RemoveMemberToGroupProposal;
-  ChnageDaoPolicy;
   BountyClaim;
   BountyRaised;
   AddMemberToGroupProposal;
@@ -162,6 +150,7 @@ type Proposals = record {
   minimum_threadsold : nat64;
   new_dao_name : opt text;
   proposal_submitted_at : nat64;
+  associated_proposal_id : opt text;
   proposal_approved_votes : nat64;
   has_been_processed : bool;
   created_by : principal;
@@ -184,6 +173,7 @@ type Proposals = record {
   token_from : opt principal;
   cool_down_period : opt nat32;
   proposal_type : ProposalType;
+  bounty_task : opt text;
   required_votes : nat32;
 };
 type RemoveDaoMemberArgs = record {
@@ -207,6 +197,11 @@ type Result_1 = variant { Ok : text; Err : text };
 type Result_2 = variant { Ok : vec principal; Err : text };
 type Result_3 = variant { Ok : vec Proposals; Err : text };
 type Result_4 = variant { Ok : nat; Err : text };
+type Test = record {
+  token_to : opt principal;
+  tokens : opt nat64;
+  token_from : opt principal;
+};
 type TokenTransferArgs = record {
   to : principal;
   from : principal;
@@ -216,7 +211,6 @@ type TokenTransferPolicy = record {
   to : principal;
   description : text;
   tokens : nat64;
-  action_member : principal;
   proposal_entiry : text;
 };
 type UpdateDaoSettings = record {
@@ -246,13 +240,13 @@ service : (DaoInput) -> {
   get_my_proposal : () -> (Result_3);
   get_proposal_by_id : (text) -> (Proposals);
   icrc_transfer : (TokenTransferArgs) -> (Result_4);
+  make_payment : (nat64, principal) -> (Result_4);
   proposal_refresh : () -> (Result_1);
   proposal_to_add_member_to_group : (AddMemberArgs) -> (Result_1);
   proposal_to_bounty_claim : (BountyClaim) -> (Result_1);
-  proposal_to_bounty_done : (BountyDone) -> (Result_1);
   proposal_to_bounty_raised : (BountyRaised) -> (Result_1);
+  proposal_to_change_dao_config : (ChangeDaoConfigArg) -> (Result_1);
   proposal_to_change_dao_policy : (ChangeDaoPolicy) -> (Result_1);
-  proposal_to_chnage_dao_config : (ChangeDaoConfigArg) -> (Result_1);
   proposal_to_create_general_purpose : (CreateGeneralPurpose) -> (Result_1);
   proposal_to_create_poll : (CreatePoll) -> (Result_1);
   proposal_to_remove_member_to_dao : (RemoveDaoMemberArgs) -> (Result_1);
@@ -261,6 +255,7 @@ service : (DaoInput) -> {
   reply_comment : (ReplyCommentArgs) -> (Result_1);
   search_follower : (text) -> (vec principal) query;
   search_proposal : (text) -> (vec Proposals) query;
+  transfer_token : (Test) -> (Result_1);
   unfollow_dao : (principal) -> (Result_1);
   update_dao_settings : (UpdateDaoSettings) -> (Result_1);
   vote : (text, VoteParam) -> (Result_1);

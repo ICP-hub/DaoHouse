@@ -16,7 +16,7 @@ use super::call_inter_canister;
 #[update]
 // to Transfer custom tokens
 pub async fn icrc_transfer(args: TokenTransferArgs) -> Result<BlockIndex, String> {
-    let ledger_id = with_state(|state| state.dao.token_ledger_id.id);
+    // let ledger_id = with_state(|state| state.dao.token_ledger_id.id);
 
     let transfer_args = TransferFromArgs {
         amount: args.tokens.into(),
@@ -35,7 +35,7 @@ pub async fn icrc_transfer(args: TokenTransferArgs) -> Result<BlockIndex, String
     };
 
     ic_cdk::call::<(TransferFromArgs,), (Result<BlockIndex, TransferFromError>,)>(
-        ledger_id,
+        Principal::from_text("ryjl3-tyaaa-aaaaa-aaaba-cai").expect("Could not decode the principal if ICP ledger."),
         "icrc2_transfer_from",
         (transfer_args,),
     )
@@ -48,7 +48,7 @@ pub async fn icrc_transfer(args: TokenTransferArgs) -> Result<BlockIndex, String
 // to check balance
 // #[update]
 pub async fn icrc_get_balance(id: Principal) -> Result<Nat, String> {
-    let ledger_canister = with_state(|state| state.dao.token_ledger_id.id);
+    // let ledger_canister = with_state(|state| state.dao.token_ledger_id.id);
 
     call_inter_canister::<Account, Nat>(
         "icrc1_balance_of",
@@ -56,7 +56,7 @@ pub async fn icrc_get_balance(id: Principal) -> Result<Nat, String> {
             owner: id,
             subaccount: None,
         },
-        ledger_canister,
+        Principal::from_text("ryjl3-tyaaa-aaaaa-aaaba-cai").expect("Could not decode the principal if ICP ledger."),
     )
     .await
 }

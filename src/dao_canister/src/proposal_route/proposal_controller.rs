@@ -41,7 +41,6 @@ pub async fn create_proposal_controller(
         proposal_description: proposal.proposal_description.clone(),
         proposal_status: ProposalState::Open,
         proposal_submitted_at: ic_cdk::api::time(),
-        // proposal_expired_at: proposal_expire_time.clone(),
         proposal_expired_at: proposal.proposal_expired_at.unwrap_or(proposal_expire_time),
         proposal_approved_votes: 0,
         approved_votes_list: Vec::new(),
@@ -68,6 +67,8 @@ pub async fn create_proposal_controller(
         has_been_processed_secound : false,
         minimum_threadsold : proposal.minimum_threadsold.clone(),
         link_of_task : proposal.link_of_task,
+        bounty_task : proposal.bounty_task,
+        associated_proposal_id : proposal.associated_proposal_id.clone()
     };
 
     // to record proposals on Parent canister
