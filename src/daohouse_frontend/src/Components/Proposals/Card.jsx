@@ -26,7 +26,8 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
   const [votersList, setVotersList] = useState(null)
   const [userProfile, setUserProfile] = useState({})
   const [profileImg, setProfileImg] = useState("");
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true);
+  const [isVoteLoading, setIsVoteLoading] = useState(true)
   const [isDisabled, setIsDisabled] = useState(false);
   const [daoName, setDaoName] = useState("");
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
@@ -95,7 +96,6 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
   ? Object.keys(proposal.proposal_status)[0] || "No Status"
   : "No Status";
 
-  const sharecount = Number(BigInt(proposal?.share_count || 0));
   const requiredVotes = Number(BigInt(proposal?.required_votes || 0))
   useEffect(() => {
     setApprovedVotes(proposal?.approved_votes_list?.length || 0);
@@ -182,6 +182,13 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
     navigate(`/social-feed/proposal/${proposalId}/dao/${daoId}`)
   }
 
+  useEffect(() => {
+    const hasVoted = localStorage.getItem(`voted_${proposal.proposal_id}`);
+    if (hasVoted) {
+      setIsDisabled(true);
+    }
+  }, [proposal.proposal_id]);
+
 
   const handleVoteSubmit = async (e) => {
     e.preventDefault();
@@ -189,13 +196,15 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
 
 
     try {
-      setIsDisabled(true)
+      setIsVoteLoading(true)
       const voteParam = voteStatus === "In Favor" ? { Yes: null } : { No: null };
       const result = await voteApi.vote(proposal.proposal_id, voteParam);
       // console.log("Result", result);
       
 
       if (result?.Ok) {
+        setIsDisabled(true);
+        localStorage.setItem(`voted_${proposal.proposal_id}`, true);
         // Update the vote counts locally based on the user vote
         toast.success("Vote submitted successfully")
         if (voteStatus === "In Favor") {
@@ -209,11 +218,12 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
         toast.error(result.Err);
       }
     } catch (error) {
+      setIsDisabled(true)
       console.error("Error submitting vote:", error);
       toast.error("Error submitting vote:", error)
 
     } finally {
-      setIsDisabled(false);
+      setIsVoteLoading(false)
     }
   };
 
@@ -355,7 +365,7 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
                     <svg className="mb-1" width="17" height="17" viewBox="0 0 17 17">
                       <path d="M16 1L1 5.85294L6.73529 8.5L12.9118 4.08824L8.5 10.2647L11.1471 16L16 1Z" stroke="black" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
-                    <span className="md:ml-2 text-sm mobile:text-base">{sharecount} Shares</span>
+                    <span className="md:ml-2 text-sm mobile:text-base">Share</span>
                   </button>
               </div>
               </div>
@@ -390,7 +400,7 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
                   </div>
                     <button
                         type="submit"
-                        className={`bg-[#0E3746] hover:bg-[#051c24] flex justify-center text-white py-1 px-4 rounded-full transition-colors duration-300 ${isDisabled && "bg-[#859ca5]"}`}
+                        className={`bg-[#0E3746] hover:bg-[#051c24] cursor-pointer flex justify-center text-white py-1 px-4 rounded-full transition-colors duration-300 ${isDisabled && "bg-[#859ca5] hover:bg-[#859ca5] "}`}
                         disabled={isDisabled}
                       >
                           Submit
