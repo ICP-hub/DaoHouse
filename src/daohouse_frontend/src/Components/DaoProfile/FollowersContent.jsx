@@ -7,7 +7,7 @@ import { useMediaQuery } from "@mui/material";
 import { useAuth } from "../utils/useAuthClient";
 import Avatar from "../../../assets/Avatar.png";
 import nodata from "../../../assets/nodata.png";
-import Container from "../../Components/Container/Container";
+import FollowersSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/FollowersSkeleton";
 
 
 const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
@@ -24,9 +24,12 @@ const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
   const minWidth = useMediaQuery("(min-width: 800px)");
   const listTemplateColumns = `repeat(auto-fill, minmax(${minWidth ? 300 : 220}px, 1fr))`;
   const listContainerStyle = { display: "grid", gridTemplateColumns: listTemplateColumns };
+  const noDataContainerStyle = { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%" };
+
 
   const [fetchFollower, setFetchFollower] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const searchChange = async (event) => {
     setSearchTerm(event.target.value)
@@ -53,28 +56,41 @@ const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
 
   useEffect(() => {
     async function fetchFollowerProfiles() {
-      if (Array.isArray(daoFollowers) && daoFollowers.length > 0) {
-        const principalArray = daoFollowers.flat();
-        const profiles = await Promise.all(
-          principalArray.map((principal) => backendActor.get_profile_by_id(principal))
-        );
+      setLoading(true); // Start the loader before fetching data
 
-        setFollowerProfiles(profiles);
-        const updatedImageSrcs = profiles.map(profile => {
-          if (profile?.Ok?.profile_img) {
-            return `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${profile.Ok.profile_img}`;
-          } else {
-            return Avatar;
-          }
-        });
+      try {
+        if (Array.isArray(daoFollowers) && daoFollowers.length > 0) {
+          const principalArray = daoFollowers.flat();
+          const profiles = await Promise.all(
+            principalArray.map((principal) => backendActor.get_profile_by_id(principal))
+          );
 
-        setImageSrc(updatedImageSrcs);
+          // Store profiles in state
+          setFollowerProfiles(profiles);
 
+          // Update image sources for profiles
+          const updatedImageSrcs = profiles.map(profile => {
+            if (profile?.Ok?.profile_img) {
+              return `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${profile.Ok.profile_img}`;
+            } else {
+              return Avatar;
+            }
+          });
+
+          setImageSrc(updatedImageSrcs);
+        } else {
+          setFollowerProfiles([]); // Handle case with no followers
+        }
+      } catch (error) {
+        console.error("Error fetching follower profiles:", error);
+        // Handle error (you might want to show an error message or notification)
+      } finally {
+        setLoading(false); // Stop the loader after fetching data
       }
     }
+
     fetchFollowerProfiles();
   }, [daoFollowers, backendActor]);
-
 
 
   return (
@@ -119,20 +135,20 @@ const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
             className="flex md:flex-row flex-col md:justify-center lg:justify-start flex-wrap bg-white md:mx-7 md:mt-2 mx-2 rounded-[10px] md:p-8 lg:p-6 mobile:p-4 p-2"
             style={listContainerStyle}
           >
-
-
-            {searchTerm.trim() === "" ? (
+            {loading ? (
+              <FollowersSkeleton />
+            ) : searchTerm.trim() === "" ? (
               followerProfiles.map((follower, index) => (
                 <div
                   key={index}
                   className="flex w-full flex-row items-center justify-between border border-[#97C3D3] rounded-lg big_phone:p-4 p-2"
-
                 >
                   <section className="flex flex-row items-center gap-2">
                     <img
-                      src={follower?.Ok?.profile_img
-                        ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${follower.Ok.profile_img}`
-                        : Avatar
+                      src={
+                        follower?.Ok?.profile_img
+                          ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${follower.Ok.profile_img}`
+                          : Avatar
                       }
                       alt="User"
                       className="big_phone:w-12 w-9 big_phone:h-12 h-9 rounded-full object-cover"
@@ -174,19 +190,12 @@ const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
                 </div>
               ))
             ) : (
-              // <Container classes="w-full flex flex-col ml-justify-center border border-black ">
-              // <img src={nodata} alt="No Data" className="mb-1 " />
-              // <p className="text-center text-gray-700 text-2xl">
-              //   There are no followers  yet!
-              // </p>
-
-              // </Container>
-              <div className="flex flex-col  item-end justify-center"
-              >
+              <div style={noDataContainerStyle} className="col-span-5">
                 <img src={nodata} alt="nodata" />
-                <p>no data</p>
+                <p className="text-xl mt-5">No Follower</p>
               </div>
             )}
+
 
           </div>
         </div>
