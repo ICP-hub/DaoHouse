@@ -252,7 +252,7 @@ className={`text-xl flex items-center ml-1 ${currentPage === 1
   ? "text-gray-400 cursor-not-allowed"
   : "text-black hover:text-gray-500 cursor-pointer"
   }`}
-onClick={() => handlePageChange(currentPage - 1)}
+onClick={() => handlePrevious(currentPage - 1)}
 disabled={currentPage === 1}
 >
 <FaArrowLeft /> Prev
