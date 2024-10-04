@@ -3,7 +3,7 @@ import React from "react";
 const TokenTransfer = ({ tokenTransfer, handleInputTransferToken }) => (
   <>
     <div className="mb-4">
-      <label>To</label>
+      <label className="mb-2 font-semibold text-xl">To</label>
       <input
         type="text"
         name="to"
@@ -14,7 +14,7 @@ const TokenTransfer = ({ tokenTransfer, handleInputTransferToken }) => (
       />
     </div>
     <div className="mb-4">
-      <label>Description</label>
+      <label className="mb-2 font-semibold text-xl">Description</label>
       <input
         type="text"
         name="description"
@@ -25,7 +25,7 @@ const TokenTransfer = ({ tokenTransfer, handleInputTransferToken }) => (
       />
     </div>
     <div className="mb-4">
-      <label>Tokens</label>
+      <label className="mb-2 font-semibold text-xl">Tokens</label>
       <input
         type="number"
         name="tokens"
@@ -36,7 +36,7 @@ const TokenTransfer = ({ tokenTransfer, handleInputTransferToken }) => (
       />
     </div>
     <div className="mb-4">
-      <label>Action Member</label>
+      <label className="mb-2 font-semibold text-xl">Action Member</label>
       <input
         type="text"
         name="actionMember"

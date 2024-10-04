@@ -3,7 +3,7 @@ import React from "react";
 const DaoConfig = ({ daoConfig, handleInputDaoConfig }) => (
     <form className="space-y-4">
         <div className="mb-4">
-            <label htmlFor="daoType">DAO Type</label>
+            <label htmlFor="daoType" className="mb-2 font-semibold text-xl">DAO Type</label>
             <input
                 id="daoType"
                 type="text"
@@ -16,7 +16,7 @@ const DaoConfig = ({ daoConfig, handleInputDaoConfig }) => (
         </div>
 
         <div className="mb-4">
-            <label htmlFor="description">Description</label>
+            <label htmlFor="description" className="mb-2 font-semibold text-xl">Description</label>
             <input
                 id="description"
                 type="text"
@@ -29,7 +29,7 @@ const DaoConfig = ({ daoConfig, handleInputDaoConfig }) => (
         </div>
 
         <div className="mb-4">
-            <label htmlFor="daoName"> New DAO Name</label>
+            <label htmlFor="daoName" className="mb-2 font-semibold text-xl"> New DAO Name</label>
             <input
                 id="NewdaoName"
                 type="text"
@@ -42,7 +42,7 @@ const DaoConfig = ({ daoConfig, handleInputDaoConfig }) => (
         </div>
 
         <div className="mb-4">
-            <label htmlFor="actionMember">Action Member (Principal)</label>
+            <label htmlFor="actionMember" className="mb-2 font-semibold text-xl">Action Member (Principal)</label>
             <input
                 id="actionMember"
                 type="text"
@@ -55,7 +55,7 @@ const DaoConfig = ({ daoConfig, handleInputDaoConfig }) => (
         </div>
 
         <div className="mb-4">
-            <label htmlFor="purpose">Purpose</label>
+            <label htmlFor="purpose" className="mb-2 font-semibold text-xl">Purpose</label>
             <input
                 id="purpose"
                 type="text"
