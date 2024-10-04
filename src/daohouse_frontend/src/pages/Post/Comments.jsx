@@ -6,6 +6,7 @@ import userImage from "../../../assets/commentUser.jpg";
 import { FaReply } from "react-icons/fa6";
 import CommentsSkeletonLoader from '../../Components/SkeletonLoaders/CommentsSkeletonLoader/CommentsSkeletonLoader';
 import CommentSkeletonLoader from '../../Components/SkeletonLoaders/CommentsSkeletonLoader/CommentSkeletonLoader';
+import CircularProgress from '@mui/material/CircularProgress';
 
 // Comment component
 const Comment = ({ comment, proposalId, daoId }) => {
@@ -18,6 +19,7 @@ const Comment = ({ comment, proposalId, daoId }) => {
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
   const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitLoading, setIsSubmitLoading] = useState(false);
 
   useEffect(() => {
     // Fetch user profile when the component mounts
@@ -52,6 +54,7 @@ const Comment = ({ comment, proposalId, daoId }) => {
 
     if (!replyText.trim()) return;
     try {
+      setIsSubmitLoading(true)
       const replyArgs = {
         comment: replyText,
         proposal_id: proposalId,
@@ -77,6 +80,8 @@ const Comment = ({ comment, proposalId, daoId }) => {
       }
     } catch (error) {
       console.error("Error adding reply:", error);
+    } finally {
+      setIsSubmitLoading(false);
     }
   };
 
@@ -141,10 +146,14 @@ const Comment = ({ comment, proposalId, daoId }) => {
               onChange={handleReplyChange}
             />
             <button
-              className="mt-2 bg-[#234A5A] text-white py-1 px-2 text-sm rounded-full hover:bg-[#173a47]"
+              className="flex mobile:m-4 my-4 flex-row items-center gap-2 bg-[#0E3746] sm:px-6 lg:px-12 py-2 rounded-[2rem] text-white mobile:text-base text-sm whitespace-nowrap"
               onClick={submitReply}
             >
-              Submit Reply
+              {isSubmitLoading ? (
+                <CircularProgress size={24} />
+              ) : (
+                "Submit Reply"
+              )}
             </button>
           </div>
         )}
@@ -181,6 +190,8 @@ const Comments = ({ daoId, proposalId, commentCount, setCommentCount }) => {
   const [daoActor, setDaoActor] = useState({});
   const {createDaoActor} = useAuth()
   const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitLoading, setIsSubmitLoading] = useState(false);
+  
 
     const fetchComments = async () => {
       try {
@@ -217,6 +228,7 @@ const Comments = ({ daoId, proposalId, commentCount, setCommentCount }) => {
   const submitComment = async () => {
     if (!newComment.trim()) return;
     try {
+      setIsSubmitLoading(true)
       const response = await daoActor.comment_on_proposal( newComment,  proposalId);
 
       if (response.Ok) {
@@ -242,6 +254,8 @@ const Comments = ({ daoId, proposalId, commentCount, setCommentCount }) => {
       }
     } catch (error) {
       console.error("Error adding comment:", error);
+    } finally {
+      setIsSubmitLoading(false)
     }
   };
   console.log("daoId:", typeof daoId, daoId);
@@ -274,8 +288,16 @@ console.log("newComment:", typeof newComment, newComment);
           onChange={handleCommentChange}
         />
         <div className='flex justify-end'>
-          <button className="mt-4 bg-[#0E3746] text-white py-4 px-16 text-[16px] rounded-full hover:bg-[#0E3746] transition" onClick={submitComment}>
-            Submit Comment
+          <button 
+            className="flex mobile:m-4 my-4 flex-row items-center gap-2 bg-[#0E3746] sm:px-6 lg:px-12 py-2 rounded-[2rem] text-white mobile:text-base text-sm whitespace-nowrap" 
+            onClick={submitComment}
+            type='submit'
+          >
+          {isSubmitLoading ? (
+            <CircularProgress size={24} />
+          ) : (
+            "Submit Comment"
+          )}
           </button>
         </div>
       </div>
