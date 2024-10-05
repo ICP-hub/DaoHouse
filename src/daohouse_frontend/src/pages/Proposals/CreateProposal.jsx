@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { CircularProgress } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { Principal } from "@dfinity/principal";
-import BountyDone from "./BountyDone";
+import BountyClaim from "./BountyClaim";
 import TokenTransfer from "./TokenTransfer";
 import GeneralPurpose from "./GeneralPurpose";
 import DaoConfig from "./DaoConfig";
@@ -35,12 +35,13 @@ function CreateProposal() {
     // action_member: '',
   });
 
-  const [bountyDone, setBountyDone] = useState({
+  const [bountyClaim, setBountyClaim] = useState({
     to: '',
     description: '',
     tokens: '',
     // action_member: '',
     bounty_task: '',
+    associated_proposal_id : '',
   });
 
   const [generalPurp, setGeneralPurp] = useState({
@@ -190,9 +191,9 @@ function CreateProposal() {
       [name]: value,
     }));
   };
-  const handleInputBountyDone = (e) => {
+  const handleInputBountyClaim = (e) => {
     const { name, value } = e.target;
-    setBountyDone((prev) => ({
+    setBountyClaim((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -348,16 +349,16 @@ function CreateProposal() {
           });
           break;
 
-        case "bountyDone":
+        case "bountyClaim":
           console.log("dfnsdjlflksdfjlksdfjlksd");
 
-          await submitBountyDone({
+          await submitBountyClaim({
             proposal_entiry: proposalEntry,
-            to: Principal.fromText(bountyDone.to),
-            description: bountyDone.description,
-            tokens: Number(bountyDone.tokens),
-            // action_member: Principal.fromText(bountyDone.action_member),
-            bounty_task: bountyDone.bounty_task,
+            to: Principal.fromText(bountyClaim.to),
+            description: bountyClaim.description,
+            tokens: Number(bountyClaim.tokens),
+            // action_member: Principal.fromText(bountyClaim.action_member),
+            bounty_task: bountyClaim.bounty_task,
           });
           break;
 
@@ -474,20 +475,20 @@ function CreateProposal() {
       toast.error("Failed to create Token Transfer proposal");
     }
   };
-  const submitBountyDone = async (bountyDone) => {
+  const submitBountyClaim = async (bountyClaim) => {
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
       console.log("DAO Canister ID:", daoCanisterId);
-      console.log("Bounty Done Proposal Payload:", bountyDone);
+      console.log("Bounty Claim Proposal Payload:", bountyClaim);
       
-      const response = await daoCanister.proposal_to_bounty_done(bountyDone);
-      console.log("Response of Bounty Done:", response);
+      const response = await daoCanister.proposal_to_bounty_claim(bountyClaim);
+      console.log("Response of Bounty Claim:", response);
       
-      toast.success("Bounty Done proposal created successfully");
+      toast.success("Bounty Claim proposal created successfully");
       movetodao();
     } catch (error) {
-      console.error("Error submitting Bounty Done proposal:", error);
-      toast.error("Failed to create Bounty Done proposal");
+      console.error("Error submitting Bounty Claim proposal:", error);
+      toast.error("Failed to create Bounty Claim proposal");
     }
   };
   const submitGeneralPurp = async (generalPurp) => {
@@ -821,7 +822,7 @@ function CreateProposal() {
                       required // Make it a required field
                     >
                       <option value="">Select Proposal Type</option>
-                      <option value="bountyDone">Bounty Done</option>
+                      <option value="bountyClaim">Bounty Claim</option>
                       <option value="tokenTransfer">Token Transfer</option>
                       <option value="GeneralPurp">General Purpose</option>
                       <option value="DaoConfig">Dao Config</option>
@@ -857,10 +858,10 @@ function CreateProposal() {
                   </div>
 
                   {/* Conditional Input Fields Based on Proposal Type */}
-                  {proposalType === "bountyDone" && (
-                    <BountyDone
-                      bountyDone={bountyDone}
-                      handleInputBountyDone={handleInputBountyDone}
+                  {proposalType === "bountyClaim" && (
+                    <BountyClaim
+                      bountyClaim={bountyClaim}
+                      handleInputBountyClaim={handleInputBountyClaim}
                     />
                   )}
 
