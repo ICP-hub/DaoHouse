@@ -252,6 +252,7 @@ const ProposalsDetails = () => {
         isComment={isComment}
         setIsComment={setIsComment}
         commentCount={commentCount}
+        showComments={true}
       />
       {isComment && (
         <div className="">
