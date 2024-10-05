@@ -35,14 +35,14 @@ function CreateProposal() {
     to: '',
     description: '',
     tokens: '',
-    action_member: '',
+    // action_member: '',
   });
 
   const [bountyDone, setBountyDone] = useState({
     to: '',
     description: '',
     tokens: '',
-    action_member: '',
+    // action_member: '',
     bounty_task: '',
   });
 
@@ -58,7 +58,7 @@ function CreateProposal() {
     daotype: '',
     description: '',
     new_dao_name: '',
-    action_member: '',
+    // action_member: '',
     purpose: '',
   });
 
@@ -78,14 +78,14 @@ function CreateProposal() {
     proposal_expired_at: '',
     description: '',
     tokens: '',
-    action_member: '',
+    // action_member: '',
     proposal_created_at: '',
     bounty_task: '',
   });
 
   const [changePolicy, setChangePolicy] = useState({
     description: '',
-    action_member: '',
+    // action_member: '',
     cool_down_period: '',
     required_votes: '',
   });
@@ -354,7 +354,7 @@ function CreateProposal() {
             to: Principal.fromText(tokenTransfer.to),
             description: tokenTransfer.description,
             tokens: Number(tokenTransfer.tokens),
-            action_member: Principal.fromText(tokenTransfer.action_member),
+            // action_member: Principal.fromText(tokenTransfer.action_member),
           });
           break;
 
@@ -364,7 +364,7 @@ function CreateProposal() {
             to: Principal.fromText(bountyDone.to),
             description: bountyDone.description,
             tokens: Number(bountyDone.tokens),
-            action_member: Principal.fromText(bountyDone.action_member),
+            // action_member: Principal.fromText(bountyDone.action_member),
             bounty_task: bountyDone.bounty_task,
           });
           break;
@@ -387,7 +387,7 @@ function CreateProposal() {
             daotype: daoConfig.daotype,
             description: daoConfig.description,
             new_dao_name: daoConfig.new_dao_name,
-            action_member: Principal.fromText(daoConfig.action_member),
+            // action_member: Principal.fromText(daoConfig.action_member),
             purpose: daoConfig.purpose,
           });
           break;
@@ -416,7 +416,7 @@ function CreateProposal() {
               proposal_expired_at: bountyRaised.proposal_expired_in_days, // Send difference in days
               description: bountyRaised.description,
               tokens: Number(bountyRaised.tokens),
-              action_member: Principal.fromText(bountyRaised.action_member),
+              // action_member: Principal.fromText(bountyRaised.action_member),
               proposal_created_at: 0,
               bounty_task: bountyRaised.bounty_task,
             });
@@ -427,7 +427,7 @@ function CreateProposal() {
           await submitChangePolicy({
             proposal_entiry: proposalEntry,
             description: changePolicy.description,
-            action_member: Principal.fromText(changePolicy.action_member),
+            // action_member: Principal.fromText(changePolicy.action_member),
             cool_down_period: Number(changePolicy.cool_down_period),
             required_votes: Number(changePolicy.required_votes),
           });
