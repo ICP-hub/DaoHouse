@@ -18,6 +18,7 @@ mod utils;
 use ic_cdk::api::time;
 use ic_cdk_timers::set_timer_interval;
 use std::time::Duration;
+use candid::Nat;
 
 thread_local! {
     static STATE: RefCell<State> = RefCell::new(State::new());
@@ -40,9 +41,9 @@ fn check_proposals() {
         let timestamp = time();
         // let cool_down_period =  state.dao.cool_down_period as u64;
         // let expiration_time  =  cool_down_period * 60 * 60 * 1_000_000_000;
-        // min_treadshold : Vec<u32>,
+
         let mut proposals_to_update: Vec<Proposals> = Vec::new();
-        
+
         for (_, proposal) in state.proposals.iter() {
             let time_diff = timestamp.saturating_sub(proposal.proposal_submitted_at);
 
@@ -53,9 +54,9 @@ fn check_proposals() {
 
             let user_propsal_expire_date = proposal.proposal_expired_at;
             let min_require_vote = state.dao.required_votes;
-            
+
             let min_threadshold = proposal.minimum_threadsold;
-            
+
             let mut proposal = proposal.clone();
             if proposal.proposal_type == ProposalType::Polls
                 || proposal.proposal_type == ProposalType::BountyRaised
@@ -81,7 +82,7 @@ fn check_proposals() {
                 if time_diff >= EXPIRATION_TIME && !proposal.has_been_processed {
                     proposal.has_been_processed = true;
                     if total_votes >= min_require_vote as f64 {
-                        if total_percentage >=  min_threadshold as f64 {
+                        if total_percentage >= min_threadshold as f64 {
                             proposal.proposal_status = ProposalState::Accepted;
                             proposals_to_update.push(proposal.clone());
                         } else if total_percentage > 0.0 {
@@ -114,13 +115,26 @@ fn check_proposals() {
                 } else if let ProposalType::RemoveMemberToGroupProposal = proposal.proposal_type {
                     remove_member_to_group(state, &proposal);
                 } else if let ProposalType::ChangeDaoConfig = proposal.proposal_type {
-                    chnage_dao_config(state, &proposal);
-                } else if let ProposalType::ChnageDaoPolicy = proposal.proposal_type {
+                    change_dao_config(state, &proposal);
+                } else if let ProposalType::ChangeDaoPolicy = proposal.proposal_type {
                     change_dao_policy(state, &proposal);
                 } else if let ProposalType::TokenTransfer = proposal.proposal_type {
                     let _ = transfer_token(&proposal);
+                }else if let ProposalType::BountyClaim = proposal.proposal_type {
+                    let _ = proposal_to_bounty_done(&proposal);
+                } 
+                else if let ProposalType::BountyDone = proposal.proposal_type {
+                    let _ = transfer_token(&proposal);
+                }
+            } else if !proposal.has_been_processed_secound {
+                if let ProposalType::BountyRaised = proposal.proposal_type {
+                    let _ = transfer_token(&proposal);
+                } else if let ProposalType::BountyClaim = proposal.proposal_type {
+                    let _ = transfer_token(&proposal);
                 } else if let ProposalType::BountyDone = proposal.proposal_type {
-                    let _ = bounty_done(&proposal);
+                    let _ = transfer_token(&proposal);
+                } else if let ProposalType::TokenTransfer = proposal.proposal_type {
+                    let _ = transfer_token(&proposal);
                 }
             }
             state
@@ -128,6 +142,39 @@ fn check_proposals() {
                 .insert(proposal.proposal_id.clone(), proposal);
         }
     });
+}
+
+async fn proposal_to_bounty_done(proposal: &Proposals) -> Result<String, String> {    
+    let proposal = ProposalInput {
+        principal_of_action: Some(proposal.principal_of_action),
+        proposal_description: proposal.proposal_description.clone(),
+        proposal_title: String::from(crate::utils::TITLE_BOUNTY_DONE),
+        proposal_type: ProposalType::BountyDone,
+        new_dao_name: None,
+        group_to_join: None,
+        dao_purpose: None,
+        tokens: proposal.tokens,
+        token_from: proposal.token_from,
+        token_to: proposal.token_from,
+        proposal_created_at: None,
+        proposal_expired_at: None,
+        bounty_task: proposal.bounty_task.clone(),
+        poll_title: None,
+        required_votes: None,
+        cool_down_period: None,
+        group_to_remove: None,
+        new_dao_type: None,
+        minimum_threadsold: proposal.minimum_threadsold,
+        link_of_task : None,
+        associated_proposal_id : proposal.associated_proposal_id.clone(),
+        };
+    crate::proposal_route::create_proposal_controller(
+        with_state(|state| state.dao.daohouse_canister_id),
+        proposal,
+    )
+    .await;
+
+    Ok(String::from(crate::utils::MESSAGE_BOUNTY_DONE))
 }
 
 fn add_member_to_dao(state: &mut State, proposal: &Proposals) {
@@ -172,7 +219,7 @@ fn remove_member_to_group(state: &mut State, proposal: &Proposals) {
     }
 }
 
-fn chnage_dao_config(state: &mut State, proposal: &Proposals) {
+fn change_dao_config(state: &mut State, proposal: &Proposals) {
     let dao = &mut state.dao;
     if let Some(ref new_dao_name) = proposal.new_dao_name {
         dao.dao_name = new_dao_name.clone();
@@ -188,46 +235,51 @@ fn chnage_dao_config(state: &mut State, proposal: &Proposals) {
 fn change_dao_policy(state: &mut State, proposal: &Proposals) {
     if let Some(cool_down_period) = proposal.cool_down_period {
         state.dao.cool_down_period = cool_down_period;
- }
+    }
     state.dao.required_votes = proposal.required_votes;
 }
 
-async fn bounty_done(proposal: &Proposals) -> Result<String, String> {
-    let principal_id: Principal = api::caller();
-    let balance = icrc_get_balance(principal_id)
-        .await
-        .map_err(|err| format!("Error while fetching user balance: {}", err))?;
+// async fn bounty_done(proposal: &Proposals) -> Result<String, String> {
+//     let principal_id: Principal = api::caller();
+//     let balance = icrc_get_balance(principal_id)
+//         .await
+//         .map_err(|err| format!("Error while fetching user balance: {}", err))?;
 
-    if balance <= 0 as u8 {
-        return Err(String::from("User token balance is less than the required transfer tokens"));
-    }
+//     if balance <= 0 as u8 {
+//         return Err(String::from(
+//             "User token balance is less than the required transfer tokens",
+//         ));
+//     }
 
-    let from = match &proposal.token_from {
-        Some(principal) => principal,
-        None => return Err(String::from("Missing 'from' principal")),
-    };
+//     let from = match &proposal.token_from {
+//         Some(principal) => principal,
+//         None => return Err(String::from("Missing 'from' principal")),
+//     };
 
-    let to = match &proposal.token_to {
-        Some(principal) => principal,
-        None => return Err(String::from("Missing 'to' principal")),
-    };
-    let tokens = match proposal.tokens {
-        Some(tokens) => tokens,
-        None => return Err(String::from("Missing token amount")),
-    };
+//     let to = match &proposal.token_to {
+//         Some(principal) => principal,
+//         None => return Err(String::from("Missing 'to' principal")),
+//     };
+//     let tokens = match proposal.tokens {
+//         Some(tokens) => tokens,
+//         None => return Err(String::from("Missing token amount")),
+//     };
 
-    let token_transfer_args = TokenTransferArgs {
-        from: *from,
-        to: *to,
-        tokens,
-    };
+//     let token_transfer_args = TokenTransferArgs {
+//         from: *from,
+//         to: *to,
+//         tokens,
+//     };
 
-    icrc_transfer(token_transfer_args)
-        .await
-        .map_err(|err| format!("Error in transfer of tokens: {}", String::from(err)))?;
+//     icrc_transfer(token_transfer_args)
+//         .await
+//         .map_err(|err| format!("Error in transfer of tokens: {}", String::from(err)))?;
 
-        Ok("Bounty has been completed and rewarded tokens have been transferred successfully".to_string())
-}
+//     Ok(
+//         "Bounty has been completed and rewarded tokens have been transferred successfully"
+//             .to_string(),
+//     )
+// }
 
 async fn transfer_token(proposal: &Proposals) -> Result<String, String> {
     let principal_id: Principal = api::caller();
@@ -241,12 +293,10 @@ async fn transfer_token(proposal: &Proposals) -> Result<String, String> {
         ));
     }
 
-
     let from = match &proposal.token_from {
         Some(principal) => principal,
         None => return Err(String::from("Missing 'from' principal")),
     };
-
 
     let to = match &proposal.token_to {
         Some(principal) => principal,
@@ -270,17 +320,47 @@ async fn transfer_token(proposal: &Proposals) -> Result<String, String> {
     Ok("Token transfer SuccessFully".to_string())
 }
 
+// async fn return_token_to_user(proposal: &Proposals) -> Result<String, String> {
+//     let from = match &proposal.token_from {
+//         Some(principal) => principal,
+//         None => return Err(String::from("Missing 'from' principal")),
+//     };
+
+//     let to = match &proposal.token_to {
+//         Some(principal) => principal,
+//         None => return Err(String::from("Missing 'to' principal")),
+//     };
+//     let tokens = match proposal.tokens {
+//         Some(tokens) => tokens,
+//         None => return Err(String::from("Missing token amount")),
+//     };
+
+//     let token_transfer_args = TokenTransferArgs {
+//         from: *from,
+//         to: *to,
+//         tokens,
+//     };
+
+//     icrc_transfer(token_transfer_args)
+//         .await
+//         .map_err(|err| format!("Error in transfer of tokens: {}", String::from(err)))?;
+
+//     Ok("Token transfer SuccessFully".to_string())
+// }
+
 #[init]
 async fn init(dao_input: DaoInput) {
     // ic_cdk::println!("data is {:?}", dao_input);
 
     // let principal_id = api::caller();
-    let proposal_entiry: Vec<crate::ProposalPlace> = dao_input.proposal_entiry.iter().map(|proposal| {
-        crate::ProposalPlace {
+    let proposal_entiry: Vec<crate::ProposalPlace> = dao_input
+        .proposal_entiry
+        .iter()
+        .map(|proposal| crate::ProposalPlace {
             place_name: proposal.place_name.clone(),
             min_required_thredshold: proposal.min_required_thredshold,
-        }
-    }).collect();
+        })
+        .collect();
 
     let new_dao = Dao {
         dao_id: ic_cdk::api::id(),
@@ -310,7 +390,7 @@ async fn init(dao_input: DaoInput) {
         total_tokens: dao_input.token_supply,
         daohouse_canister_id: dao_input.daohouse_canister_id,
         token_symbol: dao_input.token_symbol,
-        proposal_entiry : proposal_entiry,
+        proposal_entiry: proposal_entiry,
     };
 
     // let permission = Votingandpermissions {
