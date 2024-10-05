@@ -3,7 +3,7 @@ import React from "react";
 const BountyDone = ({ bountyDone, handleInputBountyDone }) => (
   <>
     <div className="mb-4">
-      <label htmlFor="to">To</label>
+      <label htmlFor="to" className="block mb-2 font-semibold text-xl">To</label>
       <input
         id="to"
         type="to"
@@ -15,7 +15,7 @@ const BountyDone = ({ bountyDone, handleInputBountyDone }) => (
       />
     </div>
     <div className="mb-4">
-      <label htmlFor="description">Description</label>
+      <label htmlFor="description" className="block mb-2 font-semibold text-xl">Description</label>
       <input
         id="description"
         type="text"
@@ -28,7 +28,7 @@ const BountyDone = ({ bountyDone, handleInputBountyDone }) => (
     </div>
 
     <div className="mb-4">
-      <label htmlFor="tokens">Tokens</label>
+      <label htmlFor="tokens" className="block mb-2 font-semibold text-xl">Tokens</label>
       <input
         id="tokens"
         type="number"
@@ -40,7 +40,7 @@ const BountyDone = ({ bountyDone, handleInputBountyDone }) => (
       />
     </div>
     <div className="mb-4">
-      <label htmlFor="actionMember">Action Member (Principal)</label>
+      <label htmlFor="actionMember" className="block mb-2 font-semibold text-xl">Action Member (Principal)</label>
       <input
         id="action_member"
         type="text"
@@ -52,7 +52,7 @@ const BountyDone = ({ bountyDone, handleInputBountyDone }) => (
       />
     </div>
     <div className="mb-4">
-      <label htmlFor="Bounty Task">Bounty Task</label>
+      <label htmlFor="Bounty Task" className="block mb-2 font-semibold text-xl">Bounty Task</label>
       <input
         id="bounty_task"
         type="text"

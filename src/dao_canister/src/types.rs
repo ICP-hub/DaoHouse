@@ -104,7 +104,7 @@ pub struct Comment {
     pub author_principal: Principal,
     pub comment_text: String,
     pub comment_id: String,
-    pub replies: Vec<String>,
+    pub replies: Vec<ReplayComment>,
     pub likes: u16,
     pub created_at: u64,
 }
@@ -114,6 +114,12 @@ pub struct Test{
     pub token_to : Principal,
     pub token_from : Principal,
     pub tokens : u64,
+}
+
+#[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
+pub struct ReplayComment {
+    pub reply_comment : String,
+    pub commented_by : Principal,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize)]

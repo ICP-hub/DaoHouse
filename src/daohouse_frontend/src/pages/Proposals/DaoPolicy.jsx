@@ -3,7 +3,7 @@ import React from "react";
 const DaoPolicy = ({ changePolicy, handleInputDaoPolicy }) => (
     <form className="space-y-4">
         <div className="mb-4">
-            <label htmlFor="description">Description</label>
+            <label htmlFor="description" className="mb-2 font-semibold text-xl">Description</label>
             <input
                 id="description"
                 type="text"
@@ -16,7 +16,7 @@ const DaoPolicy = ({ changePolicy, handleInputDaoPolicy }) => (
         </div>
 
         <div className="mb-4">
-            <label htmlFor="actionMember">Action Member (Principal)</label>
+            <label htmlFor="actionMember" className="mb-2 font-semibold text-xl">Action Member (Principal)</label>
             <input
                 id="actionMember"
                 type="text"
@@ -29,7 +29,7 @@ const DaoPolicy = ({ changePolicy, handleInputDaoPolicy }) => (
         </div>
 
         <div className="mb-4">
-            <label htmlFor="coolDownPeriod">Cool Down Period</label>
+            <label htmlFor="coolDownPeriod" className="mb-2 font-semibold text-xl">Cool Down Period</label>
             <input
                 id="coolDownPeriod"
                 type="text"
@@ -42,7 +42,7 @@ const DaoPolicy = ({ changePolicy, handleInputDaoPolicy }) => (
         </div>
 
         <div className="mb-4">
-            <label htmlFor="requiredVotes">Required Votes</label>
+            <label htmlFor="requiredVotes" className="mb-2 font-semibold text-xl">Required Votes</label>
             <input
                 id="requiredVotes"
                 type="text"
