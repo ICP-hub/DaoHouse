@@ -3,7 +3,7 @@ import React from "react";
 const RemoveDaoMember = ({ removeDaoMember, handleInputRemoveDaoMember }) => (
     <form className="space-y-4">
         <div className="mb-4">
-            <label htmlFor="description">Description</label>
+            <label htmlFor="description" className="mb-2 font-semibold text-xl">Description</label>
             <input
                 id="description"
                 type="text"
@@ -16,7 +16,7 @@ const RemoveDaoMember = ({ removeDaoMember, handleInputRemoveDaoMember }) => (
         </div>
 
         <div className="mb-4">
-            <label htmlFor="actionMember">Action Member (Principal)</label>
+            <label htmlFor="actionMember" className="mb-2 font-semibold text-xl">Action Member (Principal)</label>
             <input
                 id="actionMember"
                 type="text"

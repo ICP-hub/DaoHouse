@@ -3,7 +3,7 @@ import React from "react";
 const AddMember = ({ addMember, handleInputAddMember, groupNames }) => (
     <>
         <div className="mb-4">
-            <label className="block">Group Name</label>
+            <label className="block mb-2 font-semibold text-xl">Group Name</label>
             <select
                 name="group_name"
                 required
@@ -20,7 +20,7 @@ const AddMember = ({ addMember, handleInputAddMember, groupNames }) => (
             </select>
         </div>
         <div className="mb-4">
-            <label className="block">Description</label>
+            <label className="block mb-2 font-semibold text-xl">Description</label>
             <input
                 type="text"
                 name="description"
@@ -32,7 +32,7 @@ const AddMember = ({ addMember, handleInputAddMember, groupNames }) => (
             />
         </div>
         <div className="mb-4">
-            <label className="block">New Member (Principal)</label>
+            <label className="block mb-2 font-semibold text-xl">New Member (Principal)</label>
             <input
                 type="text"
                 name="new_member"

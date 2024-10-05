@@ -12,6 +12,8 @@ import { RiGroupFill } from "react-icons/ri";
 
 const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
   const [count, setCount] = useState(1);
+  const [councilUsernames, setCouncilUsernames] = useState([]);
+  const [username, setUsername] = useState("")
   const [showMemberNameInput, setShowMemberNameInput] = useState(false);
   const [addMemberIndex, setAddMemberIndex] = useState(null);
   const [groupNameInputIndex, setGroupNameInputIndex] = useState(null);
@@ -107,39 +109,6 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
   const deleteGroup = (index) => {
     setList(prevList => prevList.filter(item => item.index !== index));
   };
-
-  // const handleMemberAdding = (index) => {
-  //   setAddMemberIndex(index);
-  //   setShowMemberNameInput(true);
-  // };
-  // const handleNameEnter = async (name, event) => {
-  //   if (event.key === "Enter" && name.trim() !== "") {
-  //     try {
-  //       const principal = Principal.fromText(name.trim());
-  //       const response = await backendActor.get_profile_by_id(principal);
-  //       if (response.Ok) {
-  //         setList(prevList =>
-  //           prevList.map(item => {
-  //             if (item.index === addMemberIndex) {
-  //               const principalId = principal.toText();
-  //               if (!item.members.includes(principalId)) {
-  //                 return { ...item, members: [...item.members, principalId] };
-  //               } else {
-  //                 toast.error("Principal ID already exists");
-  //               }
-  //             }
-  //             return item;
-  //           })
-  //         );
-  //         setShowMemberNameInput(false);
-  //       } else {
-  //         toast.error("User does not exist");
-  //       }
-  //     } catch (error) {
-  //       toast.error("Invalid Principal ID or error fetching profile");
-  //     }
-  //   }
-  // };
   const handleMemberAdding = (index) => {
     if (index === null) {
       // Council case
@@ -158,6 +127,11 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
         const response = await backendActor.get_profile_by_id(principal);
   
         if (response.Ok) {
+          const username = response.Ok.username; // Get username from the response
+          setUsername(username);
+          localStorage.setItem(`username_${principal.toText()}`, username);
+          console.log("user", username);
+          
           setList((prevList) =>
             prevList.map((item) => {
               if (item.index === addMemberIndex || (addMemberIndex === "council" && item.name === "Council")) {
@@ -182,19 +156,6 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
     }
   };
 
-  // const handleRemoveMember = (groupIndex, memberName) => {
-  //   setList(prevList =>
-  //     prevList.map(item => {
-  //       if (item.index === groupIndex && item.members.includes(memberName)) {
-  //         return {
-  //           ...item,
-  //           members: item.members.filter(user => user !== memberName),
-  //         };
-  //       }
-  //       return item;
-  //     })
-  //   );
-  // };
   const handleRemoveMember = (groupIndex, memberName) => {
     setList(prevList =>
       prevList.map(item => {
@@ -246,9 +207,49 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
     setGroupNameInputIndex(null);
     setUpdatedGroupName(""); // Clear the input state
   };
-  
+        
+      const getUsernameByPrincipalId = async (principalId) => {
+        console.log("3", principalId);
+        
+        try {
+            const response = await backendActor.get_profile_by_id(Principal.fromText(principalId));
+            console.log("4", response);
+            
+            setUsername(response.Ok.username)
+            // return response.Ok ? response.Ok.username : "Unknown User"; // Fallback in case user not found
+        } catch {
+            return "Error fetching username"; // Handle errors accordingly
+        }
+
+      }
+
 
   const councilMembers = list.find(group => group.name === "Council")?.members || [];
+  useEffect(() => {
+    const fetchCouncilUsernames = async () => {
+      const fetchedUsernames = [];
+  
+      for (const member of councilMembers) {
+        const principal = Principal.fromText(member); // Extract the principal ID
+        try {
+          const response = await backendActor.get_profile_by_id(principal);
+          if (response.Ok) {
+            fetchedUsernames.push(`${response.Ok.username} (${principal.toText()})`);
+            console.log(fetchedUsernames);
+            
+          } else {
+            fetchedUsernames.push(member); // If not found, keep the original entry
+          }
+        } catch (error) {
+          fetchedUsernames.push(member); // If error occurs, keep the original entry
+        }
+      }
+  
+      setCouncilUsernames(fetchedUsernames);
+    };
+  
+    fetchCouncilUsernames();
+  }, [councilMembers]);
 
   // useEffect(() => {
   //   console.log("Current council members:", councilMembers);
@@ -321,37 +322,6 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
           </div>
 
           {/* Council */}
-          {/* <div className="bg-[#E9EAEA] rounded-lg">
-            <section className="w-full py-2 mobile:px-8 p-2 pl-4 flex flex-row items-center justify-between border-b-2 border-[#b4b4b4]">
-              <h2 className="font-semibold mobile:text-base text-sm">Council</h2>
-              <button
-                onClick={() => handleMemberAdding(null)}
-                className="flex flex-row items-center gap-1 text-[#229ED9] bg-white mobile:p-2 p-1 rounded-md"
-              >
-                Add Member
-              </button>
-            </section>
-            <section className="py-4 mobile:px-8 p-2 pl-4 transition">
-              {showMemberNameInput && addMemberIndex === null ? (
-                <input
-                  type="text"
-                  className="mobile:p-2 p-1 mobile:text-base text-sm rounded-md border border-slate-500"
-                  placeholder="Enter Member Name"
-                  onKeyDown={(e) => handleNameEnter(e.target.value, e)}
-                />
-              ) : null}
-            </section>
-            {councilMembers.map((name, index) => (
-              <section key={index} className="w-full py-2 p-2 pl-4 flex flex-col items-center justify-between bg-white mb-4">
-                <div className="w-full flex flex-row items-center justify-between mb-2">
-                  <p className="font-semibold mobile:text-base text-sm pl-4 bg-white border-black">{name}</p>
-                  <button onClick={() => handleRemoveMember(null, name)}>
-                    <MdOutlineDeleteOutline className="text-red-500 mobile:text-2xl text-lg" />
-                  </button>
-                </div>
-              </section>
-            ))}
-          </div> */}
           <div className="bg-[#E9EAEA] rounded-lg">
             <section className="w-full py-2 mobile:px-8 p-2 pl-4 flex flex-row items-center justify-between border-b-2 border-[#b4b4b4]">
               <h2 className="font-semibold mobile:text-base text-sm">Council</h2>
@@ -362,23 +332,8 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
                 Add Member
               </button>
             </section>
-            <section className="py-4 mobile:px-8 p-2 pl-4 transition">
+            <section className="py-4 mobile:px-8 p-2 transition">
               {showMemberNameInput && addMemberIndex === 'council' ? (
-                //   <div className="flex flex-row gap-2 items-center">
-                //   <input
-                //     type="text"
-                //     className="lg:w-[849px] h-[48px] mobile:p-2 p-1 mobile:text-base text-sm rounded-md border border-slate-500"
-                //     placeholder="Enter Member Principal Id"
-                //     value={memberName}
-                //     onChange={(e) => setMemberName(e.target.value)}
-                //   />
-                //   <button
-                //     onClick={handleAddMember}
-                //     className="bg-black lg:w-[155px] h-[48px]  text-white p-2 rounded-md"
-                //   >
-                //     Add
-                //   </button>
-                // </div>
                 <div className="flex flex-col sm:flex-row gap-2 items-center w-full">
                   <input
                     type="text"
@@ -396,16 +351,23 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
                 </div>
               ) : null}
             </section>
-            {councilMembers.map((name, index) => (
-              <section key={index} className="w-full py-2 p-2 pl-4 flex flex-col items-center justify-between bg-white mb-4">
-                <div className="w-full flex flex-row items-center justify-between mb-2">
-                  <p className="font-semibold mobile:text-base text-sm pl-4 bg-white border-black">{name}</p>
-                  <button onClick={() => handleRemoveMember('council', name)}>
-                    <MdOutlineDeleteOutline className="text-red-500 mobile:text-2xl text-lg" />
-                  </button>
-                </div>
-              </section>
-            ))}
+            {councilUsernames.map((fullName, index) => {
+              const [username, principalId] = fullName.split(" ("); // Split the string to separate username and principal ID
+              const formattedPrincipalId = principalId.slice(0, -1); // Remove the closing parenthesis
+
+              return (
+                <section key={index} className="w-full bg-white py-2 p-2 md:px-8 flex flex-col items-center justify-between  mb-4">
+                  <div className="w-full flex flex-col mobile:items-start md:flex-row md:items-center justify-between mb-2">
+                    <p className="font-semibold mobile:text-base text-sm border-black">{username}</p>
+                    <p className="text-sm">{formattedPrincipalId}</p> {/* Display Principal ID on the right */}
+                    <button onClick={() => handleRemoveMember('council', fullName)}>
+                      <MdOutlineDeleteOutline className="text-red-500 mobile:text-2xl text-lg" />
+                    </button>
+                  </div>
+                </section>
+              );
+            })}
+
           </div>
 
           {/* Groups */}
@@ -413,10 +375,10 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
           {list.filter(group => group.name !== "Council").map((item, index) => (
               <div
                 key={index}
-                className={`flex flex-col bg-white rounded-lg ${addMemberIndex === item.index ? "" : "cursor-pointer transition"}`}
+                className={`flex flex-col bg-[#E9EAEA] rounded-lg ${addMemberIndex === item.index ? "" : "cursor-pointer transition"}`}
                 onClick={() => openMemberNames(item.index)}
               >
-                <section className={`w-full py-2 p-2 pl-4 flex ${addMemberIndex === item.index ? "border-b-2 border-[#b4b4b4]" : "rounded-lg"} items-center justify-between`}>
+                <section className={`w-full py-2 mobile:px-8 p-2 pl-4 flex flex-row items-center justify-between border-b-2 border-[#b4b4b4] ${addMemberIndex === item.index ? "border-b-2 border-[#b4b4b4]" : "rounded-lg"}`}>
                   {groupNameInputIndex === item.index ? (
                     <div className="flex items-center gap-2">
                     <input
@@ -451,7 +413,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
                     // >
                     //   {item.name}
                     // </p>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 py-1">
                       <p
                         className="font-semibold py-1 cursor-pointer mobile:text-base text-sm"
                         onDoubleClick={() => handleShowGroupNameInput(item.index)}
@@ -473,19 +435,19 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
                   <div className="flex flex-row small_phone:gap-4 gap-2">
                     <button
                       onClick={() => handleMemberAdding(item.index)}
-                      className="flex flex-row items-center gap-1 text-[#229ED9] bg-slate-200 mobile:p-1 p-1 rounded-md"
+                      className="flex flex-row items-center gap-1 text-[#229ED9] bg-white mobile:p-1 p-1 rounded-md"
                     >
                       Add Member
                     </button>
                     <button onClick={() => deleteGroup(item.index)}>
-                      <MdOutlineDeleteOutline className="text-red-500 mr-1 md:mr-7 mobile:text-2xl text-lg" />
+                      <MdOutlineDeleteOutline className="text-red-500 mobile:text-2xl text-lg" />
                     </button>
                   </div>
                 </section>
                 {addMemberIndex === item.index && (
-                  <section className="p-4 gap-2 flex flex-col items-start">
+                  <section className="py-4 gap-2 flex flex-col items-start">
                     {showMemberNameInput ? (
-                      <div className="flex flex-col sm:flex-row gap-2 items-center w-full">
+                      <div className="flex flex-col sm:flex-row gap-2 px-8 items-center w-full">
                         <input
                           type="text"
                           // className="mobile:p-2 p-1 mobile:text-base text-sm rounded-md border border-slate-500"
@@ -503,14 +465,23 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
                         </button>
                       </div>
                     ) : null}
-                    {item.members.map((memberName, memberIndex) => (
-                      <div key={memberIndex} className="w-full flex flex-row items-center justify-between">
-                        <p className="font-semibold text-sm">{memberName}</p>
-                        <button onClick={() => handleRemoveMember(item.index, memberName)}>
-                          <MdOutlineDeleteOutline className="text-red-500 mobile:text-2xl text-lg" />
-                        </button>
-                      </div>
-                    ))}
+                    {item.members.map((member, memberIndex) => {
+
+                      getUsernameByPrincipalId(member)
+
+                      return (
+                        <section key={index} className="w-full bg-white py-2 p-2 md:px-8 mt-4">
+                        <div className="w-full flex flex-col mobile:items-start md:flex-row md:items-center justify-between mb-2">
+                            <p className="font-semibold mobile:text-base text-sm border-black">{username}</p>
+                            <p className="text-sm mobile:mt-1 md:mt-0">{member}</p> {/* Display Principal ID */}
+                            <button onClick={() => handleRemoveMember('council', member)} className="mt-2 md:mt-0">
+                                <MdOutlineDeleteOutline className="text-red-500 mobile:text-2xl text-lg" />
+                            </button>
+                        </div>
+                    </section>
+
+                      );
+                    })}
                   </section>
                 )}
               </div>

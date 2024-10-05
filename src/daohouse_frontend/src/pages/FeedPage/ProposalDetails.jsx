@@ -173,9 +173,9 @@ const ProposalsDetails = () => {
 
   return (
     <div className={`${className} bg-zinc-200 w-full relative`}>
-  <Container classes="${className} __mainComponent lg:py-8 lg:pb-20 py-6 big_phone:px-8 px-6 tablet:flex-row gap-2 flex-col w-full">
-    <div className="w-full md:gap-2 gap-10 z-50 relative">
-      <div className="flex flex-col md:flex-row md:justify-between items-start">
+  <Container classes="${className} __mainComponent lg:py-8 lg:pb-20 py-6 big_phone:px-8 px-6 tablet:flex-row gap-2 flex-col w-full md:pl-2">
+    <div className="w-full md:gap-2 gap-10 z-50 relative md:px-16">
+      <div className="flex flex-col md:flex-row md:justify-between items-start md:pl-1">
         {/* Left Side: Proposal Details */}
         <div className="flex flex-col md:flex-row items-center flex-grow">
           <div
@@ -217,7 +217,7 @@ const ProposalsDetails = () => {
         </div>
 
         {/* Right Side: Follow & Join Buttons */}
-        <div className="flex justify-center gap-4 mt-4 md:mt-0 md:ml-4 tablet:mr-4 w-64 self-center">
+        <div className="flex justify-center gap-4 mt-4 md:mt-0 md:ml-8  w-64 self-center">
           <button
             onClick={toggleFollow}
             className="bg-[#0E3746] text-[16px] text-white shadow-xl py-1 px-3 rounded-[27px] lg:w-[131px] lg:h-[40px] md:w-[112px] md:h-[38px] w-full flex items-center justify-center"
@@ -243,7 +243,7 @@ const ProposalsDetails = () => {
     </div>
 
     {/* Comments and Proposal Details */}
-    <div className="mt-12">
+    <div className="mt-12 md:px-16">
       <Card
         proposal={proposal}
         showActions={true}
@@ -254,7 +254,7 @@ const ProposalsDetails = () => {
         commentCount={commentCount}
       />
       {isComment && (
-        <div className="mx-20">
+        <div className="">
           <Comments
           daoId={daoCanisterId}
           proposalId={proposalId}

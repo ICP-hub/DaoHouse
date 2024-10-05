@@ -37,7 +37,7 @@ type Comment = record {
   created_at : nat64;
   author_principal : principal;
   likes : nat16;
-  replies : vec text;
+  replies : vec ReplayComment;
   comment_text : text;
   comment_id : text;
 };
@@ -187,6 +187,7 @@ type RemoveMemberArgs = record {
   proposal_entiry : text;
   group_name : text;
 };
+type ReplayComment = record { commented_by : principal; reply_comment : text };
 type ReplyCommentArgs = record {
   comment : text;
   proposal_id : text;
