@@ -501,12 +501,9 @@ async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
            let time_diff = timestamp.saturating_sub(proposal.proposal_submitted_at);
            let user_propsal_expire_date = proposal.proposal_expired_at;
 
-            if proposal.proposal_status == ProposalState::Succeeded && proposal.proposal_type == ProposalType::BountyRaised  {
+            if proposal.proposal_status == ProposalState::Succeeded && proposal.proposal_type == ProposalType::BountyRaised && time_diff >= user_propsal_expire_date && !proposal.has_been_processed_secound {
                 Ok(())
-            } else if time_diff >= user_propsal_expire_date  {
-                return Err(format!("Proposal has been Expired")); 
-            }
-            else{
+            } else{
                 return Err(format!("Proposal has been {:?}", proposal.proposal_status)); 
             }
         } else {
@@ -528,13 +525,9 @@ async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
             .find(|place| place.place_name == args.proposal_entiry)
         {
             Some(val) => {
-                ic_cdk::println!("this is dao proposal place : {:?} ", val);
-
                 required_thredshold = val.min_required_thredshold;
             }
-            None => {
-                eprintln!("No Data Found");
-            }
+            None => {eprintln!("No Data Found");}
         }
     });
 
