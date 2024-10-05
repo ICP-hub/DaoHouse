@@ -55,7 +55,7 @@ async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, 
         tokens: None,
         token_from: None,
         token_to: None,
-        proposal_created_at: Some(ic_cdk::api::time()),
+        proposal_created_at: None,
         proposal_expired_at: None,
         bounty_task: None,
         poll_title: None,
@@ -125,7 +125,7 @@ async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<St
         tokens: None,
         token_from: None,
         token_to: None,
-        proposal_created_at: Some(ic_cdk::api::time()),
+        proposal_created_at: None,
         proposal_expired_at: None,
         bounty_task: None,
         poll_title: None,
@@ -433,7 +433,7 @@ async fn make_payment(tokens: u64, user: Principal) -> Result<Nat, String> {
 async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String> {
     // let proposal_expired_at = args.proposal_expired_at * 60 * 60 * 1_000_000_000;
 
-    const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
+    // const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
     let principal_id: Principal = api::caller();
     let canister_id: Principal = ic_cdk::api::id();
 
@@ -468,8 +468,8 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
         tokens: Some(args.tokens),
         token_from: Some(principal_id),
         token_to: Some(canister_id),
-        proposal_created_at: Some(args.proposal_created_at),
-        proposal_expired_at: Some(EXPIRATION_TIME),
+        proposal_created_at: None,
+        proposal_expired_at: None,
         bounty_task: Some(args.bounty_task),
         poll_title: None,
         required_votes: None,
@@ -492,7 +492,7 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
 #[update(guard=guard_check_members)]
 async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
     // let proposal_expired_at = args.proposal_expired_at * 60 * 60 * 1_000_000_000;
-    const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
+    // const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
     let canister_id: Principal = ic_cdk::api::id();
     let timestamp = time();
     let check_expired = with_state(|state| {
@@ -543,7 +543,7 @@ async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
         token_from: Some(canister_id),
         token_to: Some(api::caller()),
         proposal_created_at: None,
-        proposal_expired_at: Some(EXPIRATION_TIME),
+        proposal_expired_at: None,
         bounty_task: Some(args.bounty_task),
         poll_title: None,
         required_votes: None,
@@ -564,7 +564,7 @@ async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
 #[update(guard=guard_check_members)]
 async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
     // let proposal_expired_at = args.proposal_expired_at * 60 * 60 * 1_000_000_000;
-    const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
+    // const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
 
     // let proposal_entiry = ProposalPlace {
     //     place_name: args.proposal_entiry,
@@ -601,8 +601,8 @@ async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
         tokens: None,
         token_from: None,
         token_to: None,
-        proposal_created_at: Some(args.proposal_created_at),
-        proposal_expired_at: Some(EXPIRATION_TIME),
+        proposal_created_at: None,
+        proposal_expired_at: None,
         bounty_task: None,
         poll_title: Some(args.poll_title),
         required_votes: None,

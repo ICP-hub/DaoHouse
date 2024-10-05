@@ -1,6 +1,6 @@
 import React from "react";
 
-const BountyDone = ({ bountyDone, handleInputBountyDone }) => (
+const BountyClaim = ({ bountyClaim, handleInputBountyClaim }) => (
   <>
     <div className="mb-4">
       <label htmlFor="to" className="block mb-2 font-semibold text-xl">To</label>
@@ -8,8 +8,8 @@ const BountyDone = ({ bountyDone, handleInputBountyDone }) => (
         id="to"
         type="to"
         name="to"
-        value={bountyDone.to}
-        onChange={handleInputBountyDone}
+        value={bountyClaim.to}
+        onChange={handleInputBountyClaim}
         className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
         placeholder="Enter description"
       />
@@ -20,8 +20,8 @@ const BountyDone = ({ bountyDone, handleInputBountyDone }) => (
         id="description"
         type="text"
         name="description"
-        value={bountyDone.description}
-        onChange={handleInputBountyDone}
+        value={bountyClaim.description}
+        onChange={handleInputBountyClaim}
         className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
         placeholder="Enter description"
       />
@@ -33,32 +33,32 @@ const BountyDone = ({ bountyDone, handleInputBountyDone }) => (
         id="tokens"
         type="number"
         name="tokens"
-        value={bountyDone.tokens}
-        onChange={handleInputBountyDone}
+        value={bountyClaim.tokens}
+        onChange={handleInputBountyClaim}
         className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
         placeholder="Enter tokens"
       />
     </div>
-    <div className="mb-4">
+    {/* <div className="mb-4">
       <label htmlFor="actionMember" className="block mb-2 font-semibold text-xl">Action Member (Principal)</label>
       <input
         id="action_member"
         type="text"
         name="action_member"
-        value={bountyDone.action_member}
-        onChange={handleInputBountyDone}
+        value={bountyClaim.action_member}
+        onChange={handleInputBountyClaim}
         className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
         placeholder="Enter action member principal"
       />
-    </div>
+    </div> */}
     <div className="mb-4">
       <label htmlFor="Bounty Task" className="block mb-2 font-semibold text-xl">Bounty Task</label>
       <input
         id="bounty_task"
         type="text"
         name="bounty_task"
-        value={bountyDone.bounty_task}
-        onChange={handleInputBountyDone}
+        value={bountyClaim.bounty_task}
+        onChange={handleInputBountyClaim}
         className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
       />
     </div>
@@ -66,4 +66,4 @@ const BountyDone = ({ bountyDone, handleInputBountyDone }) => (
   </>
 );
 
-export default BountyDone;
+export default BountyClaim;

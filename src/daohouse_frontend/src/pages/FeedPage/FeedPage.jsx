@@ -286,6 +286,8 @@ const FeedPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [fetchedProposals, setFetchedProposals] = useState([])
   const className = "FeedPage";
+  console.log(proposals);
+  
 
   const itemsPerPage = 15;
 
@@ -347,6 +349,7 @@ const FeedPage = () => {
         for (const dao of allDaos) {
           const daoActor = await createDaoActor(dao.dao_canister_id);
           const daoProposals = await daoActor.get_all_proposals(pagination);
+          console.log(daoProposals);
           const proposalsWithDaoId = daoProposals.map((proposal) => ({
             ...proposal,
             dao_canister_id: dao.dao_canister_id,
