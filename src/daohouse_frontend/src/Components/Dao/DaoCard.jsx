@@ -5,12 +5,13 @@ import { useAuth } from "../utils/useAuthClient";
 import { toast } from 'react-toastify';
 import { CircularProgress } from "@mui/material";
 
-const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoCanisterId }) => {
+const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, isJoinedDAO }) => {
 
   const navigate = useNavigate();
-  const { backendActor } = useAuth();
+  const { backendActor, stringPrincipal, createDaoActor } = useAuth();
   const canisterId = process.env.CANISTER_ID_IC_ASSET_HANDLER;
   const [isFollowing, setIsFollowing] = useState(false);
+  const [daoActor, setDaoActor] = useState({})
   const [followersCount, setFollowersCount] = useState(0);
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -31,13 +32,21 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
           if (profileResponse.Ok) {
             setUserProfile(profileResponse.Ok);
             const currentUserId = Principal.fromText(profileResponse.Ok.user_id.toString());
+            console.log("Curr", currentUserId);
+            
+            const daoActor = await createDaoActor(daoCanisterId);
+            setDaoActor(daoActor)
 
-            const daoFollowers = await daoCanister.get_dao_followers();
+            const daoFollowers = await daoActor.get_dao_followers();
+            console.log("DF", daoFollowers);
+            
             
             setFollowersCount(daoFollowers.length);
-            setIsFollowing(daoFollowers.some(follower => follower.toString() === currentUserId.toString()));
+            const following = await daoFollowers.some(follower => follower.toString() === currentUserId.toString());
+            setIsFollowing(following)
+            
 
-            const daoMembers = await daoCanister.get_dao_members();
+            const daoMembers = await daoActor.get_dao_members();
             const isCurrentUserMember = daoMembers.some(member => member.toString() === currentUserId.toString());
             setIsMember(isCurrentUserMember);
 
@@ -55,6 +64,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
 
     fetchDaoDetails();
   }, [daoCanisterId, backendActor]);
+  console.log("IsFollowing", isFollowing);
 
   const toggleFollow = async () => {
     
@@ -62,11 +72,11 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
       if (!userProfile) return;
       setIsFollowing(!isFollowing);
       const response = isFollowing
-        ? await daoCanister.unfollow_dao(backendCanisterId)
-        : await daoCanister.follow_dao(backendCanisterId);
+        ? await daoActor.unfollow_dao(backendCanisterId)
+        : await daoActor.follow_dao(backendCanisterId);
 
       if (response?.Ok) {
-        const updatedFollowers = await daoCanister.get_dao_followers();
+        const updatedFollowers = await daoActor.get_dao_followers();
         setFollowersCount(updatedFollowers.length);
         console.log(followersCount);
         
@@ -93,7 +103,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
     setLoading(true)
     try {
       let a = Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND)
-      const response = await daoCanister.ask_to_join_dao(a);
+      const response = await daoActor.ask_to_join_dao(a);
       console.log(response);
       
       if (response.Ok) {
@@ -196,7 +206,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanister, daoC
           onClick={handleJoinDao}
           className="flex-1 bg-dark-green border-2 border-dark-green text-white p-2 rounded-[3rem] small_phone:text-base text-sm"
         >
-          {joinStatus}
+          {isJoinedDAO ? "Joined" : joinStatus }
         </button>
       </div>
       {/* Confirmation Modal */}

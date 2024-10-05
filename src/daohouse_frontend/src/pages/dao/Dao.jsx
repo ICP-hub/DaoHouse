@@ -22,6 +22,7 @@ const Dao = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [fetchedDAOs, setFetchedDAOs] = useState([]);
   const [hasMore, setHasMore] = useState(true);
+  // const [isJoinedDAO, setIsJoinedDAO] = useState(false)
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
 
@@ -34,6 +35,8 @@ const Dao = () => {
         try {
           const daoCanister = await createDaoActor(data.dao_canister_id);
           const dao_details = await daoCanister.get_dao_detail();
+          console.log("ddd", dao_details);
+          
           return { ...dao_details, daoCanister, dao_canister_id: data.dao_canister_id };
         } catch (err) {
           console.error(`Error fetching details for DAO ${data.dao_canister_id}:`, err);
@@ -92,6 +95,9 @@ const Dao = () => {
           }
         })
       );
+
+      console.log("JD", joinedDaoDetails);
+      
 
       setJoinedDAO(joinedDaoDetails.filter((dao) => dao !== null));
     } catch (error) {
@@ -188,12 +194,13 @@ const Dao = () => {
                   key={index}
                   {...{
                     name: daos.dao_name || "No Name",
-                    followers: daos.followers_count || "0",
+                    followers: daos.followers || "0",
+                    followers_count: daos.followers_count || "0",
                     members: daos.members_count ? Number(BigInt(daos.members_count)) : "0",
                     groups: daos.groups_count ? Number(BigInt(daos.groups_count)) : "0",
                     proposals: daos.proposals_count || "0",
                     image_id: daos.image_id || "No Image",
-                    daoCanister: daos.daoCanister,
+                    // daoCanister: daos.daoCanister,
                     daoCanisterId: daos.dao_canister_id || "No ID",
                   }}
                 />
@@ -212,14 +219,16 @@ const Dao = () => {
                 key={index}
                 {...{
                   name: daos.dao_name || "No Name",
-                  followers: daos.followers_count || "0",
+                  followers: daos.followers || "No Followers",
+                  followers_count: daos.followers_count || "0",
                   members: daos.members_count ? Number(BigInt(daos.members_count)) : "0",
                   groups: daos.groups_count ? Number(BigInt(daos.groups_count)) : "0",
                   proposals: daos.proposals_count || "0",
                   image_id: daos.image_id || "No Image",
-                  daoCanister: daos.daoCanister,
+                  // daoCanister: daos.daoCanister,
                   daoCanisterId: daos.dao_canister_id || "No ID",
                 }}
+                isJoinedDAO={true}
               />
             ))}
           </Container>

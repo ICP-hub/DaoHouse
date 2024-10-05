@@ -243,7 +243,8 @@ const ProposalsDetails = () => {
     </div>
 
     {/* Comments and Proposal Details */}
-    <div className="mt-12 md:px-16">
+    <div className="mt-12">
+      <div className="px-0">
       <Card
         proposal={proposal}
         showActions={true}
@@ -253,8 +254,9 @@ const ProposalsDetails = () => {
         setIsComment={setIsComment}
         commentCount={commentCount}
       />
+      </div>
       {isComment && (
-        <div className="">
+        <div className="md:px-16">
           <Comments
           daoId={daoCanisterId}
           proposalId={proposalId}

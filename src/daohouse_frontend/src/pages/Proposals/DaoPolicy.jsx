@@ -15,7 +15,7 @@ const DaoPolicy = ({ changePolicy, handleInputDaoPolicy }) => (
             />
         </div>
 
-        <div className="mb-4">
+        {/* <div className="mb-4">
             <label htmlFor="actionMember" className="mb-2 font-semibold text-xl">Action Member (Principal)</label>
             <input
                 id="actionMember"
@@ -26,7 +26,7 @@ const DaoPolicy = ({ changePolicy, handleInputDaoPolicy }) => (
                 className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                 placeholder="Enter Action Member Principal"
             />
-        </div>
+        </div> */}
 
         <div className="mb-4">
             <label htmlFor="coolDownPeriod" className="mb-2 font-semibold text-xl">Cool Down Period</label>
