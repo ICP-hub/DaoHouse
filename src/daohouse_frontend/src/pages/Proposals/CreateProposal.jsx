@@ -105,12 +105,11 @@ function CreateProposal() {
   console.log("group", groupNames);
 
   const [loading, setLoading] = useState(false);
-  const { createDaoActor, stringPrincipal , identity} = useAuth();
+  const { createDaoActor, stringPrincipal, identity } = useAuth();
 
   const movetodao = () => {
     // navigate(`/dao/profile/${daoCanisterId}`);
     console.log("Proposal Submitted");
-    
   };
 
   const { daoCanisterId } = useParams();
@@ -125,18 +124,18 @@ function CreateProposal() {
         try {
           const daoActor = await createDaoActor(daoCanisterId);
           console.log("DAO Actor:", daoActor);
-          
+
           if (daoActor) {
             const daoDetails = await daoActor.get_dao_detail();
             console.log("DAO Details Returned:", daoDetails);
             setDao(daoDetails); // Set dao to the fetched details
-            console.log("dao",dao);
-            
-            
-            const names = await daoDetails.proposal_entiry.map(group => group.place_name);
-            console.log("GR",names);
+            console.log("dao", dao);
+
+            const names = await daoDetails.proposal_entiry.map(
+              (group) => group.place_name
+            );
+            console.log("GR", names);
             setGroupNames(names);
-            
           } else {
             console.error("daoActor is null");
           }
@@ -146,7 +145,7 @@ function CreateProposal() {
       }
     };
     console.log("Dao", dao);
-    console.log("GRP",groupNames);
+    console.log("GRP", groupNames);
 
     fetchDaoDetails();
   }, [daoCanisterId]);
@@ -178,7 +177,7 @@ function CreateProposal() {
   };
 
   const stripHtmlTags = (html) => {
-    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const doc = new DOMParser().parseFromString(html, "text/html");
     return doc.body.textContent || "";
   };
 
@@ -200,16 +199,16 @@ function CreateProposal() {
   };
   const handleInputGeneralPurp = (e) => {
     const { name, value } = e.target;
-  
+
     if (name === "proposalExpiredAt") {
       const createdAtDate = new Date(generalPurp.proposalCreatedAt); // Created At date
       const selectedExpiredDate = new Date(value); // User's selected expiration date
-  
+
       // Calculate the difference in days between the created at date and the selected expired at date
       const differenceInDays = Math.floor(
         (selectedExpiredDate - createdAtDate) / (1000 * 60 * 60 * 24)
       );
-  
+
       // Store both the selected date for frontend display and the difference in days for backend
       setGeneralPurp({
         ...generalPurp,
@@ -223,7 +222,6 @@ function CreateProposal() {
       });
     }
   };
-  
 
   const handleInputDaoConfig = (e) => {
     setDaoConfig({
@@ -248,21 +246,22 @@ function CreateProposal() {
 
   const handleInputBountyRaised = (e) => {
     const { name, value } = e.target;
-    
+
     if (name === "proposal_expired_at") {
       const today = new Date().getTime(); // Current date in milliseconds
       const selectedDate = new Date(value).getTime(); // Selected date in milliseconds
-  
+
       // Calculate the difference in days between the selected date and today's date
-      const differenceInDays = Math.ceil((selectedDate - today) / (1000 * 60 * 60 * 24));
-  
+      const differenceInDays = Math.ceil(
+        (selectedDate - today) / (1000 * 60 * 60 * 24)
+      );
+
       setBountyRaised({
         ...bountyRaised,
         proposal_expired_at: value, // Set the actual selected date for display in the input field
-        proposal_expired_in_days: differenceInDays // Store the difference in days for backend submission
+        proposal_expired_in_days: differenceInDays, // Store the difference in days for backend submission
       });
       console.log("Bounty", bountyRaised);
-      
     } else {
       setBountyRaised({
         ...bountyRaised,
@@ -271,7 +270,6 @@ function CreateProposal() {
       console.log("BountyE", bountyRaised);
     }
   };
-  
 
   const handleInputDaoPolicy = (e) => {
     setChangePolicy({
@@ -282,16 +280,16 @@ function CreateProposal() {
 
   const handleInputPoll = (e) => {
     const { name, value } = e.target;
-  
+
     if (name === "proposal_expired_at") {
       const createdAtDate = new Date(poll.proposal_created_at); // Created At date
       const selectedExpiredDate = new Date(value); // User's selected expiration date
-  
+
       // Calculate the difference in days between the created at date and the selected expired at date
       const differenceInDays = Math.floor(
         (selectedExpiredDate - createdAtDate) / (1000 * 60 * 60 * 24)
       );
-  
+
       // Store both the selected date (for frontend display) and the difference in days for the backend
       setPoll({
         ...poll,
@@ -299,19 +297,14 @@ function CreateProposal() {
         days_until_expiration: differenceInDays, // Store the difference for backend submission
       });
       console.log("if", poll);
-      
     } else {
       setPoll({
         ...poll,
         [name]: value,
       });
       console.log("Else", poll);
-      
     }
   };
-  
-  
-  
 
   const handleInputRemoveDaoMember = (e) => {
     setRemoveDaoMember({
@@ -345,6 +338,7 @@ function CreateProposal() {
             to: Principal.fromText(tokenTransfer.to),
             description: tokenTransfer.description,
             tokens: Number(tokenTransfer.tokens),
+            // action_member: Principal.fromText(tokenTransfer.action_member),
             // action_member: Principal.fromText(tokenTransfer.action_member),
           });
           break;
@@ -380,6 +374,7 @@ function CreateProposal() {
             daotype: daoConfig.daotype,
             description: daoConfig.description,
             new_dao_name: daoConfig.new_dao_name,
+            // action_member: Principal.fromText(daoConfig.action_member),
             // action_member: Principal.fromText(daoConfig.action_member),
             purpose: daoConfig.purpose,
           });
@@ -421,22 +416,23 @@ function CreateProposal() {
             proposal_entiry: proposalEntry,
             description: changePolicy.description,
             // action_member: Principal.fromText(changePolicy.action_member),
+            // action_member: Principal.fromText(changePolicy.action_member),
             cool_down_period: Number(changePolicy.cool_down_period),
             required_votes: Number(changePolicy.required_votes),
           });
           break;
 
-          case 'Poll':
-            await submitPoll({
-              proposal_entiry: proposalEntry,
-              proposal_expired_at: poll.days_until_expiration, // Pass the days difference to the backend
-              poll_title: poll.poll_title, 
-              description: poll.description, 
-              action_member: Principal.fromText(poll.action_member),
-              proposal_created_at: 0, // Set Created At to 0 as per your requirement
-            });
-            
-            break;
+        case "Poll":
+          await submitPoll({
+            proposal_entiry: proposalEntry,
+            proposal_expired_at: poll.days_until_expiration, // Pass the days difference to the backend
+            poll_title: poll.poll_title,
+            description: poll.description,
+            action_member: Principal.fromText(poll.action_member),
+            proposal_created_at: 0, // Set Created At to 0 as per your requirement
+          });
+
+          break;
 
           
 
@@ -449,7 +445,9 @@ function CreateProposal() {
           break;
 
         default:
-          toast.error('Please select a valid proposal type and fill in the details.');
+          toast.error(
+            "Please select a valid proposal type and fill in the details."
+          );
       }
     } catch (error) {
       console.error("Submission error:", error);
@@ -458,7 +456,6 @@ function CreateProposal() {
       setLoading(false);
     }
   };
-
   const submitTokenTransferProposal = async (tokenTransfer) => {
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
@@ -493,7 +490,7 @@ function CreateProposal() {
   };
   const submitGeneralPurp = async (generalPurp) => {
     console.log("general purpose", generalPurp);
-    
+
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
       console.log("DAO Canister ID:", daoCanisterId);
@@ -514,21 +511,26 @@ function CreateProposal() {
       const daoCanister = await createDaoActor(daoCanisterId);
       console.log("DAO Canister ID:", daoCanisterId);
       console.log("DAO Config Proposal Payload:", daoConfig);
-      
-      const response = await daoCanister.proposal_to_chnage_dao_config(daoConfig);
+
+      const response = await daoCanister.proposal_to_chnage_dao_config(
+        daoConfig
+      );
       console.log("Response from DAO Config Proposal:", response);
-      
+
       if (response.Ok) {
         toast.success("DAO configuration proposal created successfully");
-        movetodao();const submitBountyRaised = async (bountyRaised) => {
+        movetodao();
+        const submitBountyRaised = async (bountyRaised) => {
           try {
             const daoCanister = await createDaoActor(daoCanisterId);
             console.log("DAO Canister ID:", daoCanisterId);
             console.log("Bounty Raised Proposal Payload:", bountyRaised);
-            
-            const response = await daoCanister.proposal_to_bounty_raised(bountyRaised);
+
+            const response = await daoCanister.proposal_to_bounty_raised(
+              bountyRaised
+            );
             console.log("Response of Bounty Raised:", response);
-            
+
             toast.success("Bounty raised proposal created successfully");
             movetodao();
           } catch (error) {
@@ -601,8 +603,10 @@ function CreateProposal() {
     }
   };
   const createTokenActor = async () => {
-    const tokenActorrr = createActor(Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"),
-    { agentOptions: { identity } });
+    const tokenActorrr = createActor(
+      Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"),
+      { agentOptions: { identity } }
+    );
     return tokenActorrr;
   };
   const formatTokenMetaData = async (arr) => {
@@ -630,20 +634,28 @@ function CreateProposal() {
     }
   };
   const afterPaymentApprove = async (sendableAmount) => {
-   try {
-    const daoCanister = await createDaoActor(daoCanisterId);
-    const res = await daoCanister.make_payment(sendableAmount, Principal.fromText(stringPrincipal));
-    console.log("res : ", res);
-    if (res.Ok) {
-      toast.success("Payment successful!");
-    } else {
-      toast.error("Payment failed. Please try again.");
+    try {
+      const daoCanister = await createDaoActor(daoCanisterId);
+      const res = await daoCanister.make_payment(
+        sendableAmount,
+        Principal.fromText(stringPrincipal)
+      );
+      console.log("res : ", res);
+      if (res.Ok) {
+        toast.success("Payment successful!");
+      } else {
+        toast.error("Payment failed. Please try again.");
+      }
+    } catch (err) {
+      console.error("Error in transfer approve", err);
     }
-  }catch (err) {
-    console.error("Error in transfer approve", err);
-  }
   };
-  const transferApprove = async (currentBalance,tokenActor,currentMetaData,tokens) => {
+  const transferApprove = async (
+    currentBalance,
+    tokenActor,
+    currentMetaData,
+    tokens
+  ) => {
     try {
       const sendableAmount = BigInt(tokens);
       if (currentBalance >= sendableAmount) {
@@ -653,7 +665,7 @@ function CreateProposal() {
             owner: Principal.fromText(daoCanisterId),
             subaccount: [],
           },
-          amount: Number(sendableAmount) +  Number(currentMetaData["icrc1:fee"]),
+          amount: Number(sendableAmount) + Number(currentMetaData["icrc1:fee"]),
           expected_allowance: [],
           expires_at: [],
           fee: [currentMetaData["icrc1:fee"]],
@@ -669,7 +681,9 @@ function CreateProposal() {
           await afterPaymentApprove(sendableAmount);
         }
       } else {
-        toast.error(`Insufficient balance. Balance : ${currentBalance / 10 ** 8}`);
+        toast.error(
+          `Insufficient balance. Balance : ${currentBalance / 10 ** 8}`
+        );
       }
     } catch (err) {
       console.error("Error in transfer approve", err);
@@ -679,11 +693,18 @@ function CreateProposal() {
   const submitBountyRaised = async (bountyRaised) => {
     try {
       const actor = await createTokenActor();
-      const { balance, metadata } = await 
-      fetchMetadataAndBalance(actor,Principal.fromText(stringPrincipal));
+      const { balance, metadata } = await fetchMetadataAndBalance(
+        actor,
+        Principal.fromText(stringPrincipal)
+      );
       const parsedBalance = parseInt(balance, 10);
       const formattedMetadata = await formatTokenMetaData(metadata);
-      await transferApprove(parsedBalance, actor, formattedMetadata, bountyRaised.tokens);
+      await transferApprove(
+        parsedBalance,
+        actor,
+        formattedMetadata,
+        bountyRaised.tokens
+      );
     } catch (err) {
       console.log("error is in approval : ", err);
       toast.error("Payment failed. Please try again.");
@@ -722,7 +743,7 @@ function CreateProposal() {
       const daoCanister = await createDaoActor(daoCanisterId);
       console.log("DAO Canister ID:", daoCanisterId);
       console.log("Poll Proposal Payload:", poll);
-      
+
       const response = await daoCanister.proposal_to_create_poll(poll);
       console.log("Response of Poll Proposal:", response);
       
@@ -734,6 +755,8 @@ function CreateProposal() {
     }
   };
   const submitRemoveDaoMember = async (removeDaoMember) => {
+    console.log("remove dao member paylaod", removeDaoMember);
+
     console.log("remove dao member paylaod", removeDaoMember);
 
     try {
@@ -814,7 +837,9 @@ function CreateProposal() {
 
                   {/* Proposal Type Select */}
                   <div className="mb-6 max-w-6xl relative">
-                    <label className="block mb-2 font-semibold text-xl">Proposal Type</label>
+                    <label className="block mb-2 font-semibold text-xl">
+                      Proposal Type
+                    </label>
                     <select
                       value={proposalType}
                       onChange={handleProposalTypeChange}
@@ -827,17 +852,23 @@ function CreateProposal() {
                       <option value="GeneralPurp">General Purpose</option>
                       <option value="DaoConfig">Dao Config</option>
                       <option value="AddMember">Add Member in Group</option>
-                      <option value="RemoveMember">Remove Member from Group</option>
+                      <option value="RemoveMember">
+                        Remove Member from Group
+                      </option>
                       <option value="BountyRaised">Bounty Raised</option>
                       <option value="ChangePolicy">Change Dao Policy</option>
                       <option value="Poll">Polls</option>
-                      <option value="RemoveDaoMember">RemoveMemberToDaoProposal</option>
+                      <option value="RemoveDaoMember">
+                        RemoveMemberToDaoProposal
+                      </option>
                     </select>
                   </div>
 
                   {/* Proposal Entry Select */}
                   <div className="mb-6 max-w-6xl relative">
-                    <label className="block mb-2 font-semibold text-xl">Proposal Entry</label>
+                    <label className="block mb-2 font-semibold text-xl">
+                      Proposal Entry
+                    </label>
                     <select
                       value={proposalEntry}
                       onChange={(e) => setProposalEntry(e.target.value)}
@@ -845,7 +876,9 @@ function CreateProposal() {
                       required // Make it a required field
                     >
                       <option value="">Select Proposal Entry</option>
-                      {dao && dao.proposal_entiry && dao.proposal_entiry.length > 0 ? (
+                      {dao &&
+                      dao.proposal_entiry &&
+                      dao.proposal_entiry.length > 0 ? (
                         dao.proposal_entiry.map((entry, index) => (
                           <option key={index} value={entry.place_name}>
                             {entry.place_name}
