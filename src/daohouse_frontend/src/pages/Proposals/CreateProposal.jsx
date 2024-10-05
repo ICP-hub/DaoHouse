@@ -1,26 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import proposals from "../../../assets/proposals.png";
 import createProposalNew from "../../../assets/createProposalNew.png";
-import ReactQuill from 'react-quill';
-import { quillFormats, quillModules } from '../../utils/quilConfig';
-import Container from '../../Components/Container/Container';
-import { useAuth } from '../../Components/utils/useAuthClient';
-import { toast } from 'react-toastify';
-import { CircularProgress } from '@mui/material';
+import Container from "../../Components/Container/Container";
+import { useAuth } from "../../Components/utils/useAuthClient";
+import { toast } from "react-toastify";
+import { CircularProgress } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-
 import { Principal } from "@dfinity/principal";
-import BountyDone from './BountyDone';
-import TokenTransfer from './TokenTransfer';
-import GeneralPurpose from './GeneralPurpose';
-import DaoConfig from './DaoConfig';
-import AddMember from './AddMember';
-import RemoveMember from './RemoveMember';
-import BountyRaised from './BountyRaised';
-import DaoPolicy from './DaoPolicy';
-import Poll from './Poll';
-import RemoveDaoMember from './RemoveDaoMember';
-
+import BountyDone from "./BountyDone";
+import TokenTransfer from "./TokenTransfer";
+import GeneralPurpose from "./GeneralPurpose";
+import DaoConfig from "./DaoConfig";
+import AddMember from "./AddMember";
+import RemoveMember from "./RemoveMember";
+import BountyRaised from "./BountyRaised";
+import DaoPolicy from "./DaoPolicy";
+import Poll from "./Poll";
+import RemoveDaoMember from "./RemoveDaoMember";
+import { createActor } from "../../../../declarations/icp_ledger_canister";
 function CreateProposal() {
   const navigate = useNavigate();
 
@@ -91,11 +88,11 @@ function CreateProposal() {
   });
 
   const [poll, setPoll] = useState({
-    proposal_expired_at: '',
-    poll_title: '',
-    description: '',
-    action_member: '',
-    proposal_created_at: '',
+    proposal_expired_at: "",
+    poll_title: "",
+    description: "",
+    action_member: "",
+    proposal_created_at: "",
   });
 
   const [removeDaoMember, setRemoveDaoMember] = useState({
@@ -107,7 +104,7 @@ function CreateProposal() {
   console.log("group", groupNames);
 
   const [loading, setLoading] = useState(false);
-  const { createDaoActor, backendActor, stringPrincipal } = useAuth();
+  const { createDaoActor, stringPrincipal , identity} = useAuth();
 
   const movetodao = () => {
     // navigate(`/dao/profile/${daoCanisterId}`);
@@ -175,11 +172,6 @@ function CreateProposal() {
   const handleProposalTitleChange = (event) => {
     setProposalTitle(event.target.value);
   };
-
-  const handleProposalDescriptionChange = (value) => {
-    setProposalDescription(value);
-  };
-
   const handleProposalTypeChange = (event) => {
     setProposalType(event.target.value);
   };
@@ -198,7 +190,6 @@ function CreateProposal() {
       [name]: value,
     }));
   };
-
   const handleInputBountyDone = (e) => {
     const { name, value } = e.target;
     setBountyDone((prev) => ({
@@ -206,7 +197,6 @@ function CreateProposal() {
       [name]: value,
     }));
   };
-
   const handleInputGeneralPurp = (e) => {
     const { name, value } = e.target;
   
@@ -348,7 +338,7 @@ function CreateProposal() {
 
     try {
       switch (proposalType) {
-        case 'tokenTransfer':
+        case "tokenTransfer":
           await submitTokenTransferProposal({
             proposal_entiry: proposalEntry,
             to: Principal.fromText(tokenTransfer.to),
@@ -358,7 +348,9 @@ function CreateProposal() {
           });
           break;
 
-        case 'bountyDone':
+        case "bountyDone":
+          console.log("dfnsdjlflksdfjlksdfjlksd");
+
           await submitBountyDone({
             proposal_entiry: proposalEntry,
             to: Principal.fromText(bountyDone.to),
@@ -381,7 +373,7 @@ function CreateProposal() {
             break;
           
 
-        case 'DaoConfig':
+        case "DaoConfig":
           await submitDaoConfig({
             proposal_entiry: proposalEntry,
             daotype: daoConfig.daotype,
@@ -392,7 +384,7 @@ function CreateProposal() {
           });
           break;
 
-        case 'AddMember':
+        case "AddMember":
           await submitAddMember({
             proposal_entiry: proposalEntry,
             group_name: addMember.group_name,
@@ -458,7 +450,6 @@ function CreateProposal() {
         default:
           toast.error('Please select a valid proposal type and fill in the details.');
       }
-
     } catch (error) {
       console.error("Submission error:", error);
       toast.error("Failed to submit the proposal. Please try again.");
@@ -483,7 +474,6 @@ function CreateProposal() {
       toast.error("Failed to create Token Transfer proposal");
     }
   };
-
   const submitBountyDone = async (bountyDone) => {
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
@@ -500,7 +490,6 @@ function CreateProposal() {
       toast.error("Failed to create Bounty Done proposal");
     }
   };
-
   const submitGeneralPurp = async (generalPurp) => {
     console.log("general purpose", generalPurp);
     
@@ -519,7 +508,6 @@ function CreateProposal() {
       toast.error("Failed to create General Purpose proposal");
     }
   };
-
   const submitDaoConfig = async (daoConfig) => {
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
@@ -576,8 +564,7 @@ function CreateProposal() {
           description: "",
           new_member: "",
         });
-      }
-      else {
+      } else {
         toast.error("Failed to create Add Member proposal");
       }
     } catch (error) {
@@ -609,28 +596,108 @@ function CreateProposal() {
         toast.error("Failed to create Remove Member proposal");
       }
     } catch (error) {
-      console.error("Error during Remove Member proposal submission:", error);
-      toast.error("Failed to create Remove Member proposal");
+      console.error("Error during proposal submission:", error);
+    }
+  };
+  const createTokenActor = async () => {
+    const tokenActorrr = createActor(Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"),
+    { agentOptions: { identity } });
+    return tokenActorrr;
+  };
+  const formatTokenMetaData = async (arr) => {
+    const resultObject = {};
+    arr.forEach((item) => {
+      const key = item[0];
+      const value = item[1][Object.keys(item[1])[0]];
+      resultObject[key] = value;
+    });
+    return resultObject;
+  };
+  const fetchMetadataAndBalance = async (tokenActor, ownerPrincipal) => {
+    try {
+      const [metadata, balance] = await Promise.all([
+        tokenActor.icrc1_metadata(),
+        tokenActor.icrc1_balance_of({
+          owner: ownerPrincipal,
+          subaccount: [],
+        }),
+      ]);
+      return { metadata, balance };
+    } catch (err) {
+      console.error("Error fetching metadata and balance:", err);
+      throw err;
+    }
+  };
+  const afterPaymentApprove = async (sendableAmount) => {
+   try {
+    const daoCanister = await createDaoActor(daoCanisterId);
+    const res = await daoCanister.make_payment(sendableAmount, Principal.fromText(stringPrincipal));
+    console.log("res : ", res);
+    if (res.Ok) {
+      toast.success("Payment successful!");
+    } else {
+      toast.error("Payment failed. Please try again.");
+    }
+  }catch (err) {
+    console.error("Error in transfer approve", err);
+  }
+  };
+  const transferApprove = async (currentBalance,tokenActor,currentMetaData,tokens) => {
+    try {
+      const sendableAmount = BigInt(tokens);
+      if (currentBalance >= sendableAmount) {
+        let transaction = {
+          from_subaccount: [],
+          spender: {
+            owner: Principal.fromText(daoCanisterId),
+            subaccount: [],
+          },
+          amount: Number(sendableAmount) +  Number(currentMetaData["icrc1:fee"]),
+          expected_allowance: [],
+          expires_at: [],
+          fee: [currentMetaData["icrc1:fee"]],
+          memo: [],
+          created_at_time: [],
+        };
+        const approveRes = await tokenActor.icrc2_approve(transaction);
+        if (approveRes.Err) {
+          const errorMessage = `Insufficient funds. Balance: ${approveRes.Err.InsufficientFunds.balance}`;
+          toast.error(errorMessage);
+          return;
+        } else {
+          await afterPaymentApprove(sendableAmount);
+        }
+      } else {
+        toast.error(`Insufficient balance. Balance : ${currentBalance / 10 ** 8}`);
+      }
+    } catch (err) {
+      console.error("Error in transfer approve", err);
     }
   };
 
   const submitBountyRaised = async (bountyRaised) => {
     try {
-      const daoCanister = await createDaoActor(daoCanisterId);
-      console.log("DAO Canister ID:", daoCanisterId);
-      console.log("Bounty Raised Proposal Payload:", bountyRaised);
-      
-      const response = await daoCanister.proposal_to_bounty_raised(bountyRaised);
-      console.log("Response of Bounty Raised:", response);
-      
-      toast.success("Bounty raised proposal created successfully");
-      movetodao();
-    } catch (error) {
-      console.error("Error submitting Bounty Raised proposal:", error);
-      toast.error("Failed to create Bounty Raised proposal");
+      const actor = await createTokenActor();
+      const { balance, metadata } = await 
+      fetchMetadataAndBalance(actor,Principal.fromText(stringPrincipal));
+      const parsedBalance = parseInt(balance, 10);
+      const formattedMetadata = await formatTokenMetaData(metadata);
+      await transferApprove(parsedBalance, actor, formattedMetadata, bountyRaised.tokens);
+    } catch (err) {
+      console.log("error is in approval : ", err);
+      toast.error("Payment failed. Please try again.");
     }
-  };
 
+    // try {
+    //   const daoCanister = await createDaoActor(daoCanisterId);
+    //   const response = await daoCanister.proposal_to_bounty_raised(bountyRaised);
+    //   console.log("response of bounty rasied ", response);
+    //   toast.success("bounty raised proposal created successfully");
+    //   movetodao();
+    // } catch (error) {
+    //   console.log("error of add", error);
+    // }
+  };
   const submitChangePolicy = async (changePolicy) => {
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
@@ -647,7 +714,6 @@ function CreateProposal() {
       toast.error("Failed to create Change DAO Policy proposal");
     }
   };
-
   const submitPoll = async (poll) => {
     console.log("Poll",poll);
     
@@ -666,8 +732,9 @@ function CreateProposal() {
       toast.error("Failed to create Poll proposal");
     }
   };
-
   const submitRemoveDaoMember = async (removeDaoMember) => {
+    console.log("remove dao member paylaod", removeDaoMember);
+
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
       console.log("DAO Canister ID:", daoCanisterId);
@@ -686,19 +753,27 @@ function CreateProposal() {
 
   return (
     <div className="bg-zinc-200 w-full">
-      <div style={{
-        backgroundImage: `url("${proposals}")`,
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}>
-        <Container classes={`${className}__filter w-full h-[25vh] p-20 flex flex-col items-start justify-center`}>
-          <h1 className="text-[40px] p-2 text-white border-b-2 border-white">Proposals</h1>
+      <div
+        style={{
+          backgroundImage: `url("${proposals}")`,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <Container
+          classes={`${className}__filter w-full h-[25vh] p-20 flex flex-col items-start justify-center`}
+        >
+          <h1 className="text-[40px] p-2 text-white border-b-2 border-white">
+            Proposals
+          </h1>
         </Container>
       </div>
 
-      <div className='bg-[#F5F5F5]'>
-        <Container classes={`${className}__label relative py-8 px-10 flex gap-2 flex-col w-full justify-between items-center`}>
+      <div className="bg-[#F5F5F5]">
+        <Container
+          classes={`${className}__label relative py-8 px-10 flex gap-2 flex-col w-full justify-between items-center`}
+        >
           <p className="md:text-[40px] text-[30px] text-black px-8 mr-auto flex flex-row justify-start items-center gap-4 ">
             Create Proposal
             <div className="flex flex-col items-start">
@@ -873,11 +948,15 @@ function CreateProposal() {
                   </div>
                 </div>
 
-                <div className="md:flex self-start hidden">
-                  <img src={createProposalNew} alt="Illustration" className="w-[350px] h-[350px]" />
-                </div>
+              <div className="md:flex self-start hidden">
+                <img
+                  src={createProposalNew}
+                  alt="Illustration"
+                  className="w-[350px] h-[350px]"
+                />
               </div>
-            </form> {/* End of form */}
+            </div>
+            </form>
           </div>
         </Container>
       </div>
