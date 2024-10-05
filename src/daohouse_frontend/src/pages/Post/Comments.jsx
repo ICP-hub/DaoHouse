@@ -7,6 +7,7 @@ import { FaReply } from "react-icons/fa6";
 import CommentsSkeletonLoader from '../../Components/SkeletonLoaders/CommentsSkeletonLoader/CommentsSkeletonLoader';
 import CommentSkeletonLoader from '../../Components/SkeletonLoaders/CommentsSkeletonLoader/CommentSkeletonLoader';
 import CircularProgress from '@mui/material/CircularProgress';
+import { Principal } from '@dfinity/principal';
 
 // Comment component
 const Comment = ({ comment, proposalId, daoId }) => {
@@ -48,30 +49,30 @@ const Comment = ({ comment, proposalId, daoId }) => {
     setReplyText(e.target.value);
   };
 
+
+
   const submitReply = async () => {
-
     console.log("submitReply called");
-
+  
     if (!replyText.trim()) return;
     try {
-      setIsSubmitLoading(true)
-      const replyArgs = {
-        comment: replyText,
-        proposal_id: proposalId,
-        comment_id: comment.comment_id,
-      };
-
-
-      console.log("Commentid", comment);
+      setIsSubmitLoading(true);
       
-
+      // Create replyArgs with the commented_by principal
+      const replyArgs = {
+        commented_by: comment.author_principal, // Use the comment's author principal
+        reply_comment: replyText,
+      };
+  
       const daoActor = await createDaoActor(daoId);
       const response = await daoActor.reply_comment(replyArgs);
-
+  
       if (response.Ok) {
-        comment.replies.push(replyText);
-        console.log(comment.replies);
-        
+        // Add the new reply to the comment's replies array
+        comment.replies.push({
+          commented_by: comment.author_principal, // Push the principal
+          reply_comment: replyText,
+        });
         setReplyText("");
         setShowReplies(true);
         setShowReplyInput(false);
@@ -167,14 +168,47 @@ const Comment = ({ comment, proposalId, daoId }) => {
 
 // Reply component
 const Reply = ({ reply }) => {
-  console.log(reply);
-  
-  return (
+  const [authorName, setAuthorName] = useState("");
+  const [profileImg, setProfileImg] = useState("");
+  const { backendActor } = useAuth(); // Use the useAuth hook to access backendActor
+  const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
+  const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
 
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await backendActor.get_profile_by_id(reply.commented_by);
+        if (response?.Ok) {
+          setAuthorName(response.Ok.username);
+          const img = response.Ok.profile_img
+            ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${response.Ok.profile_img}`
+            : userImage;
+          setProfileImg(img);
+        }
+        
+      } catch (error) {
+        console.error("Error fetching reply author profile:", error);
+      }
+    };
+    console.log(profileImg);
+    
+
+    fetchProfile();
+  }, [reply.commented_by]);
+  
+
+  return (
     <div className="flex mb-4 font-mulish pl-3" style={{ borderLeft: '2px solid #E0E0E0' }}>
       <div className="w-full">
-        <p className="mt-2 break-words text-base">{reply}</p>
-
+        <div className="flex items-center mb-1">
+          {profileImg ? (
+            <img src={profileImg} alt="Profile" className="w-[40px] h-[40px] rounded-full mr-2" />
+          ) : (
+            <div className="w-8 h-8 bg-gray-300 rounded-full mr-2" />
+          )}
+          <h5 className="font-semibold text-sm">{authorName || reply.commented_by.toText()}</h5>
+        </div>
+        <p className="mt-2 break-words text-base">{reply.reply_comment}</p>
       </div>
     </div>
   );
@@ -262,6 +296,19 @@ const Comments = ({ daoId, proposalId, commentCount, setCommentCount }) => {
 console.log("proposalId:", typeof proposalId, proposalId);
 console.log("newComment:", typeof newComment, newComment);
 
+const detail = async() =>{
+  try {
+    const daoActor = await createDaoActor(daoId);
+    const Details = await daoActor.get_proposal_by_id(proposalId);
+   console.log("detail",Details);
+   
+  } catch (error) {
+    console.log("error",error);
+    
+  }
+}
+detail();
+
 
   return (
 
@@ -308,3 +355,4 @@ console.log("newComment:", typeof newComment, newComment);
 };
 
 export default Comments;
+
