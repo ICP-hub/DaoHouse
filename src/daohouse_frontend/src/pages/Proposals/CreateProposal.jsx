@@ -710,15 +710,15 @@ function CreateProposal() {
       toast.error("Payment failed. Please try again.");
     }
 
-    // try {
-    //   const daoCanister = await createDaoActor(daoCanisterId);
-    //   const response = await daoCanister.proposal_to_bounty_raised(bountyRaised);
-    //   console.log("response of bounty rasied ", response);
-    //   toast.success("bounty raised proposal created successfully");
-    //   movetodao();
-    // } catch (error) {
-    //   console.log("error of add", error);
-    // }
+    try {
+      const daoCanister = await createDaoActor(daoCanisterId);
+      const response = await daoCanister.proposal_to_bounty_raised(bountyRaised);
+      console.log("response of bounty rasied ", response);
+      toast.success("bounty raised proposal created successfully");
+      movetodao();
+    } catch (error) {
+      console.log("error of add", error);
+    }
   };
   const submitChangePolicy = async (changePolicy) => {
     try {

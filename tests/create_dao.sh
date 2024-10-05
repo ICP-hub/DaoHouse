@@ -60,7 +60,7 @@ for ((i = 1; i <= COUNT; i++)); do
             group_name = "Example Group";
             group_members = vec {
             principal "6ydm4-srext-xsaic-y3v2x-cticp-5n6pf-2meh7-j43r6-rghg7-pt5nd-bqe";
-            principal "rmehg-adw5r-6trpq-epk4r-tyl4c-dd2u4-erbw4-kcjzr-rrjpf-dfvi2-oae";
+            principal "nrfrq-ss3nl-ygga2-lnir6-ci34y-sn6kn-3ggec-pqwic-ckqhj-hwu2z-qqe";
             principal "yxtej-lmfuu-rp3yv-xzu2h-6q43c-7iast-yiwff-z552q-6ugas-pyd6b-fae";  
            };
             group_permissions = vec { "example_permission" };
