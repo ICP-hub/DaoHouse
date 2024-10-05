@@ -198,9 +198,9 @@ type Result_2 = variant { Ok : vec principal; Err : text };
 type Result_3 = variant { Ok : vec Proposals; Err : text };
 type Result_4 = variant { Ok : nat; Err : text };
 type Test = record {
-  token_to : opt principal;
-  tokens : opt nat64;
-  token_from : opt principal;
+  token_to : principal;
+  tokens : nat64;
+  token_from : principal;
 };
 type TokenTransferArgs = record {
   to : principal;
