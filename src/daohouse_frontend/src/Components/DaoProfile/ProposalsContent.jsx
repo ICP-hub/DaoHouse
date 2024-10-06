@@ -82,7 +82,7 @@ const ProposalsContent = ({ proposals, isMember, showActions=true, voteApi, daoC
           </span>
         </div>
       )}
-        <div className={`${showActions ? "w-full border-t py-6 px-4 border-[#0000004D] rounded-[10px] mb-4" : ""}`}>
+        <div className={`${showActions ? "w-full border-t py-6 border-[#0000004D] rounded-[10px] mb-4" : ""}`}>
           <div className="bg-transparent rounded flex flex-col gap-8">
             {displayedProposals.length === 0 ? (
               <p className="text-center font-black">

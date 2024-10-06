@@ -32,6 +32,7 @@ const ProposalsDetails = () => {
   const [userProfile, setUserProfile] = useState(null);
   const [isComment, setIsComment] = useState(true);
   const [commentCount, setCommentCount] = useState(0);  // State for comment count
+  const backendCanisterId = Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND)
 
   const maxWords = 90;
 
@@ -65,42 +66,46 @@ const ProposalsDetails = () => {
 
   useEffect(() => {
     const fetchDaoDetails = async () => {
-      if (!daoActor) return;
-
       setLoading(true);
-      try {
-        const proposalDetails = await daoActor.get_proposal_by_id(proposalId);
-        setProposal(proposalDetails);
-        console.log("propos",proposalDetails);
+      if (daoCanisterId) {
+        try {
+          setVoteApi(daoActor);
+          const proposalDetails = await daoActor.get_proposal_by_id(proposalId);
+          setProposal(proposalDetails);
+          console.log("propos",proposalDetails);
 
-        setCommentCount(Number(BigInt(proposalDetails?.comments || 0)))
-        
+          setCommentCount(Number(BigInt(proposalDetails?.comments || 0)))
 
-        const daoDetails = await daoActor.get_dao_detail();
-        setDao(daoDetails);
+          const daoDetails = await daoActor.get_dao_detail();
+          setDao(daoDetails);
 
-        const profileResponse = await backendActor.get_user_profile();
-        if (profileResponse.Ok) {
-          setUserProfile(profileResponse.Ok);
-          const currentUserId = Principal.fromText(profileResponse.Ok.user_id.toString());
-
-          const daoFollowers = await daoActor.get_dao_followers();
-          setDaoFollowers(daoFollowers);
-          setFollowersCount(daoFollowers.length);
-          setIsFollowing(daoFollowers.some(follower => follower.toString() === currentUserId.toString()));
-
+          // Fetch user profile
+          const profileResponse = await backendActor.get_user_profile();
+          if (profileResponse.Ok) {
+            setUserProfile(profileResponse.Ok);
+            const currentUserId = Principal.fromText(profileResponse.Ok.user_id.toString());
+            const daoFollowers = await daoActor.get_dao_followers();
+            setDaoFollowers(daoFollowers);
+            setFollowersCount(daoFollowers.length);
+            setIsFollowing(daoFollowers.some(follower => follower.toString() === currentUserId.toString()));
+          
           const daoMembers = await daoActor.get_dao_members();
-          setDaoMembers(daoMembers);
+          console.log(daoMembers);
+          
+          setDaoMembers(daoMembers)
           const isCurrentUserMember = daoMembers.some(member => member.toString() === currentUserId.toString());
-          setIsMember(isCurrentUserMember);
-          setJoinStatus(isCurrentUserMember ? 'Joined' : 'Join DAO');
-        }
-      } catch (error) {
-        console.error('Error fetching DAO details:', error);
-      } finally {
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
+            if (isCurrentUserMember) {
+              setIsMember(true)
+              setJoinStatus('Joined');
+            } else {
+              setIsMember(false)
+              setJoinStatus('Join DAO');
+            }
+          }
+          setLoading(false)
+        } catch (error) {
+          console.error('Error fetching DAO details:', error);
+        } 
       }
     };
 
@@ -112,17 +117,22 @@ const ProposalsDetails = () => {
 
     try {
       const daoActor = createDaoActor(daoCanisterId);
+      console.log({daoActor});
+      
       const response = await daoActor.ask_to_join_dao(daoCanisterId);
       if (response.Ok) {
         setJoinStatus("Requested");
         toast.success("Join request sent successfully");
       } else {
+        console.error("Failed to send join request:", response.Err || "Unknown error");
         toast.error(`Failed to send join request: ${response.Err || "Unknown error"}`);
       }
     } catch (error) {
+      console.error('Error sending join request:', error);
       toast.error('Error sending join request');
     }
   };
+
 
   const toggleFollow = async () => {
     if (!userProfile) return;
@@ -134,17 +144,21 @@ const ProposalsDetails = () => {
     try {
       const daoActor = createDaoActor(daoCanisterId);
       const response = isFollowing
-        ? await daoActor.unfollow_dao(backendActor)
-        : await daoActor.follow_dao(backendActor);
+        ? await daoActor.unfollow_dao(backendCanisterId)
+        : await daoActor.follow_dao(backendCanisterId);
+  
+        if (response?.Ok) {
+          toast.success(newIsFollowing ? "Successfully followed" : "Successfully unfollowed");
+        } else if (response?.Err) {
+          // Revert the state if there's an error
+          setIsFollowing(!newIsFollowing);
+          setFollowersCount(prevCount => newIsFollowing ? prevCount - 1 : prevCount + 1);
+          toast.error(response.Err);
+        }
 
-      if (response?.Ok) {
-        toast.success(newIsFollowing ? "Successfully followed" : "Successfully unfollowed");
-      } else {
-        setIsFollowing(!newIsFollowing);
-        setFollowersCount(prevCount => newIsFollowing ? prevCount - 1 : prevCount + 1);
-        toast.error(response.Err);
-      }
     } catch (error) {
+      console.error('Error following/unfollowing DAO:', error);
+      // Revert the state if there's an error
       setIsFollowing(!newIsFollowing);
       setFollowersCount(prevCount => newIsFollowing ? prevCount - 1 : prevCount + 1);
       toast.error("An error occurred");
@@ -174,7 +188,7 @@ const ProposalsDetails = () => {
   return (
     <div className={`${className} bg-zinc-200 w-full relative`}>
   <Container classes="${className} __mainComponent lg:py-8 lg:pb-20 py-6 big_phone:px-8 px-6 tablet:flex-row gap-2 flex-col w-full md:pl-2">
-    <div className="w-full md:gap-2 gap-10 z-50 relative md:px-16">
+    <div className="w-full md:gap-2 gap-10 z-10 relative md:pl-4 tablet:px-12 lg:px-16 mt-10">
       <div className="flex flex-col md:flex-row md:justify-between items-start md:pl-1">
         {/* Left Side: Proposal Details */}
         <div className="flex flex-col md:flex-row items-center flex-grow">
@@ -193,7 +207,7 @@ const ProposalsDetails = () => {
           </div>
 
           <div className="lg:ml-10 ml-4 md:mt-0 mt-4">
-            <h2 className="lg:text-[40px] md:text-[24px] text-[16px] tablet:font-normal font-medium md:text-left text-[#05212C] truncate md:w-[50%] w-full text-center">
+            <h2 className="lg:text-[40px] md:text-[24px] text-[16px] tablet:font-normal font-medium md:text-left text-[#05212C] truncate md:w-[100%] w-full text-center">
               {dao?.dao_name || 'Dao Name'}
             </h2>
             <div className="relative w-full md:w-[65%] lg:w-[80%] mt-2">
@@ -256,7 +270,7 @@ const ProposalsDetails = () => {
       />
       </div>
       {isComment && (
-        <div className="md:px-16">
+        <div className="lg:px-16">
           <Comments
           daoId={daoCanisterId}
           proposalId={proposalId}

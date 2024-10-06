@@ -127,13 +127,25 @@ const Dao = () => {
     if (!showAll) getJoinedDaos();
   }, [showAll]);
 
-  const handleLogin = async (loginMethod) => {
+  const handleLogin = async () => {
     setLoading(true);
     try {
-      await loginMethod();
+      await login("Icp");
       window.location.reload();
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error('Login failed:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleNFIDLogin = async () => {
+    setLoading(true);
+    try {
+      await signInNFID();
+      window.location.reload();
+    } catch (error) {
+      console.error('NFID login failed:', error);
     } finally {
       setLoading(false);
     }
@@ -145,16 +157,16 @@ const Dao = () => {
     <div className="bg-zinc-200">
       <TopComponent showAll={showAll} setShowAll={setShowAll} showButtons />
       <div className="bg-gray">
-        <Container classes="__label small_phone:py-8 py-5 mobile:px-10 px-5 flex justify-between items-center">
+        <Container classes="__label small_phone:py-8 py-5 px-4 mobile:px-10 small_phone:px-8  flex justify-between items-center">
           <div
             onClick={() => (showAll ? getDaos() : getJoinedDaos())}
-            className="small_phone:text-4xl text-3xl big_phone:px-8 flex items-center gap-4"
+            className="small_phone:text-4xl text-3xl tablet:ml-16  flex items-center gap-4"
           >
             {showAll ? "All" : "Joined"}
           </div>
-          <div className="flex-grow lg:flex justify-center px-6 mx-2 hidden">
+          <div className="flex-grow lg:flex justify-center hidden">
             <SearchProposals
-              width="100%"
+              width="70%"
               bgColor="transparent"
               placeholder="Search here"
               className="border-2 border-[#AAC8D6] w-full max-w-lg"
@@ -162,7 +174,7 @@ const Dao = () => {
             />
           </div>
           <Link to="/dao/create-dao">
-            <button className="bg-white small_phone:gap-2 gap-1 mr-12 mobile:px-5 p-2 small_phone:text-base text-sm shadow-xl flex items-center rounded-full hover:bg-[#ececec] hover:scale-105 transition">
+            <button className="bg-white small_phone:gap-2 gap-1 tablet:mr-12 mobile:px-5 p-2 small_phone:text-base text-sm shadow-xl flex items-center rounded-full hover:bg-[#ececec] hover:scale-105 transition">
               <HiPlus />
               Create DAO
             </button>
@@ -175,7 +187,7 @@ const Dao = () => {
           isOpen={showLoginModal}
           onClose={() => navigate("/")}
           onLogin={() => handleLogin(login)}
-          onNFIDLogin={() => handleLogin(signInNFID)}
+          onNFIDLogin={() => handleNFIDLogin()}
         />
       )}
 
@@ -188,7 +200,7 @@ const Dao = () => {
           </div>
         ) : (
           <div className="bg-gray">
-            <Container classes="__cards tablet:px-10 px-4 pb-10 grid grid-cols-1 big_phone:grid-cols-2 tablet:gap-6 gap-4">
+            <Container classes="__cards tablet:px-10 small_phone:px-8 pb-10 grid grid-cols-1 big_phone:grid-cols-2 tablet:gap-2 gap-4">
               {(searchTerm ? fetchedDAOs : dao).map((daos, index) => (
                 <DaoCard
                   key={index}
@@ -235,7 +247,9 @@ const Dao = () => {
           <Pagignation currentPage={currentPage} setCurrentPage={setCurrentPage} hasMore={hasMore} />
         </div>
       ) : (
-        <NoDataComponent />
+        <div className="flex justify-center items-center h-full mb-10 md:mt-40 mx-10">
+            <NoDataComponent />
+          </div>
       )}
     </div>
   );
