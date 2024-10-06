@@ -15,7 +15,7 @@ import { CircularProgress } from "@mui/material";
 import ShareModal from "./ShareModal";
 
 
-export default function Card({ proposal, voteApi, daoCanisterId, showActions, isProposalDetails, isComment, setIsComment, commentCount, isSubmittedProposals}) {
+export default function Card({ proposal, voteApi, daoCanisterId, showActions, isProposalDetails, isComment, setIsComment, commentCount, isSubmittedProposals, showComments}) {
 
   console.log("Vote API", proposal);
   
@@ -283,8 +283,8 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
     return (
       <div className={`bg-white  font-mulish ${isProposalDetails ? "rounded-t-xl tablet:mx-16": "rounded-xl desktop:mx-20" } shadow-md ${isSubmittedProposals ? "flex" : "flex flex-col md:flex-col"}`}>
         {/* Top Section */}
-        <div className={` bg-[#0E3746] ${isSubmittedProposals ? "w-2/6 flex flex-col justify-center items-center py-6 space-y-6 rounded-l-lg" : "w-full flex justify-between items-center bg-[#0E3746] px-[20px] md:px-12 py-6  rounded-t-lg rounded-b-none"}`}>
-          <div className={`${isSubmittedProposals ? "flex flex-col text-center justify-center items-center space-y-4" : "flex gap-[12px] md:gap-8 justify-center items-center"}`}>
+        <div className={` bg-[#0E3746] ${isSubmittedProposals ? "w-2/6 flex flex-col justify-center items-center py-2 space-y-6 rounded-l-lg" : "w-full flex justify-between items-center bg-[#0E3746] px-[20px] md:px-12 py-6  rounded-t-lg rounded-b-none"}`}>
+          <div className={`${isSubmittedProposals ? "flex justify-between items-start space-x-4" : "flex gap-[12px] md:gap-8 justify-center items-center"}`}>
             {isLoading ? (
               <div className="w-8 h-8 md:w-16 md:h-16 rounded-full bg-gray-300 animate-pulse"></div>
             ) : (
@@ -293,21 +293,9 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
             {isLoading ? (
               <div className="w-24 h-6 md:w-36 md:h-8 bg-gray-400"></div>
             ) : (
-              <h4 className="text-white text-sm md:text-xl font-semibold">{userProfile.username || "Username"}</h4>
+              <h4 className="text-white text-sm md:text-xl font-semibold self-center">{userProfile.username || "Username"}</h4>
             )}
           </div>
-
-          {isSubmittedProposals && (
-            <div className="flex justify-center">
-              <span
-                className={`px-4 md:py-1 rounded-full text-white font-semibold text-sm small_phone:text-base ${
-                  status === "Approved" ? "bg-[#4CAF50]" : status === "Rejected" ? "bg-red-500" : "bg-[#4993B0]"
-                }`}
-              >
-                {status}
-              </span>
-            </div>
-          )}
 
           <div className={`${isSubmittedProposals ? "flex justify-center items-center gap-6" : "flex gap-4"}`}>
             <div className={`${isSubmittedProposals ? "flex flex-col items-center gap-2" : "flex flex-col md:flex-row items-center gap-2 md:gap-4"}`}>
@@ -347,31 +335,39 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
               </span>
             </div>
           </div>
-
-          <p className={`text-gray-900 text-sm mobile:text-xl mb-4`}>{proposal?.proposal_description}</p>
+          <p className={`${isSubmittedProposals ? "hidden" : "text-gray-900 text-sm mobile:text-xl mb-4 "}`}>{proposal?.proposal_description}</p>
           {isSubmittedProposals && (
             <div>
+              <span
+                className={`px-4 md:py-1 rounded-full text-white font-semibold text-sm small_phone:text-base ${
+                  status === "Approved" ? "bg-[#4CAF50]" : status === "Rejected" ? "bg-red-500" : "bg-[#4993B0]"
+                }`}
+              >
+                {status}
+              </span>
               <span className="px-8 py-2 bg-[#4993B0] text-white rounded-full text-lg ">
             {daoName || "DaoName"}
           </span>
             </div>
           )}
-          <div className="flex flex-wrap gap-4 flex-col md:flex-row md:justify-between items-start md:items-center space-y-4 md:space-y-0 xl:space-x-8">
+          <div className={`flex flex-wrap gap-4 flex-col md:flex-row md:justify-between items-start md:items-center space-y-4 md:space-y-0 xl:space-x-8`}>
             <div className="flex flex-col gap-4 items-start justify-start">
-                <div className=" flex mobile:space-x-2 xl:space-x-8">
-                  <div className="flex flex-col items-start">
-                    <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Submitted On </span>
-                    <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{submittedOnDate} <span className="text-[8px] small_phone:text-[8px] md:text-xs font-normal text-gray-400">{submittedOnTime}</span></span>
+                {!isSubmittedProposals && (
+                  <div className=" flex mobile:space-x-2 xl:space-x-8">
+                    <div className="flex flex-col items-start">
+                      <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Submitted On </span>
+                      <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{submittedOnDate} <span className="text-[8px] small_phone:text-[8px] md:text-xs font-normal text-gray-400">{submittedOnTime}</span></span>
+                    </div>
+                    <div className="flex flex-col items-start">
+                      <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Expires On </span>
+                      <span className=" text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{expiresOnDate} <span className="text-[8px]  small_phone:text-[8px] md:text-xs font-normal text-gray-400">{expiresOnTime}</span></span>
+                    </div>
+                    <div className="flex flex-col items-start">
+                      <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Votes Required </span>
+                      <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{requiredVotes}</span>
+                    </div>
                   </div>
-                  <div className="flex flex-col items-start">
-                    <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Expires On </span>
-                    <span className=" text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{expiresOnDate} <span className="text-[8px]  small_phone:text-[8px] md:text-xs font-normal text-gray-400">{expiresOnTime}</span></span>
-                  </div>
-                  <div className="flex flex-col items-start">
-                    <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Votes Required </span>
-                    <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{requiredVotes}</span>
-                  </div>
-                </div>
+                )}
 
                 <div className="flex flex-wrap justify-start md:justify-start md:mt-0 space-x-2 small_phone:space-x-4">
                   {showActions && (              
@@ -453,7 +449,7 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
               </div>
               )}
             </div>
-            {!showActions && (
+            {!showActions &&  !isSubmittedProposals && (
             <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer">
             <button className=" px-6 py-2 font-semibold" onClick={handleViewMore}>View More</button>
           </div>

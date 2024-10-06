@@ -85,7 +85,7 @@ const MyPosts = () => {
           >
             {myProposals.map((proposal, index) => (
               <div key={index} className="proposal relative w-full">
-                <Card proposal={proposal} isSubmittedProposals={true} />
+               <Card proposal={proposal} isSubmittedProposals={true} showComments={true}/>
               </div>
             ))}
           </div>

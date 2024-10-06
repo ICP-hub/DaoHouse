@@ -426,8 +426,6 @@ async fn transfer(tokens: u64, user_principal: Principal) -> Result<BlockIndex, 
 
 #[update(guard = prevent_anonymous)]
 async fn make_payment(tokens: u64, user: Principal) -> Result<Nat, String> {
-    ic_cdk::println!("tokens : {} ", tokens);
-    ic_cdk::println!("tokens : {} ", user.to_text());
     transfer(tokens, user).await
 }
 
@@ -435,8 +433,9 @@ async fn make_payment(tokens: u64, user: Principal) -> Result<Nat, String> {
 async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String> {
     // let proposal_expired_at = args.proposal_expired_at * 60 * 60 * 1_000_000_000;
 
-    const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
+    // const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
     let principal_id: Principal = api::caller();
+    let canister_id: Principal = ic_cdk::api::id();
 
     let mut required_thredshold = 0;
 
@@ -466,9 +465,9 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
         new_dao_name: None,
         group_to_join: None,
         dao_purpose: None,
-        tokens: None,
-        token_from: None,
-        token_to: None,
+        tokens: Some(args.tokens),
+        token_from: Some(principal_id),
+        token_to: Some(canister_id),
         proposal_created_at: None,
         proposal_expired_at: None,
         bounty_task: Some(args.bounty_task),
@@ -493,7 +492,7 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
 #[update(guard=guard_check_members)]
 async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
     // let proposal_expired_at = args.proposal_expired_at * 60 * 60 * 1_000_000_000;
-    const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
+    // const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
     let canister_id: Principal = ic_cdk::api::id();
     let timestamp = time();
     let check_expired = with_state(|state| {
@@ -502,12 +501,9 @@ async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
            let time_diff = timestamp.saturating_sub(proposal.proposal_submitted_at);
            let user_propsal_expire_date = proposal.proposal_expired_at;
 
-            if proposal.proposal_status == ProposalState::Succeeded && proposal.proposal_type == ProposalType::BountyRaised  {
+            if proposal.proposal_status == ProposalState::Succeeded && proposal.proposal_type == ProposalType::BountyRaised && time_diff >= user_propsal_expire_date && !proposal.has_been_processed_secound {
                 Ok(())
-            } else if time_diff >= user_propsal_expire_date  {
-                return Err(format!("Proposal has been Expired")); 
-            }
-            else{
+            } else{
                 return Err(format!("Proposal has been {:?}", proposal.proposal_status)); 
             }
         } else {
@@ -529,13 +525,9 @@ async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
             .find(|place| place.place_name == args.proposal_entiry)
         {
             Some(val) => {
-                ic_cdk::println!("this is dao proposal place : {:?} ", val);
-
                 required_thredshold = val.min_required_thredshold;
             }
-            None => {
-                eprintln!("No Data Found");
-            }
+            None => {eprintln!("No Data Found");}
         }
     });
 
@@ -572,7 +564,7 @@ async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
 #[update(guard=guard_check_members)]
 async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
     // let proposal_expired_at = args.proposal_expired_at * 60 * 60 * 1_000_000_000;
-    const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
+    // const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
 
     // let proposal_entiry = ProposalPlace {
     //     place_name: args.proposal_entiry,
@@ -1052,8 +1044,7 @@ fn get_dao_groups() -> Vec<DaoGroup> {
 
 #[update]
 async fn transfer_token(proposal: Test) -> Result<String, String> {
-    let principal_id: Principal = api::caller();
-    let balance = icrc_get_balance(principal_id)
+    let balance = icrc_get_balance(proposal.token_from)
         .await
         .map_err(|err| format!("Error while fetching user balance: {}", err))?;
 
@@ -1063,24 +1054,10 @@ async fn transfer_token(proposal: Test) -> Result<String, String> {
         ));
     }
 
-    let from = match proposal.token_from {
-        Some(principal) => principal,
-        None => return Err(String::from("Missing 'from' principal")),
-    };
-
-    let to = match proposal.token_to {
-        Some(principal) => principal,
-        None => return Err(String::from("Missing 'to' principal")),
-    };
-    let tokens = match proposal.tokens {
-        Some(tokens) => tokens,
-        None => return Err(String::from("Missing token amount")),
-    };
-
     let token_transfer_args = TokenTransferArgs {
-        from: from,
-        to: to,
-        tokens,
+        from: proposal.token_from,
+        to: proposal.token_to,
+        tokens : proposal.tokens,
     };
 
     icrc_transfer(token_transfer_args)
