@@ -10,7 +10,8 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import LoginModal from "../../Components/Auth/LoginModal";
 import SearchProposals from "../../Components/Proposals/SearchProposals";
 import { Principal } from "@dfinity/principal";
-import DaoCardLoaderSkeleton from "../../Components/SkeletonLoaders/DaoCardLoaderSkeleton/DaoCardLoaderSkeleton";
+import DaoCardLoaderSkeleton from "../../Components/SkeletonLoaders/DaoCardLoaderSkeleton/DaoCardLoaderSkeleton"; 
+import Pagination from "../../Components/pagination/Pagination";
 
 const Dao = () => {
   const [showAll, setShowAll] = useState(true);
@@ -22,7 +23,6 @@ const Dao = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [fetchedDAOs, setFetchedDAOs] = useState([]);
   const [hasMore, setHasMore] = useState(true);
-  // const [isJoinedDAO, setIsJoinedDAO] = useState(false)
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
 
@@ -51,8 +51,8 @@ const Dao = () => {
     setLoading(true);
     try {
       const response = await backendActor.get_all_dao(pagination);
-      const combinedDaoDetails = await fetchDaoDetails(response.slice(0, itemsPerPage));
-      setHasMore(response.length > itemsPerPage);
+      const combinedDaoDetails = await fetchDaoDetails(response);
+      setHasMore(response.length === itemsPerPage+1); // Assuming backend returns exactly `itemsPerPage` items if more exist
       setDao(combinedDaoDetails);
     } catch (error) {
       console.error("Error fetching DAOs:", error);
@@ -66,8 +66,9 @@ const Dao = () => {
 
     setLoading(true);
     try {
-      const response = await backendActor.search_dao(searchTerm);
+      const response = await backendActor.search_dao(searchTerm, { start: (currentPage - 1) * itemsPerPage, end: currentPage * itemsPerPage });
       const combinedSearchDaoDetails = await fetchDaoDetails(response);
+      setHasMore(response.length === itemsPerPage); // Adjust if backend provides total count
       setFetchedDAOs(combinedSearchDaoDetails);
     } catch (error) {
       console.error("Error searching DAOs:", error);
@@ -97,7 +98,6 @@ const Dao = () => {
       );
 
       console.log("JD", joinedDaoDetails);
-      
 
       setJoinedDAO(joinedDaoDetails.filter((dao) => dao !== null));
     } catch (error) {
@@ -118,10 +118,14 @@ const Dao = () => {
 
   useEffect(() => {
     if (searchTerm) {
-      setLoading(true);
+      setCurrentPage(1); // Reset to first page on new search
       getSearchDao();
+    } else {
+      // If search term is cleared, refetch DAOs
+      getDaos({ start: (currentPage - 1) * itemsPerPage, end: currentPage * itemsPerPage });
     }
-  }, [searchTerm]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTerm, currentPage]);
 
   useEffect(() => {
     if (!showAll) getJoinedDaos();
@@ -159,10 +163,28 @@ const Dao = () => {
       <div className="bg-gray">
         <Container classes="__label small_phone:py-8 py-5 px-4 mobile:px-10 small_phone:px-8  flex justify-between items-center">
           <div
-            onClick={() => (showAll ? getDaos() : getJoinedDaos())}
-            className="small_phone:text-4xl text-3xl tablet:ml-16  flex items-center gap-4"
+            onClick={() => {
+              setCurrentPage(1); // Reset to first page when toggling
+              setShowAll(true);
+              getDaos({ start: 0, end: itemsPerPage });
+            }}
+            className={`small_phone:text-4xl text-3xl tablet:ml-16 flex items-center gap-4 cursor-pointer ${
+              showAll ? "font-bold" : ""
+            }`}
           >
-            {showAll ? "All" : "Joined"}
+            All
+          </div>
+          <div
+            onClick={() => {
+              setCurrentPage(1); // Reset to first page when toggling
+              setShowAll(false);
+              getJoinedDaos();
+            }}
+            className={`small_phone:text-4xl text-3xl tablet:ml-16 flex items-center gap-4 cursor-pointer ${
+              !showAll ? "font-bold" : ""
+            }`}
+          >
+            Joined
           </div>
           <div className="flex-grow lg:flex justify-center hidden">
             <SearchProposals
@@ -186,8 +208,8 @@ const Dao = () => {
         <LoginModal
           isOpen={showLoginModal}
           onClose={() => navigate("/")}
-          onLogin={() => handleLogin(login)}
-          onNFIDLogin={() => handleNFIDLogin()}
+          onLogin={handleLogin}
+          onNFIDLogin={handleNFIDLogin}
         />
       )}
 
@@ -212,7 +234,6 @@ const Dao = () => {
                     groups: daos.groups_count ? Number(BigInt(daos.groups_count)) : "0",
                     proposals: daos.proposals_count || "0",
                     image_id: daos.image_id || "No Image",
-                    // daoCanister: daos.daoCanister,
                     daoCanisterId: daos.dao_canister_id || "No ID",
                   }}
                 />
@@ -237,64 +258,22 @@ const Dao = () => {
                   groups: daos.groups_count ? Number(BigInt(daos.groups_count)) : "0",
                   proposals: daos.proposals_count || "0",
                   image_id: daos.image_id || "No Image",
-                  // daoCanister: daos.daoCanister,
                   daoCanisterId: daos.dao_canister_id || "No ID",
                 }}
                 isJoinedDAO={true}
               />
             ))}
           </Container>
-          <Pagignation currentPage={currentPage} setCurrentPage={setCurrentPage} hasMore={hasMore} />
+          <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} hasMore={hasMore} />
         </div>
       ) : (
         <div className="flex justify-center items-center h-full mb-10 md:mt-40 mx-10">
-            <NoDataComponent />
-          </div>
+          <NoDataComponent />
+        </div>
       )}
     </div>
   );
 };
 
-const Pagignation = ({ currentPage, setCurrentPage, hasMore }) => {
-  const handleNext = () => {
-    if (hasMore) {
-      setCurrentPage((prevPage) => prevPage + 1);
-    }
-  };
-
-  const handlePrevious = () => {
-    if (currentPage > 1) {
-      setCurrentPage((prevPage) => prevPage - 1);
-    }
-  };
-
-  return (
-    <div className="pagination-container flex justify-center gap-10 items-center pb-10">
-      <button
-className={`text-xl flex items-center ml-1 ${currentPage === 1
-  ? "text-gray-400 cursor-not-allowed"
-  : "text-black hover:text-gray-500 cursor-pointer"
-  }`}
-onClick={() => handlePrevious(currentPage - 1)}
-disabled={currentPage === 1}
->
-<FaArrowLeft /> Prev
-</button>
-<button
-className={`text-xl flex items-center px-3 py-1 transition duration-300 ease-in-out ${!hasMore
-  ? "text-gray-400 cursor-not-allowed"
-  : "text-black hover:text-gray-500 cursor-pointer"
-  }`}
-onClick={() => handlePageChange(currentPage + 1)}
-disabled={!hasMore}
->
-Next <FaArrowRight />
-</button>
-    </div>
-  );
-};
 
 export default Dao;
-
-
-

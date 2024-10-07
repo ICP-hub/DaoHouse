@@ -91,7 +91,7 @@ const ProposalsContent = ({ proposals, isMember, showActions=true, voteApi, daoC
                 </p>
             ) : (
               displayedProposals.map((proposal, index) => (
-                <Card key={index} proposal={proposal} voteApi={voteApi} daoCanisterId={daoCanisterId} />
+                <Card key={index} proposal={proposal} voteApi={voteApi} />
               ))
             )}
           </div>

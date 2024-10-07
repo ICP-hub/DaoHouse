@@ -7,7 +7,7 @@ import ApprovedAnimation from "./MyProposals/proposal-cards-animations/approved-
 import RejectedAnimation from "./MyProposals/proposal-cards-animations/rejected-animation.json";
 import { Principal } from "@dfinity/principal";
 import ViewModal from "../Dao/ViewModal";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../utils/useAuthClient";
 import userImage from "../../../assets/commentUser.jpg";
@@ -15,7 +15,7 @@ import { CircularProgress } from "@mui/material";
 import ShareModal from "./ShareModal";
 
 
-export default function Card({ proposal, voteApi, daoCanisterId, showActions, isProposalDetails, isComment, setIsComment, commentCount, isSubmittedProposals, showComments}) {
+export default function Card({ proposal, voteApi, showActions, isProposalDetails, isComment, setIsComment, commentCount, isSubmittedProposals, showComments}) {
 
   console.log("Vote API", proposal);
   
@@ -33,6 +33,7 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [copySuccess, setCopySuccess] = useState("");
   const [daoName, setDaoName] = useState("");
+  const {daoCanisterId} = useParams();
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
   console.log(votersList);
