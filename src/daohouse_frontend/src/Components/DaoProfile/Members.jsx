@@ -7,7 +7,7 @@ import { Principal } from "@dfinity/principal";
 import { MdAddBox } from "react-icons/md";
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 import userImage from "../../../assets/commentUser.jpg";
-import MyProfileSkelton from "../SkeletonLoaders/MyProfileSkelton";
+import FollowersSkeleton from "../SkeletonLoaders/ProposalLoaderSkeleton/FollowersSkeleton";
 
 const Members = ({ daoGroups, daoMembers }) => {
   const { backendActor } = useAuth();
@@ -100,7 +100,7 @@ const Members = ({ daoGroups, daoMembers }) => {
             {isCouncilOpen && (
               <div className="bg-white rounded-lg p-8">
                 {loading ? ( // Show skeleton loader while loading
-                  <MyProfileSkelton />
+                  <FollowersSkeleton/>
                 ) : (
                   <div style={gridView ? gridContainerStyle : listContainerStyle}>
                     {councilMembers.map((member, index) => (
