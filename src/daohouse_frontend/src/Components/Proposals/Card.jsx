@@ -39,7 +39,7 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
   
   // console.log("voters", proposal?.approved_votes_list + proposal?.rejected_votes_list); 
 
-
+  
   useEffect(() => {
     async function fetchUserProfile() {
       try {
@@ -366,34 +366,40 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
                       <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Votes Required </span>
                       <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{requiredVotes}</span>
                     </div>
+
                   </div>
                 )}
 
                 <div className="flex flex-wrap justify-start md:justify-start md:mt-0 space-x-2 small_phone:space-x-4">
-                  {showActions && (              
+                  {showActions || isSubmittedProposals && (              
                     <button className={`flex items-center justify-center gap-1 mobile:gap-2 ${
                       isComment ? 'bg-gray-200 text-black rounded-lg p-2' : 'text-gray-600 bg-none'
                     }`} onClick={handleCommentToggle}>
                       <svg className="mb-1" width="16" height="15" viewBox="0 0 16 15">
                         <path d="M3.11111 9.22293H12.8889V8.34456H3.11111V9.22293ZM3.11111 6.58781H12.8889V5.70943H3.11111V6.58781ZM3.11111 3.95269H12.8889V3.07431H3.11111V3.95269ZM16 15L13.2649 12.2972H1.43556C1.02667 12.2972 0.685333 12.162 0.411556 11.8914C0.137778 11.6209 0.000592593 11.2833 0 10.8787V1.41857C0 1.01452 0.137185 0.677227 0.411556 0.406687C0.685926 0.136148 1.02726 0.000585583 1.43556 0H14.5644C14.9733 0 15.3147 0.135562 15.5884 0.406687C15.8622 0.677812 15.9994 1.01511 16 1.41857V15ZM1.43556 11.4189H13.6444L15.1111 12.8629V1.41857C15.1111 1.28389 15.0542 1.16004 14.9404 1.04702C14.8267 0.934005 14.7013 0.877789 14.5644 0.878374H1.43556C1.29926 0.878374 1.17393 0.93459 1.05956 1.04702C0.945185 1.15945 0.888296 1.2833 0.888889 1.41857V10.8787C0.888889 11.0134 0.945778 11.1372 1.05956 11.2502C1.17333 11.3632 1.29867 11.4195 1.43556 11.4189Z" fill="black" />
                       </svg>
-                      <span className="md:ml-2 text-sm mobile:text-base">{commentCount} Comments</span>
+                      <span className="md:ml-2 text-sm mobile:text-base">{commentCount || 0} Comments</span>
                     </button>
                   )}
 
-                <button className="flex items-center justify-center mobile:gap-2 text-gray-600" onClick={handleVotesClick}>
-                  <svg className="mb-1" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"/>
-                    <path d="M19.07 18.93C17.66 17.52 15.48 16.5 12 16.5s-5.66 1.02-7.07 2.43A2 2 0 0 0 6.34 22h11.32a2 2 0 0 0 1.41-3.07z"/>
-                  </svg>
-                  <span className="md:ml-2 text-sm mobile:text-base">{voteCount} Voters</span>
-                </button>
-                <button className="flex items-center justify-center mobile:gap-2 text-gray-600" onClick={toggleShareModal}>
-                  <svg className="mb-1" width="17" height="17" viewBox="0 0 17 17">
-                    <path d="M16 1L1 5.85294L6.73529 8.5L12.9118 4.08824L8.5 10.2647L11.1471 16L16 1Z" stroke="black" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                  <span className="md:ml-2 text-sm mobile:text-base">Share</span>
-                </button>
+                  <button className="flex items-center justify-center mobile:gap-2 text-gray-600" onClick={handleVotesClick}>
+                    <svg className="mb-1" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"/>
+                      <path d="M19.07 18.93C17.66 17.52 15.48 16.5 12 16.5s-5.66 1.02-7.07 2.43A2 2 0 0 0 6.34 22h11.32a2 2 0 0 0 1.41-3.07z"/>
+                    </svg>
+                    <span className="md:ml-2 text-sm mobile:text-base">{voteCount} Voters</span>
+                  </button>
+                  <button className="flex items-center justify-center mobile:gap-2 text-gray-600" onClick={toggleShareModal}>
+                    <svg className="mb-1" width="17" height="17" viewBox="0 0 17 17">
+                      <path d="M16 1L1 5.85294L6.73529 8.5L12.9118 4.08824L8.5 10.2647L11.1471 16L16 1Z" stroke="black" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    <span className="md:ml-2 text-sm mobile:text-base">Share</span>
+                  </button>
+                  {isSubmittedProposals && (
+                    <div className="mt-4 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer">
+                    <button className=" px-6 py-2 font-semibold" onClick={handleViewMore}>View More</button>
+                  </div>
+                  )}
 
                 <ShareModal
                   isOpen={isShareModalOpen}
@@ -402,6 +408,7 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
                   toggleModal={toggleShareModal}
                   copyToClipboard={copyToClipboard}
                 />
+                
              
               </div>
               </div>
