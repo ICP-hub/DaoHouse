@@ -6,7 +6,7 @@ function MyProfileSkelton() {
       {[1, 2, 3, 4].map((_, index) => (
         <div
           key={index}
-          className="bg-white shadow-lg rounded-lg flex items-center p-4 space-x-4 transition-transform transform hover:scale-105"
+          className="bg-white shadow-lg rounded-lg flex items-center p-4 space-x-4 transition-transform transform"
         >
           {/* Skeleton for the avatar image */}
           <div className="rounded-full bg-gray-300 w-16 h-16" />
