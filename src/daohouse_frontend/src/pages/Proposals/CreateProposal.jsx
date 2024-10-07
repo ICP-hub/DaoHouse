@@ -36,20 +36,20 @@ function CreateProposal() {
   });
 
   const [bountyClaim, setBountyClaim] = useState({
-    to: '',
+    associated_proposal_id: '',
     description: '',
-    tokens: '',
+    link_of_task: '',
     // action_member: '',
     bounty_task: '',
     associated_proposal_id : '',
   });
 
   const [generalPurp, setGeneralPurp] = useState({
-    proposalExpiredAt: '',
+    // proposalExpiredAt: '',
     description: '',
-    actionMember: '',
+    // actionMember: '',
     proposalTitle: '',
-    proposalCreatedAt: '',
+    // proposalCreatedAt: '',
   });
 
   const [daoConfig, setDaoConfig] = useState({
@@ -92,7 +92,7 @@ function CreateProposal() {
     proposal_expired_at: "",
     poll_title: "",
     description: "",
-    action_member: "",
+    // action_member: "",
     proposal_created_at: "",
   });
 
@@ -348,9 +348,9 @@ function CreateProposal() {
 
           await submitBountyClaim({
             proposal_entiry: proposalEntry,
-            to: Principal.fromText(bountyClaim.to),
+            associated_proposal_id: bountyClaim.associated_proposal_id,
             description: bountyClaim.description,
-            tokens: Number(bountyClaim.tokens),
+            link_of_task: bountyClaim.link_of_task,
             // action_member: Principal.fromText(bountyClaim.action_member),
             bounty_task: bountyClaim.bounty_task,
           });
@@ -359,11 +359,11 @@ function CreateProposal() {
           case 'GeneralPurp':
             await submitGeneralPurp({
               proposal_entiry: proposalEntry,
-              proposal_expired_at: generalPurp.days_until_expiration, // Send the days difference to the backend
+              // proposal_expired_at: generalPurp.days_until_expiration, // Send the days difference to the backend
               description: generalPurp.description,
-              action_member: Principal.fromText(generalPurp.actionMember),
+              // action_member: Principal.fromText(generalPurp.actionMember),
               proposal_title: generalPurp.proposalTitle,
-              proposal_created_at: 0, // Set Created At to 0 as per your requirement
+              // proposal_created_at: 0, // Set Created At to 0 as per your requirement
             });
             break;
           
@@ -428,7 +428,7 @@ function CreateProposal() {
             proposal_expired_at: poll.days_until_expiration, // Pass the days difference to the backend
             poll_title: poll.poll_title,
             description: poll.description,
-            action_member: Principal.fromText(poll.action_member),
+            // action_member: Principal.fromText(poll.action_member),
             proposal_created_at: 0, // Set Created At to 0 as per your requirement
           });
 
@@ -512,7 +512,7 @@ function CreateProposal() {
       console.log("DAO Canister ID:", daoCanisterId);
       console.log("DAO Config Proposal Payload:", daoConfig);
 
-      const response = await daoCanister.proposal_to_chnage_dao_config(
+      const response = await daoCanister.proposal_to_change_dao_config(
         daoConfig
       );
       console.log("Response from DAO Config Proposal:", response);

@@ -16,7 +16,7 @@ const RemoveDaoMember = ({ removeDaoMember, handleInputRemoveDaoMember }) => (
         </div>
 
         <div className="mb-4">
-            <label htmlFor="actionMember" className="mb-2 font-semibold text-xl">Action Member (Principal)</label>
+            <label htmlFor="actionMember" className="mb-2 font-semibold text-xl">Member (Principal)</label>
             <input
                 id="actionMember"
                 type="text"
