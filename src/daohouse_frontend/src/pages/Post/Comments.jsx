@@ -60,8 +60,9 @@ const Comment = ({ comment, proposalId, daoId }) => {
       
       // Create replyArgs with the commented_by principal
       const replyArgs = {
-        commented_by: comment.author_principal, // Use the comment's author principal
-        reply_comment: replyText,
+        comment: replyText,
+        proposal_id: proposalId,
+        comment_id: comment.comment_id,
       };
   
       const daoActor = await createDaoActor(daoId);
