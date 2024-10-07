@@ -364,7 +364,7 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
                     <span className="md:ml-2 text-sm mobile:text-base">Share</span>
                   </button>
                   {isSubmittedProposals && (
-            <div className="mt-4 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer">
+            <div className="mt-4 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer text-left translate-x-[300px]">
             <button className=" px-6 py-2 font-semibold" onClick={handleViewMore}>View More</button>
           </div>
           )}

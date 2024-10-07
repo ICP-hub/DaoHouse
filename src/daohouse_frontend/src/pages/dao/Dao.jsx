@@ -226,7 +226,9 @@ const Dao = () => {
           <Pagignation currentPage={currentPage} setCurrentPage={setCurrentPage} hasMore={hasMore} />
         </div>
       ) : (
+        <div className="flex justify-center items-center h-full mb-10 md:mt-40 mx-10">
         <NoDataComponent />
+      </div>
       )}
     </div>
   );

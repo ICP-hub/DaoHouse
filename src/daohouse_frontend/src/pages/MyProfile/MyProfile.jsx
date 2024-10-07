@@ -503,19 +503,19 @@ const MyProfile = ({ childComponent }) => {
                   <div className="md:flex justify- translate-x-[60px] translate-y-[30px] translate top-[204px] left-[20px] mt-3">
                     <span className="md:mr-5 tablet:text-[32px] text-[18px] font-mulish text-[#05212C] user-acc-info">
                       {post}
-                      <span className="tablet:text-[16px] text-[10px] mx-1">
+                      <span className="tablet:text-[16px] text-[8px] mx-1">
                       Proposals
                       </span>
                     </span>
                     <span className="md:mx-5 tablet:text-[32px] text-[18px] font-mulish text-[#05212C] user-acc-info">
                       {following}
-                      <span className="tablet:text-[16px] text-[10px] mx-1">
+                      <span className="tablet:text-[16px] text-[8px] mx-1">
                         Dao Joined
                       </span>
                     </span>
                     <span className="md:mx-5 tablet:text-[32px] text-[18px] font-mulish text-[#05212C] user-acc-info">
                       {followers}
-                      <span className="tablet:text-[16px]  text-[10px] mx-1">
+                      <span className="tablet:text-[16px]  text-[8px] mx-1">
                       Dao  Followed 
                       </span>
                     </span>
@@ -526,7 +526,8 @@ const MyProfile = ({ childComponent }) => {
            
             </div>
             <div className="flex justify-start gap-8 p-4 mx-6 md:hidden text-center text-[#05212C]">
-<div className="mr-20 translate-y-[30px] translate-x-[-20px]">   <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C]">
+        <div className="mr-20 translate-y-[30px] translate-x-[-20px]">  
+         <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C]">
                     {name || "Username.user"}{" "}
                   </h2>
                   <p className="md:text-[14px] text-[10px] tablet:text-[16px] font-normal text-left text-[#646464]">
@@ -574,13 +575,13 @@ const MyProfile = ({ childComponent }) => {
   {/* Dark gray base line */}
  
   {/* Thicker line to overlap and change width */}
-  <div className="absolute bottom-0 flex justify-center left-0  w-[380px] h-[1px] translate-y-[-53px] bg-gray-500 transition-all duration-300 hover:w-[50px]"></div>
+  <div className="absolute bottom-0 flex justify-center left-0  translate-x-[-10px]   w-[320px] h-[1px] translate-y-[-53px] bg-gray-500 transition-all duration-300 hover:w-[50px]"></div>
 
   {/* First tab */}
 
   <Link to="/my-profile/posts" onClick={() => setActiveTab(1)}>
-    <p className={`${tabButtonsStyle} ${activeTab === 1 ? "text-hex text-[14px] border-b-0.8 border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
-    Proposals
+    <p className={`${tabButtonsStyle} ${activeTab === 1 ? "text-hex text-[14px] border-b-1 border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
+     Proposals
       {activeTab === 1 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
       {/* Tab underlining effect */}
       <span className={`${activeTab === 1 ? "absolute w-full h-[4px] bg-black  text-[14px] left-0 bottom-0 -z-10" : "hover:w-full hover:h-[4px] hover:bg-black left-0 bottom-0 -z-10 transition-all duration-300"}`}></span>
@@ -593,7 +594,7 @@ const MyProfile = ({ childComponent }) => {
       Followed Dao List
       {activeTab === 2 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
       {/* Tab underlining effect */}
-      <span className={`${activeTab === 2 ? "absolute w-full h-[4px] bg-black left-0 text-[14px]  bottom-0 -z-10" : "hover:w-full hover:h-[4px] hover:bg-black left-0 bottom-0 -z-10 transition-all duration-300"}`}></span>
+      <span className={`${activeTab === 2 ? "absolute w-full h-[4px] bg-black left-0 text-[14px]  bottom-0 -z-10" : "hover:w-full hover:h-[4px]  hover:bg-black left-0 bottom-0 -z-10 transition-all duration-300"}`}></span>
     </p>
   </Link>
 

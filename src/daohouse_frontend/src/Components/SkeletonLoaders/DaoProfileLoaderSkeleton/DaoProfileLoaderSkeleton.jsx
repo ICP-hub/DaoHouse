@@ -1,10 +1,11 @@
 import React from 'react'
 import ProposalLoaderSkeleton from '../ProposalLoaderSkeleton/ProposalLoaderSkeleton'
-
+import Container from '../../../Components/Container/Container'
 const DaoProfileLoaderSkeleton = () => {
   return (
     
-    <div className=''>
+   <Container className="w-full">
+     <div className=''>
       {/* <div className='p-32 w-[100%] bg-[#8f9da8]'></div> */}
       <div className="bg-zinc-200 w-full relative flex-col space-y-16">
     
@@ -33,6 +34,7 @@ const DaoProfileLoaderSkeleton = () => {
   </div>
     </div>
 
+   </Container>
   )
 }
 
