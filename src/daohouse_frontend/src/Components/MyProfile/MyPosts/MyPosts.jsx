@@ -62,11 +62,11 @@ const MyPosts = () => {
         <h3 className="text-[#05212C] md:text-[24px] text-[18px] md:font-bold font-mulish ml-4 translate-y-[-65px]">
           Submitted Proposals
         </h3>
-        <div className="flex justify-center px-2 md:px-6 mx-2">
+        <div className="w-full  flex-grow lg:flex justify-end hidden">
           <SearchProposals
             onChange={handleSearchChange}
             value={searchTerm}
-            width="70%"
+            width="60%"
             bgColor="transparent"
             placeholder="Search by proposal ID"
             className="border-2 border-[#AAC8D6] w-full md:max-w-lg translate-y-[-105px] translate-x-0 md:translate-x-[95px] "
@@ -81,7 +81,7 @@ const MyPosts = () => {
         ) : (
           <div
             className="flex flex-col md:mt-4 mt-2 mb-6 bg-[#F4F2EC] translate-y-[-82px] p-2 rounded-lg gap-2 h-auto md:h-73 w-full md:w-[1000px] overflow-y-auto"
-            style={{ maxHeight: "390px" }}
+            style={{ maxHeight: "503px" }}
           >
             {myProposals.map((proposal, index) => (
               <div key={index} className="proposal relative w-full">
