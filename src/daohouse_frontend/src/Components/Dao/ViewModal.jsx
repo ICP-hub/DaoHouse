@@ -172,30 +172,30 @@ function ViewModal({ open, onClose, users = [], approvedVotesList = [], rejected
               )}
             </div>
           ) : profiles.length > 0 ? (
-  profiles.map((member) => (
-    <div
-        key={member.user}
-        className="flex items-center mb-4 justify-between cursor-pointer p-2 rounded-md bg-gray-100"
-        onClick={() => onClose(member)}
-    >
-        <div className="flex items-center">
-            <img
-                src={member.profileImage || avatar}
-                alt={`${member.profileData?.username || member.name}'s profile`}
-                className="w-16 h-16 mr-6 rounded-full"
-            />
-            <div>
-                <div className="flex flex-col items-start">
-                    <p className="m-0 font-bold  text-[25px] font-mulish text-left">{member.profileData?.username || member.name}</p>
-                    <span className="block m-0 text-xs text-gray-600">{member.user}</span>
-                </div>
-            </div>
-        </div>
-    </div>
-))
-) : (
-<p className="text-center text-gray-700">No profiles available yet. Be the first to participate!</p>
-)}
+            profiles.map((member) => (
+              <div
+                  key={member.user}
+                  className="flex items-center mb-4 justify-between cursor-pointer p-2 rounded-md bg-gray-100"
+                  onClick={() => onClose(member)}
+              >
+                  <div className="flex items-center">
+                      <img
+                          src={member.profileImage || avatar}
+                          alt={`${member.profileData?.username || member.name}'s profile`}
+                          className="w-16 h-16 mr-6 rounded-full"
+                      />
+                      <div>
+                          <div className="flex flex-col items-start">
+                              <p className="m-0 font-bold  text-[25px] font-mulish text-left">{member.profileData?.username || member.name}</p>
+                              <span className="block m-0 text-xs text-gray-600">{member.user}</span>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          ))
+          ) : (
+          <p className="text-center text-gray-700">No profiles available yet. Be the first to participate!</p>
+          )}
         </div>
       </Box>
     </Modal>
