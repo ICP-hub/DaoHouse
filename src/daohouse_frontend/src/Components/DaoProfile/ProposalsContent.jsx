@@ -6,7 +6,7 @@ import { useAuth } from "../../Components/utils/useAuthClient";
 import { useParams } from "react-router-dom";
 import nodata from "../../../assets/nodata.png";
 
-const ProposalsContent = ({ proposals, isMember, showActions=true, voteApi, daoCanisterId }) => {
+const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, daoCanisterId }) => {
   const { backendActor, createDaoActor } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [fetchedProposals, setFetchedProposals] = useState([]);
@@ -43,52 +43,52 @@ const ProposalsContent = ({ proposals, isMember, showActions=true, voteApi, daoC
 
   return (
     <div className="mt-6 mb-6">
-       {isMember && showActions && (
-      <div className="flex items-center justify-between">
-        <h1 className="lg:text-[24px] md:text-[18px] text-[16px] font-bold">
-          Proposals
-        </h1>
-        <Link
-          to ={ `/create-proposal/${daoCanisterId}`}
-          className="flex justify-center items-center text-[16px] relative lg:w-[220px] lg:h-[50px] md:w-[185px] md:h-[46px] w-[30px] h-[30px] bg-white rounded-full"
-          style={{
-            boxShadow:
-              "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
-          }}
-        >
-          <span className="md:absolute md:text-[35px] text-[28px] font-thin lg:left-5 lg:bottom-[1px] md:left-4 md:bottom-[0.1%] md:mb-0 mb-[20%] ">
-            +
-          </span>
-          <span className="ml-6 hidden md:block">Create Proposals</span>
-        </Link>
-        
-      </div>
-    )}
-      <div className={`${showActions ? "bg-[#F4F2EC] pt-3 pb-8 mt-4 mb-8 rounded-[10px] " : ""} `}>
-      {showActions && (
-        <div className="flex justify-between items-center px-6 mb-3">
-          <span className="text-[20px] text-[#05212C] font-semibold">All</span>
-          <span className="flex">
-            <div className="flex-grow flex justify-center px-6 mx-2">
-              <SearchProposals
-                onChange={handleSearchChange} // Update search term on input change
-                onClick={getproposal} // Call getproposal on search
-                width="100%"
-                bgColor="transparent"
-                placeholder="Search by proposal ID"
-                className="border-2 border-[#AAC8D6] w-full max-w-lg"
-              />
-            </div>
-          </span>
+      {isMember && showActions && (
+        <div className="flex items-center justify-between">
+          <h1 className="lg:text-[24px] md:text-[18px] text-[16px] font-bold">
+            Proposals
+          </h1>
+          <Link
+            to={`/create-proposal/${daoCanisterId}`}
+            className="flex justify-center items-center text-[16px] relative lg:w-[220px] lg:h-[50px] md:w-[185px] md:h-[46px] w-[30px] h-[30px] bg-white rounded-full"
+            style={{
+              boxShadow:
+                "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
+            }}
+          >
+            <span className="md:absolute md:text-[35px] text-[28px] font-thin lg:left-5 lg:bottom-[1px] md:left-4 md:bottom-[0.1%] md:mb-0 mb-[20%] ">
+              +
+            </span>
+            <span className="ml-6 hidden md:block">Create Proposals</span>
+          </Link>
+
         </div>
       )}
+      <div className={`${showActions ? "bg-[#F4F2EC] pt-3 pb-8 mt-4 mb-8 rounded-[10px] " : ""} `}>
+        {showActions && (
+          <div className="flex justify-between items-center px-6 mb-3">
+            <span className="text-[20px] text-[#05212C] font-semibold">All</span>
+            <span className="flex">
+              <div className="flex-grow flex justify-center px-6 mx-2">
+                <SearchProposals
+                  onChange={handleSearchChange} // Update search term on input change
+                  onClick={getproposal} // Call getproposal on search
+                  width="100%"
+                  bgColor="transparent"
+                  placeholder="Search by proposal ID"
+                  className="border-2 border-[#AAC8D6] w-full max-w-lg"
+                />
+              </div>
+            </span>
+          </div>
+        )}
         <div className={`${showActions ? "w-full border-t py-6 border-[#0000004D] rounded-[10px] mb-4" : ""}`}>
           <div className="bg-transparent rounded flex flex-col gap-8">
             {displayedProposals.length === 0 ? (
               <p className="text-center font-black">
-                 <img src={nodata} alt="No Data" className="mx-auto block " />
-                {/* No proposal found */}
-                </p>
+                <img src={nodata} alt="No Data" className="mx-auto block " />
+                <p className="text-xl mt-5 font-bold">No Proposal Found!</p>
+              </p>
             ) : (
               displayedProposals.map((proposal, index) => (
                 <Card key={index} proposal={proposal} voteApi={voteApi} daoCanisterId={daoCanisterId} />
@@ -134,7 +134,7 @@ export const SearchProposals = ({
       </div>
 
       <input
-        onChange={onChange} 
+        onChange={onChange}
         type="text"
         placeholder={placeholder}
         className="pl-4 pr-10 py-2 w-full bg-transparent focus:outline-none placeholder-zinc-400 text-zinc-700 placeholder-custom"
