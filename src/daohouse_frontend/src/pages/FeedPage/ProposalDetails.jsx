@@ -73,11 +73,14 @@ const ProposalsDetails = () => {
           const proposalDetails = await daoActor.get_proposal_by_id(proposalId);
           setProposal(proposalDetails);
           console.log("propos",proposalDetails);
+          
 
           setCommentCount(Number(BigInt(proposalDetails?.comments || 0)))
 
           const daoDetails = await daoActor.get_dao_detail();
           setDao(daoDetails);
+          console.log("daoDetails", daoDetails);
+          
 
           // Fetch user profile
           const profileResponse = await backendActor.get_user_profile();
@@ -224,9 +227,9 @@ const ProposalsDetails = () => {
               </p>
             </div>
 
-            <p className="mt-2 text-gray-500 text-xs md:text-sm text-center md:text-start">
+            {/* <p className="mt-2 text-gray-500 text-xs md:text-sm text-center md:text-start">
               Creation Date: March 1, 2023
-            </p>
+            </p> */}
           </div>
         </div>
 

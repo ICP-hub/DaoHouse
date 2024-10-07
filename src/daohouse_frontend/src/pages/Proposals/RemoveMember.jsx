@@ -41,7 +41,7 @@ const RemoveMember = ({ removeMember, handleInputRemoveMember, groupNames }) => 
             />
         </div>
         <div className="mb-4">
-            <label className="block mb-2 font-semibold text-xl">New Member (Principal)</label>
+            <label className="block mb-2 font-semibold text-xl">Member (Principal)</label>
             <input
                 type="text"
                 name="action_member"

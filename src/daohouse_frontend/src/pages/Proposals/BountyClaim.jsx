@@ -3,15 +3,15 @@ import React from "react";
 const BountyClaim = ({ bountyClaim, handleInputBountyClaim }) => (
   <>
     <div className="mb-4">
-      <label htmlFor="to" className="block mb-2 font-semibold text-xl">To</label>
+      <label htmlFor="associated_proposal_id" className="block mb-2 font-semibold text-xl">Associated Proposal ID</label>
       <input
-        id="to"
-        type="to"
-        name="to"
-        value={bountyClaim.to}
+        id="associated_proposal_id"
+        type="text"
+        name="associated_proposal_id"
+        value={bountyClaim.associated_proposal_id}
         onChange={handleInputBountyClaim}
         className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-        placeholder="Enter description"
+        placeholder="Enter Proposal ID"
       />
     </div>
     <div className="mb-4">
@@ -28,15 +28,15 @@ const BountyClaim = ({ bountyClaim, handleInputBountyClaim }) => (
     </div>
 
     <div className="mb-4">
-      <label htmlFor="tokens" className="block mb-2 font-semibold text-xl">Tokens</label>
+      <label htmlFor="link_of_task" className="block mb-2 font-semibold text-xl">Link of Task</label>
       <input
-        id="tokens"
-        type="number"
-        name="tokens"
-        value={bountyClaim.tokens}
+        id="link_of_task"
+        type="text"
+        name="link_of_task"
+        value={bountyClaim.link_of_task}
         onChange={handleInputBountyClaim}
         className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-        placeholder="Enter tokens"
+        placeholder="Enter the link of the task"
       />
     </div>
     {/* <div className="mb-4">

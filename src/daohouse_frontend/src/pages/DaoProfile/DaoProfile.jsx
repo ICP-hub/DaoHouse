@@ -127,7 +127,7 @@ const DaoProfile = () => {
           // Start loading proposals
         try {
           const daoActor = createDaoActor(daoCanisterId);
-          const itemsPerPage = 8;
+          const itemsPerPage = 20;
           const start = (currentPage - 1) * itemsPerPage;
           const end = start + itemsPerPage;
 

@@ -2,18 +2,18 @@ import React, { useEffect } from "react";
 
 const GeneralPurpose = ({ generalPurp, handleInputGeneralPurp, setGeneralPurp }) => {
   // Get today's date in the format YYYY-MM-DD
-  const getTodayDate = () => {
-    const today = new Date();
-    return today.toISOString().split("T")[0]; // Format as YYYY-MM-DD
-  };
+  // const getTodayDate = () => {
+  //   const today = new Date();
+  //   return today.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+  // };
 
-  useEffect(() => {
-    // Set today's date for "Created At" when the component loads
-    setGeneralPurp((prevGeneralPurp) => ({
-      ...prevGeneralPurp,
-      proposalCreatedAt: getTodayDate(),
-    }));
-  }, [setGeneralPurp]);
+  // useEffect(() => {
+  //   // Set today's date for "Created At" when the component loads
+  //   setGeneralPurp((prevGeneralPurp) => ({
+  //     ...prevGeneralPurp,
+  //     proposalCreatedAt: getTodayDate(),
+  //   }));
+  // }, [setGeneralPurp]);
 
   return (
     <>
@@ -39,7 +39,7 @@ const GeneralPurpose = ({ generalPurp, handleInputGeneralPurp, setGeneralPurp })
           placeholder="Enter description"
         />
       </div>
-      <div className="mb-4">
+      {/* <div className="mb-4">
         <label className="mb-2 font-semibold text-xl">Action Member (Principal)</label>
         <input
           type="text"
@@ -71,7 +71,7 @@ const GeneralPurpose = ({ generalPurp, handleInputGeneralPurp, setGeneralPurp })
           min={getTodayDate()}
           className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
         />
-      </div>
+      </div> */}
     </>
   );
 };
