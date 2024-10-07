@@ -28,7 +28,7 @@ const PaymentModal = ({ open, onClose, onPay, loading, data,fileURL }) => {
             />
             <div>
               <p className="font-bold">{data?.step1?.DAOIdentifier || "Product Name"}</p> {/* Show "Product Name" if DAOIdentifier is not available */}
-              <p>{data?.step1?.Purpose || "Purpose not specified"}</p> {/* Default text if Purpose is not available */}
+              <p className='break-words w-96'>{data?.step1?.Purpose || "Purpose not specified"}</p> {/* Default text if Purpose is not available */}
             </div>
           </div>
           <div className="border-t border-gray-300 mb-4"></div>

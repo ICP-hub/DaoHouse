@@ -22,6 +22,7 @@ const Dao = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [fetchedDAOs, setFetchedDAOs] = useState([]);
   const [hasMore, setHasMore] = useState(true);
+  // const [isJoinedDAO, setIsJoinedDAO] = useState(false)
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
 
@@ -34,6 +35,8 @@ const Dao = () => {
         try {
           const daoCanister = await createDaoActor(data.dao_canister_id);
           const dao_details = await daoCanister.get_dao_detail();
+          console.log("ddd", dao_details);
+          
           return { ...dao_details, daoCanister, dao_canister_id: data.dao_canister_id };
         } catch (err) {
           console.error(`Error fetching details for DAO ${data.dao_canister_id}:`, err);
@@ -93,6 +96,9 @@ const Dao = () => {
         })
       );
 
+      console.log("JD", joinedDaoDetails);
+      
+
       setJoinedDAO(joinedDaoDetails.filter((dao) => dao !== null));
     } catch (error) {
       console.error("Error fetching joined DAOs:", error);
@@ -121,13 +127,25 @@ const Dao = () => {
     if (!showAll) getJoinedDaos();
   }, [showAll]);
 
-  const handleLogin = async (loginMethod) => {
+  const handleLogin = async () => {
     setLoading(true);
     try {
-      await loginMethod();
+      await login("Icp");
       window.location.reload();
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error('Login failed:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleNFIDLogin = async () => {
+    setLoading(true);
+    try {
+      await signInNFID();
+      window.location.reload();
+    } catch (error) {
+      console.error('NFID login failed:', error);
     } finally {
       setLoading(false);
     }
@@ -139,16 +157,16 @@ const Dao = () => {
     <div className="bg-zinc-200">
       <TopComponent showAll={showAll} setShowAll={setShowAll} showButtons />
       <div className="bg-gray">
-        <Container classes="__label small_phone:py-8 py-5 mobile:px-10 px-5 flex justify-between items-center">
+        <Container classes="__label small_phone:py-8 py-5 px-4 mobile:px-10 small_phone:px-8  flex justify-between items-center">
           <div
             onClick={() => (showAll ? getDaos() : getJoinedDaos())}
-            className="small_phone:text-4xl text-3xl big_phone:px-8 flex items-center gap-4"
+            className="small_phone:text-4xl text-3xl tablet:ml-16  flex items-center gap-4"
           >
             {showAll ? "All" : "Joined"}
           </div>
-          <div className="flex-grow lg:flex justify-center px-6 mx-2 hidden">
+          <div className="flex-grow lg:flex justify-center hidden">
             <SearchProposals
-              width="100%"
+              width="70%"
               bgColor="transparent"
               placeholder="Search here"
               className="border-2 border-[#AAC8D6] w-full max-w-lg"
@@ -156,7 +174,7 @@ const Dao = () => {
             />
           </div>
           <Link to="/dao/create-dao">
-            <button className="bg-white small_phone:gap-2 gap-1 mr-12 mobile:px-5 p-2 small_phone:text-base text-sm shadow-xl flex items-center rounded-full hover:bg-[#ececec] hover:scale-105 transition">
+            <button className="bg-white small_phone:gap-2 gap-1 tablet:mr-12 mobile:px-5 p-2 small_phone:text-base text-sm shadow-xl flex items-center rounded-full hover:bg-[#ececec] hover:scale-105 transition">
               <HiPlus />
               Create DAO
             </button>
@@ -169,7 +187,7 @@ const Dao = () => {
           isOpen={showLoginModal}
           onClose={() => navigate("/")}
           onLogin={() => handleLogin(login)}
-          onNFIDLogin={() => handleLogin(signInNFID)}
+          onNFIDLogin={() => handleNFIDLogin()}
         />
       )}
 
@@ -182,18 +200,19 @@ const Dao = () => {
           </div>
         ) : (
           <div className="bg-gray">
-            <Container classes="__cards tablet:px-10 px-4 pb-10 grid grid-cols-1 big_phone:grid-cols-2 tablet:gap-6 gap-4">
+            <Container classes="__cards tablet:px-10 small_phone:px-8 pb-10 grid grid-cols-1 big_phone:grid-cols-2 tablet:gap-2 gap-4">
               {(searchTerm ? fetchedDAOs : dao).map((daos, index) => (
                 <DaoCard
                   key={index}
                   {...{
                     name: daos.dao_name || "No Name",
-                    followers: daos.followers_count || "0",
+                    followers: daos.followers || "0",
+                    followers_count: daos.followers_count || "0",
                     members: daos.members_count ? Number(BigInt(daos.members_count)) : "0",
                     groups: daos.groups_count ? Number(BigInt(daos.groups_count)) : "0",
                     proposals: daos.proposals_count || "0",
                     image_id: daos.image_id || "No Image",
-                    daoCanister: daos.daoCanister,
+                    // daoCanister: daos.daoCanister,
                     daoCanisterId: daos.dao_canister_id || "No ID",
                   }}
                 />
@@ -212,14 +231,16 @@ const Dao = () => {
                 key={index}
                 {...{
                   name: daos.dao_name || "No Name",
-                  followers: daos.followers_count || "0",
+                  followers: daos.followers || "No Followers",
+                  followers_count: daos.followers_count || "0",
                   members: daos.members_count ? Number(BigInt(daos.members_count)) : "0",
                   groups: daos.groups_count ? Number(BigInt(daos.groups_count)) : "0",
                   proposals: daos.proposals_count || "0",
                   image_id: daos.image_id || "No Image",
-                  daoCanister: daos.daoCanister,
+                  // daoCanister: daos.daoCanister,
                   daoCanisterId: daos.dao_canister_id || "No ID",
                 }}
+                isJoinedDAO={true}
               />
             ))}
           </Container>
@@ -227,8 +248,8 @@ const Dao = () => {
         </div>
       ) : (
         <div className="flex justify-center items-center h-full mb-10 md:mt-40 mx-10">
-        <NoDataComponent />
-      </div>
+            <NoDataComponent />
+          </div>
       )}
     </div>
   );

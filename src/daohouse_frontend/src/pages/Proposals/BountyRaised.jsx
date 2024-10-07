@@ -30,7 +30,7 @@ const BountyRaised = ({ bountyRaised, handleInputBountyRaised, setBountyRaised }
           required
         />
       </div>
-      <div className="mb-4">
+      {/* <div className="mb-4">
         <label htmlFor="actionMember" className="mb-2 font-semibold text-xl">Action Member (Principal)</label>
         <input
           id="actionMember"
@@ -42,7 +42,7 @@ const BountyRaised = ({ bountyRaised, handleInputBountyRaised, setBountyRaised }
           placeholder="Enter action member principal"
           required
         />
-      </div>
+      </div> */}
       <div className="mb-4">
         <label htmlFor="bountyTask" className="mb-2 font-semibold text-xl">Bounty Task</label>
         <input

@@ -604,8 +604,6 @@ pub async fn create_ledger(
         max_memo_length: None,
     });
 
-    ic_cdk::println!("ledger canister args are {:?}", ledger_args);
-
     create_ledger_canister(ledger_args).await
 
     // Ok("()".to_string())

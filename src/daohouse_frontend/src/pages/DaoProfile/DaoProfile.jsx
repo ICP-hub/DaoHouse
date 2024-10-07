@@ -322,7 +322,7 @@ const DaoProfile = () => {
 ) : (
 
       <div className={"bg-[#c8ced3]"}>
-        <Container classes={`${className} __mainComponent lg:py-8 lg:pb-20 py-6 big_phone:px-8 px-6 tablet:flex-row gap-2 flex-col w-full`}>
+        <Container classes={`${className} __mainComponent lg:py-8 lg:pb-20 py-6 tablet:px-28 px-6 tablet:flex-row gap-2 flex-col w-full`}>
         <div className="flex md:justify-between w-full md:gap-2 gap-10 z-20 relative flex-wrap">
           <div className="flex items-start">
             <div

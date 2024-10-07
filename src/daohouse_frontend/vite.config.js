@@ -11,6 +11,7 @@ export default defineConfig({
     emptyOutDir: true,
   },
   optimizeDeps: {
+    include: ["@mui/material/Box"],  // Add this line to optimize the Box component
     esbuildOptions: {
       define: {
         global: "globalThis",

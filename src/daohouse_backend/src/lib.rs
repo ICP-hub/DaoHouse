@@ -31,9 +31,6 @@ pub fn with_state<R>(f: impl FnOnce(&mut State) -> R) -> R {
 
 #[init]
 async fn init(args: InitialArgs) {
-    ic_cdk::println!("values are {:?}", args.payment_recipient.to_string());
-    ic_cdk::println!("values are: {:?}", args);
-
     let analytics = Analytics::default();
 
     with_state(|state| {

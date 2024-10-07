@@ -111,9 +111,9 @@ pub struct Comment {
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Copy)]
 pub struct Test{
-    pub token_to : Option<Principal>,
-    pub token_from : Option<Principal>,
-    pub tokens : Option<u64>,
+    pub token_to : Principal,
+    pub token_from : Principal,
+    pub tokens : u64,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
