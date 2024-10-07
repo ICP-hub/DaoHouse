@@ -13,6 +13,7 @@ import avatar from "../../../assets/avatar.png";
 import Comments from "../Post/Comments";
 import ProposalDetailsLoaderSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/ProposalDetailsLoaderSkeleton";
 import NoDataComponent from "../../Components/Dao/NoDataComponent";
+import { CircularProgress } from "@mui/material";
 
 const ProposalsDetails = () => {
    const className="DaoProfile"
@@ -28,6 +29,9 @@ const ProposalsDetails = () => {
   const [daoMembers, setDaoMembers] = useState([]);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [daoCanister, setDaoCanister] = useState({})
+  const [loadingJoinedDAO, setLoadingJoinedDAO] = useState(false); 
   const [followersCount, setFollowersCount] = useState(0);
   const [userProfile, setUserProfile] = useState(null);
   const [isComment, setIsComment] = useState(true);
@@ -116,13 +120,24 @@ const ProposalsDetails = () => {
   }, [daoActor, backendActor, proposalId]);
 
   const handleJoinDao = async () => {
-    if (joinStatus === 'Joined') return;
+    if (joinStatus === 'Joined') {
+      toast.error(`You are already member of this dao`);
+      return;
+    };
 
+    setShowConfirmModal(true);
+    
+  };
+
+  const confirmJoinDao = async () => {
+    setLoadingJoinedDAO(true)
     try {
-      const daoActor = createDaoActor(daoCanisterId);
-      console.log({daoActor});
+      let a = Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND)
+      console.log(a);
       
-      const response = await daoActor.ask_to_join_dao(daoCanisterId);
+      const response = await daoActor.ask_to_join_dao(a);
+      console.log(response);
+      
       if (response.Ok) {
         setJoinStatus("Requested");
         toast.success("Join request sent successfully");
@@ -131,8 +146,12 @@ const ProposalsDetails = () => {
         toast.error(`Failed to send join request: ${response.Err || "Unknown error"}`);
       }
     } catch (error) {
+      setLoadingJoinedDAO(false)
       console.error('Error sending join request:', error);
       toast.error('Error sending join request');
+    } finally {
+      setShowConfirmModal(false);
+      setLoadingJoinedDAO(false)
     }
   };
 
@@ -192,7 +211,7 @@ const ProposalsDetails = () => {
     <div className={`${className} bg-zinc-200 w-full relative`}>
   <Container classes="${className} __mainComponent lg:py-8 lg:pb-20 py-6 big_phone:px-8 px-6 tablet:flex-row gap-2 flex-col w-full md:pl-2">
     <div className="w-full md:gap-2 gap-10 z-10 relative md:pl-4 tablet:px-12 lg:px-16 mt-10">
-      <div className="flex flex-col md:flex-row md:justify-between items-start md:pl-1">
+      <div className="flex flex-col md:flex-row md:justify-between md:pl-1">
         {/* Left Side: Proposal Details */}
         <div className="flex flex-col md:flex-row items-center flex-grow">
           <div
@@ -255,6 +274,35 @@ const ProposalsDetails = () => {
           >
             {joinStatus}
           </button>
+          {showConfirmModal && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+              <div className="bg-white p-6 rounded-lg shadow-lg md:w-[800px] mx-auto text-center">
+                <h3 className="text-xl font-mulish font-semibold text-[#234A5A]">Ready to join this DAO?</h3>
+                <p className="mt-4 text-[16px] md:px-24 font-mulish">
+                  You’re about to join a DAO! A proposal will be created to welcome you, and DAO members will vote on your request. 
+                  You'll be notified once the results are in. Approval happens when members vote in your favor—good luck!
+                </p>
+                <div className="flex justify-center gap-4 mt-4">
+                  <button
+                    onClick={() => setShowConfirmModal(false)}
+                    className="px-8 py-3 text-[12px] lg:text-[16px] text-black font-normal rounded-full shadow-md hover:bg-gray-200 hover:text-[#0d2933]"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={confirmJoinDao}
+                    className="px-6 md:px-8 py-3 text-center text-[12px] lg:text-[16px] bg-[#0E3746] text-white rounded-full shadow-xl hover:bg-[#0d2933] hover:text-white"
+                  >
+                    {loadingJoinedDAO ? (
+                        <CircularProgress size={24} />
+                      ) : (
+                        "Join DAO"
+                      )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -50,9 +50,17 @@ const Dao = () => {
   const getDaos = async (pagination = {}) => {
     setLoading(true);
     try {
-      const response = await backendActor.get_all_dao(pagination);
-      const combinedDaoDetails = await fetchDaoDetails(response);
-      setHasMore(response.length === itemsPerPage+1); // Assuming backend returns exactly `itemsPerPage` items if more exist
+      const response = await backendActor.get_all_dao({ 
+        start: pagination.start, 
+        end: pagination.end + 1 
+      });
+  
+      const hasMoreData = response.length > itemsPerPage;
+  
+      const daoToDisplay = response.slice(0, itemsPerPage);
+  
+      const combinedDaoDetails = await fetchDaoDetails(daoToDisplay);
+      setHasMore(hasMoreData); 
       setDao(combinedDaoDetails);
     } catch (error) {
       console.error("Error fetching DAOs:", error);
@@ -60,15 +68,24 @@ const Dao = () => {
       setLoading(false);
     }
   };
+  
 
   const getSearchDao = async () => {
     if (!searchTerm.trim()) return setFetchedDAOs([]);
-
+  
     setLoading(true);
     try {
-      const response = await backendActor.search_dao(searchTerm, { start: (currentPage - 1) * itemsPerPage, end: currentPage * itemsPerPage });
-      const combinedSearchDaoDetails = await fetchDaoDetails(response);
-      setHasMore(response.length === itemsPerPage); // Adjust if backend provides total count
+      const response = await backendActor.search_dao(searchTerm, { 
+        start: (currentPage - 1) * itemsPerPage, 
+        end: currentPage * itemsPerPage + 1  
+      });
+  
+      const hasMoreData = response.length > itemsPerPage;
+  
+      const daoToDisplay = response.slice(0, itemsPerPage);
+  
+      const combinedSearchDaoDetails = await fetchDaoDetails(daoToDisplay);
+      setHasMore(hasMoreData);
       setFetchedDAOs(combinedSearchDaoDetails);
     } catch (error) {
       console.error("Error searching DAOs:", error);
@@ -76,6 +93,7 @@ const Dao = () => {
       setLoading(false);
     }
   };
+  
 
   const getJoinedDaos = async () => {
     try {
@@ -221,7 +239,9 @@ const Dao = () => {
                 />
               ))}
             </Container>
-            <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} hasMore={hasMore} />
+            {!loading && (
+              <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} hasMore={hasMore} />
+            )}
           </div>
         )
       ) : loadingJoinedDAO ? (
@@ -246,7 +266,9 @@ const Dao = () => {
               />
             ))}
           </Container>
-          <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} hasMore={hasMore} />
+          {!loadingJoinedDAO && (
+            <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} hasMore={hasMore} />
+          )}
         </div>
       ) : (
         <div className="flex justify-center items-center h-full mb-10 md:mt-40 mx-10">
