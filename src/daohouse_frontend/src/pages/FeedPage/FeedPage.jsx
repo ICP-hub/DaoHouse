@@ -247,13 +247,15 @@ const FeedPage = () => {
       )}
       
       {/* Pagination Controls */}
-      <div className={`${className}__pagination mobile:px-10 px-6 pb-10 bg-[#c8ced3] gap-8 flex flex-col`}>
+      {!loading && (
+        <div className={`${className}__pagination mobile:px-10 px-6 pb-10 bg-[#c8ced3] gap-8 flex flex-col`}>
         <Pagination
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
           hasMore={hasMore}
         />
       </div>
+      )}
     </div>
   );
 };
