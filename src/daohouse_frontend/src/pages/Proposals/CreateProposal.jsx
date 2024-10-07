@@ -108,7 +108,7 @@ function CreateProposal() {
   const { createDaoActor, stringPrincipal, identity } = useAuth();
 
   const movetodao = () => {
-    // navigate(`/dao/profile/${daoCanisterId}`);
+    navigate(`/dao/profile/${daoCanisterId}`);
     console.log("Proposal Submitted");
   };
 

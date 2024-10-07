@@ -199,6 +199,37 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
     }
   };
 
+  useEffect(() => {
+    const fetchGroupUsernames = async () => {
+      const groups = list.filter(group => group.name !== "Council");
+      const newUsernames = { ...memberUsernames };
+  
+      for (const group of groups) {
+        for (const member of group.members) {
+          if (!newUsernames[member]) { // Only fetch if not already fetched
+            try {
+              const principal = Principal.fromText(member);
+              const response = await backendActor.get_profile_by_id(principal);
+              if (response.Ok) {
+                newUsernames[member] = response.Ok.username;
+              } else {
+                newUsernames[member] = "Unknown User";
+              }
+            } catch {
+              newUsernames[member] = "Error fetching username";
+            }
+          }
+        }
+      }
+      console.log(newUsernames);
+      
+      setMemberUsernames(newUsernames);
+    };
+  
+    fetchGroupUsernames();
+  }, [list, backendActor, memberUsernames]);
+  
+
   const handleRemoveMember = (groupIndex, memberName) => {
     setList(prevList =>
       prevList.map(item => {
@@ -509,7 +540,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
                       </div>
                     ) : null}
                     {item.members.map((member, idx) => {
-                      const username = memberUsernames[member] || member; // Fallback to Principal ID if username not available
+                      const username = memberUsernames[member] || "Loading..."; // Fallback to Principal ID if username not available
                       return (
                         <div key={idx} className="w-full bg-white py-2 p-2 md:px-8 flex flex-col items-center justify-between mb-4">
                           <div className="w-full flex flex-col mobile:items-start md:flex-row md:items-center justify-between mb-2">

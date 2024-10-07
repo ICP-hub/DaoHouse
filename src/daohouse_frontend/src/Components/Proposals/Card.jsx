@@ -43,10 +43,10 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
   useEffect(() => {
     async function fetchUserProfile() {
       try {
-        const userProfile = await backendActor.get_profile_by_id(Principal.fromUint8Array(proposal?.created_by?._arr));
-        setUserProfile(userProfile.Ok);
-        const profileImg = userProfile.Ok.profile_img
-          ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${userProfile.Ok.profile_img}`
+        const userProfile = await backendActor.get_profile_by_id(Principal.fromUint8Array(proposal?.created_by._arr));
+        setUserProfile(userProfile?.Ok);
+        const profileImg = userProfile?.Ok.profile_img
+          ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${userProfile?.Ok.profile_img}`
           : userImage;
         setProfileImg(profileImg);
       } catch (error) {
@@ -72,26 +72,53 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
 
   useEffect(() => {
     const fetchDaoName = async() => {
-      daoCan = Principal.fromUint8Array(daoId)
-      const daoActor = await createDaoActor(daoCan.toText());
-      console.log(daoActor);
-      
-      const daoDetails = await daoActor.get_dao_detail();
-      console.log("daodetails", daoDetails);
+      if (!daoId || !daoId._arr) {
+        console.error("Invalid daoId:", daoId);
+        // toast.error("DAO ID is invalid or missing.");
+        return;
+      }
 
-      console.log(daoDetails.dao_name);
-      
-      setDaoName(daoDetails.dao_name)
-      
-    }
+      try {
+        // Convert Uint8Array to Principal
+        const daoPrincipal = Principal.fromUint8Array(new Uint8Array(daoId._arr));
+        const daoPrincipalText = daoPrincipal.toText();
+
+        console.log("DAO Principal (Text):", daoPrincipalText);
+
+        // Create the DAO actor using the Principal text
+        const daoActor = await createDaoActor(daoPrincipalText);
+
+        if (!daoActor) {
+          throw new Error("Failed to create DAO actor.");
+        }
+
+        console.log("DAO Actor:", daoActor);
+
+        // Fetch DAO details
+        const daoDetails = await daoActor?.get_dao_detail();
+
+        if (!daoDetails || !daoDetails.dao_name) {
+          throw new Error("DAO details are missing or incomplete.");
+        }
+
+        console.log("DAO Details:", daoDetails);
+
+        // Update the DAO name state
+        setDaoName(daoDetails.dao_name);
+      } catch (error) {
+        console.error("Error fetching DAO details:", error);
+        // toast.error("Failed to fetch DAO details. Please try again.");
+      }
+    };
+
 
     fetchDaoName();
-  }, [ daoCanisterId, createDaoActor, proposal.associated_dao_canister_id, daoId])
+  }, [ createDaoActor, proposal?.associated_dao_canister_id, daoId])
 
   const copyToClipboard = () => {
     console.log("daoCaniste", daoCanisterId);
     
-    const proposalUrl = `${window.location.origin}/social-feed/proposal/${proposal.proposal_id}/dao/${daoId}`;
+    const proposalUrl = `${window.location.origin}/social-feed/proposal/${proposal?.proposal_id}/dao/${daoId}`;
     navigator.clipboard.writeText(proposalUrl).then(
       () => {
         setCopySuccess("Copied!");
@@ -117,7 +144,7 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
   const approvedProposals = Number(BigInt(proposal?.proposal_approved_votes || 0));
   const rejectedvoters = Number(BigInt(proposal?.proposal_rejected_votes || 0));
   const status = proposal?.proposal_status
-  ? Object.keys(proposal.proposal_status)[0] || "No Status"
+  ? Object.keys(proposal?.proposal_status)[0] || "No Status"
   : "No Status";
 
   const requiredVotes = Number(BigInt(proposal?.required_votes || 0))
@@ -171,7 +198,7 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
   const expiresOnTime = formatTime(expiresOn);
 
   const principalString = proposal?.created_by
-    ? Principal.fromUint8Array(new Uint8Array(proposal.created_by)).toText()
+    ? Principal.fromUint8Array(new Uint8Array(proposal?.created_by)).toText()
     : "Unknown";
 
     const getTimeRemaining = (expiryDate) => {
@@ -207,11 +234,11 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
   }
 
   useEffect(() => {
-    const hasVoted = localStorage.getItem(`voted_${proposal.proposal_id}`);
+    const hasVoted = localStorage.getItem(`voted_${proposal?.proposal_id}`);
     if (hasVoted) {
       // setIsDisabled(true);
     }
-  }, [proposal.proposal_id]);
+  }, [proposal?.proposal_id]);
 
   const handleVoteSubmit = async (e) => {
     e.preventDefault();
@@ -220,7 +247,7 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
     try {
       setIsVoteLoading(true);
       const voteParam = voteStatus === "In Favor" ? { Yes: null } : { No: null };
-      const result = await voteApi.vote(proposal.proposal_id, voteParam);
+      const result = await voteApi?.vote(proposal?.proposal_id, voteParam);
   
       if (result?.Ok) {
         toast.success("Vote submitted successfully");
@@ -234,7 +261,7 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
         setVoteCount((prev) => prev + 1);
   
         // Fetch the updated voter lists
-        const updatedProposal = await voteApi.get_proposal_by_id(proposal.proposal_id);
+        const updatedProposal = await voteApi?.get_proposal_by_id(proposal?.proposal_id);
         setVotersList({
           approvedVotes: updatedProposal?.approved_votes_list || [],
           rejectedVotes: updatedProposal?.rejected_votes_list || [],
@@ -337,7 +364,7 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
           </div>
           <p className={`${isSubmittedProposals ? "hidden" : "text-gray-900 text-sm mobile:text-xl mb-4 "}`}>{proposal?.proposal_description}</p>
           {isSubmittedProposals && (
-            <div>
+            <div className="flex gap-4">
               <span
                 className={`px-4 md:py-1 rounded-full text-white font-semibold text-sm small_phone:text-base ${
                   status === "Approved" ? "bg-[#4CAF50]" : status === "Rejected" ? "bg-red-500" : "bg-[#4993B0]"
@@ -345,7 +372,7 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
               >
                 {status}
               </span>
-              <span className="px-8 py-2 bg-[#4993B0] text-white rounded-full text-lg ">
+              <span className="px-4 md:py-1 bg-[#4993B0] text-white rounded-full text-sm small_phone:text-base ">
             {daoName || "DaoName"}
           </span>
             </div>
@@ -371,7 +398,7 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
                 )}
 
                 <div className="flex flex-wrap justify-start md:justify-start md:mt-0 space-x-2 small_phone:space-x-4">
-                  {showActions || isSubmittedProposals && (              
+                  {showActions && (              
                     <button className={`flex items-center justify-center gap-1 mobile:gap-2 ${
                       isComment ? 'bg-gray-200 text-black rounded-lg p-2' : 'text-gray-600 bg-none'
                     }`} onClick={handleCommentToggle}>
@@ -403,7 +430,7 @@ export default function Card({ proposal, voteApi, daoCanisterId, showActions, is
 
                 <ShareModal
                   isOpen={isShareModalOpen}
-                  proposalId={proposal.proposal_id}
+                  proposalId={proposal?.proposal_id}
                   daoCanisterId={daoId}
                   toggleModal={toggleShareModal}
                   copyToClipboard={copyToClipboard}
