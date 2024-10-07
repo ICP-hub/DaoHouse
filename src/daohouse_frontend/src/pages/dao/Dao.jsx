@@ -162,30 +162,12 @@ const Dao = () => {
       <TopComponent showAll={showAll} setShowAll={setShowAll} showButtons />
       <div className="bg-gray">
         <Container classes="__label small_phone:py-8 py-5 px-4 mobile:px-10 small_phone:px-8  flex justify-between items-center">
-          <div
-            onClick={() => {
-              setCurrentPage(1); // Reset to first page when toggling
-              setShowAll(true);
-              getDaos({ start: 0, end: itemsPerPage });
-            }}
-            className={`small_phone:text-4xl text-3xl tablet:ml-16 flex items-center gap-4 cursor-pointer ${
-              showAll ? "font-bold" : ""
-            }`}
+        <div
+            onClick={() => (showAll ? getDaos() : getJoinedDaos())}
+            className="small_phone:text-4xl text-3xl tablet:ml-16  flex items-center gap-4"
           >
-            All
-          </div>
-          <div
-            onClick={() => {
-              setCurrentPage(1); // Reset to first page when toggling
-              setShowAll(false);
-              getJoinedDaos();
-            }}
-            className={`small_phone:text-4xl text-3xl tablet:ml-16 flex items-center gap-4 cursor-pointer ${
-              !showAll ? "font-bold" : ""
-            }`}
-          >
-            Joined
-          </div>
+            {showAll ? "All" : "Joined"}
+       </div>
           <div className="flex-grow lg:flex justify-center hidden">
             <SearchProposals
               width="70%"
@@ -239,7 +221,7 @@ const Dao = () => {
                 />
               ))}
             </Container>
-            <Pagignation currentPage={currentPage} setCurrentPage={setCurrentPage} hasMore={hasMore} />
+            <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} hasMore={hasMore} />
           </div>
         )
       ) : loadingJoinedDAO ? (
