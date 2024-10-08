@@ -517,10 +517,13 @@ async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
 
     let mut required_thredshold = 0;
     let mut tokens: u64 = 0;
+    let mut token_from: Option<Principal> = None;
+
     let proposals_data = with_state(|state| state.proposals.get(&args.associated_proposal_id));
 
     if let Some(proposal) = proposals_data {
         tokens = proposal.tokens.unwrap_or(0); 
+        token_from = proposal.token_from;
     }     
 
     let _ = with_state(|state| {
@@ -546,7 +549,7 @@ async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
         group_to_join: None,
         dao_purpose: None,
         tokens: Some(tokens),
-        token_from: Some(canister_id),
+        token_from: token_from,
         token_to: Some(api::caller()),
         proposal_created_at: None,
         proposal_expired_at: Some(EXPIRATION_TIME),

@@ -461,8 +461,8 @@ async fn return_token_bounty_claim_or_done(proposal_data: Proposals, proposal: &
         }
     };
 
-    let token_to: Principal = match proposal.token_to.clone() {
-        Some(token_to) => token_to,
+    let token_to: Principal = match proposal.token_from.clone() {
+        Some(token_from) => token_from,
         None => {
             ic_cdk::println!("Missing token amount");
             return;
@@ -475,10 +475,12 @@ async fn return_token_bounty_claim_or_done(proposal_data: Proposals, proposal: &
         tokens,
     };
 
-    ic_cdk::println!("proposals token_from {:?} ", proposal.token_from);
-    ic_cdk::println!("proposals  token_to {:?} ", proposal.token_to);
-    ic_cdk::println!("proposals principal_of_action {:?} ", proposal.principal_of_action);
-
+    if let Some(token_from) = proposal.token_from {
+        ic_cdk::println!("proposals token_from: {}", token_from.to_text());
+    }
+    if let Some(token_to) = proposal.token_to {
+        ic_cdk::println!("proposals token_to: {}", token_to.to_text());
+    }    
 
     if let Err(err) = icrc_transfer(token_transfer_args.clone()).await {
         ic_cdk::println!("Error in transfer of tokens: {}", err);
