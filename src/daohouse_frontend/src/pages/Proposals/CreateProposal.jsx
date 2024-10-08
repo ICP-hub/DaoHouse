@@ -41,7 +41,6 @@ function CreateProposal() {
     link_of_task: '',
     // action_member: '',
     bounty_task: '',
-    associated_proposal_id : '',
   });
 
   const [generalPurp, setGeneralPurp] = useState({

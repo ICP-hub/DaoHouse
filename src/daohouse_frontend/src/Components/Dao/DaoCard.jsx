@@ -203,7 +203,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
           View Profile
         </button>
         <button
-          // onClick={handleJoinDao}
+          onClick={!isJoinedDAO ? handleJoinDao : null}
           className="flex-1 bg-dark-green border-2 border-dark-green text-white p-2 rounded-[3rem] small_phone:text-base text-sm"
         >
           {isJoinedDAO ? "Joined" : joinStatus }

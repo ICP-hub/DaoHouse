@@ -350,7 +350,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
 
 
 
-            <div className="flex gap-4">
+            <div className="flex gap-4 self-start">
               <span className="md:py-1 px-2 md:px-4 md:w-[190px] rounded-full bg-[#4993B0] text-white font-semibold text-sm small_phone:text-base">
                 {timeRemaining}
               </span>
