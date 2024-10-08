@@ -27,6 +27,7 @@ import MuiSkeleton from "../../Components/SkeletonLoaders/MuiSkeleton";
 import ProposalLoaderSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/ProposalLoaderSkeleton";
 import DaoProfileLoaderSkeleton from "../../Components/SkeletonLoaders/DaoProfileLoaderSkeleton/DaoProfileLoaderSkeleton";
 import NoDataComponent from "../../Components/Dao/NoDataComponent";
+import { CircularProgress } from "@mui/material";
 
 
 const DaoProfile = () => {
@@ -47,6 +48,9 @@ const DaoProfile = () => {
   const [voteApi, setVoteApi] = useState({})
   const [daoFollowers, setDaoFollowers] = useState([])
   const [daoMembers, setDaoMembers] = useState([])
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [daoActor, setDaoActor] = useState({})
+  const [loading, setLoading] = useState(false); 
   const [daoGroups, setDaoGroups] = useState([])
   const [isExpanded, setIsExpanded] = useState(false);
   const maxWords = 250;
@@ -83,6 +87,7 @@ const DaoProfile = () => {
       if (daoCanisterId) {
         try {
           const daoActor = createDaoActor(daoCanisterId);
+          setDaoActor(daoActor)
           setVoteApi(daoActor);
 
           const daoDetails = await daoActor.get_dao_detail();
@@ -127,7 +132,7 @@ const DaoProfile = () => {
           // Start loading proposals
         try {
           const daoActor = createDaoActor(daoCanisterId);
-          const itemsPerPage = 8;
+          const itemsPerPage = 20;
           const start = (currentPage - 1) * itemsPerPage;
           const end = start + itemsPerPage;
 
@@ -146,13 +151,24 @@ const DaoProfile = () => {
   }, [daoCanisterId, backendActor, createDaoActor, currentPage]);
 
   const handleJoinDao = async () => {
-    if (joinStatus === 'Joined') return;
+    if (joinStatus === 'Joined') {
+      toast.error(`You are already member of this dao`);
+      return;
+    };
 
+    setShowConfirmModal(true);
+    
+  };
+
+  const confirmJoinDao = async () => {
+    setLoading(true)
     try {
-      const daoActor = createDaoActor(daoCanisterId);
-      console.log({daoActor});
+      let a = Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND)
+      console.log(a);
       
-      const response = await daoActor.ask_to_join_dao(daoCanisterId);
+      const response = await daoActor.ask_to_join_dao(a);
+      console.log(response);
+      
       if (response.Ok) {
         setJoinStatus("Requested");
         toast.success("Join request sent successfully");
@@ -161,8 +177,12 @@ const DaoProfile = () => {
         toast.error(`Failed to send join request: ${response.Err || "Unknown error"}`);
       }
     } catch (error) {
+      setLoading(false)
       console.error('Error sending join request:', error);
       toast.error('Error sending join request');
+    } finally {
+      setShowConfirmModal(false);
+      setLoading(false)
     }
   };
 
@@ -322,7 +342,7 @@ const DaoProfile = () => {
 ) : (
 
       <div className={"bg-[#c8ced3]"}>
-        <Container classes={`${className} __mainComponent lg:py-8 lg:pb-20 py-6 big_phone:px-8 px-6 tablet:flex-row gap-2 flex-col w-full`}>
+        <Container classes={`${className} __mainComponent lg:py-8 lg:pb-20 py-6 tablet:px-28 px-6 tablet:flex-row gap-2 flex-col w-full`}>
         <div className="flex md:justify-between w-full md:gap-2 gap-10 z-20 relative flex-wrap">
           <div className="flex items-start">
             <div
@@ -403,8 +423,38 @@ const DaoProfile = () => {
             >
               {joinStatus}
             </button>
+            {showConfirmModal && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                <div className="bg-white p-6 rounded-lg shadow-lg md:w-[800px] mx-auto text-center">
+                  <h3 className="text-xl font-mulish font-semibold text-[#234A5A]">Ready to join this DAO?</h3>
+                  <p className="mt-4 text-[16px] md:px-24 font-mulish">
+                    You’re about to join a DAO! A proposal will be created to welcome you, and DAO members will vote on your request. 
+                    You'll be notified once the results are in. Approval happens when members vote in your favor—good luck!
+                  </p>
+                  <div className="flex justify-center gap-4 mt-4">
+                    <button
+                      onClick={() => setShowConfirmModal(false)}
+                      className="px-8 py-3 text-[12px] lg:text-[16px] text-black font-normal rounded-full shadow-md hover:bg-gray-200 hover:text-[#0d2933]"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={confirmJoinDao}
+                      className="px-6 md:px-8 py-3 text-center text-[12px] lg:text-[16px] bg-[#0E3746] text-white rounded-full shadow-xl hover:bg-[#0d2933] hover:text-white"
+                    >
+                      {loading ? (
+                          <CircularProgress size={24} />
+                        ) : (
+                          "Join DAO"
+                        )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
+        
         <div
           className={
             className +

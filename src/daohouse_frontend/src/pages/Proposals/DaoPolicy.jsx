@@ -32,7 +32,7 @@ const DaoPolicy = ({ changePolicy, handleInputDaoPolicy }) => (
             <label htmlFor="coolDownPeriod" className="mb-2 font-semibold text-xl">Cool Down Period</label>
             <input
                 id="coolDownPeriod"
-                type="text"
+                type="number"
                 name="cool_down_period"
                 value={changePolicy.cool_down_period}
                 onChange={handleInputDaoPolicy}
@@ -45,7 +45,7 @@ const DaoPolicy = ({ changePolicy, handleInputDaoPolicy }) => (
             <label htmlFor="requiredVotes" className="mb-2 font-semibold text-xl">Required Votes</label>
             <input
                 id="requiredVotes"
-                type="text"
+                type="number"
                 name="required_votes"
                 value={changePolicy.required_votes}
                 onChange={handleInputDaoPolicy}

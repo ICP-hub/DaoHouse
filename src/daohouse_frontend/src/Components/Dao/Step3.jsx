@@ -17,6 +17,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
   const [showMemberNameInput, setShowMemberNameInput] = useState(false);
   const [addMemberIndex, setAddMemberIndex] = useState(null);
   const [groupNameInputIndex, setGroupNameInputIndex] = useState(null);
+  const [memberUsernames, setMemberUsernames] = useState({});
   const [updatedGroupName, setUpdatedGroupName] = useState("");
   const [memberName, setMemberName] = useState("");
   const { backendActor, stringPrincipal } = useAuth();
@@ -120,6 +121,42 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
     setShowMemberNameInput(true);
   };
 
+  // const handleAddMember = async () => {
+  //   if (memberName.trim() !== "") {
+  //     try {
+  //       const principal = Principal.fromText(memberName.trim());
+  //       const response = await backendActor.get_profile_by_id(principal);
+  
+  //       if (response.Ok) {
+  //         const username = response.Ok.username; // Get username from the response
+  //         setUsername(username);
+  //         localStorage.setItem(`username_${principal.toText()}`, username);
+  //         console.log("user", username);
+          
+  //         setList((prevList) =>
+  //           prevList.map((item) => {
+  //             if (item.index === addMemberIndex || (addMemberIndex === "council" && item.name === "Council")) {
+  //               const principalId = principal.toText();
+  //               if (!item.members.includes(principalId)) {
+  //                 return { ...item, members: [...item.members, principalId] };
+  //               } else {
+  //                 toast.error("Principal ID already exists");
+  //               }
+  //             }
+  //             return item;
+  //           })
+  //         );
+  //         setMemberName("");
+  //         setShowMemberNameInput(false);
+  //       } else {
+  //         toast.error("User does not exist");
+  //       }
+  //     } catch (error) {
+  //       toast.error("Invalid Principal ID or error fetching profile");
+  //     }
+  //   }
+  // };
+
   const handleAddMember = async () => {
     if (memberName.trim() !== "") {
       try {
@@ -128,14 +165,19 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
   
         if (response.Ok) {
           const username = response.Ok.username; // Get username from the response
-          setUsername(username);
-          localStorage.setItem(`username_${principal.toText()}`, username);
-          console.log("user", username);
-          
+          const principalId = principal.toText();
+  
+          setMemberUsernames((prevUsernames) => ({
+            ...prevUsernames,
+            [principalId]: username,
+          }));
+  
           setList((prevList) =>
             prevList.map((item) => {
-              if (item.index === addMemberIndex || (addMemberIndex === "council" && item.name === "Council")) {
-                const principalId = principal.toText();
+              if (
+                item.index === addMemberIndex ||
+                (addMemberIndex === "council" && item.name === "Council")
+              ) {
                 if (!item.members.includes(principalId)) {
                   return { ...item, members: [...item.members, principalId] };
                 } else {
@@ -145,6 +187,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
               return item;
             })
           );
+  
           setMemberName("");
           setShowMemberNameInput(false);
         } else {
@@ -155,6 +198,37 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
       }
     }
   };
+
+  useEffect(() => {
+    const fetchGroupUsernames = async () => {
+      const groups = list.filter(group => group.name !== "Council");
+      const newUsernames = { ...memberUsernames };
+  
+      for (const group of groups) {
+        for (const member of group.members) {
+          if (!newUsernames[member]) { // Only fetch if not already fetched
+            try {
+              const principal = Principal.fromText(member);
+              const response = await backendActor.get_profile_by_id(principal);
+              if (response.Ok) {
+                newUsernames[member] = response.Ok.username;
+              } else {
+                newUsernames[member] = "Unknown User";
+              }
+            } catch {
+              newUsernames[member] = "Error fetching username";
+            }
+          }
+        }
+      }
+      console.log(newUsernames);
+      
+      setMemberUsernames(newUsernames);
+    };
+  
+    fetchGroupUsernames();
+  }, [list, backendActor, memberUsernames]);
+  
 
   const handleRemoveMember = (groupIndex, memberName) => {
     setList(prevList =>
@@ -465,21 +539,18 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
                         </button>
                       </div>
                     ) : null}
-                    {item.members.map((member, memberIndex) => {
-
-                      getUsernameByPrincipalId(member)
-
+                    {item.members.map((member, idx) => {
+                      const username = memberUsernames[member] || "Loading..."; // Fallback to Principal ID if username not available
                       return (
-                        <section key={index} className="w-full bg-white py-2 p-2 md:px-8 mt-4">
-                        <div className="w-full flex flex-col mobile:items-start md:flex-row md:items-center justify-between mb-2">
-                            <p className="font-semibold mobile:text-base text-sm border-black">{username}</p>
-                            <p className="text-sm mobile:mt-1 md:mt-0">{member}</p> {/* Display Principal ID */}
-                            <button onClick={() => handleRemoveMember('council', member)} className="mt-2 md:mt-0">
-                                <MdOutlineDeleteOutline className="text-red-500 mobile:text-2xl text-lg" />
+                        <div key={idx} className="w-full bg-white py-2 p-2 md:px-8 flex flex-col items-center justify-between mb-4">
+                          <div className="w-full flex flex-col mobile:items-start md:flex-row md:items-center justify-between mb-2">
+                            <p className="font-semibold mobile:text-base text-sm">{username}</p>
+                            <p className="text-sm mobile:mt-1 md:mt-0">{member}</p>
+                            <button onClick={() => handleRemoveMember(item.index, member)}>
+                              <MdOutlineDeleteOutline className="text-red-500 mobile:text-2xl text-lg" />
                             </button>
+                          </div>
                         </div>
-                    </section>
-
                       );
                     })}
                   </section>

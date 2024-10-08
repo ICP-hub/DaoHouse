@@ -10,7 +10,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { Principal } from '@dfinity/principal';
 
 // Comment component
-const Comment = ({ comment, proposalId, daoId }) => {
+const Comment = ({ comment, proposalId, daoId, commentCount, setCommentCount }) => {
   const { createDaoActor, backendActor } = useAuth();
   const [showReplies, setShowReplies] = useState(false);
   const [showReplyInput, setShowReplyInput] = useState(false);
@@ -60,8 +60,9 @@ const Comment = ({ comment, proposalId, daoId }) => {
       
       // Create replyArgs with the commented_by principal
       const replyArgs = {
-        commented_by: comment.author_principal, // Use the comment's author principal
-        reply_comment: replyText,
+        comment: replyText,
+        proposal_id: proposalId,
+        comment_id: comment.comment_id,
       };
   
       const daoActor = await createDaoActor(daoId);
@@ -74,6 +75,7 @@ const Comment = ({ comment, proposalId, daoId }) => {
           reply_comment: replyText,
         });
         setReplyText("");
+        setCommentCount(commentCount+1)
         setShowReplies(true);
         setShowReplyInput(false);
       } else {
@@ -320,7 +322,7 @@ detail();
       <h3 className="font-bold mb-6 text-[#234A5A] text-xl">Comments</h3>
 
       {comments.slice(0, visibleComments).map((comment, index) => (
-        <Comment key={index} comment={comment} proposalId={proposalId} daoActor={daoActor} daoId={daoId} />
+        <Comment key={index} comment={comment} proposalId={proposalId} daoActor={daoActor} daoId={daoId} commentCount={commentCount} setCommentCount={setCommentCount} />
       ))}
       {comments.length > 3 && (
         <p className="text-[0F3746] underline cursor-pointer mt-4" onClick={toggleShowMore}>

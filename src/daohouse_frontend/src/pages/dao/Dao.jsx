@@ -10,7 +10,8 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import LoginModal from "../../Components/Auth/LoginModal";
 import SearchProposals from "../../Components/Proposals/SearchProposals";
 import { Principal } from "@dfinity/principal";
-import DaoCardLoaderSkeleton from "../../Components/SkeletonLoaders/DaoCardLoaderSkeleton/DaoCardLoaderSkeleton";
+import DaoCardLoaderSkeleton from "../../Components/SkeletonLoaders/DaoCardLoaderSkeleton/DaoCardLoaderSkeleton"; 
+import Pagination from "../../Components/pagination/Pagination";
 
 const Dao = () => {
   const [showAll, setShowAll] = useState(true);
@@ -22,7 +23,6 @@ const Dao = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [fetchedDAOs, setFetchedDAOs] = useState([]);
   const [hasMore, setHasMore] = useState(true);
-  // const [isJoinedDAO, setIsJoinedDAO] = useState(false)
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
 
@@ -50,9 +50,17 @@ const Dao = () => {
   const getDaos = async (pagination = {}) => {
     setLoading(true);
     try {
-      const response = await backendActor.get_all_dao(pagination);
-      const combinedDaoDetails = await fetchDaoDetails(response.slice(0, itemsPerPage));
-      setHasMore(response.length > itemsPerPage);
+      const response = await backendActor.get_all_dao({ 
+        start: pagination.start, 
+        end: pagination.end + 1 
+      });
+  
+      const hasMoreData = response.length > itemsPerPage;
+  
+      const daoToDisplay = response.slice(0, itemsPerPage);
+  
+      const combinedDaoDetails = await fetchDaoDetails(daoToDisplay);
+      setHasMore(hasMoreData); 
       setDao(combinedDaoDetails);
     } catch (error) {
       console.error("Error fetching DAOs:", error);
@@ -60,14 +68,24 @@ const Dao = () => {
       setLoading(false);
     }
   };
+  
 
   const getSearchDao = async () => {
     if (!searchTerm.trim()) return setFetchedDAOs([]);
-
+  
     setLoading(true);
     try {
-      const response = await backendActor.search_dao(searchTerm);
-      const combinedSearchDaoDetails = await fetchDaoDetails(response);
+      const response = await backendActor.search_dao(searchTerm, { 
+        start: (currentPage - 1) * itemsPerPage, 
+        end: currentPage * itemsPerPage + 1  
+      });
+  
+      const hasMoreData = response.length > itemsPerPage;
+  
+      const daoToDisplay = response.slice(0, itemsPerPage);
+  
+      const combinedSearchDaoDetails = await fetchDaoDetails(daoToDisplay);
+      setHasMore(hasMoreData);
       setFetchedDAOs(combinedSearchDaoDetails);
     } catch (error) {
       console.error("Error searching DAOs:", error);
@@ -75,6 +93,7 @@ const Dao = () => {
       setLoading(false);
     }
   };
+  
 
   const getJoinedDaos = async () => {
     try {
@@ -97,7 +116,6 @@ const Dao = () => {
       );
 
       console.log("JD", joinedDaoDetails);
-      
 
       setJoinedDAO(joinedDaoDetails.filter((dao) => dao !== null));
     } catch (error) {
@@ -118,22 +136,38 @@ const Dao = () => {
 
   useEffect(() => {
     if (searchTerm) {
-      setLoading(true);
+      setCurrentPage(1); // Reset to first page on new search
       getSearchDao();
+    } else {
+      // If search term is cleared, refetch DAOs
+      getDaos({ start: (currentPage - 1) * itemsPerPage, end: currentPage * itemsPerPage });
     }
-  }, [searchTerm]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTerm, currentPage]);
 
   useEffect(() => {
     if (!showAll) getJoinedDaos();
   }, [showAll]);
 
-  const handleLogin = async (loginMethod) => {
+  const handleLogin = async () => {
     setLoading(true);
     try {
-      await loginMethod();
+      await login("Icp");
       window.location.reload();
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error('Login failed:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleNFIDLogin = async () => {
+    setLoading(true);
+    try {
+      await signInNFID();
+      window.location.reload();
+    } catch (error) {
+      console.error('NFID login failed:', error);
     } finally {
       setLoading(false);
     }
@@ -145,16 +179,16 @@ const Dao = () => {
     <div className="bg-zinc-200">
       <TopComponent showAll={showAll} setShowAll={setShowAll} showButtons />
       <div className="bg-gray">
-        <Container classes="__label small_phone:py-8 py-5 mobile:px-10 px-5 flex justify-between items-center">
-          <div
+        <Container classes="__label small_phone:py-8 py-5 px-4 mobile:px-10 small_phone:px-8  flex justify-between items-center">
+        <div
             onClick={() => (showAll ? getDaos() : getJoinedDaos())}
-            className="small_phone:text-4xl text-3xl big_phone:px-8 flex items-center gap-4"
+            className="small_phone:text-4xl text-3xl tablet:ml-16  flex items-center gap-4"
           >
             {showAll ? "All" : "Joined"}
-          </div>
-          <div className="flex-grow lg:flex justify-center px-6 mx-2 hidden">
+       </div>
+          <div className="flex-grow lg:flex justify-center hidden">
             <SearchProposals
-              width="100%"
+              width="70%"
               bgColor="transparent"
               placeholder="Search here"
               className="border-2 border-[#AAC8D6] w-full max-w-lg"
@@ -162,7 +196,7 @@ const Dao = () => {
             />
           </div>
           <Link to="/dao/create-dao">
-            <button className="bg-white small_phone:gap-2 gap-1 mr-12 mobile:px-5 p-2 small_phone:text-base text-sm shadow-xl flex items-center rounded-full hover:bg-[#ececec] hover:scale-105 transition">
+            <button className="bg-white small_phone:gap-2 gap-1 tablet:mr-12 mobile:px-5 p-2 small_phone:text-base text-sm shadow-xl flex items-center rounded-full hover:bg-[#ececec] hover:scale-105 transition">
               <HiPlus />
               Create DAO
             </button>
@@ -174,8 +208,8 @@ const Dao = () => {
         <LoginModal
           isOpen={showLoginModal}
           onClose={() => navigate("/")}
-          onLogin={() => handleLogin(login)}
-          onNFIDLogin={() => handleLogin(signInNFID)}
+          onLogin={handleLogin}
+          onNFIDLogin={handleNFIDLogin}
         />
       )}
 
@@ -188,7 +222,7 @@ const Dao = () => {
           </div>
         ) : (
           <div className="bg-gray">
-            <Container classes="__cards tablet:px-10 px-4 pb-10 grid grid-cols-1 big_phone:grid-cols-2 tablet:gap-6 gap-4">
+            <Container classes="__cards tablet:px-10 small_phone:px-8 pb-10 grid grid-cols-1 big_phone:grid-cols-2 tablet:gap-2 gap-4">
               {(searchTerm ? fetchedDAOs : dao).map((daos, index) => (
                 <DaoCard
                   key={index}
@@ -200,13 +234,14 @@ const Dao = () => {
                     groups: daos.groups_count ? Number(BigInt(daos.groups_count)) : "0",
                     proposals: daos.proposals_count || "0",
                     image_id: daos.image_id || "No Image",
-                    // daoCanister: daos.daoCanister,
                     daoCanisterId: daos.dao_canister_id || "No ID",
                   }}
                 />
               ))}
             </Container>
-            <Pagignation currentPage={currentPage} setCurrentPage={setCurrentPage} hasMore={hasMore} />
+            {!loading && (
+              <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} hasMore={hasMore} />
+            )}
           </div>
         )
       ) : loadingJoinedDAO ? (
@@ -225,62 +260,24 @@ const Dao = () => {
                   groups: daos.groups_count ? Number(BigInt(daos.groups_count)) : "0",
                   proposals: daos.proposals_count || "0",
                   image_id: daos.image_id || "No Image",
-                  // daoCanister: daos.daoCanister,
                   daoCanisterId: daos.dao_canister_id || "No ID",
                 }}
                 isJoinedDAO={true}
               />
             ))}
           </Container>
-          <Pagignation currentPage={currentPage} setCurrentPage={setCurrentPage} hasMore={hasMore} />
+          {!loadingJoinedDAO && (
+            <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} hasMore={hasMore} />
+          )}
         </div>
       ) : (
-        <NoDataComponent />
+        <div className="flex justify-center items-center h-full mb-10 md:mt-40 mx-10">
+          <NoDataComponent />
+        </div>
       )}
     </div>
   );
 };
 
-const Pagignation = ({ currentPage, setCurrentPage, hasMore }) => {
-  const handleNext = () => {
-    if (hasMore) {
-      setCurrentPage((prevPage) => prevPage + 1);
-    }
-  };
-
-  const handlePrevious = () => {
-    if (currentPage > 1) {
-      setCurrentPage((prevPage) => prevPage - 1);
-    }
-  };
-
-  return (
-    <div className="pagination-container flex justify-center gap-10 items-center pb-10">
-      <button
-className={`text-xl flex items-center ml-1 ${currentPage === 1
-  ? "text-gray-400 cursor-not-allowed"
-  : "text-black hover:text-gray-500 cursor-pointer"
-  }`}
-onClick={() => handlePrevious(currentPage - 1)}
-disabled={currentPage === 1}
->
-<FaArrowLeft /> Prev
-</button>
-<button
-className={`text-xl flex items-center px-3 py-1 transition duration-300 ease-in-out ${!hasMore
-  ? "text-gray-400 cursor-not-allowed"
-  : "text-black hover:text-gray-500 cursor-pointer"
-  }`}
-onClick={() => handlePageChange(currentPage + 1)}
-disabled={!hasMore}
->
-Next <FaArrowRight />
-</button>
-    </div>
-  );
-};
 
 export default Dao;
-
-
-

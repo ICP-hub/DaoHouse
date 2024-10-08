@@ -128,7 +128,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
   };
 
   return (
-    <div className="bg-[#F4F2EC] rounded-lg shadow-lg tablet:p-6 big_phone:p-3 small_phone:p-5 p-3 rounded-lg mr-12 ml-8">
+    <div className="bg-[#F4F2EC] shadow-lg tablet:p-6 big_phone:p-3 small_phone:p-5 p-3 rounded-lg md:mx-8 tablet:mx-16">
       <div className="flex big_phone:flex-row small_phone:flex-col justify-start items-start mb-4 gap-2">
         {/* Image Container */}
         <div className="w-full big_phone:w-40 lg:w-60 mobile:h-[120px] border border-black rounded">
@@ -203,7 +203,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
           View Profile
         </button>
         <button
-          onClick={handleJoinDao}
+          onClick={!isJoinedDAO ? handleJoinDao : null}
           className="flex-1 bg-dark-green border-2 border-dark-green text-white p-2 rounded-[3rem] small_phone:text-base text-sm"
         >
           {isJoinedDAO ? "Joined" : joinStatus }
