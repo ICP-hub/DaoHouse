@@ -1,3 +1,5 @@
+import { CircularProgress } from '@mui/material';
+
 const TokenPaymentModal = ({ isOpen, onClose, onConfirm, paymentDetails, loadingPayment }) => {
     if (!isOpen) return null;
   
@@ -10,15 +12,15 @@ const TokenPaymentModal = ({ isOpen, onClose, onConfirm, paymentDetails, loading
           <div className="flex justify-end space-x-4">
             <button
               onClick={onClose}
-              className="text-black bg-white hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-6 py-2.5 sm:px-6 lg:px-12 sm:py-2.5 sm:me-2 mb-2 border border-gray-500 dark:bg-white dark:hover:bg-gray-200 dark:focus:ring-gray-300 dark:text-black w-full sm:w-auto"
+              className="text-black bg-white hover:bg-gray-100 font-medium rounded-full text-sm px-6 py-2.5 sm:px-6 lg:px-12 sm:py-2.5 sm:me-2 mb-2 border border-gray-500 dark:bg-white dark:hover:bg-gray-200 dark:text-black w-full sm:w-auto"
             >
               Cancel
             </button>
             <button
               onClick={onConfirm}
-              className="text-white bg-black hover:bg-gray-900 focus:outline-none focus:ring-4 font-medium rounded-full text-sm px-6 py-2.5 sm:px-6 lg:px-16 sm:py-2.5 sm:me-2 mb-2 border border-gray-500 dark:bg-black dark:hover:bg-gray-800 dark:focus:ring-gray-700 dark:text-white w-full sm:w-auto"
+              className="text-white bg-black hover:bg-gray-900   font-medium rounded-full text-sm px-6 py-2.5 sm:px-6 lg:px-16 sm:py-2.5 sm:me-2 mb-2 border border-gray-500 dark:bg-black dark:hover:bg-gray-800 dark:text-white w-full sm:w-auto"
             >
-              {loadingPayment ? "Loading..." : "Confirm"}
+              {loadingPayment ? <CircularProgress size={30} color="inherit" /> : "Confirm"}
             </button>
           </div>
         </div>

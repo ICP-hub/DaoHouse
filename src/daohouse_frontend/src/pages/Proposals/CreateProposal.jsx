@@ -28,12 +28,7 @@ function CreateProposal() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 const [loadingPayment, setLoadingPayment] = useState(false);
 const [paymentDetails, setPaymentDetails] = useState({
-    proposal_expired_at: '',
-    description: '',
-    tokens: '',
-    // action_member: '',
-    proposal_created_at: '',
-    bounty_task: '',
+ 
 });
   const [proposalType, setProposalType] = useState('');
   const [dao, setDao] = useState(null);
@@ -467,18 +462,21 @@ const [paymentDetails, setPaymentDetails] = useState({
         parsedBalance,
         actor,
         formattedMetadata,
-        bountyRaised.tokens
+        tokenTransfer.tokens
       );
   
       // After payment, create the proposal
       const daoCanister = await createDaoActor(daoCanisterId);
-      const response = await daoCanister.proposal_to_transfer_token(bountyRaised);
+      const response = await daoCanister.proposal_to_transfer_token(tokenTransfer);
+      console.log(response.Err);
+      
       
       if (response.Ok) {
         toast.success("Token transfer proposal created successfully");
+        setIsModalOpen(false);
         movetodao();
       } else {
-        toast.error("Failed to create token transfer proposal");
+        toast.error(response.Err);
       }
     } catch (err) {
       console.error("Error submitting Token Transfer proposal:", err);
@@ -728,6 +726,7 @@ const [paymentDetails, setPaymentDetails] = useState({
       
       if (response.Ok) {
         toast.success("Bounty raised proposal created successfully");
+        setIsModalOpen(false);
         movetodao();
       } else {
         toast.error("Failed to create bounty raised proposal");
@@ -766,7 +765,6 @@ const [paymentDetails, setPaymentDetails] = useState({
         
       }
       
-      setIsModalOpen(false);
     } catch (error) {
       console.error("Payment submission failed:", error);
       toast.error("Payment failed. Please try again.");
