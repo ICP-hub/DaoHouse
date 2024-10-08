@@ -429,11 +429,11 @@ async fn make_payment(tokens: u64, user: Principal) -> Result<Nat, String> {
     transfer(tokens, user).await
 }
 
-#[update(guard=guard_check_members)]
+#[update]
 async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String> {
     // let proposal_expired_at = args.proposal_expired_at * 60 * 60 * 1_000_000_000;
 
-    // const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
+    const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
     let principal_id: Principal = api::caller();
     let canister_id: Principal = ic_cdk::api::id();
 
@@ -469,7 +469,7 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
         token_from: Some(principal_id),
         token_to: Some(canister_id),
         proposal_created_at: None,
-        proposal_expired_at: None,
+        proposal_expired_at: Some(EXPIRATION_TIME),
         bounty_task: Some(args.bounty_task),
         poll_title: None,
         required_votes: None,
@@ -489,33 +489,39 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
     Ok(String::from(crate::utils::MESSAGE_BOUNTY_RAISED))
 }
 
-#[update(guard=guard_check_members)]
+#[update]
 async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
     // let proposal_expired_at = args.proposal_expired_at * 60 * 60 * 1_000_000_000;
-    // const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
+    const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
     let canister_id: Principal = ic_cdk::api::id();
-    let timestamp = time();
-    let check_expired = with_state(|state| {
-        if let Some(proposal) = state.proposals.get(&args.associated_proposal_id) {
+    // let timestamp = time();
+    // let check_expired = with_state(|state| {
+    //     if let Some(proposal) = state.proposals.get(&args.associated_proposal_id) {
            
-           let time_diff = timestamp.saturating_sub(proposal.proposal_submitted_at);
-           let user_propsal_expire_date = proposal.proposal_expired_at;
+    //        let time_diff = timestamp.saturating_sub(proposal.proposal_submitted_at);
+    //        let user_propsal_expire_date = proposal.proposal_expired_at;
 
-            if proposal.proposal_status == ProposalState::Succeeded && proposal.proposal_type == ProposalType::BountyRaised && time_diff >= user_propsal_expire_date && !proposal.has_been_processed_secound {
-                Ok(())
-            } else{
-                return Err(format!("Proposal has been {:?}", proposal.proposal_status)); 
-            }
-        } else {
-            Err("Proposal not found".to_string())
-        }
-    });
+    //         if proposal.proposal_status == ProposalState::Succeeded && proposal.proposal_type == ProposalType::BountyRaised && time_diff >= user_propsal_expire_date && !proposal.has_been_processed_secound {
+    //             Ok(())
+    //         } else{
+    //             return Err(format!("Proposal has been {:?}", proposal.proposal_status)); 
+    //         }
+    //     } else {
+    //         Err("Proposal not found".to_string())
+    //     }
+    // });
 
-    if let Err(e) = check_expired {
-        return Err(e);
-    }
+    // if let Err(e) = check_expired {
+    //     return Err(e);
+    // }
 
     let mut required_thredshold = 0;
+    let mut tokens: u64 = 0;
+    let proposals_data = with_state(|state| state.proposals.get(&args.associated_proposal_id));
+
+    if let Some(proposal) = proposals_data {
+        tokens = proposal.tokens.unwrap_or(0); 
+    }     
 
     let _ = with_state(|state| {
         match state
@@ -539,11 +545,11 @@ async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
         new_dao_name: None,
         group_to_join: None,
         dao_purpose: None,
-        tokens: None,
+        tokens: Some(tokens),
         token_from: Some(canister_id),
         token_to: Some(api::caller()),
         proposal_created_at: None,
-        proposal_expired_at: None,
+        proposal_expired_at: Some(EXPIRATION_TIME),
         bounty_task: Some(args.bounty_task),
         poll_title: None,
         required_votes: None,

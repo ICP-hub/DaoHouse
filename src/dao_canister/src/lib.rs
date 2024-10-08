@@ -28,8 +28,7 @@ pub fn with_state<R>(f: impl FnOnce(&mut State) -> R) -> R {
     STATE.with(|cell| f(&mut cell.borrow_mut()))
 }
 
-const EXPIRATION_TIME: u64 = 1 * 60 * 1_000_000_000;
-
+const EXPIRATION_TIME: u64 = 60 * 1_000_000_000;
 fn start_proposal_checker() {
     set_timer_interval(Duration::from_secs(60), || {
         check_proposals();
@@ -39,134 +38,223 @@ fn start_proposal_checker() {
 fn check_proposals() {
     with_state(|state: &mut State| {
         let timestamp = time();
-        // let cool_down_period =  state.dao.cool_down_period as u64;
-        // let expiration_time  =  cool_down_period * 60 * 60 * 1_000_000_000;
 
-        let mut proposals_to_update: Vec<Proposals> = Vec::new();
+        let proposal_ids: Vec<String> = state.proposals.iter()
+            .filter_map(|(id, proposal)| {
+                let time_diff = timestamp.saturating_sub(proposal.proposal_submitted_at);
+                let should_process = if proposal.proposal_type == ProposalType::Polls
+                    || proposal.proposal_type == ProposalType::BountyRaised
+                {
+                    time_diff >= proposal.proposal_expired_at && !proposal.has_been_processed
+                } else {
+                    time_diff >= EXPIRATION_TIME && !proposal.has_been_processed
+                };
+                if should_process {
+                    Some(id.clone())
+                } else {
+                    None
+                }
+            })
+            .collect();
 
-        for (_, proposal) in state.proposals.iter() {
-            let time_diff = timestamp.saturating_sub(proposal.proposal_submitted_at);
+        for proposal_id in proposal_ids {
+            if let Some(mut proposal) = state.proposals.get(&proposal_id) {
+                proposal.has_been_processed = true;
 
-            let proposal_approved_votes = proposal.proposal_approved_votes as f64;
-            let proposal_rejected_votes = proposal.proposal_rejected_votes as f64;
-            let total_votes = proposal_approved_votes + proposal_rejected_votes;
-            let total_percentage = (proposal_approved_votes / total_votes) * 100.0;
+                let proposal_approved_votes = proposal.proposal_approved_votes as f64;
+                let proposal_rejected_votes = proposal.proposal_rejected_votes as f64;
+                let total_votes: f64 = proposal_approved_votes + proposal_rejected_votes;
+                let total_percentage = if total_votes > 0.0 {
+                    (proposal_approved_votes / total_votes) * 100.0
+                } else {
+                    0.0
+                };
+                let time_diff = timestamp.saturating_sub(proposal.proposal_submitted_at);
+                let min_require_vote = state.dao.required_votes as f64;
+                let min_threshold = proposal.minimum_threadsold as f64;
 
-            let user_propsal_expire_date = proposal.proposal_expired_at;
-            let min_require_vote = state.dao.required_votes;
-
-            let min_threadshold = proposal.minimum_threadsold;
-
-            let mut proposal = proposal.clone();
-            if proposal.proposal_type == ProposalType::Polls
-                || proposal.proposal_type == ProposalType::BountyRaised
-            {
-                if time_diff >= user_propsal_expire_date && !proposal.has_been_processed {
-                    proposal.has_been_processed = true;
-                    if total_votes >= min_require_vote as f64 {
-                        if total_percentage >= min_threadshold as f64 {
-                            proposal.proposal_status = ProposalState::Accepted;
-                            proposals_to_update.push(proposal.clone());
-                        } else if total_percentage > 0.0 {
-                            proposal.proposal_status = ProposalState::Rejected;
-                        } else {
-                            proposal.proposal_status = ProposalState::Expired;
-                        }
+                if total_votes >= min_require_vote {
+                    if total_percentage >= min_threshold {
+                        proposal.proposal_status = ProposalState::Accepted;
+                        let clone_proposal = proposal.clone();
+                        state.proposals.insert(proposal_id.clone(), clone_proposal);
+                    } else if total_percentage > 0.0 {
+                        proposal.proposal_status = ProposalState::Rejected;
+                        let clone_proposal = proposal.clone();
+                        state.proposals.insert(proposal_id.clone(), clone_proposal);
                     } else {
-                        proposal.proposal_status = ProposalState::Unreachable;
+                        proposal.proposal_status = ProposalState::Expired;
+                        let clone_proposal = proposal.clone();
+                        state.proposals.insert(proposal_id.clone(), clone_proposal);
                     }
                 } else {
-                    proposal.proposal_status = ProposalState::Open;
+                    proposal.proposal_status = ProposalState::Unreachable;
+                    let clone_proposal = proposal.clone();
+                    state.proposals.insert(proposal_id.clone(), clone_proposal);
                 }
-            } else {
-                if time_diff >= EXPIRATION_TIME && !proposal.has_been_processed {
-                    proposal.has_been_processed = true;
-                    if total_votes >= min_require_vote as f64 {
-                        if total_percentage >= min_threadshold as f64 {
-                            proposal.proposal_status = ProposalState::Accepted;
-                            proposals_to_update.push(proposal.clone());
-                        } else if total_percentage > 0.0 {
-                            proposal.proposal_status = ProposalState::Rejected;
-                        } else {
-                            proposal.proposal_status = ProposalState::Expired;
-                        }
-                    } else {
-                        proposal.proposal_status = ProposalState::Unreachable;
-                    }
-                } else {
-                    proposal.proposal_status = ProposalState::Open;
-                }
-            }
-            proposals_to_update.push(proposal);
-        }
 
-        for mut proposal in proposals_to_update {
-            let time_diff = timestamp.saturating_sub(proposal.proposal_submitted_at);
-            proposal.has_been_processed = false;
-            if proposal.proposal_status == ProposalState::Accepted
-                && !proposal.has_been_processed_secound
-            {
-                proposal.has_been_processed_secound = true;
-                let proposal_clone = proposal.clone();
-                if let ProposalType::AddMemberToDaoProposal = proposal.proposal_type {
-                    add_member_to_dao(state, &proposal);
-                } else if let ProposalType::AddMemberToGroupProposal = proposal.proposal_type {
-                    add_member_to_group(state, &proposal);
-                } else if let ProposalType::RemoveMemberToDaoProposal = proposal.proposal_type {
-                    remove_member_from_dao(state, &proposal);
-                } else if let ProposalType::RemoveMemberToGroupProposal = proposal.proposal_type {
-                    remove_member_to_group(state, &proposal);
-                } else if let ProposalType::ChangeDaoConfig = proposal.proposal_type {
-                    change_dao_config(state, &proposal);
-                } else if let ProposalType::ChangeDaoPolicy = proposal.proposal_type {
-                    change_dao_policy(state, &proposal);
-                } else if let ProposalType::TokenTransfer = proposal.proposal_type {
-                    ic_cdk::spawn(async move {
-                        transfer_tokens_to_user(&proposal_clone).await;
-                    });
-                } else if let ProposalType::BountyClaim = proposal.proposal_type {
-                    ic_cdk::println!("propsla for BountyClaim success 1 ");
-                    ic_cdk::spawn(async move {
-                        create_bounty_done_proposal(&proposal_clone).await;
-                    });
-                } else if let ProposalType::BountyDone = proposal.proposal_type {
-                    ic_cdk::println!("just in BountyDone success 2");
-                    ic_cdk::spawn(async move {
-                        transfer_tokens_to_user(&proposal_clone).await;
-                    });
-                }
-            } else if !proposal.has_been_processed_secound && time_diff >= EXPIRATION_TIME {
-                proposal.has_been_processed_secound = true;
-                let proposal_clone = proposal.clone();
-                if let ProposalType::BountyRaised = proposal.proposal_type {
-                    ic_cdk::spawn(async move {
-                        return_token_bounty_raised_or_transfer(&proposal_clone).await;
-                    });
-                } else if let ProposalType::BountyClaim = proposal.proposal_type {
-                    ic_cdk::spawn(async move {
-                        return_token_bounty_claim_or_done(&proposal_clone).await;
-                    });
-                } else if let ProposalType::BountyDone = proposal.proposal_type {
-                    ic_cdk::spawn(async move {
-                        return_token_bounty_claim_or_done(&proposal_clone).await;
-                    });
-                } else if let ProposalType::TokenTransfer = proposal.proposal_type {
-                    ic_cdk::spawn(async move {
-                        return_token_bounty_raised_or_transfer(&proposal_clone).await;
-                    });
+                if proposal.proposal_status == ProposalState::Accepted
+                    && !proposal.has_been_processed_second
+                {
+                    let proposal_clone = proposal.clone();
+                    let daohouse_canister_id = state.dao.daohouse_canister_id.clone();
+
+                    match proposal.proposal_type {
+                        ProposalType::AddMemberToDaoProposal => {
+                            if !proposal.has_been_processed_second {
+                                ic_cdk::println!(" add_member_to_dao ");
+                            add_member_to_dao(state, &proposal);
+                            proposal.has_been_processed_second = true;
+                            state.proposals.insert(proposal_id.clone(), proposal);
+                        }
+                        }
+                        ProposalType::AddMemberToGroupProposal => {
+                            if !proposal.has_been_processed_second {
+                                ic_cdk::println!(" AddMemberToGroupProposal ");
+                            add_member_to_group(state, &proposal);
+                            proposal.has_been_processed_second = true;
+                            state.proposals.insert(proposal_id.clone(), proposal);
+                        }
+                        }
+                        ProposalType::RemoveMemberToDaoProposal => {
+                            if !proposal.has_been_processed_second {
+                                ic_cdk::println!(" RemoveMemberToDaoProposal ");
+                            remove_member_from_dao(state, &proposal);
+                            proposal.has_been_processed_second = true;
+                            state.proposals.insert(proposal_id.clone(), proposal);
+                        }
+                        }
+                        ProposalType::RemoveMemberToGroupProposal => {
+                            if !proposal.has_been_processed_second {
+                                ic_cdk::println!(" RemoveMemberToGroupProposal ");
+                            remove_member_to_group(state, &proposal);
+                            proposal.has_been_processed_second = true;
+                            state.proposals.insert(proposal_id.clone(), proposal);
+                        }
+                        }
+                        ProposalType::ChangeDaoConfig => {
+                            if !proposal.has_been_processed_second {
+                                ic_cdk::println!(" ChangeDaoConfig ");
+                            change_dao_config(state, &proposal);
+                            proposal.has_been_processed_second = true;
+                            state.proposals.insert(proposal_id.clone(), proposal);
+                        }
+                        }
+                        ProposalType::ChangeDaoPolicy => {
+                            if !proposal.has_been_processed_second {
+                                ic_cdk::println!(" ChangeDaoPolicy ");
+                            change_dao_policy(state, &proposal);
+                            proposal.has_been_processed_second = true;
+                            state.proposals.insert(proposal_id.clone(), proposal);
+                        }
+                        }
+                        ProposalType::TokenTransfer => {
+                            if !proposal.has_been_processed_second {
+                            ic_cdk::println!(" TokenTransfer ");
+                            ic_cdk::spawn(async move {
+                                transfer_tokens_to_user(&proposal_clone).await;
+                            });
+                            proposal.has_been_processed_second = true;
+                            state.proposals.insert(proposal_id.clone(), proposal);
+                        }
+                        }
+                        ProposalType::BountyClaim => {
+                            if !proposal.has_been_processed_second {
+                            ic_cdk::println!(" BountyClaim ");
+                                ic_cdk::spawn(async move {
+                                    create_bounty_done_proposal(
+                                        daohouse_canister_id,
+                                        &proposal_clone,
+                                    )
+                                    .await;
+                                });
+                                proposal.has_been_processed_second = true;
+                                state.proposals.insert(proposal_id.clone(), proposal);
+                            }
+                        }
+                        ProposalType::BountyDone => {
+                            if !proposal.has_been_processed_second {
+                                ic_cdk::println!(" BountyDone ");
+                            ic_cdk::spawn(async move {
+                                transfer_tokens_to_user(&proposal_clone).await;
+                            });
+                            proposal.has_been_processed_second = true;
+                            state.proposals.insert(proposal_id.clone(), proposal);
+                        }
+                        }
+                        _ => {}
+                    }
+                } else if !proposal.has_been_processed_second && time_diff >= EXPIRATION_TIME {
+                    let proposal_clone = proposal.clone();
+                    match proposal.proposal_type {
+                        ProposalType::BountyRaised => {
+                            if !proposal.has_been_processed_second {
+                                ic_cdk::println!(" BountyRaised unsucess ");
+                                ic_cdk::spawn(async move {
+                                    return_token_bounty_raised_or_transfer(&proposal_clone).await;
+                                });
+                                proposal.has_been_processed_second = true;
+                                state.proposals.insert(proposal_id.clone(), proposal);
+                            }
+                        }
+                        ProposalType::BountyClaim => {
+                            if !proposal.has_been_processed_second {
+                                ic_cdk::println!(" BountyClaim unsucess ");
+                                if let Some(proposal_id) = proposal.associated_proposal_id.clone() {
+                                    let proposal_data =
+                                        state.proposals.get(&proposal_id).unwrap().clone();
+                                    ic_cdk::spawn(async move {
+                                        return_token_bounty_claim_or_done(
+                                            proposal_data,
+                                            &proposal_clone,
+                                        )
+                                        .await;
+                                    });
+                                    proposal.has_been_processed_second = true;
+                                    state.proposals.insert(proposal_id.clone(), proposal);
+                                }
+                            }
+                        }
+                        ProposalType::BountyDone => {
+                            if !proposal.has_been_processed_second {
+                                ic_cdk::println!(" BountyDone unsucess ");
+                                if let Some(proposal_id) = proposal.associated_proposal_id.clone() {
+                                    let proposal_data =
+                                        state.proposals.get(&proposal_id).unwrap().clone();
+                                    ic_cdk::spawn(async move {
+                                        return_token_bounty_claim_or_done(
+                                            proposal_data,
+                                            &proposal_clone,
+                                        )
+                                        .await;
+                                    });
+
+                                    proposal.has_been_processed_second = true;
+                                    state.proposals.insert(proposal_id.clone(), proposal);
+                                }
+                            }
+                        }
+                        ProposalType::TokenTransfer => {
+                            if !proposal.has_been_processed_second {
+                                ic_cdk::println!(" TokenTransfer unsucess ");
+                                ic_cdk::spawn(async move {
+                                    return_token_bounty_raised_or_transfer(&proposal_clone).await;
+                                });
+                                proposal.has_been_processed_second = true;
+                                state.proposals.insert(proposal_id.clone(), proposal);
+                            }
+                        }
+                        _ => {}
+                    }
                 }
             }
-            state
-                .proposals
-                .insert(proposal.proposal_id.clone(), proposal);
         }
     });
 }
 
-async fn create_bounty_done_proposal(proposal: &Proposals) {
-
-    let proposal = ProposalInput {
-        principal_of_action: Some(proposal.principal_of_action),
+async fn create_bounty_done_proposal(daohouse_canister_id: Principal, proposal: &Proposals) {   
+    let proposal_input = ProposalInput {
+        principal_of_action: Some(proposal.principal_of_action.clone()),
         proposal_description: proposal.proposal_description.clone(),
         proposal_title: String::from(crate::utils::TITLE_BOUNTY_DONE),
         proposal_type: ProposalType::BountyDone,
@@ -174,25 +262,27 @@ async fn create_bounty_done_proposal(proposal: &Proposals) {
         group_to_join: None,
         dao_purpose: None,
         tokens: proposal.tokens,
-        token_from: proposal.token_from,
-        token_to: proposal.token_to,
+        token_from: proposal.token_from.clone(),
+        token_to: proposal.token_to.clone(),
         proposal_created_at: None,
-        proposal_expired_at: None,
+        proposal_expired_at: Some(EXPIRATION_TIME),
         bounty_task: proposal.bounty_task.clone(),
         poll_title: None,
         required_votes: None,
         cool_down_period: None,
         group_to_remove: None,
         new_dao_type: None,
-        minimum_threadsold: proposal.minimum_threadsold,
+        minimum_threadsold: proposal.minimum_threadsold.clone(),
         link_of_task: None,
         associated_proposal_id: proposal.associated_proposal_id.clone(),
     };
+    ic_cdk::spawn(async move {
     crate::proposal_route::create_proposal_controller(
-        with_state(|state| state.dao.daohouse_canister_id),
-        proposal,
-    )
-    .await;
+            daohouse_canister_id.clone(),
+            proposal_input.clone(),
+        )
+        .await;
+    });
 }
 
 fn add_member_to_dao(state: &mut State, proposal: &Proposals) {
@@ -258,6 +348,7 @@ fn change_dao_policy(state: &mut State, proposal: &Proposals) {
 }
 
 async fn transfer_tokens_to_user(proposal: &Proposals) {
+    ic_cdk::println!("we are transfering tokens : ");
     let canister_wallet_id = ic_cdk::api::id();
     let balance = match icrc_get_balance(canister_wallet_id.clone()).await {
         Ok(balance) => balance,
@@ -272,7 +363,7 @@ async fn transfer_tokens_to_user(proposal: &Proposals) {
         return;
     }
 
-    let tokens = match proposal.tokens {
+    let tokens = match proposal.tokens.clone() {
         Some(tokens) => tokens,
         None => {
             ic_cdk::println!("Missing token amount");
@@ -280,7 +371,7 @@ async fn transfer_tokens_to_user(proposal: &Proposals) {
         }
     };
 
-    let token_to: Principal = match proposal.token_to {
+    let token_to: Principal = match proposal.token_to.clone() {
         Some(token_to) => token_to,
         None => {
             ic_cdk::println!("Missing token amount");
@@ -288,14 +379,13 @@ async fn transfer_tokens_to_user(proposal: &Proposals) {
         }
     };
 
-
     let token_transfer_args = TokenTransferArgs {
-        from: canister_wallet_id,
-        to: token_to,
+        from: canister_wallet_id.clone(),
+        to: token_to.clone(),
         tokens,
     };
 
-    if let Err(err) = icrc_transfer(token_transfer_args).await {
+    if let Err(err) = icrc_transfer(token_transfer_args.clone()).await {
         ic_cdk::println!("Error in transfer of tokens: {}", err);
     } else {
         ic_cdk::println!("Token transfer completed successfully");
@@ -317,7 +407,7 @@ async fn return_token_bounty_raised_or_transfer(proposal: &Proposals) {
         return;
     }
 
-    let tokens = match proposal.tokens {
+    let tokens = match proposal.tokens.clone() {
         Some(tokens) => tokens,
         None => {
             ic_cdk::println!("Missing token amount");
@@ -325,40 +415,31 @@ async fn return_token_bounty_raised_or_transfer(proposal: &Proposals) {
         }
     };
 
-    let token_to: Principal = match proposal.token_from {
+    let token_to: Principal = match proposal.token_from.clone() {
         Some(token_to) => token_to,
         None => {
             ic_cdk::println!("Missing token amount");
             return;
         }
     };
-
+    ic_cdk::println!("proposals token_from {:?} ", proposal.token_from);
+    ic_cdk::println!("proposals  token_to {:?} ", proposal.token_to);
+    ic_cdk::println!("proposals principal_of_action {:?} ", proposal.principal_of_action);
     let token_transfer_args = TokenTransferArgs {
-        from: canister_wallet_id,
-        to: token_to,
+        from: canister_wallet_id.clone(),
+        to: token_to.clone(),
         tokens,
     };
 
-    if let Err(err) = icrc_transfer(token_transfer_args).await {
+    if let Err(err) = icrc_transfer(token_transfer_args.clone()).await {
         ic_cdk::println!("Error in transfer of tokens: {}", err);
     } else {
         ic_cdk::println!("Token transfer completed successfully");
     }
 }
 
-async fn return_token_bounty_claim_or_done(proposal: &Proposals) {
+async fn return_token_bounty_claim_or_done(proposal_data: Proposals, proposal: &Proposals) {
     let canister_wallet_id = ic_cdk::api::id();
-    
-    let proposal_id = match &proposal.associated_proposal_id {
-        Some(proposal_id) => proposal_id,
-        None => {
-            ic_cdk::println!("Missing token amount");
-            return;
-        }
-    };
-
-    let proposal_data =  with_state(|state| state.proposals.get(&proposal_id).unwrap().clone());
-
     let balance = match icrc_get_balance(canister_wallet_id.clone()).await {
         Ok(balance) => balance,
         Err(err) => {
@@ -372,7 +453,7 @@ async fn return_token_bounty_claim_or_done(proposal: &Proposals) {
         return;
     }
 
-    let tokens = match proposal_data.tokens {
+    let tokens = match proposal_data.tokens.clone() {
         Some(tokens) => tokens,
         None => {
             ic_cdk::println!("Missing token amount");
@@ -380,7 +461,7 @@ async fn return_token_bounty_claim_or_done(proposal: &Proposals) {
         }
     };
 
-    let token_to: Principal = match proposal.token_from {
+    let token_to: Principal = match proposal.token_to.clone() {
         Some(token_to) => token_to,
         None => {
             ic_cdk::println!("Missing token amount");
@@ -389,12 +470,17 @@ async fn return_token_bounty_claim_or_done(proposal: &Proposals) {
     };
 
     let token_transfer_args = TokenTransferArgs {
-        from: canister_wallet_id,
-        to: token_to,
+        from: canister_wallet_id.clone(),
+        to: token_to.clone(),
         tokens,
     };
 
-    if let Err(err) = icrc_transfer(token_transfer_args).await {
+    ic_cdk::println!("proposals token_from {:?} ", proposal.token_from);
+    ic_cdk::println!("proposals  token_to {:?} ", proposal.token_to);
+    ic_cdk::println!("proposals principal_of_action {:?} ", proposal.principal_of_action);
+
+
+    if let Err(err) = icrc_transfer(token_transfer_args.clone()).await {
         ic_cdk::println!("Error in transfer of tokens: {}", err);
     } else {
         ic_cdk::println!("Token transfer completed successfully");
@@ -403,9 +489,6 @@ async fn return_token_bounty_claim_or_done(proposal: &Proposals) {
 
 #[init]
 async fn init(dao_input: DaoInput) {
-    // ic_cdk::println!("data is {:?}", dao_input);
-
-    // let principal_id = api::caller();
     let proposal_entiry: Vec<crate::ProposalPlace> = dao_input
         .proposal_entiry
         .iter()

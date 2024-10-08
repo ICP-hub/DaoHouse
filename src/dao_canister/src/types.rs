@@ -90,7 +90,7 @@ pub struct Proposals {
     pub token_from: Option<Principal>,
     pub token_to: Option<Principal>,
     pub has_been_processed: bool, 
-    pub has_been_processed_secound : bool,
+    pub has_been_processed_second : bool,
     // pub proposal_entiry : ProposalPlace,
     pub minimum_threadsold : u64,
     pub link_of_task : Option<String>,
