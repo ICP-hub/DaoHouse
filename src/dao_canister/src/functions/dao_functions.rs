@@ -432,8 +432,10 @@ async fn make_payment(tokens: u64, user: Principal) -> Result<Nat, String> {
 #[update]
 async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String> {
     // let proposal_expired_at = args.proposal_expired_at * 60 * 60 * 1_000_000_000;
+   let proposal_expire_time =
+    ic_cdk::api::time() + (args.proposal_expired_at as u64 * 86_400 * 1_000_000_000);
 
-    const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
+    // const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
     let principal_id: Principal = api::caller();
     let canister_id: Principal = ic_cdk::api::id();
 
@@ -469,7 +471,7 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
         token_from: Some(principal_id),
         token_to: Some(canister_id),
         proposal_created_at: None,
-        proposal_expired_at: Some(EXPIRATION_TIME),
+        proposal_expired_at: Some(proposal_expire_time),
         bounty_task: Some(args.bounty_task),
         poll_title: None,
         required_votes: None,
@@ -493,7 +495,6 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
 async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
     // let proposal_expired_at = args.proposal_expired_at * 60 * 60 * 1_000_000_000;
     const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
-    let canister_id: Principal = ic_cdk::api::id();
     // let timestamp = time();
     // let check_expired = with_state(|state| {
     //     if let Some(proposal) = state.proposals.get(&args.associated_proposal_id) {
@@ -580,6 +581,9 @@ async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
     //     min_required_thredshold: 12,
     // };
     let mut required_thredshold = 0;
+    let proposal_expire_time =
+    ic_cdk::api::time() + (args.proposal_expired_at as u64 * 86_400 * 1_000_000_000);
+
 
     let _ = with_state(|state| {
         match state
@@ -611,7 +615,7 @@ async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
         token_from: None,
         token_to: None,
         proposal_created_at: None,
-        proposal_expired_at: None,
+        proposal_expired_at: Some(proposal_expire_time),
         bounty_task: None,
         poll_title: Some(args.poll_title),
         required_votes: None,
