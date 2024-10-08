@@ -40,7 +40,6 @@ pub const MESSAGE_CHANGE_DAO_CONFIG: &str = "Change dao config proposal created 
 pub const MESSAGE_CHANGE_DAO_POLICY: &str =  "Change dao policy proposal created successfully";
 pub const MESSAGE_TOKEN_TRANSFER_POLICY: &str =  "token transfer policy proposal created successfully";
 pub const MESSAGE_BOUNTY_RAISED: &str =  "Bounty raised proposal created successfully";
-pub const MESSAGE_BOUNTY_DONE: &str =  "Bounty Done proposal created successfully";
 pub const MESSAGE_POLL_CREATE_DONE: &str =  "Poll creation proposal created successfully";
 pub const MESSAGE_GENERAL_PURPOSE_CREATED: &str =  "General purpose proposal created successfully";
 
