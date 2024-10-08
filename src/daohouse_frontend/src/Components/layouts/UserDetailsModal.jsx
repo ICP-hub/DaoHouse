@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import { toast } from "react-toastify";
 import MyProfileImage from "../../../assets/Avatar.png";
 import defaultImage from "../../../assets/Avatar.png";
 import { useAuth } from "../utils/useAuthClient";
@@ -12,6 +11,7 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
   const [email, setEmail] = useState("");
   const [profileImage, setProfileImage] = useState(null);
   const [fileURL, setFileURL] = useState(defaultImage);
+  const [errors, setErrors] = useState({});
   const fileInputRef = useRef(null);
   const { backendActor } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -40,6 +40,20 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
     return emailRegex.test(email);
   };
 
+  const validateInputs = () => {
+    const newErrors = {};
+    if (!name.trim()) {
+      newErrors.name = "Name is required";
+    }
+    if (!email.trim() || !validateEmail(email)) {
+      newErrors.email = "A valid email is required";
+    }
+    if (!profileImage) {
+      newErrors.profileImage = "Profile image is required";
+    }
+    return newErrors;
+  };
+
   const handleFileInput = () => {
     fileInputRef.current.click();
   };
@@ -48,7 +62,7 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
     const file = event.target.files[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        toast.error("File size must be less than 5 MB");
+        alert("File size must be less than 5 MB");
         return;
       }
       setProfileImage(file);
@@ -57,16 +71,9 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
   };
 
   const handleSubmit = async () => {
-    if (!name.trim()) {
-      toast.error("Name is required");
-      return;
-    }
-    if (!email.trim() || !validateEmail(email)) {
-      toast.error("A valid email is required");
-      return;
-    }
-    if (!profileImage) {
-      toast.error("Profile image is required");
+    const inputErrors = validateInputs();
+    if (Object.keys(inputErrors).length > 0) {
+      setErrors(inputErrors);
       return;
     }
 
@@ -91,7 +98,7 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
         onSubmit();
       } catch (error) {
         console.log("error", error);
-        toast.error("An error occurred while creating the profile");
+        alert("An error occurred while creating the profile");
       } finally {
         setIsLoading(false);
       }
@@ -120,8 +127,9 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Enter your Name"
-                  className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm mb-4"
+                  className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm mb-1"
                 />
+                {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
 
                 {/* Email Input */}
                 <label htmlFor="email" className="mobile:text-base text-sm mb-1">
@@ -132,8 +140,9 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your Email"
-                  className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm mb-4"
+                  className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm mb-1"
                 />
+                {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
 
                 {/* Profile Image Upload */}
                 <label htmlFor="profile" className="mobile:text-base text-sm mb-1">
@@ -165,6 +174,9 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
                     />
                   </div>
                 </div>
+                {errors.profileImage && (
+                  <p className="text-red-500 text-sm">{errors.profileImage}</p>
+                )}
 
                 {/* Submit Button */}
                 <div className="flex justify-center">
@@ -180,7 +192,6 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
                     )}
                   </button>
                 </div>
-
               </div>
             </div>
           </div>
