@@ -16,8 +16,6 @@ pub async fn create_proposal_controller(
     proposal: ProposalInput,
     // proposal_id: String,
 ) -> String {
-    // let principal_id = api::caller();
-
     let uuids = raw_rand().await.unwrap().0;
     let proposal_id = format!("{:x}", Sha256::digest(&uuids));
 
@@ -64,7 +62,7 @@ pub async fn create_proposal_controller(
         token_from: proposal.token_from,
         token_to : proposal.token_to,
         has_been_processed: false, 
-        has_been_processed_secound : false,
+        has_been_processed_second : false,
         minimum_threadsold : proposal.minimum_threadsold.clone(),
         link_of_task : proposal.link_of_task,
         bounty_task : proposal.bounty_task,
@@ -81,7 +79,7 @@ pub async fn create_proposal_controller(
         proposal_id: proposal_id.clone(),
         proposal_type: proposal.proposal_type,
         required_votes: proposal.required_votes.unwrap_or(required_votes),
-   proposal_submitted_at: ic_cdk::api::time(),
+        proposal_submitted_at: ic_cdk::api::time(),
         propsal_title: proposal.proposal_title,
         minimum_threadsold : proposal.minimum_threadsold,
         dao_members,
@@ -102,8 +100,9 @@ pub async fn create_proposal_controller(
         state.dao = updated_dao;
         state.proposals.insert(proposal_id, new_proposal);
     });
-
+    ic_cdk::println!("done ok come : ");
     return String::from(crate::utils::REQUEST_ADD_MEMBER);
+    
 }
 
 // pub fn get_all_proposals(state:&State)-> HashMap<String, Proposals>{
