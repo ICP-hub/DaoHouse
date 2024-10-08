@@ -18,12 +18,23 @@ import DaoPolicy from "./DaoPolicy";
 import Poll from "./Poll";
 import RemoveDaoMember from "./RemoveDaoMember";
 import { createActor } from "../../../../declarations/icp_ledger_canister";
+import TokenPaymentModal from "./TokenPaymentModal"
 function CreateProposal() {
   const navigate = useNavigate();
 
   const [proposalTitle, setProposalTitle] = useState('');
   const [proposalDescription, setProposalDescription] = useState('');
   const [requiredVotes, setRequiredVotes] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+const [loadingPayment, setLoadingPayment] = useState(false);
+const [paymentDetails, setPaymentDetails] = useState({
+    proposal_expired_at: '',
+    description: '',
+    tokens: '',
+    // action_member: '',
+    proposal_created_at: '',
+    bounty_task: '',
+});
   const [proposalType, setProposalType] = useState('');
   const [dao, setDao] = useState(null);
   const [proposalEntry, setProposalEntry] = useState(''); // New state for proposal_entiry
@@ -270,6 +281,7 @@ function CreateProposal() {
     }
   };
 
+
   const handleInputDaoPolicy = (e) => {
     setChangePolicy({
       ...changePolicy,
@@ -332,14 +344,7 @@ function CreateProposal() {
     try {
       switch (proposalType) {
         case "tokenTransfer":
-          await submitTokenTransferProposal({
-            proposal_entiry: proposalEntry,
-            to: Principal.fromText(tokenTransfer.to),
-            description: tokenTransfer.description,
-            tokens: Number(tokenTransfer.tokens),
-            // action_member: Principal.fromText(tokenTransfer.action_member),
-            // action_member: Principal.fromText(tokenTransfer.action_member),
-          });
+          setIsModalOpen(true)
           break;
 
         case "bountyClaim":
@@ -397,17 +402,9 @@ function CreateProposal() {
           });
           break;
 
-          case 'BountyRaised':
-            await submitBountyRaised({
-              proposal_entiry: proposalEntry,
-              proposal_expired_at: bountyRaised.proposal_expired_in_days, // Send difference in days
-              description: bountyRaised.description,
-              tokens: Number(bountyRaised.tokens),
-              // action_member: Principal.fromText(bountyRaised.action_member),
-              proposal_created_at: 0,
-              bounty_task: bountyRaised.bounty_task,
-            });
-            break;
+        case 'BountyRaised':
+          setIsModalOpen(true);
+          break;
           
 
         case 'ChangePolicy':
@@ -457,20 +454,38 @@ function CreateProposal() {
   };
   const submitTokenTransferProposal = async (tokenTransfer) => {
     try {
+      const actor = await createTokenActor();
+      const { balance, metadata } = await fetchMetadataAndBalance(
+        actor,
+        Principal.fromText(stringPrincipal)
+      );
+      const parsedBalance = parseInt(balance, 10);
+      const formattedMetadata = await formatTokenMetaData(metadata);
+  
+      // Call transferApprove to process the payment
+      await transferApprove(
+        parsedBalance,
+        actor,
+        formattedMetadata,
+        bountyRaised.tokens
+      );
+  
+      // After payment, create the proposal
       const daoCanister = await createDaoActor(daoCanisterId);
-      console.log("DAO Canister ID:", daoCanisterId);
-      console.log("Token Transfer Proposal Payload:", tokenTransfer);
+      const response = await daoCanister.proposal_to_transfer_token(bountyRaised);
       
-      const response = await daoCanister.proposal_to_transfer_token(tokenTransfer);
-      console.log("Response of Token Transfer:", response);
-      
-      toast.success("Token transfer proposal created successfully");
-      movetodao();
-    } catch (error) {
-      console.error("Error submitting Token Transfer proposal:", error);
-      toast.error("Failed to create Token Transfer proposal");
+      if (response.Ok) {
+        toast.success("Token transfer proposal created successfully");
+        movetodao();
+      } else {
+        toast.error("Failed to create token transfer proposal");
+      }
+    } catch (err) {
+      console.error("Error submitting Token Transfer proposal:", err);
+        toast.error("Failed to create Token Transfer proposal");
     }
   };
+
   const submitBountyClaim = async (bountyClaim) => {
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
@@ -698,27 +713,75 @@ function CreateProposal() {
       );
       const parsedBalance = parseInt(balance, 10);
       const formattedMetadata = await formatTokenMetaData(metadata);
+  
+      // Call transferApprove to process the payment
       await transferApprove(
         parsedBalance,
         actor,
         formattedMetadata,
         bountyRaised.tokens
       );
-    } catch (err) {
-      console.log("error is in approval : ", err);
-      toast.error("Payment failed. Please try again.");
-    }
-
-    try {
+  
+      // After payment, create the proposal
       const daoCanister = await createDaoActor(daoCanisterId);
       const response = await daoCanister.proposal_to_bounty_raised(bountyRaised);
-      console.log("response of bounty rasied ", response);
-      toast.success("bounty raised proposal created successfully");
-      movetodao();
-    } catch (error) {
-      console.log("error of add", error);
+      
+      if (response.Ok) {
+        toast.success("Bounty raised proposal created successfully");
+        movetodao();
+      } else {
+        toast.error("Failed to create bounty raised proposal");
+      }
+    } catch (err) {
+      console.error("Error during proposal submission:", err);
+      toast.error("Payment or proposal submission failed");
     }
   };
+  
+  const handleConfirmPayment = async () => {
+     // Close the modal
+    setLoadingPayment(true); // Show loading indicator during payment and submission
+    try {
+      if(proposalType === "BountyRaised" ) {
+        await submitBountyRaised({
+          proposal_entiry: proposalEntry,
+          proposal_expired_at: bountyRaised.proposal_expired_in_days, // Send difference in days
+          description: bountyRaised.description,
+          tokens: Number(bountyRaised.tokens),
+          // action_member: Principal.fromText(bountyRaised.action_member),
+          proposal_created_at: 0,
+          bounty_task: bountyRaised.bounty_task,
+        }); // Trigger payment and proposal submission
+      } else if(proposalType === "tokenTransfer") {
+        await submitTokenTransferProposal({
+          to: Principal.fromText(tokenTransfer.to),
+          description: tokenTransfer.description,
+          tokens: Number(tokenTransfer.tokens),
+          proposal_entiry: proposalEntry,
+          // action_member: Principal.fromText(tokenTransfer.action_member),
+          // action_member: Principal.fromText(tokenTransfer.action_member),
+        });
+      } else {
+        console.log("Wrong Proposal type");
+        
+      }
+      
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Payment submission failed:", error);
+      toast.error("Payment failed. Please try again.");
+      setIsModalOpen(false);
+    } finally {
+      setLoadingPayment(false);
+      
+    }
+  };
+  
+  const handleCancelPayment = () => {
+    setIsModalOpen(false); // Close the modal when cancel is clicked
+  };
+  
+  
   const submitChangePolicy = async (changePolicy) => {
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
@@ -792,6 +855,14 @@ function CreateProposal() {
           </h1>
         </Container>
       </div>
+      <TokenPaymentModal
+        isOpen={isModalOpen}
+        onClose={handleCancelPayment}
+        onConfirm={handleConfirmPayment}
+        paymentDetails={paymentDetails}
+        loadingPayment={loadingPayment}
+/>
+
 
       <div className="bg-[#F5F5F5]">
         <Container
