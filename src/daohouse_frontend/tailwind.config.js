@@ -38,6 +38,8 @@ module.exports = {
         tablet: "1000px",
         laptop: "1280px",
         desktop: "1440px",
+        large_desktop: "1480px",
+        xl_desktop: "1700px"
       },
       blur: {
         xs: '2px',

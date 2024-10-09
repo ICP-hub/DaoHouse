@@ -217,7 +217,7 @@ const Dao = () => {
         <DaoCardLoaderSkeleton />
       ) : showAll ? (
         noDaoFound || dao.length === 0 ? (
-          <div className="flex justify-center items-center h-full mb-10 md:mt-40 mx-10">
+          <div className="flex justify-center items-center h-full mb-10 mx-10">
             <NoDataComponent />
           </div>
         ) : (
@@ -271,7 +271,7 @@ const Dao = () => {
           )}
         </div>
       ) : (
-        <div className="flex justify-center items-center h-full mb-10 md:mt-40 mx-10">
+        <div className="flex justify-center items-center h-full mb-10 mx-10">
           <NoDataComponent />
         </div>
       )}

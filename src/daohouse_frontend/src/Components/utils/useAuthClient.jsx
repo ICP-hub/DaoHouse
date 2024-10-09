@@ -248,18 +248,14 @@ export const useAuthClient = (options = defaultOptions) => {
     console.log("Canister Array:", canisterArray);
   
     try {
-      const identity = nfid.getIdentity();
-      console.log(identity);
       const delegationResult = await nfid.getDelegation({ targets: canisterArray, maxTimeToLive: BigInt(8) * BigInt(3_600_000_000_000) });
       console.log("Delegation Result:", delegationResult);
   
-      const theUserPrincipal = Principal.from(delegationResult.getPrincipal()).toText();
-      console.log("The User principal:", theUserPrincipal);
       
       const isLogin = await nfid.getDelegationType();
-      console.log(isLogin,'Delegation type');
+      console.log('Delegation type', isLogin);
       // const identity = delegationResult.getIdentity();
-      const agent = new HttpAgent({ identity });
+      const agent = new HttpAgent({ identity: delegationResult });
       console.log("HttpAgent created with identity:", identity);
   
       if (process.env.DFX_NETWORK !== 'ic') {
@@ -274,8 +270,13 @@ export const useAuthClient = (options = defaultOptions) => {
       console.log("Backend Actor created:", backendActor);
   
       setBackendActor(backendActor);
-      setIdentity(identity);
+
+      const identity = await nfid.getIdentity();
+      console.log(identity);
+      const theUserPrincipal = identity.getPrincipalId.toText()
+      console.log("The User principal:", theUserPrincipal);
       setIsAuthenticated(true);
+      setIdentity(identity);
       setPrincipal(theUserPrincipal);
   
       await clientInfo({ 

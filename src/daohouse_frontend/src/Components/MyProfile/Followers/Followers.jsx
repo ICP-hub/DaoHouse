@@ -96,9 +96,9 @@ const Followers = () => {
 
   return (
     <div className={`${className} w-full`}>
-      <div className="lg:ml-10 tablet:mt-12 mt-5 md:px-0 px-3">
-        <div className="flex flex-col md:flex-row justify-between items-center translate-y-[-90px] space-y-4 md:space-y-0">
-          <h3 className="text-[#05212C] tablet:text-[24px] translate-x-[20px] text-[18px] tablet:font-bold  font-mulish mb-4">
+      <div className=" tablet:mt-12 mt-5 md:px-0">
+        <div className="flex flex-col md:flex-row justify-between space-y-4 md:space-y-0">
+          <h3 className="text-[#05212C] tablet:text-[24px] text-[18px] text-start tablet:font-bold  font-mulish">
             {searchTerm ? "Search Results" : "Followed DAO List"}
           </h3>
           <div className="w-full md:w-auto flex-grow lg:flex justify-end hidden">
@@ -117,12 +117,12 @@ const Followers = () => {
         ) : loading ? (
           <MyProfileSkelton />
         ) : displayDAOs.length === 0 ? (
-          <div className="translate-y-[20px]">
+          <div className="mt-4 md:mt-8">
             <NoDataComponent text={searchTerm ? "No DAOs found!" : "No DAOs joined yet!"} />
           </div>
         ) : (
           <div
-            className={`bg-[#F4F2EC] w-full p-2 rounded-lg md:mt-4 mt-2 mb-6 translate-y-[-70px] ${
+            className={`bg-[#F4F2EC] w-full p-2 rounded-lg md:mt-4 mt-2 mb-6 ${
               displayDAOs.length === 1 ? "min-h-[200px]" : "min-h-[328px]"
             }`}
           >
