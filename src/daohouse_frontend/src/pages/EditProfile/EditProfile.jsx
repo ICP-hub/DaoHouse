@@ -90,6 +90,8 @@ const EditProfile = () => {
     if (!profileData.name.trim()) newErrors.name = "Name is required.";
     if (!profileData.email_id.trim()) newErrors.email_id = "Email is required.";
     else if (!/\S+@\S+\.\S+/.test(profileData.email_id)) newErrors.email_id = "Email format is invalid.";
+
+    if (!profileData.description.trim()) newErrors.description = "Description is required.";
     
     if (!profileData.contact_number.trim()) newErrors.contact_number = "Contact number is required.";
     else if (!/^\d+$/.test(profileData.contact_number)) newErrors.contact_number = "Contact number should be numeric.";
@@ -384,8 +386,11 @@ const EditProfile = () => {
               <h3 className="text-[#05212C] text-[16px] md:text-[18px] lg:text-[24px] md:font-semibold font-medium ml-3">
                 About Me
               </h3>
+              <p className="lg:text-[20px] md:text-[16px] text-[14px] font-semibold text-[#05212C] md:ml-2 md:mb-3 mt-10">
+                Name<span className="text-red-500">*</span>
+              </p>
               <div className="bg-[#FFFFFF] md:text-[16px] text-[12px] font-normal text-[#646464] py-3 md:px-5 pl-3 my-4 sm:w-[100%] rounded-lg">
-                <span className="text-[#05212C] md:mr-32 mr-4">Name <span className="text-red-500">*</span></span>
+                {/* <span className="text-[#05212C] md:mr-32 mr-4">Name <span className="text-red-500">*</span></span> */}
                 <input
                   type="text"
                   name="name"
@@ -397,7 +402,7 @@ const EditProfile = () => {
                 {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
               </div>
               <p className="lg:text-[20px] md:text-[16px] text-[14px] font-semibold text-[#05212C] md:ml-2 md:mb-3">
-                Description
+                Description<span className="text-red-500">*</span>
               </p>
               <div className="bg-[#FFFFFF] md:text-[16px] text-[12px] font-normal text-[#646464] py-3 px-5 my-2 rounded-lg">
                 <textarea
