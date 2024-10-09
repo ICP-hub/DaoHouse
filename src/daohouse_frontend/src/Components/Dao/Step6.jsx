@@ -97,18 +97,25 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
 
 
     try {
-      const res = await backendActor.make_payment(sendableAmount, Principal.fromText(stringPrincipal));
-      console.log(res,"asdjshjkhfksdhflksdhflkshdflkhdslk");
+      //uncomment later
+      // const res = await backendActor.make_payment(sendableAmount, Principal.fromText(stringPrincipal));
+      // console.log(res,"asdjshjkhfksdhflksdhflkshdflkhdslk");
       // console.log("resok",res?.Ok)
     
-      if (res.Ok) {
-        toast.success("Payment successful!");
+      // uncomment later
+      // if (res.Ok) {
+        // toast.success("Payment successful!");
+        // setIsModalOpen(false); // Close the modal on successful payment
+        // handleDaoClick(); // Navigate to the next step
+      // } else {
+      //   console.log(res);
+      //   toast.error("Payment failed. Please try again.");
+      // }
+
+      //remove this later
+      toast.success("Payment successful!");
         setIsModalOpen(false); // Close the modal on successful payment
         handleDaoClick(); // Navigate to the next step
-      } else {
-        console.log(res);
-        toast.error("Payment failed. Please try again.");
-      }
     } finally {
       setLoadingPayment(false); // End loading state after payment is processed
     }
@@ -211,7 +218,15 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
     console.log("Balance:", parsedBalance);
   
     // Proceed with transfer approval and payment
-    await transferApprove(parsedBalance, formattedMetadata, actor);
+    // await transferApprove(parsedBalance, formattedMetadata, actor);   //uncomment this later
+
+    // remove this later
+    const sendableAmount = parseInt(                
+      10000
+    );
+    if(sendableAmount) {
+      afterPaymentApprove(sendableAmount);
+    }
     } catch (err) {
       toast.error("Payment failed. Please try again.");
       setLoadingPayment(false);

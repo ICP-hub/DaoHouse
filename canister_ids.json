@@ -1,13 +1,14 @@
 {
   "dao_canister": {
-    "ic": "f76ch-uaaaa-aaaap-aki3a-cai"
+    "ic": "75yrn-nyaaa-aaaap-aknqa-cai"
   },
   "daohouse_backend": {
-    "ic": "evra5-wqaaa-aaaap-aki4a-cai"
+    "ic": "72zxz-aaaaa-aaaap-aknqq-cai"
   },
   "daohouse_frontend": {
+    "ic": "2gcn4-liaaa-aaaap-aknpa-cai"
   },
   "ic_asset_handler": {
-    "ic": "fr4pp-pqaaa-aaaap-aki2a-cai"
+    "ic": "2bdli-gqaaa-aaaap-aknpq-cai"
   }
 }
