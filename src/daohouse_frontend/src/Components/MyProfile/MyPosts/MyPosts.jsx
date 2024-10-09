@@ -58,29 +58,31 @@ const MyPosts = () => {
 
   return (
     <div className={className}>
-      <div className="md:ml-10 mx-5 mt-5">
-        <h3 className="text-[#05212C] md:text-[24px] text-[18px] md:font-bold font-mulish ml-4 translate-y-[-65px]">
+      <div className="mt-2 md:mt-10">
+        <div className="flex gap-10">
+        <h3 className="text-[#05212C] md:text-[24px] text-[18px] md:font-bold font-mulish self-center">
           Submitted Proposals
         </h3>
-        <div className="w-full  flex-grow lg:flex justify-end hidden">
+        <div className="  flex-grow lg:flex justify-end hidden">
           <SearchProposals
             onChange={handleSearchChange}
             value={searchTerm}
             width="60%"
             bgColor="transparent"
             placeholder="Search by proposal ID"
-            className="border-2 border-[#AAC8D6] w-full md:max-w-lg translate-y-[-105px] translate-x-0 md:translate-x-[95px] "
+            className="border-2 border-[#AAC8D6] w-full md:max-w-lg "
           />
+        </div>
         </div>
         {loading ? (
           <MuiSkeleton />
         ) : myProposals.length === 0 ? (
-          <div className="translate-y-[52px]">
+          <div className="mt-4 md:mt-8 w-full">
             <NoDataComponent />
           </div>
         ) : (
           <div
-            className="flex flex-col md:mt-4 mt-2 mb-6 bg-[#F4F2EC] translate-y-[-82px] p-2 rounded-lg gap-2 h-auto md:h-73 w-full md:w-[1000px] overflow-y-auto"
+            className="flex flex-col md:mt-4 mt-2 mb-6 bg-[#F4F2EC] p-2 rounded-lg gap-2 h-auto md:h-73 w-full md:w-[1000px] overflow-y-auto"
             style={{ maxHeight: "503px" }}
           >
             {myProposals.map((proposal, index) => (
