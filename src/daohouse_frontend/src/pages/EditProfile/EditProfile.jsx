@@ -28,6 +28,8 @@ const EditProfile = () => {
   const { userProfile, fetchUserProfile } = useUserProfile();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { backendActor, frontendCanisterId, identity, principal } = useAuth();
+  console.log('frontendCanisterId:', frontendCanisterId); // Debugging line
+
   const [loading, setLoading] = useState(false);
 
   const [imageSrc, setImageSrc] = useState(MyProfileImage);
@@ -136,7 +138,7 @@ const EditProfile = () => {
         toast.success("Profile created successfully");
         setIsModalOpen(true);
         setTimeout(() => {
-          navigate('/');
+          navigate('/my-profile');
           window.scrollTo(0, 0); // Scrolls to the top of the page
         }, 2000);
       }
@@ -394,30 +396,6 @@ const EditProfile = () => {
                 />
                 {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
               </div>
-              {/* <div className="bg-[#FFFFFF] md:text-[16px] text-[12px] font-normal text-[#646464] py-3 md:px-5 pl-3 my-4 sm:w-[100%] rounded-lg">
-                <span className="text-[#05212C] md:mr-32 mr-4">Email</span>
-                <input
-                  type="text"
-                  name="email_id"
-                  value={profileData.email_id}
-                  onChange={handleInputChange}
-                  placeholder="Email address"
-                  className={`border-solid border ${errors.email_id ? 'border-red-500' : 'border-[#DFE9EE]'} py-2 pl-4 md:w-[40%] w-[82%] rounded-[6px]`}
-                />
-                {errors.email_id && <p className="text-red-500 text-xs mt-1">{errors.email_id}</p>}
-              </div> */}
-              {/* <div className="bg-[#FFFFFF] md:text-[16px] text-[12px] font-normal text-[#646464] py-3 md:px-5 pl-3 my-4 sm:w-[100%] rounded-lg">
-                <span className="text-[#05212C] md:mr-32 mr-4">Contact Number</span>
-                <input
-                  type="text"
-                  name="contact_number"
-                  value={profileData.contact_number}
-                  onChange={handleInputChange}
-                  placeholder="Contact number"
-                  className={`border-solid border ${errors.contact_number ? 'border-red-500' : 'border-[#DFE9EE]'} py-2 pl-4 md:w-[40%] w-[82%] rounded-[6px]`}
-                />
-                {errors.contact_number && <p className="text-red-500 text-xs mt-1">{errors.contact_number}</p>}
-              </div> */}
               <p className="lg:text-[20px] md:text-[16px] text-[14px] font-semibold text-[#05212C] md:ml-2 md:mb-3">
                 Description
               </p>

@@ -59,7 +59,7 @@ export const useAuthClient = (options = defaultOptions) => {
 
   const frontendCanisterId =
     process.env.CANISTER_ID_DAOHOUSE_FRONTEND ||
-    process.env.FRONTEND_CANISTER_CANISTER_ID;
+    process.env.FRONTEND_CANISTER_CANISTER_ID || process.env.CANISTER_ID;
 
   const clientInfo = async (client, identity) => {
     const isAuthenticated = await client.isAuthenticated();

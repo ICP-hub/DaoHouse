@@ -194,7 +194,7 @@ const MyProfile = ({ childComponent }) => {
           </Container>
         </div>
         <div className={`bg-[#c8ced3]`}>
-          <Container classes={`__mainComponent big_phone:py-8 big_phone:pb-20 py-7 md:px-8 desktop:mx-28 large_desktop:mx-40 xl_desktop:mx-80 tablet:mx-16 flex md:flex-row gap-2 flex-col w-full user-container`}>
+          <Container classes={`__mainComponent big_phone:py-8 big_phone:pb-20 py-7 md:px-8 flex md:flex-row gap-2 flex-col w-full user-container`}>
             <div className="flex justify-between w-[90%] left-0 gap-16">
             
               <div className={`${className}__mainComponent__leftSide md:mx-0 mx-5 lg:px-20 flex flex-col tablet:items-start justify-center md:w-[204px] md:h-[600px] lg:w-[252px] lg:h-[600px] md:px-28 rounded-[10px] bg-[#0E3746] text-white text-opacity-50 font-normal  z-20`}>
