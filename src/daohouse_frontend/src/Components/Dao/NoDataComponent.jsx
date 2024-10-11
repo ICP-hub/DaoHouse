@@ -4,7 +4,7 @@ import nodata1 from "../../../assets/nodata1.png";
 const NoDataComponent = ({ setJoinedDAO  }) => {
   return (
     <>
-     <div className="hidden md:flex w-full max-w-[950px] h-[367px]  mx-auto flex-col items-center justify-center p-4 bg-slate-100 rounded-md">
+     <div className="hidden md:flex w-full max-w-[950px] h-[367px]  mx-auto flex-col items-center justify-center p-4 bg-[#F4F2EC] rounded-md">
         <img src={nodata1} alt="No Data" className="mb-1" />
         <p className="text-center text-gray-700 text-[16px]">
           No Data Available !
