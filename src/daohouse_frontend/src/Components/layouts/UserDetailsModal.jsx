@@ -23,15 +23,15 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
       document.body.style.top = `-${window.scrollY}px`;
       document.body.style.width = '100%';
     } else {
-      const scrollY = document.body.style.top; 
-      document.body.style.position = ''; 
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
       document.body.style.top = '';
       window.scrollTo(0, parseInt(scrollY || '0') * -1);
     }
 
     return () => {
-      document.body.style.position = ''; 
-      document.body.style.top = ''; 
+      document.body.style.position = '';
+      document.body.style.top = '';
     };
   }, [isOpen]);
 
@@ -58,17 +58,6 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
     fileInputRef.current.click();
   };
 
-  const handleFileChange = async (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        alert("File size must be less than 5 MB");
-        return;
-      }
-      setProfileImage(file);
-      setFileURL(URL.createObjectURL(file));
-    }
-  };
 
   const handleSubmit = async () => {
     const inputErrors = validateInputs();
@@ -104,7 +93,26 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
       }
     };
   };
-
+  const handleNameChange = (e) => {
+    setName(e.target.value);
+    setErrors((prevErrors) => ({ ...prevErrors, name: null })); // Clear name error
+  };
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+    setErrors((prevErrors) => ({ ...prevErrors, email: null })); // Clear email error
+  };
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size must be less than 5 MB");
+        return;
+      }
+      setProfileImage(file);
+      setFileURL(URL.createObjectURL(file));
+      setErrors((prevErrors) => ({ ...prevErrors, profileImage: null })); // Clear profile image error
+    }
+  };
   if (!isOpen) return null;
 
   return (
@@ -125,11 +133,12 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
                 <input
                   type="text"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  // onChange={(e) => setName(e.target.value)}
+                  onChange={handleNameChange}
                   placeholder="Enter your Name"
                   className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm mb-1"
                 />
-                {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+                {errors.name && <p className="text-red-500 text-sm mb-4">{errors.name}</p>}
 
                 {/* Email Input */}
                 <label htmlFor="email" className="mobile:text-base text-sm mb-1">
@@ -138,11 +147,11 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={handleEmailChange}
                   placeholder="Enter your Email"
                   className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm mb-1"
                 />
-                {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+                {errors.email && <p className="text-red-500 text-sm mb-4">{errors.email}</p>}
 
                 {/* Profile Image Upload */}
                 <label htmlFor="profile" className="mobile:text-base text-sm mb-1">
