@@ -2,7 +2,7 @@ import React from 'react';
 
 function MyProfileSkelton() {
   return (
-    <div className="grid grid-cols-1 tablet:grid-cols-2 relative bottom-[-20px] gap-2 max-h-[350px] overflow-y-auto px-4 custom-scrollbar">
+    <div className="grid grid-cols-1 tablet:grid-cols-2 relative bottom-[-20px] gap-6 max-h-[350px] overflow-y-auto px-4 custom-scrollbar">
 
       {[1, 2, 3, 4].map((_, index) => (
         <div
