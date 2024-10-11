@@ -12,7 +12,7 @@ const NoDataComponent = ({ setJoinedDAO  }) => {
       </div>
 
       {/* Mobile View (visible only on small screens) */}
-      <div className="flex md:hidden w-full max-w-[320px] h-[248px] mx-auto flex-col items-center justify-center p-2 bg-slate-100 rounded-md gap-0">
+      <div className="flex md:hidden w-full max-w-[320px] h-[248px] mx-auto flex-col items-center justify-center p-2 bg-[#F4F2EC] rounded-md gap-0">
         <img src={nodata1} alt="No Data" className="mb-1" />
         <p className="text-center text-gray-700 text-[14px]">
         No Data Available !
