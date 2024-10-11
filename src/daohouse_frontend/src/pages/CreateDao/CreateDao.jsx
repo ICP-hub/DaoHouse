@@ -234,9 +234,9 @@ const CreateDao = () => {
   return (
     <Fragment>
       <TopComponent showButtons={false} />
-      <div className={className + " bg-[#c8ced3] mobile:py-8 py-4 mobile:px-10 px-5"}>
+      <div className={className + " bg-[#c8ced3] mobile:py-8 py-4 mobile:px-5 px-5"}>
         <Container>
-          <div className={className + "__label py-2 mobile:px-2 w-full mx-[-2px] small_phone:px-4 mobile:mx-[-16px] tablet:px-16 lg:px-20 laptop:px-[72px] desktop:px-32"}>
+          <div className={className + "__label py-2 mobile:px-2 mobile:mx-2 w-full mx-[-2px] small_phone:px-4 desktop:mx-[-16px] md:mx-2 big_phone:mx-1 tablet:px-12 tablet:mx-2 lg:px-20 laptop:px-[72px] desktop:px-32"}>
             <div className="phone:text-4xl text-2xl flex flex-row items-center gap-4">
               Create DAO
               <div className="flex flex-col items-start">
@@ -249,7 +249,7 @@ const CreateDao = () => {
         {showLoginModal && <LoginModal isOpen={showLoginModal} onClose={handleModalClose} onLogin={handleLogin} 
           onNFIDLogin={handleNFIDLogin} loading={loading} />}
         <Container>
-          <div className={className + "__steps overflow-x-scroll mobile:py-4 py-2 tablet:px-12 desktop:px-24 mobile:gap-20 gap-6 flex flex-row w-full mobile:items-center justify-between"}>
+          <div className={className + "__steps overflow-x-scroll small_phone:px-4 mobile:px-4 mobile:py-4 py-2 big_phone:px-4 tablet:px-12 lg:px-20 desktop:px-24 mobile:gap-20 gap-6 flex flex-row w-full mobile:items-center justify-between"}>
             {steps.map(({ step, name }, index) => (
               <div key={index} ref={index >= 3 ? Step4Ref : Step1Ref} className={"flex mobile:flex-row flex-col  py-4 items-center gap-2 " + `${activeStep >= index ? "opacity-100" : "opacity-50"}`}>
                 {index >= activeStep ? (
@@ -265,9 +265,9 @@ const CreateDao = () => {
           </div>
         </Container>
         <Container>
-      <div className="form-wrapper w-full tablet:mx-10 tablet:mr-20 desktop:mx-20 py-4 max-w-[1224px]">
-        {Form()}
-      </div>
+          <div className="form-wrapper w-full small_phone:px-4 mobile:px-4 big_phone:mx-0 big_phone:px-0 tablet:mx-[-2px] tablet:px-16 desktop:px-20  py-4 ">
+            {Form()}
+          </div>
     </Container>
       </div>
     </Fragment>
