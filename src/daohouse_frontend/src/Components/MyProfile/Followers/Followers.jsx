@@ -113,9 +113,13 @@ const Followers = () => {
         </div>
 
         {searchTerm && searchLoading ? ( // Show skeleton loading when search is in progress
+          <div className="md:mt-8">
           <MyProfileSkelton />
+        </div>
         ) : loading ? (
-          <MyProfileSkelton />
+          <div className="md:mt-8 mt-4">
+            <MyProfileSkelton />
+          </div>
         ) : displayDAOs.length === 0 ? (
           <div className="mt-4 md:mt-8">
             <NoDataComponent text={searchTerm ? "No DAOs found!" : "No DAOs joined yet!"} />
