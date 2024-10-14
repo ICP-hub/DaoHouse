@@ -17,7 +17,7 @@ import ShareModal from "./ShareModal";
 
 export default function Card({ proposal, voteApi, showActions, isProposalDetails, isComment, setIsComment, commentCount, isSubmittedProposals, showComments}) {
 
-  console.log("Vote API", proposal);
+  // console.log("Vote API", proposal);
   
   const {backendActor, createDaoActor, stringPrincipal} = useAuth();
   const [voteStatus, setVoteStatus] = useState(""); // Track user vote (Yes/No)
@@ -36,7 +36,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const {daoCanisterId} = useParams();
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
-  console.log(votersList);
+  // console.log(votersList);
   
   // console.log("voters", proposal?.approved_votes_list + proposal?.rejected_votes_list); 
 
@@ -56,7 +56,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
         setIsLoading(false); // Set loading to false after fetching data
       }
     }
-
+    
     fetchUserProfile();
   }, [proposal]);
 
@@ -67,8 +67,6 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   // console.log(proposal.dao_canister_id);
   const proposalId = proposal.proposal_id
   const daoId = proposal.dao_canister_id || proposal.associated_dao_canister_id || daoCanisterId;
-    
-  console.log(daoCanisterId);
   
 
   useEffect(() => {
@@ -93,16 +91,12 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
           throw new Error("Failed to create DAO actor.");
         }
 
-        console.log("DAO Actor:", daoActor);
-
         // Fetch DAO details
         const daoDetails = await daoActor?.get_dao_detail();
 
         if (!daoDetails || !daoDetails.dao_name) {
           throw new Error("DAO details are missing or incomplete.");
         }
-
-        console.log("DAO Details:", daoDetails);
 
         // Update the DAO name state
         setDaoName(daoDetails.dao_name);
@@ -111,13 +105,11 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
         // toast.error("Failed to fetch DAO details. Please try again.");
       }
     };
-
-
+    
     fetchDaoName();
   }, [ createDaoActor, proposal?.associated_dao_canister_id, daoId])
 
   const copyToClipboard = () => {
-    console.log("daoCaniste", daoCanisterId);
     
     const proposalUrl = `${window.location.origin}/social-feed/proposal/${proposal?.proposal_id}/dao/${daoId}`;
     navigator.clipboard.writeText(proposalUrl).then(
@@ -159,7 +151,10 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
 
   // Convert BigInt timestamps to dates
   const submittedOn = new Date(Number(proposal?.proposal_submitted_at) / 1_000_000); // Convert nanoseconds to milliseconds
-  const expiresOn = new Date(Number(proposal?.proposal_expired_at) / 1_000_000);
+  const expiresOn = useMemo(() => {
+  return new Date(Number(proposal?.proposal_expired_at) / 1_000_000);
+}, [proposal?.proposal_expired_at]);
+
 
   // Format the dates to be human-readable
   const formattedSubmittedOn = submittedOn.toLocaleString();
@@ -222,6 +217,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
       const intervalId = setInterval(() => {
         setTimeRemaining(getTimeRemaining(expiresOn));
       }, 1000);
+      
   
       return () => clearInterval(intervalId);
     }, [expiresOn]);
@@ -239,6 +235,9 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
     if (hasVoted) {
       // setIsDisabled(true);
     }
+
+    console.log("HOOK4");
+    
   }, [proposal?.proposal_id]);
 
   const handleVoteSubmit = async (e) => {
@@ -309,7 +308,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
 
   {
     return (
-      <div className={`bg-white  font-mulish ${isProposalDetails ? "rounded-t-xl tablet:mx-16": "rounded-xl desktop:mx-20" } shadow-md ${isSubmittedProposals ? "flex" : "flex flex-col md:flex-col"}`}>
+      <div className={`bg-white  font-mulish ${isProposalDetails ? "rounded-t-xl md:mx-4 tablet:mx-16": "rounded-xl desktop:mx-20" } shadow-md ${isSubmittedProposals ? "flex" : "flex flex-col md:flex-col"}`}>
         {/* Top Section */}
         <div className={` bg-[#0E3746] ${isSubmittedProposals ? "w-2/6 flex flex-col justify-center items-center py-2 space-y-6 rounded-l-lg" : "w-full flex justify-between items-center bg-[#0E3746] px-[20px] md:px-12 py-6  rounded-t-lg rounded-b-none"}`}>
           <div className={`${isSubmittedProposals ? "flex justify-between items-start space-x-4" : "flex gap-[12px] md:gap-8 justify-center items-center"}`}>
@@ -339,7 +338,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
 
 
         {/* Bottom Section */}
-        <div className={`${isSubmittedProposals ? "w-4/6 px-12 py-8 flex-col space-y-4" : "w-full px-4 lg:px-12 py-4 md:py-8"}`}>
+        <div className={`${isSubmittedProposals ? "w-4/6 md:px-12 py-8 flex-col space-y-4" : "w-full px-4 md:px-12 py-4 md:py-8"}`}>
           <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-4 gap-4">
             <div className="max-w-full lg:max-w-full">
               <h4 className={`text-xl font-bold text-[#0E3746] ${isSubmittedProposals ? "overflow-hidden truncate w-64 " : "overflow-hidden text-ellipsis whitespace-normal"}`}>
@@ -350,7 +349,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
 
 
 
-            <div className="flex gap-4 self-start">
+            <div className="flex iphone_SE:gap-1 small-phone:gap-4 self-start">
               <span className="md:py-1 px-2 md:px-2 md:w-[185px] rounded-full bg-[#4993B0] text-white font-semibold text-sm small_phone:text-base">
                 {timeRemaining}
               </span>

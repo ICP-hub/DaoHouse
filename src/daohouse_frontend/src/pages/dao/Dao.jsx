@@ -229,7 +229,9 @@ const Dao = () => {
       )}
 
       {loading ? (
-        <DaoCardLoaderSkeleton />
+        <div className="mx-4">
+          <DaoCardLoaderSkeleton />
+        </div>
       ) : showAll ? (
         noDaoFound || dao.length === 0 ? (
           <div className="flex justify-center items-center h-full mb-10 mt-10 ">
@@ -243,7 +245,7 @@ const Dao = () => {
           </div>
         ) : (
           <div className="bg-gray">
-            <Container classes="__cards tablet:px-10 small_phone:px-8 pb-10 grid grid-cols-1 big_phone:grid-cols-2 tablet:gap-2 gap-4">
+            <Container classes="__cards tablet:px-10 small_phone:px-8 md:px-0 pb-10 grid grid-cols-1 big_phone:grid-cols-2 tablet:gap-2 gap-4">
               {(searchTerm ? fetchedDAOs : dao).map((daos, index) => (
                 <DaoCard
                   key={index}
