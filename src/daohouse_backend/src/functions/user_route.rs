@@ -90,6 +90,7 @@ async fn create_profile(profile: MinimalProfileinput) -> Result<String, String> 
         image_canister: asset_canister_id,
         follow_dao : Vec::new(),
         join_dao :  Vec::new(),
+        submitted_proposals : 0,
     };
 
     // with_state(|state| routes::create_new_profile(state, profile.clone()))
@@ -533,8 +534,19 @@ fn check_user_existance() -> Result<String, String> {
 
 #[update(guard = prevent_anonymous)]
 fn get_profile_by_id(id: Principal) -> Result<UserProfile, String> {
+    let user_submitted_proposals : u64 = with_state(|state| {
+        state.proposal_store
+            .iter()
+            .filter(|(_key, proposal)| proposal.created_by == id)
+            .count()
+    }).try_into().unwrap();
+
     with_state(|state| match state.user_profile.get(&id) {
-        Some(profile) => Ok(profile),
+        Some(profile) => {
+            let mut user_profile: UserProfile = profile.clone();
+            user_profile.submitted_proposals = user_submitted_proposals;
+            Ok(user_profile)
+        },
         None => Err(String::from(crate::utils::USER_DOES_NOT_EXIST)),
     })
 }

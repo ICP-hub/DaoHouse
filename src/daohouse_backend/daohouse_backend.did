@@ -132,6 +132,7 @@ type UserProfile = record {
   follow_dao : vec principal;
   profile_img : text;
   telegram : text;
+  submitted_proposals : nat64;
   tag_defines : vec text;
   followings_list : vec principal;
 };
