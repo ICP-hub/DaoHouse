@@ -223,6 +223,7 @@ const FeedPage = () => {
 
             <img src={nodata} alt="No Data" className="mb-1  desktop:ml-[100px]  mobile:ml-0" />
             <p className="text-center text-gray-700 text-2xl">
+
               There are no proposals available yet!
             </p>
           </Container>
