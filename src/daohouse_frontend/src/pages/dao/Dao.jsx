@@ -3,6 +3,8 @@ import { HiPlus } from "react-icons/hi";
 import { Link, useNavigate } from "react-router-dom";
 import DaoCard from "../../Components/Dao/DaoCard";
 import NoDataComponent from "../../Components/Dao/NoDataComponent";
+// import nodata from "../../../assets/nodata.png";
+import nodata from "../../../assets/gif/nodata.svg";
 import TopComponent from "../../Components/Dao/TopComponent";
 import Container from "../../Components/Container/Container";
 import { useAuth } from "../../Components/utils/useAuthClient";
@@ -10,7 +12,7 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import LoginModal from "../../Components/Auth/LoginModal";
 import SearchProposals from "../../Components/Proposals/SearchProposals";
 import { Principal } from "@dfinity/principal";
-import DaoCardLoaderSkeleton from "../../Components/SkeletonLoaders/DaoCardLoaderSkeleton/DaoCardLoaderSkeleton"; 
+import DaoCardLoaderSkeleton from "../../Components/SkeletonLoaders/DaoCardLoaderSkeleton/DaoCardLoaderSkeleton";
 import Pagination from "../../Components/pagination/Pagination";
 
 const Dao = () => {
@@ -29,6 +31,11 @@ const Dao = () => {
   const { isAuthenticated, backendActor, createDaoActor, login, signInNFID, stringPrincipal } = useAuth();
   const navigate = useNavigate();
 
+
+  const handleJoinDaoClick = () => {
+    navigate("/dao");
+  };
+
   const fetchDaoDetails = async (daoList) => {
     const allDaoDetails = await Promise.all(
       daoList.map(async (data) => {
@@ -36,7 +43,7 @@ const Dao = () => {
           const daoCanister = await createDaoActor(data.dao_canister_id);
           const dao_details = await daoCanister.get_dao_detail();
           console.log("ddd", dao_details);
-          
+
           return { ...dao_details, daoCanister, dao_canister_id: data.dao_canister_id };
         } catch (err) {
           console.error(`Error fetching details for DAO ${data.dao_canister_id}:`, err);
@@ -50,17 +57,17 @@ const Dao = () => {
   const getDaos = async (pagination = {}) => {
     setLoading(true);
     try {
-      const response = await backendActor.get_all_dao({ 
-        start: pagination.start, 
-        end: pagination.end + 1 
+      const response = await backendActor.get_all_dao({
+        start: pagination.start,
+        end: pagination.end + 1
       });
-  
+
       const hasMoreData = response.length > itemsPerPage;
-  
+
       const daoToDisplay = response.slice(0, itemsPerPage);
-  
+
       const combinedDaoDetails = await fetchDaoDetails(daoToDisplay);
-      setHasMore(hasMoreData); 
+      setHasMore(hasMoreData);
       setDao(combinedDaoDetails);
     } catch (error) {
       console.error("Error fetching DAOs:", error);
@@ -68,22 +75,22 @@ const Dao = () => {
       setLoading(false);
     }
   };
-  
+
 
   const getSearchDao = async () => {
     if (!searchTerm.trim()) return setFetchedDAOs([]);
-  
+
     setLoading(true);
     try {
-      const response = await backendActor.search_dao(searchTerm, { 
-        start: (currentPage - 1) * itemsPerPage, 
-        end: currentPage * itemsPerPage + 1  
+      const response = await backendActor.search_dao(searchTerm, {
+        start: (currentPage - 1) * itemsPerPage,
+        end: currentPage * itemsPerPage + 1
       });
-  
+
       const hasMoreData = response.length > itemsPerPage;
-  
+
       const daoToDisplay = response.slice(0, itemsPerPage);
-  
+
       const combinedSearchDaoDetails = await fetchDaoDetails(daoToDisplay);
       setHasMore(hasMoreData);
       setFetchedDAOs(combinedSearchDaoDetails);
@@ -93,7 +100,7 @@ const Dao = () => {
       setLoading(false);
     }
   };
-  
+
 
   const getJoinedDaos = async () => {
     try {
@@ -177,15 +184,18 @@ const Dao = () => {
 
   return (
     <div className="bg-zinc-200">
+
       <TopComponent showAll={showAll} setShowAll={setShowAll} showButtons />
+
       <div className="bg-gray">
         <Container classes="__label small_phone:py-8 py-5 px-4 mobile:px-10 small_phone:px-8  flex justify-between items-center">
-        <div
+          <div
             onClick={() => (showAll ? getDaos() : getJoinedDaos())}
             className="small_phone:text-4xl text-3xl tablet:ml-16  flex items-center gap-4"
           >
             {showAll ? "All" : "Joined"}
-       </div>
+          </div>
+
           <div className="flex-grow lg:flex justify-center hidden">
             <SearchProposals
               width="70%"
@@ -194,13 +204,18 @@ const Dao = () => {
               className="border-2 border-[#AAC8D6] w-full max-w-lg"
               onChange={(e) => setSearchTerm(e.target.value)}
             />
+
           </div>
-          <Link to="/dao/create-dao">
-            <button className="bg-white small_phone:gap-2 gap-1 tablet:mr-12 mobile:px-5 p-2 small_phone:text-base text-sm shadow-xl flex items-center rounded-full hover:bg-[#ececec] hover:scale-105 transition">
-              <HiPlus />
-              Create DAO
-            </button>
-          </Link>
+
+
+          {showAll && (
+            <Link to="/dao/create-dao">
+              <button className="bg-white small_phone:gap-2 gap-1 tablet:mr-12 mobile:px-5 p-2 small_phone:text-base text-sm shadow-xl flex items-center rounded-full hover:bg-[#ececec] hover:scale-105 transition">
+                <HiPlus />
+                Create DAO
+              </button>
+            </Link>
+          )}
         </Container>
       </div>
 
@@ -214,15 +229,23 @@ const Dao = () => {
       )}
 
       {loading ? (
-        <DaoCardLoaderSkeleton />
+        <div className="mx-4">
+          <DaoCardLoaderSkeleton />
+        </div>
       ) : showAll ? (
         noDaoFound || dao.length === 0 ? (
-          <div className="flex justify-center items-center h-full mb-10 mx-10">
-            <NoDataComponent />
+          <div className="flex justify-center items-center h-full mb-10 mt-10 ">
+            <Container className="w-full flex flex-col items-center justify-center   ">
+              <img src={nodata} alt="No Data" className="mb-1  ml-[42px]  " />
+              <p className="text-center  ml-[42px] mt-4  text-gray-700 text-base">
+                You have not created any DAO
+              </p>
+
+            </Container>
           </div>
         ) : (
           <div className="bg-gray">
-            <Container classes="__cards tablet:px-10 small_phone:px-8 pb-10 grid grid-cols-1 big_phone:grid-cols-2 tablet:gap-2 gap-4">
+            <Container classes="__cards tablet:px-10 small_phone:px-8 md:px-0 pb-10 grid grid-cols-1 big_phone:grid-cols-2 tablet:gap-2 gap-4">
               {(searchTerm ? fetchedDAOs : dao).map((daos, index) => (
                 <DaoCard
                   key={index}
@@ -271,8 +294,19 @@ const Dao = () => {
           )}
         </div>
       ) : (
-        <div className="flex justify-center items-center h-full mb-10 mx-10">
-          <NoDataComponent />
+        <div className="flex justify-center items-center h-full mb-10 mt-10 ">
+          <Container className="w-full flex flex-col items-center justify-center    ">
+            <img src={nodata} alt="No Data" className="mb-1  ml-[42px]  " />
+            <p className="text-center  ml-[42px]  mt-4 text-gray-700 text-base">
+              You have not joined any DAO
+            </p>
+            <button
+              onClick={handleJoinDaoClick}
+              className="px-16 py-3 ml-[56px]  mt-4 bg-black text-center text-white font-normal rounded-full shadow-md hover:bg-gray-200 hover:text-blue-900 transition-colors duration-300"
+            >
+              Join DAO
+            </button>
+          </Container>
         </div>
       )}
     </div>

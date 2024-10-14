@@ -70,7 +70,7 @@ const AboutMe = () => {
           <p className="lg:text-[20px] md:text-[16px] text-[14px] font-semibold text-[#05212C] ml-2 mb-3 mt-6">
             Personal Links & Contact Info
           </p>
-          {userProfile?.description ? (
+          {userProfile?.contact_number ? (
             <PersonalLinksAndContactInfo
               links={[
                 { icon: "phone-icon", 
