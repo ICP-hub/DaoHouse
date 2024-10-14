@@ -538,6 +538,7 @@ pub struct UserProfile {
     pub website: String,
     pub follow_dao : Vec<Principal>,
     pub join_dao :  Vec<Principal>,
+    pub submitted_proposals : u64,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize)]
