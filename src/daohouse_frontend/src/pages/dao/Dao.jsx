@@ -75,10 +75,7 @@ const Dao = () => {
   
     setLoading(true);
     try {
-      const response = await backendActor.search_dao(searchTerm, { 
-        start: (currentPage - 1) * itemsPerPage, 
-        end: currentPage * itemsPerPage + 1  
-      });
+      const response = await backendActor.search_dao(searchTerm);
   
       const hasMoreData = response.length > itemsPerPage;
   
@@ -135,15 +132,8 @@ const Dao = () => {
   }, [isAuthenticated, backendActor, currentPage]);
 
   useEffect(() => {
-    if (searchTerm) {
-      setCurrentPage(1); // Reset to first page on new search
-      getSearchDao();
-    } else {
-      // If search term is cleared, refetch DAOs
-      getDaos({ start: (currentPage - 1) * itemsPerPage, end: currentPage * itemsPerPage });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTerm, currentPage]);
+    if (searchTerm) getSearchDao();
+  }, [searchTerm]);
 
   useEffect(() => {
     if (!showAll) getJoinedDaos();
@@ -224,7 +214,7 @@ const Dao = () => {
           </div>
         ) : (
           <div className="bg-gray">
-            <Container classes="__cards tablet:px-10 small_phone:px-8 md:px-0 pb-10 grid grid-cols-1 big_phone:grid-cols-2 tablet:gap-2 gap-4">
+            <Container classes="__cards tablet:px-10 px-4 small_phone:px-8 md:px-0 pb-10 grid grid-cols-1 big_phone:grid-cols-2 tablet:gap-2 gap-4">
               {(searchTerm ? fetchedDAOs : dao).map((daos, index) => (
                 <DaoCard
                   key={index}
