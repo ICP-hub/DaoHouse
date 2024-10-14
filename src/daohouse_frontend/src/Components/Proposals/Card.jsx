@@ -17,7 +17,7 @@ import ShareModal from "./ShareModal";
 
 export default function Card({ proposal, voteApi, showActions, isProposalDetails, isComment, setIsComment, commentCount, isSubmittedProposals, showComments}) {
 
-  console.log("Vote API", proposal);
+  // console.log("Vote API", proposal);
   
   const {backendActor, createDaoActor, stringPrincipal} = useAuth();
   const [voteStatus, setVoteStatus] = useState(""); // Track user vote (Yes/No)
@@ -36,7 +36,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const {daoCanisterId} = useParams();
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
-  console.log(votersList);
+  // console.log(votersList);
   
   // console.log("voters", proposal?.approved_votes_list + proposal?.rejected_votes_list); 
 
@@ -56,7 +56,6 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
         setIsLoading(false); // Set loading to false after fetching data
       }
     }
-    console.log("HOOK1");
     
     fetchUserProfile();
   }, [proposal]);
@@ -68,8 +67,6 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   // console.log(proposal.dao_canister_id);
   const proposalId = proposal.proposal_id
   const daoId = proposal.dao_canister_id || proposal.associated_dao_canister_id || daoCanisterId;
-    
-  console.log(daoCanisterId);
   
 
   useEffect(() => {
@@ -94,16 +91,12 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
           throw new Error("Failed to create DAO actor.");
         }
 
-        console.log("DAO Actor:", daoActor);
-
         // Fetch DAO details
         const daoDetails = await daoActor?.get_dao_detail();
 
         if (!daoDetails || !daoDetails.dao_name) {
           throw new Error("DAO details are missing or incomplete.");
         }
-
-        console.log("DAO Details:", daoDetails);
 
         // Update the DAO name state
         setDaoName(daoDetails.dao_name);
@@ -112,14 +105,11 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
         // toast.error("Failed to fetch DAO details. Please try again.");
       }
     };
-
-    console.log("HOOK2");
     
     fetchDaoName();
   }, [ createDaoActor, proposal?.associated_dao_canister_id, daoId])
 
   const copyToClipboard = () => {
-    console.log("daoCaniste", daoCanisterId);
     
     const proposalUrl = `${window.location.origin}/social-feed/proposal/${proposal?.proposal_id}/dao/${daoId}`;
     navigator.clipboard.writeText(proposalUrl).then(
@@ -227,8 +217,6 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
       const intervalId = setInterval(() => {
         setTimeRemaining(getTimeRemaining(expiresOn));
       }, 1000);
-
-      console.log("HOOK3");
       
   
       return () => clearInterval(intervalId);

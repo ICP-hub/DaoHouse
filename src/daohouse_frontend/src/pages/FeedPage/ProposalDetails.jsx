@@ -322,7 +322,7 @@ const ProposalsDetails = () => {
       />
       </div>
       {isComment && (
-        <div className="lg:px-16">
+        <div className="tablet:px-12">
           <Comments
           daoId={daoCanisterId}
           proposalId={proposalId}

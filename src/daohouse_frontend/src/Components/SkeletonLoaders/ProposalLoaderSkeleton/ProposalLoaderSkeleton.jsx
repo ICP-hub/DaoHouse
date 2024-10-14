@@ -4,7 +4,7 @@ import Container from '../../Container/Container'; // Import your Container comp
 const ProposalLoaderSkeleton = ({ isProposalDetails = false, showActions = false }) => {
   return (
     // Container for Loader Skeleton
-    <Container classes="w-[1200px] ">
+    <Container classes="w-[300px] mobile:w-[450px] md:w-[650px] lg:w-[900px] xl:w-[1050px]">
       <div className={`bg-white font-mulish ${isProposalDetails ? "rounded-t-xl" : "rounded-xl"} shadow-md flex flex-col md:flex-col animate-pulse`}>
         {/* Top Section */}
         <div className="w-full flex justify-between items-center bg-gray-300 px-[20px] md:px-12 py-6 rounded-t-lg rounded-b-none">
@@ -28,7 +28,7 @@ const ProposalLoaderSkeleton = ({ isProposalDetails = false, showActions = false
         <div className="w-full px-4 lg:px-12 py-4 md:py-8">
           <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-4 gap-4">
             <div className="max-w-full lg:max-w-full">
-              <div className="w-[700px] h-6 bg-gray-400"></div>
+              <div className="w-[200px] h-6 bg-gray-400"></div>
             </div>
             <div className="flex gap-4">
               <div className="w-24 h-6 bg-gray-400 rounded-full"></div>
@@ -62,7 +62,7 @@ const ProposalLoaderSkeleton = ({ isProposalDetails = false, showActions = false
           )}
         </div>
       </div>
-    </Container>
+      </Container>
   );
 }
 
