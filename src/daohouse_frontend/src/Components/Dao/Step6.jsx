@@ -371,28 +371,26 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
         </div>
       </div>
 
-      <div className="w-full md:w-[40%] flex flex-col lg:mt-10 md:flex-row items-center md:items-end justify-center md:justify-end">
-        <button
-          onClick={() => setActiveStep(4)}
-          className="flex mobile:m-4 my-4 flex-row items-center gap-2 border border-[#0E3746] hover:bg-[#0E3746] text-[#3d6979] hover:text-white mobile:text-base text-sm transition sm:px-6 lg:px-12 py-2 rounded-[2rem]"
-        >
-          <FaArrowLeftLong /> Back
-        </button>
+      <div className="w-full flex flex-col sm:flex-row items-center justify-center sm:justify-end space-y-4 sm:space-y-0 sm:space-x-4 mt-6 sm:mt-10 px-4 sm:px-0">
+  <button
+    onClick={() => setActiveStep(4)}
+    className="w-full sm:w-auto flex items-center justify-center gap-2 border border-[#0E3746] hover:bg-[#0E3746] text-[#3d6979] hover:text-white text-sm sm:text-base transition px-4 sm:px-6 lg:px-12 py-2 sm:py-3 rounded-full"
+  >
+    <FaArrowLeftLong /> Back
+  </button>
 
-       
-          <button
-            type="submit"
-            onClick={createDAO}
-            className="flex mobile:m-4 my-4 flex-row items-center gap-2 bg-[#0E3746] sm:px-6 lg:px-12 py-2 rounded-[2rem] text-white mobile:text-base text-sm whitespace-nowrap"
-          >
-            {loadingNext ? (
-              <CircularProgress size={24} />
-            ) : (
-              "Create DAO"
-            )}
-          </button>
-        
-      </div>
+  <button
+    type="submit"
+    onClick={createDAO}
+    className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#0E3746] text-white text-sm sm:text-base px-4 sm:px-6 lg:px-12 py-2 sm:py-3 rounded-full whitespace-nowrap"
+  >
+    {loadingNext ? (
+      <CircularProgress size={20} />
+    ) : (
+      "Create DAO"
+    )}
+  </button>
+</div>
     </div>
     </Container>
     <PaymentModal

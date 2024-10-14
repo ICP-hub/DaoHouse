@@ -190,9 +190,9 @@ const FeedPage = () => {
       {/* Filter Section */}
       <div className="bg-[#c8ced3]">
         <Container
-          classes={`__label small_phone:py-8 py-5 mobile:px-10 px-5 flex flex-col-reverse gap-4 lg:flex-row w-full justify-between items-start lg:items-center ${className}`}
+          classes={`__label small_phone:py-8 py-5 mobile:px-10 tablet:px-20 px-5 flex flex-col gap-4 md:flex-row w-full justify-between items-center md:items-center ${className}`}
         >
-          <p className="small_phone:text-4xl text-3xl big_phone:px-8 flex flex-row items-center translate-x-[20px] gap-4">
+          <p className="small_phone:text-4xl text-3xl big_phone:px-2 tablet:px-6 flex flex-row items-center gap-4">
             Most Recent
             <div className="flex flex-col items-start">
               <div className="mobile:w-32 w-12 border-t-2 border-black"></div>
@@ -220,19 +220,24 @@ const FeedPage = () => {
           <ProposalLoaderSkeleton />
         ) : proposals.length === 0 ? (
           <Container className="w-full flex flex-col items-center justify-center ">
-            <img src={nodata} alt="No Data" className="mb-1  ml-[100px] " />
-            <p className="text-center text-gray-700 text-base mt-6 ml-[80px]">
+
+            <img src={nodata} alt="No Data" className="mb-1  desktop:ml-[100px]  mobile:ml-0" />
+            <p className="text-center text-gray-700 text-2xl">
+
               There are no proposals available yet!
             </p>
           </Container>
         ) : (
-          <Container className="w-full">
+          <div className="mx-2 small_phone:mx-4 mobile:mx-1 lg:mx-16 desktop:mx-20">
+          <Container >
             <ProposalsContent
               proposals={proposals}
               isMember={true}
               showActions={false}
             />
+
           </Container>
+          </div>
         )}
       </div>
 
