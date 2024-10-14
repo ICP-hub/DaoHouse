@@ -220,8 +220,9 @@ const FeedPage = () => {
           <ProposalLoaderSkeleton />
         ) : proposals.length === 0 ? (
           <Container className="w-full flex flex-col items-center justify-center ">
-            <img src={nodata} alt="No Data" className="mb-1  ml-[100px] " />
-            <p className="text-center text-gray-700 text-base mt-6 ml-[80px]">
+
+            <img src={nodata} alt="No Data" className="mb-1  desktop:ml-[100px]  mobile:ml-0" />
+            <p className="text-center text-gray-700 text-2xl">
               There are no proposals available yet!
             </p>
           </Container>

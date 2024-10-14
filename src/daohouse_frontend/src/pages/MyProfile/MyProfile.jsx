@@ -64,7 +64,7 @@ const MyProfile = ({ childComponent }) => {
   const [showNoFollowing, setShowNoFollowing] = useState(false); // New state for NoFollowing component
   const navigate = useNavigate();
   const className = "MyProfile";
-  const tabButtonsStyle = "my-1 big_phone:text-base mobile:text-md text-sm flex flex-row items-center gap-2 hover:text-white";
+  const tabButtonsStyle = "my-1 big_phone:text-base mobile:text-md text-sm flex flex-row items-center gap-2 ";
 
   const defaultOptions = {
     loop: true,
@@ -540,7 +540,8 @@ const MyProfile = ({ childComponent }) => {
                 {/* Dark gray base line */}
               
                 {/* Thicker line to overlap and change width */}
-                <div className="absolute bottom-0 flex justify-center left-4 w-full h-[1px]  bg-gray-500 transition-all duration-300 hover:w-[50px]"></div>
+                <div className="absolute bottom-1 flex justify-center   w-full h-[2px] bg-black transition-all duration-300 hover:w-[20px]"></div>
+
 
                 {/* First tab */}
 

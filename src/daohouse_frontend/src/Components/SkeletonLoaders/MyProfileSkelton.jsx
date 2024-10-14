@@ -2,14 +2,15 @@ import React from 'react';
 
 function MyProfileSkelton() {
   return (
-    <div className="grid grid-cols-1 tablet:grid-cols-2 gap-4 max-h-[350px] overflow-y-auto px-4 custom-scrollbar">
+    <div className="grid grid-cols-1 tablet:grid-cols-2 relative bottom-[-20px] gap-6 max-h-[350px] overflow-y-auto px-4 custom-scrollbar">
+
       {[1, 2, 3, 4].map((_, index) => (
         <div
           key={index}
-          className="bg-white shadow-lg rounded-lg flex items-center p-4 space-x-4 transition-transform transform"
+          className="bg-white shadow-lg rounded-lg flex items-center p-4 space-x-4  bottom-0 transition-transform transform"
         >
           {/* Skeleton for the avatar image */}
-          <div className="rounded-full bg-gray-300 w-16 h-16" />
+          <div className="rounded-full bg-gray-300 w-16  h-16" />
 
           {/* Skeleton for the text and button */}
           <div className="flex-1">

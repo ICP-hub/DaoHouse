@@ -142,15 +142,19 @@ const Followers = () => {
                       alt={dao.dao_name}
                       className="w-16 h-16 rounded-full border-2 border-black"
                     />
-                    <div className="flex-1">
-                      <h4 className="text-lg font-mulish">{dao?.dao_name || "No Name"}</h4>
-                      <p className="text-gray-500 truncate max-w-[200px]">{dao?.purpose || "No Purpose"}</p>
+                    <div className="flex-1 overflow-hidden">
+                      <h4 className="text-lg font-mulish truncate">
+                        {dao?.dao_name || "No Name"}
+                      </h4>
+                      <p className="text-gray-500 truncate max-w-[200px] whitespace-nowrap">
+                        {dao?.purpose || "No Purpose"}
+                      </p>
                     </div>
                     <button
                       onClick={() => handleViewProfile(dao?.dao_canister_id)}
-                      className="border-2 border-[#0E3746] text-[#0E3746] rounded-full px-2 py-1 md:px-4 md:py-2 text-sm md:text-base hover:bg-[#0E3746] hover:text-white transition duration-300"
+                      className="border-2 border-[#0E3746] text-[#0E3746] rounded-full px-2 py-1 md:px-4 md:py-2 text-sm md:text-base hover:bg-[#0E3746] hover:text-white transition duration-300 whitespace-nowrap"
                     >
-                      View 
+                      View
                     </button>
                   </div>
                 ))}
