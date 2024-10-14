@@ -380,7 +380,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   
               <div className="mt-4 sm:mt-6">
                 <button 
-                  className="bg-[#CDEFFE] w-full sm:w-auto px-4 py-2 rounded-xl text-sm sm:text-base font-semibold transition-colors hover:bg-[#B8E0F5]" 
+                  className="bg-[#CDEFFE] w-full desktop:ml-[360px] sm:w-auto px-4 py-2 rounded-xl text-sm sm:text-base font-semibold transition-colors hover:bg-[#B8E0F5]" 
                   onClick={handleViewMore}
                 >
                   View More
@@ -529,7 +529,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
               )}
             </div>
             {!showActions && (
-              <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ml-[350px]">
+              <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
                 <button className="px-6 py-2 font-mulish" onClick={handleViewMore}>View More</button>
               </div>
             )}
