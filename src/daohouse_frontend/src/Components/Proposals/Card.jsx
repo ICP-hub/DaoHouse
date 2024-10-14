@@ -487,7 +487,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                 </div>
               </div>
 
-              {/* Cast Vote Section */}
+              {/* Cast Vote Section  */}
               {showActions && (
                 <div className="bg-sky-200 w-full md:w-96 p-4 rounded-md mt-6">
                   <h1 className="text-lg font-semibold mb-2">Cast Vote</h1>
