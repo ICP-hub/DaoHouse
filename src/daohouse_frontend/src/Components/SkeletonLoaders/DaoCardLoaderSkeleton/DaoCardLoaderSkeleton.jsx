@@ -7,7 +7,7 @@ const DaoCardLoaderSkeleton = () => {
       {[...Array(4)].map((_, index) => (
         <div 
           key={index} 
-          className="bg-[#F4F2EC] shadow-lg tablet:p-6 big_phone:p-3 small_phone:p-5 p-3 rounded-lg mr-12 ml-8 animate-pulse max-w-full md:max-w-[350px] lg:max-w-[800px]"
+          className="bg-[#F4F2EC] shadow-lg tablet:p-6 big_phone:p-3 small_phone:p-5 p-3 rounded-lg mr-4 ml-4 animate-pulse max-w-full md:max-w-[350px] big_phone:max-w-[750px] lg:max-w-[800px]"
         >
           <div className="flex big_phone:flex-row small_phone:flex-col justify-start items-start mb-4 gap-2">
             {/* Image Skeleton */}
@@ -56,7 +56,7 @@ const DaoCardLoaderSkeleton = () => {
           </div>
 
           {/* Buttons skeleton */}
-          <div className="flex justify-between gap-2 w-[500px] md:w-72 lg:w-96">
+          <div className="flex justify-between gap-2 w-[300px] small_phone:w-[350px] mobile:w-[400px] md:w-72 lg:w-96">
             <div className="flex-1 bg-gray-300 w-20 h-10 rounded-[3rem]"></div>
             <div className="flex-1 bg-gray-300 w-20 h-10 rounded-[3rem]"></div>
           </div>

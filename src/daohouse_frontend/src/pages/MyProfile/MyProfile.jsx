@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Lottie from "react-lottie";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaArrowRightLong } from "react-icons/fa6";
 
 import EditPen from "../../../assets/edit_pen.png";
@@ -33,6 +33,15 @@ const MyProfile = ({ childComponent }) => {
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
   const [imageSrc, setImageSrc] = useState(MyProfileImage);
+  const location = useLocation(); // Initialize useLocation
+
+  // Map paths to tab indices
+  const tabPathMap = {
+    "/my-profile": 0,
+    "/my-profile/posts": 1,
+    "/my-profile/followers": 2,
+    "/my-profile/following": 3,
+  };
 
   useEffect(() => {
     console.log("User Profile Image:", userProfile?.profile_img);
@@ -123,6 +132,12 @@ const MyProfile = ({ childComponent }) => {
       setShowNoFollowing(false);
     }
   }, [activeTab, following]); // Updated to include following
+
+  useEffect(() => {
+    const currentPath = location.pathname;
+    const tabIndex = tabPathMap[currentPath] !== undefined ? tabPathMap[currentPath] : 0;
+    setActiveTab(tabIndex);
+  }, [location.pathname]);
 
   return (
     <div className={`${className} bg-zinc-200 w-full relative `}>

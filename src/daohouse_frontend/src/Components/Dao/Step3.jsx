@@ -21,6 +21,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
   const [updatedGroupName, setUpdatedGroupName] = useState("");
   const [memberName, setMemberName] = useState("");
   const { backendActor, stringPrincipal } = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
 
   const [list, setList] = useState([
     { name: "Council", index:0, members: [] },
@@ -90,23 +91,43 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
   function handleBack() {
     setActiveStep(1);
   }
-
+  
   const handleGroupAdding = () => {
-    const newGroupIndex = count;
-    
-    setList(prevList => [
-      ...prevList,
-      { name: `Group ${count}`, index: newGroupIndex, members: [] },
-    ]);
+    let newGroupIndex = count;
+  
+    // Get the current list to check the existing indices
+    setList(prevList => {
+      const existingIndices = prevList.map(group => group.index);
+  
+      // Find the first missing index in the range from 1 to the current count
+      for (let i = 1; i <= count; i++) {
+        if (!existingIndices.includes(i)) {
+          newGroupIndex = i;
+          break;
+        }
+      }
+  
+      // If no missing index was found, set the new index to the current count
+      if (!newGroupIndex) {
+        newGroupIndex = count;
+      }
+  
+      // Return the updated list with the new group
+      return [
+        ...prevList,
+        { name: `Group ${newGroupIndex}`, index: newGroupIndex, members: [] },
+      ];
+    });
   
     // Automatically open the member input field for the new group
     setAddMemberIndex(newGroupIndex);
     setShowMemberNameInput(true);
-    setCount(prevCount => prevCount + 1);
+  
+    // Only increment count if no missing index was found
+    setCount(prevCount => (newGroupIndex === count ? prevCount + 1 : prevCount));
   };
   
   
-
   const deleteGroup = (index) => {
     setList(prevList => prevList.filter(item => item.index !== index));
   };
@@ -199,9 +220,6 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
     }
   }, [list, backendActor, memberUsernames]);
   
-  
-
-
   const handleRemoveMember = (groupIndex, memberPrincipalId) => {
     setList(prevList => 
       prevList.map(item => {
@@ -296,6 +314,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
         }
       }
       setCouncilUsernames(fetchedUsernames);
+      setIsLoading(false);
     };
     
     // Only fetch if councilMembers are present
@@ -338,13 +357,25 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
     console.log("Current council members:", council?.members || []);
   }, [stringPrincipal]);  // Only rerun if stringPrincipal changes
   
-  
-
   const handleEditGroup = (index) => {
     setGroupNameInputIndex(index);
     const groupName = list.find(item => item.index === index)?.name || "";
     setUpdatedGroupName(groupName); // Set the current name to the input state
   };
+
+  const skeletonLoader = () => {
+    return (
+      <div className="w-full flex bg-gray-100 py-4 px-8 flex-col mobile:items-start md:flex-row md:items-center justify-between mb-2 animate-pulse">
+        {/* Simulated Username */}
+        <p className="font-semibold mobile:text-base text-sm bg-gray-300 h-6 w-1/6 rounded-md"></p>
+        {/* Simulated Principal ID */}
+        <p className="text-sm bg-gray-300 h-6 w-1/3 rounded-md"></p>
+        {/* Simulated Delete Button */}
+        <button className="w-6 h-6 bg-gray-300 rounded-full"></button>
+      </div>
+    );
+  };
+  
 
   return (
     <React.Fragment>
@@ -405,7 +436,9 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
                 </div>
               ) : null}
             </section>
-            {councilUsernames.map((fullName, index) => {
+            {isLoading ? (
+              skeletonLoader() // Show skeleton loader while data is being fetched
+            ) : (councilUsernames.map((fullName, index) => {
               const [username, principalId] = fullName.split(" ("); // Split the string to separate username and principal ID
               const formattedPrincipalId = principalId.slice(0, -1); // Remove the closing parenthesis
 
@@ -420,7 +453,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
                   </div>
                 </section>
               );
-            })}
+            }))}
 
           </div>
 
