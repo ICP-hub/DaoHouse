@@ -204,7 +204,7 @@ const ProposalsDetails = () => {
   }
 
   if (!dao) {
-    return <div className="m-auto"><NoDataComponent /></div>;
+    return <div className="m-auto mt-20"><NoDataComponent /></div>;
   }
 
   return (

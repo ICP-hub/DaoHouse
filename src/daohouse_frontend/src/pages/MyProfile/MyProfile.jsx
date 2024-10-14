@@ -195,177 +195,127 @@ const MyProfile = ({ childComponent }) => {
         </div>
         <div className={`bg-[#c8ced3]`}>
           <Container classes={`__mainComponent big_phone:py-8 big_phone:pb-20 py-7 md:px-8 flex md:flex-row gap-2 flex-col w-full user-container`}>
-            <div className={`${className}__mainComponent__leftSide md:mx-0 mx-5 lg:px-20 flex flex-col tablet:items-start justify-center md:w-[204px] md:h-[600px] lg:w-[252px] translate-y-[50px] lg:h-[600px] md:px-14 rounded-[10px] bg-[#0E3746] text-white text-opacity-50 font-normal md:mt-[-65px] mt-[-45px] z-20`}>
-              <div
-                className="
-      flex md:flex-col flex-row 
-      items-start md:justify-center justify-around 
-      gap-x-4 gap-y-8 
-      w-[204px] 
-      translate-y-[50px]
-      translate-x-[-50px]
-      py-12 md:py-20 
-      text-nowrap 
-      font-mulish font-bold text-[16px] leading-[20px] text-left 
-    "
-              >
-                 <Link to="/my-profile" onClick={() => setActiveTab(0)}>
-                      <p className={`${tabButtonsStyle} ${activeTab === 0 ? "text-white " : ""}`}> 
-                         <img  src={add_reaction} alt="MyProfile" className="inline mr-2 w-4 h-4" />
-                         My Profile
-                         {activeTab === 0 ? <FaArrowRightLong className="md:inline hidden" /> : ""}</p> 
-                   
-                      </Link> 
-                <Link to="/my-profile/posts" onClick={() => setActiveTab(1)}>
-                  <p className={`${tabButtonsStyle} ${activeTab === 1 ? "text-white" : ""}`}>
-                    <img src={post_add} alt="Submitted Proposals" className="inline mr-2 w-4 h-4" />
-                    Submitted Proposals
-                    {activeTab === 1 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
-                  </p>
-                </Link>
-                <Link to="/my-profile/followers" onClick={() => setActiveTab(2)}>
-                  <p className={`${tabButtonsStyle} ${activeTab === 2 ? "text-white" : ""}`}>
-                    <img src={contract} alt="Followed Dao List" className="inline mr-2 w-4 h-4" />
-                    Followed Dao List
-                    {activeTab === 2 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
-                  </p>
-                </Link>
-                <Link to="/my-profile/following" onClick={() => setActiveTab(3)}>
-                  <p className={`${tabButtonsStyle} ${activeTab === 3 ? "text-white" : ""}`}>
-                    <img src={contract_edit} alt="Dao Joined" className="inline mr-2 w-4 h-4" />
-                    Dao Joined
-                    {activeTab === 3 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
-                  </p>
-                </Link>
-              </div>
-            </div>
-            <div className={`${className}__rightSide w-full`}>
-              <div className="flex md:justify-between justify-around w-full gap-2 relative">
-                <div className="flex items-start md:-ml-[10%] tablet:ml-[-90px] relative">
-                  <div
-                    className="fixed-image-container w-[206px] h-[206px] rounded-md overflow-hidden 
-                z-50 translate-x-[-180px] sm:translate-x-[-160px] md:translate-x-[-150px] 
-               lg:translate-x-[-146px] sm:z-40 md:z-20 lg:z-20"
-                    style={{
-                      boxShadow: "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
-                      // Adjust values as needed
-                    }}
-                  >
-                    <img
-                      className="w-full h-full object-cover"
-                      src={imageSrc} // Dynamically set to user's profile image or default
-                      alt="profile-pic"
-                      onError={handleImageError} // Handle image loading errors
-                    />
-                  </div>
-
-                  <div className="mr-20 translate-x-[-60px] ">
-                    <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C]">
-                      {name || "Username.user"}{" "}
-                    </h2>
-                    <p className="md:text-[14px] text-[10px] tablet:text-[16px] font-normal text-left text-[#646464]">
-                      {email || "gmail@gmail.xyz"}{" "}
+            <div className="flex justify-between w-[100%] big_phone:mx-2 lg:mx-16  gap-16">
+            
+              <div className={`${className}__mainComponent__leftSide md:mx-0 mx-5 left lg:px-20 flex flex-col tablet:items-start justify-center md:w-[204px] md:h-[600px] lg:w-[252px] lg:h-[600px] md:px-28 rounded-[10px] bg-[#0E3746] text-white text-opacity-50 font-normal  z-20`}>
+                <div
+                      className="fixed-image-container w-[180px] h-[180px] lg:w-[206px] lg:h-[206px] rounded-md overflow-hidden 
+                  z-50 sm:z-40 md:z-20 lg:z-20 md:translate-x-[-90px] lg:translate-x-[-55px]"
+                      style={{
+                        boxShadow: "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
+                        // Adjust values as needed
+                      }}
+                    >
+                      <img
+                        className="w-full h-full object-cover"
+                        src={imageSrc} // Dynamically set to user's profile image or default
+                        alt="profile-pic"
+                        onError={handleImageError} // Handle image loading errors
+                      />
+                    </div>
+                <div
+                  className="
+                    flex md:flex-col flex-row 
+                    items-start md:justify-center justify-around 
+                    gap-x-4 gap-y-8 
+                    
+                    
+                    
+                    lg:translate-x-[-50px]
+                    md:translate-x-[-80px]
+                    py-12 
+                    text-nowrap 
+                    font-mulish font-bold text-[16px] leading-[20px] text-left 
+                  "
+                >
+                  <Link to="/my-profile" onClick={() => setActiveTab(0)}>
+                        <p className={`${tabButtonsStyle} ${activeTab === 0 ? "text-white " : ""}`}> 
+                          <img  src={add_reaction} alt="MyProfile" className="inline mr-2 w-4 h-4" />
+                          My Profile
+                          {activeTab === 0 ? <FaArrowRightLong className="md:inline hidden" /> : ""}</p> 
+                    
+                        </Link> 
+                  <Link to="/my-profile/posts" onClick={() => setActiveTab(1)}>
+                    <p className={`${tabButtonsStyle} ${activeTab === 1 ? "text-white" : ""}`}>
+                      <img src={post_add} alt="Submitted Proposals" className="inline mr-2 w-4 h-4" />
+                      Submitted Proposals
+                      {activeTab === 1 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
                     </p>
-                    <div className="md:flex hidden justify-between mt-3">
-                      <span className="md:mr-5 tablet:text-[32px] text-[24px] font-normal text-[#05212C] user-acc-info">
-                        {post}
-                        <span className="tablet:text-[16px] text-[14px] mx-1">
-                          Submitted Proposals
+                  </Link>
+                  <Link to="/my-profile/followers" onClick={() => setActiveTab(2)}>
+                    <p className={`${tabButtonsStyle} ${activeTab === 2 ? "text-white" : ""}`}>
+                      <img src={contract} alt="Followed Dao List" className="inline mr-2 w-4 h-4" />
+                      Followed Dao List
+                      {activeTab === 2 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
+                    </p>
+                  </Link>
+                  <Link to="/my-profile/following" onClick={() => setActiveTab(3)}>
+                    <p className={`${tabButtonsStyle} ${activeTab === 3 ? "text-white" : ""}`}>
+                      <img src={contract_edit} alt="Dao Joined" className="inline mr-2 w-4 h-4" />
+                      Dao Joined
+                      {activeTab === 3 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
+                    </p>
+                  </Link>
+                </div>
+              </div>
+            <div className={`w-full flex-col`}>
+              <div className="flex md:justify-between w-full gap-2 relative">
+                <div className="flex items-start relative">
+                  <div className="flex justify-between w-full">
+                    <div className="">
+                      <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C]">
+                        {name || "Username.user"}{" "}
+                      </h2>
+                      <p className="md:text-[14px] text-[10px] tablet:text-[16px] font-normal text-left text-[#646464]">
+                        {email || "gmail@gmail.xyz"}{" "}
+                      </p>
+                      <div className="md:flex gap-2 hidden  mt-3">
+                        <span className=" tablet:text-[32px] text-[24px] font-normal text-[#05212C] user-acc-info">
+                          {post}
+                          <span className="tablet:text-[16px] text-[14px] mx-1">
+                            Submitted Proposals
+                          </span>
                         </span>
-                      </span>
-                      <span className="md:mx-5 tablet:text-[32px] text-[24px] font-normal text-[#05212C] user-acc-info">
-                        {followers}
-                        <span className="tablet:text-[16px] text-[14px] mx-1">
-                          Followed Dao List
+                        <span className=" tablet:text-[32px] text-[24px] font-normal text-[#05212C] user-acc-info">
+                          {followers}
+                          <span className="tablet:text-[16px] text-[14px] mx-1">
+                            Followed Dao
+                          </span>
                         </span>
-                      </span>
-                      <span className="md:mx-5 tablet:text-[32px] text-[24px] font-normal text-[#05212C] user-acc-info">
-                        {following}
-                        <span className="tablet:text-[16px] text-[14px] mx-1">
-                          Dao Joined
+                        <span className=" tablet:text-[32px] text-[24px] font-normal text-[#05212C] user-acc-info">
+                          {following}
+                          <span className="tablet:text-[16px] text-[14px] mx-1">
+                            Dao Joined
+                          </span>
                         </span>
-                      </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-end gap-4 tablet:mt-4 tablet:mr-4 translate-x-[-32px]">
-                  {activeTab === 0 && (
-                    <button
-                      onClick={() => navigate("/edit-profile")}
-                      className="bg-white text-[16px] text-[#05212C] gap-1  shadow-xl md:px-3  rounded-[27px] tablet:w-[181px] tablet:h-[40px] md:w-[151px] md:h-[35px] w-[2.5rem] h-[2.5rem] flex items-center justify-center space-x-4 rounded-2xl"
-                    >
-                      <img
-                        src={EditPen}
-                        alt="edit"
-                        className="tablet:mr-2 h-4 w-4 edit-pen "
-                      />
-                      <span className="md:inline hidden whitespace-nowrap">
-                        {userProfile === null ? "Complete Profile" : "Edit Profile"}
-                      </span>
-                    </button>
-                  )}
+                <div className="flex justify-end gap-4 ">
+                    {activeTab === 0 && (
+                      <button
+                        onClick={() => navigate("/edit-profile")}
+                        className="bg-white text-[16px] text-[#05212C] gap-1  shadow-xl md:px-3  rounded-[27px] tablet:w-[181px] tablet:h-[40px] md:w-[151px] md:h-[35px] w-[2.5rem] h-[2.5rem] flex items-center justify-center space-x-4 rounded-2xl"
+                      >
+                        <img
+                          src={EditPen}
+                          alt="edit"
+                          className=" h-4 w-4 edit-pen "
+                        />
+                        <span className="md:inline hidden whitespace-nowrap">
+                          {userProfile === null ? "Complete Profile" : "Edit Profile"}
+                        </span>
+                      </button>
+                    )}
                 </div>
               </div>
-              <div className="flex justify-start gap-8 p-4 mx-6 md:hidden text-center text-[#05212C]">
-                <div className="text-[22px] font-semibold ">
-                  {userProfile?.post_count}{" "}
-                  <div className="text-[15px] font-medium">Posts</div>
-                </div>
-                <div className="text-[22px] font-semibold ">
-                  {userProfile?.followers_count}{" "}
-                  <div className="text-[15px] font-medium">Followers</div>
-                </div>
-                <div className="text-[22px] font-semibold ">
-                  {userProfile?.followings_count}{" "}
-                  <div className="text-[15px] font-medium">Following</div>
-                </div>
-                <div> <div className={`${className}__mainComponent__leftSide md:mx-0 mx-5 lg:px-20 flex flex-col tablet:items-start justify-center md:w-[204px] md:h-[36px] lg:w-[320px] translate-y-[50px] lg:h-[36px] md:px-14 rounded-[10px]  text-black text-opacity-50 font-normal md:mt-[-65px] mt-[-45px] z-20`}>
-           <div
-              className="
-        flex md:flex-col flex-row 
-        items-start md:justify-center justify-around 
-        gap-x-4 gap-y-8 
-        w-[204px] 
-        translate-y-[50px]
-        translate-x-[-50px]
-        py-12 md:py-20 
-        text-nowrap 
-        font-mulish font-bold text-[16px] leading-[20px] text-left 
-      "
-            >
-             <Link to="/my-profile" onClick={() => setActiveTab(0)}>
-                    <p className={`${tabButtonsStyle} ${activeTab === 0 ? "text-black" : ""}`}>My Profile{activeTab === 0 ? <FaArrowRightLong className="md:inline hidden" /> : ""}</p> 
-                    </Link> 
-              <Link to="/my-profile/posts" onClick={() => setActiveTab(1)}>
-                <p className={`${tabButtonsStyle} ${activeTab === 1 ? "text-black" : ""}`}>
-               
-                   Proposals
-                  {activeTab === 1 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
-                </p>
-              </Link>
-              <Link to="/my-profile/followers" onClick={() => setActiveTab(2)}>
-                <p className={`${tabButtonsStyle} ${activeTab === 2 ? "text-black" : ""}`}>
-                 
-                  Followed Dao List
-                  {activeTab === 2 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
-                </p>
-              </Link>
-              <Link to="/my-profile/following" onClick={() => setActiveTab(3)}>
-                <p className={`${tabButtonsStyle} ${activeTab === 3 ? "text-black" : ""}`}>
-                 
-                  Dao Joined
-                  {activeTab === 3 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
-                </p>
-              </Link>
-            </div>
-             
-          </div></div>
-              </div>
-
               {childComponent}
               {activeTab === 2 && showNoFollowers && <NoFollowers setFollowers={setShowNoFollowers} />}
                {activeTab === 3 && showNoFollowing && <NoFollowing />} 
                {/* Render NoFollowing component */}
+            </div>
+            
             </div>
           </Container>
         </div>
@@ -479,7 +429,7 @@ const MyProfile = ({ childComponent }) => {
              */}
           </div>
           <div className={`${className}__rightSide w-full`}>
-            <div className="flex md:justify-between justify-around w-full gap-2 relative">
+            <div className="flex md:justify-between justify-start w-full gap-2 relative">
               <div className="flex items-start md:-ml-[10%] tablet:ml-[-90px] relative">
                 <div
                   className="fixed-image-container w-[70px] h-[56px] rounded-md overflow-hidden 
@@ -558,61 +508,63 @@ const MyProfile = ({ childComponent }) => {
              
            {/* {childComponent}*/} 
            <div className={`${className}__mainComponent__leftSide md:mx-0 mx-5 lg:px-20 flex flex-col tablet:items-start justify-center md:w-[320px] md:h-[36px] lg:w-[320px] translate-y-[50px] lg:h-[36px] md:px-14 rounded-[10px] bg-[#0E3746] text-white text-opacity-50 font-normal md:mt-[-65px] mt-[-45px] z-20`}>
-</div>
+              </div>
 
-<div className="
-  flex md:flex-col flex-row 
-  items-start md:justify-center justify-around 
-  gap-x-4 gap-y-8 
-  w-[204px] 
-  translate-y-[50px]
-  translate-x-[30px]
-  py-12 md:py-20 
-  text-nowrap 
-  font-mulish font-bold text-[10px] leading-[20px] text-left 
-  relative
-">
-  {/* Dark gray base line */}
- 
-  {/* Thicker line to overlap and change width */}
-  <div className="absolute bottom-0 flex justify-center left-0  translate-x-[-10px]   w-[320px] h-[1px] translate-y-[-53px] bg-gray-500 transition-all duration-300 hover:w-[50px]"></div>
+              <div className="
+                flex md:flex-col flex-row 
+                items-start md:justify-center justify-around 
+                gap-x-4 gap-y-8 
+                w-full 
+                
+                
+                mt-20
+                text-nowrap 
+                font-mulish font-bold text-[10px]  text-left 
+                relative
+              ">
+                {/* Dark gray base line */}
+              
+                {/* Thicker line to overlap and change width */}
+                <div className="absolute bottom-0 flex justify-center left-4 w-full h-[1px]  bg-gray-500 transition-all duration-300 hover:w-[50px]"></div>
 
-  {/* First tab */}
+                {/* First tab */}
 
-  <Link to="/my-profile/posts" onClick={() => setActiveTab(1)}>
-    <p className={`${tabButtonsStyle} ${activeTab === 1 ? "text-hex text-[14px] border-b-1 border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
-     Proposals
-      {activeTab === 1 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
-      {/* Tab underlining effect */}
-      <span className={`${activeTab === 1 ? "absolute w-full h-[4px] bg-black  text-[14px] left-0 bottom-0 -z-10" : "hover:w-full hover:h-[4px] hover:bg-black left-0 bottom-0 -z-10 transition-all duration-300"}`}></span>
-    </p>
-  </Link>
+                <Link to="/my-profile/posts" onClick={() => setActiveTab(1)}>
+                  <p className={`${tabButtonsStyle} ${activeTab === 1 ? "text-hex text-[14px] border-b-1 border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
+                  Proposals
+                    {activeTab === 1 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
+                    {/* Tab underlining effect */}
+                    <span className={`${activeTab === 1 ? "absolute w-full h-[4px] bg-black  text-[14px] left-0 bottom-0 -z-10" : "hover:w-full hover:h-[4px] hover:bg-black left-0 bottom-0 -z-10 transition-all duration-300"}`}></span>
+                  </p>
+                </Link>
 
-  {/* Second tab */}
-  <Link to="/my-profile/followers" onClick={() => setActiveTab(2)}>
-    <p className={`${tabButtonsStyle} ${activeTab === 2 ? "text-black border-b-1 text-[14px]  border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
-      Followed Dao List
-      {activeTab === 2 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
-      {/* Tab underlining effect */}
-      <span className={`${activeTab === 2 ? "absolute w-full h-[4px] bg-black left-0 text-[14px]  bottom-0 -z-10" : "hover:w-full hover:h-[4px]  hover:bg-black left-0 bottom-0 -z-10 transition-all duration-300"}`}></span>
-    </p>
-  </Link>
+                {/* Second tab */}
+                <Link to="/my-profile/followers" onClick={() => setActiveTab(2)}>
+                  <p className={`${tabButtonsStyle} ${activeTab === 2 ? "text-black border-b-1 text-[14px]  border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
+                    Followed Dao
+                    {activeTab === 2 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
+                    {/* Tab underlining effect */}
+                    <span className={`${activeTab === 2 ? "absolute w-full h-[4px] bg-black left-0 text-[14px]  bottom-0 -z-10" : "hover:w-full hover:h-[4px]  hover:bg-black left-0 bottom-0 -z-10 transition-all duration-300"}`}></span>
+                  </p>
+                </Link>
 
-  {/* Third tab */}
-  <Link to="/my-profile/following" onClick={() => setActiveTab(3)}>
-    <p className={`${tabButtonsStyle} ${activeTab === 3 ? "text-black border-b-1 text-[14px]  border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
-      Dao Joined
-      {activeTab === 3 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
-      {/* Tab underlining effect */}
-      <span className={`${activeTab === 3 ? "absolute w-full h-[4px] bg-black left-0 bottom-0 -z-10" : "hover:w-full hover:h-[4px] hover:bg-black left-0 bottom-0 -z-10 transition-all duration-300"}`}></span>
-    </p>
-  </Link>
-</div>
+                {/* Third tab */}
+                <Link to="/my-profile/following" onClick={() => setActiveTab(3)}>
+                  <p className={`${tabButtonsStyle} ${activeTab === 3 ? "text-black border-b-1 text-[14px]  border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
+                    Dao Joined
+                    {activeTab === 3 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
+                    {/* Tab underlining effect */}
+                    <span className={`${activeTab === 3 ? "absolute w-full h-[4px] bg-black left-0 bottom-0 -z-10" : "hover:w-full hover:h-[4px] hover:bg-black left-0 bottom-0 -z-10 transition-all duration-300"}`}></span>
+                  </p>
+                </Link>
+              </div>
 
-{childComponent}
+              <div className="mx-6">
+              {childComponent}
               {activeTab === 2 && showNoFollowers && <NoFollowers setFollowers={setShowNoFollowers} />}
                {activeTab === 3 && showNoFollowing && <NoFollowing />} 
                {/* Render NoFollowing component */}
+              </div>
             </div>
           
         </Container>
