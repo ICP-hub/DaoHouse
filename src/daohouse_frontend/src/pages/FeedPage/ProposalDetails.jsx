@@ -197,7 +197,7 @@ const ProposalsDetails = () => {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }} className="mt-12 mb-28">
         <ProposalDetailsLoaderSkeleton isProposalDetails={true} showActions={true} />
       </div>
     );
@@ -309,7 +309,7 @@ const ProposalsDetails = () => {
 
     {/* Comments and Proposal Details */}
     <div className="mt-12">
-      <div className="px-0">
+      <div className="px-0 tablet:px-0">
       <Card
         proposal={proposal}
         showActions={true}

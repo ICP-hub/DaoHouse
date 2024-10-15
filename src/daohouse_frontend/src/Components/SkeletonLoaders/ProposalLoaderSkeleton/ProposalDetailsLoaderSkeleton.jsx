@@ -6,7 +6,7 @@ const ProposalDetailsLoaderSkeleton = (isProposalDetails=false, showActions=fals
   return (
     <div>
       <div className={` bg-zinc-200 w-full relative h-full top-0`}>
-     <Container classes="__mainComponent mt-4 lg:mt-[54px] lg:pb-20 py-6 big_phone:px-16 px-6 tablet:flex-row flex-col w-full animate-pulse">
+     <Container classes="__mainComponent mt-20 lg:mt-[54px] lg:pb-20 py-6 big_phone:px-16 tablet:flex-row flex-col w-full animate-pulse">
     <div className="flex md:flex-row flex-col md:justify-between w-full items-center mb-12">
       
       {/* Left Section: Image and DAO Info */}
