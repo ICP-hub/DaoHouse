@@ -47,7 +47,7 @@ const Decentralization = () => {
     >
       <Container classes={"flex flex-col items-center justify-center relative max-w-full px-4"}>
         {/* Main Section */}
-        <div className="relative translate-y-[-10px] w-full max-w-[110%] lg:mx-80 sm:max-w-[90%] md:max-w-[190%] px-4 sm:px-6 md:px-8 lg:px-16 tablet:px-8 mobile:px-4 flex flex-col items-center justify-center gap-8 bg-white rounded-xl shadow-lg p-6 sm:p-8 md:p-10 lg:p-12 overflow-hidden main-section">
+        <div className="relative w-full max-w-[110%] lg:mx-80 sm:max-w-[90%] md:max-w-[190%] px-4 sm:px-6 md:px-8 lg:px-16 tablet:px-8 mobile:px-4 flex flex-col items-center justify-center gap-8 bg-white rounded-xl shadow-lg h-auto mt-8 p-6 sm:p-8 md:p-10 lg:p-12 overflow-hidden main-section">
 
           {/* Circles as Background */}
           {/* Large screen circles (shown only on large screens) */}
@@ -77,8 +77,8 @@ const Decentralization = () => {
 
 
           {/* Text Section */}
-          <div className="w-full text-center flex flex-col items-center gap-6 z-10">
-            <h1 className="text-[16px] big_phone:text-[36px] font-mulish sm:text-2xl md:text-6xl lg:text-4xl text-[#0F3746] font-bold">
+          <div className="w-full text-center flex flex-col items-center gap-2 lg:gap-6 z-10">
+            <h1 className=" font-mulish text-xl md:text-xl lg:text-4xl text-[#0F3746] font-bold">
               <span className="block">Bringing Decentralization to Life:</span>
               <span className="block">Empowering Communities through</span>
               <span className="block">Seamless DAO Management</span>
