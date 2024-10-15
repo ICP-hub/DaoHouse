@@ -10,14 +10,14 @@ import ViewModal from "../Dao/ViewModal";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../utils/useAuthClient";
-import userImage from "../../../assets/commentUser.jpg";
+import userImage from "../../../assets/avatar.png";
 import { CircularProgress } from "@mui/material";
 import ShareModal from "./ShareModal";
 
 
 export default function Card({ proposal, voteApi, showActions, isProposalDetails, isComment, setIsComment, commentCount, isSubmittedProposals, showComments}) {
 
-  console.log("Vote API", proposal);
+  // console.log("Vote API", proposal);
   
   const {backendActor, createDaoActor, stringPrincipal} = useAuth();
   const [voteStatus, setVoteStatus] = useState(""); // Track user vote (Yes/No)
@@ -36,7 +36,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const {daoCanisterId} = useParams();
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
-  console.log(votersList);
+  // console.log(votersList);
   
   // console.log("voters", proposal?.approved_votes_list + proposal?.rejected_votes_list); 
 
@@ -68,7 +68,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const proposalId = proposal.proposal_id
   const daoId = proposal.dao_canister_id || proposal.associated_dao_canister_id || daoCanisterId;
     
-  console.log(daoCanisterId);
+  // console.log(daoCanisterId);
   
 
   useEffect(() => {
@@ -323,7 +323,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                 {isLoading ? (
                   <div className="w-24 h-6 sm:w-32 sm:h-8 bg-gray-400"></div>
                 ) : (
-                  <h4 className="text-white text-sm sm:text-base lg:text-xl font-semibold">{userProfile.username || "Username"}</h4>
+                  <h4 className="text-white text-sm sm:text-base lg:text-xl font-semibold">{userProfile?.username || "Username"}</h4>
                 )}
               </div>
   
@@ -401,7 +401,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                 {isLoading ? (
                   <div className="w-24 h-6 md:w-36 md:h-8 bg-gray-400"></div>
                 ) : (
-                  <h4 className="text-white text-sm md:text-xl font-semibold self-center">{userProfile.username || "Username"}</h4>
+                  <h4 className="text-white text-sm md:text-xl font-semibold self-center">{userProfile?.username || "Username"}</h4>
                 )}
               </div>
   
@@ -529,8 +529,16 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
               )}
             </div>
             {!showActions && (
-              <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
+              <div className="flex gap-2">
+                <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
                 <button className="px-6 py-2 font-mulish" onClick={handleViewMore}>View More</button>
+              </div>
+              {(proposal?.proposal_title === "Bounty raised" || proposal.propsal_title === "Bounty raised") && (
+                <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
+              
+                <button className="px-2 py-2 font-mulish" onClick={() => navigate(`/create-proposal/${daoCanisterId}`)}>Claim Bounty</button>
+              </div>
+              )}
               </div>
             )}
           </div>

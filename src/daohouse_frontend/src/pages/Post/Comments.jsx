@@ -320,7 +320,7 @@ detail();
         <CommentsSkeletonLoader />
       </div>
     ) : (
-    <div className='bg-white mt-1 rounded-t-sm rounded-b-lg md:mx-4 px-4 md:px-12 py-12 font-mulish bg'>
+    <div className='bg-white mt-1 rounded-t-sm rounded-b-lg tablet:mx-4 px-4 tablet:px-12 py-12 font-mulish bg'>
       <h3 className="font-bold mb-6 text-[#234A5A] text-xl">Comments</h3>
 
       {comments.slice(0, visibleComments).map((comment, index) => (

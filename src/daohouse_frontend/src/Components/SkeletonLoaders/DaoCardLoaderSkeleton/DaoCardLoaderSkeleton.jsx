@@ -3,11 +3,11 @@ import Container from '../../Container/Container'; // Import your Container comp
 
 const DaoCardLoaderSkeleton = () => {
   return (
-    <Container classes="flex flex-wrap justify-center w-full gap-2 mb-10 ">
+    <Container classes="flex flex-wrap justify-center w-full gap-2 desktop:gap-20 mb-10 ">
       {[...Array(4)].map((_, index) => (
         <div 
           key={index} 
-          className="bg-[#F4F2EC] shadow-lg tablet:p-6 big_phone:p-3 small_phone:p-5 p-3 rounded-lg mr-4 ml-4 animate-pulse max-w-full md:max-w-[350px] big_phone:max-w-[750px] lg:max-w-[800px]"
+          className="bg-[#F4F2EC] shadow-lg tablet:p-6 big_phone:p-3 small_phone:p-5 p-3 rounded-lg mr-4 ml-4 animate-pulse max-w-full md:max-w-[350px]  lg:max-w-[420px]"
         >
           <div className="flex big_phone:flex-row small_phone:flex-col justify-start items-start mb-4 gap-2">
             {/* Image Skeleton */}

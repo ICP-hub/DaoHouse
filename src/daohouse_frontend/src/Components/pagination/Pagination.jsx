@@ -17,7 +17,7 @@ const Pagination = ({ currentPage, setCurrentPage, hasMore }) => {
   return (
     <div className="pagination-container flex justify-center gap-10 items-center mt-2 pb-10">
       <button
-        className={`text-xl flex items-center ml-1 ml-[80px] ${currentPage === 1
+        className={`text-xl flex items-center ${currentPage === 1
             ? "text-gray-400 cursor-not-allowed"
             : "text-black hover:text-gray-500 cursor-pointer"
           }`}

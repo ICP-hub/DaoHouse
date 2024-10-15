@@ -9,6 +9,7 @@ import { useAuth } from "../../Components/utils/useAuthClient";
 import Container from "../Container/Container";
 import EditPen from "../../../assets/edit_pen.png";
 import { RiGroupFill } from "react-icons/ri";
+import { CircularProgress } from "@mui/material";
 
 const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
   const [count, setCount] = useState(1);
@@ -22,6 +23,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
   const [memberName, setMemberName] = useState("");
   const { backendActor, stringPrincipal } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
+  const [isAdding, setIsAdding] = useState(false)
 
   const [list, setList] = useState([
     { name: "Council", index:0, members: [] },
@@ -143,6 +145,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
   };
   const handleAddMember = async () => {
     if (memberName.trim() !== "") {
+      setIsAdding(true);
       try {
         const principal = Principal.fromText(memberName.trim());
         const response = await backendActor.get_profile_by_id(principal);
@@ -179,6 +182,8 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
         }
       } catch (error) {
         toast.error("Invalid Principal ID or error fetching profile");
+      } finally {
+        setIsAdding(false)
       }
     }
   };
@@ -429,9 +434,9 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
                   />
                   <button
                     onClick={handleAddMember}
-                    className="w-full sm:w-auto lg:w-[155px] h-[48px] sm:h-[40px] md:h-[48px]  bg-black text-white p-2 rounded-md"
+                    className="w-full flex justify-center items-center sm:w-auto lg:w-[155px] h-[48px] sm:h-[40px] md:h-[48px]  bg-black text-white p-2 rounded-md"
                   >
-                    Add
+                    {isAdding ? <div className="w-6 h-6 border-2 border-t-transparent border-white rounded-full animate-spin"></div> : "Add"}
                   </button>
                 </div>
               ) : null}
@@ -546,9 +551,9 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
                         <button
                           onClick={handleAddMember}
                           // className="bg-[#229ED9] text-white p-2 rounded-md"
-                          className="w-full sm:w-auto md:w-[100px] lg:w-[155px] h-[48px] sm:h-[40px] md:h-[48px]  bg-black text-white p-2 rounded-md"
+                          className="w-full flex justify-center items-center sm:w-auto md:w-[100px] lg:w-[155px] h-[48px] sm:h-[40px] md:h-[48px]  bg-black text-white p-2 rounded-md"
                         >
-                          Add
+                          {isAdding ? <div className="w-6 h-6 border-2 border-t-transparent border-white rounded-full animate-spin"></div> : "Add"}
                         </button>
                       </div>
                     ) : null}

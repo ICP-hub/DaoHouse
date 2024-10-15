@@ -253,7 +253,7 @@ const FeedPage = () => {
 
       {/* Pagination Controls */}
       {!loading && proposals.length > 0 && (
-        <div className={`${className}__pagination mobile:px-10 px-6 pb-10 bg-[#c8ced3] gap-8 flex flex-col`}>
+        <div className={`${className}__pagination pb-10 bg-[#c8ced3] gap-8 flex flex-col`}>
           <Pagination
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
