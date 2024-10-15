@@ -46,6 +46,24 @@ function ViewModal({ open, onClose, users = [], approvedVotesList = [], rejected
     fetchUserProfiles();
 }, [users, backendActor]);
 
+useEffect(() => {
+  if (open) {
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${window.scrollY}px`;
+    document.body.style.width = '100%';
+  } else {
+    const scrollY = document.body.style.top;
+    document.body.style.position = '';
+    document.body.style.top = '';
+    window.scrollTo(0, parseInt(scrollY || '0') * -1);
+  }
+
+  return () => {
+    document.body.style.position = '';
+    document.body.style.top = '';
+  };
+}, [open]);
+
   useEffect(() => {
     if (approvedVotesList.length === 0 && rejectedVotesList.length === 0) return;
 

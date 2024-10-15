@@ -10,7 +10,7 @@ import { useAuth } from "../../Components/utils/useAuthClient";
 import Container from "../../Components/Container/Container";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import NoPostProfile from "../../Components/Dao/NoPostProfile";
-import nodata from "../../../assets/nodata.png";
+import nodata from "../../../assets/gif/nodata.svg";
 import MuiSkeleton from "../../Components/SkeletonLoaders/MuiSkeleton";
 import LoginModal from "../../Components/Auth/LoginModal";
 import { useNavigate } from "react-router-dom";
@@ -27,13 +27,13 @@ const FeedPage = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { isAuthenticated, login, signInNFID, backendActor, createDaoActor } = useAuth();
   const navigate = useNavigate();
-  
+
   const [searchTerm, setSearchTerm] = useState("");
   const [hasMore, setHasMore] = useState(true);
   const [proposals, setProposals] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(false);
-  
+
   const [currentPage, setCurrentPage] = useState(1);
   const [fetchedProposals, setFetchedProposals] = useState([]);
 
@@ -170,7 +170,7 @@ const FeedPage = () => {
       {showPopup && (
         <div className="fixed inset-0 bg-black opacity-40 z-40"></div>
       )}
-      
+
       {/* Header Section with Background Image */}
       <div
         style={{
@@ -186,13 +186,13 @@ const FeedPage = () => {
           <h1 className="mobile:text-5xl text-3xl p-3 text-white">Social Feed</h1>
         </Container>
       </div>
-      
+
       {/* Filter Section */}
       <div className="bg-[#c8ced3]">
         <Container
-          classes={`__label small_phone:py-8 py-5 mobile:px-10 px-5 flex flex-col-reverse gap-4 lg:flex-row w-full justify-between items-start lg:items-center ${className}`}
+          classes={`__label small_phone:py-8 py-5 mobile:px-10 tablet:px-20 px-5 flex flex-col gap-4 md:flex-row w-full justify-between items-center md:items-center ${className}`}
         >
-          <p className="small_phone:text-4xl text-3xl big_phone:px-8 flex flex-row items-center translate-x-[20px] gap-4">
+          <p className="small_phone:text-4xl text-3xl big_phone:px-2 tablet:px-6 flex flex-row items-center gap-4">
             Most Recent
             <div className="flex flex-col items-start">
               <div className="mobile:w-32 w-12 border-t-2 border-black"></div>
@@ -211,7 +211,7 @@ const FeedPage = () => {
           </div>
         </Container>
       </div>
-      
+
       {/* Post Section */}
       <div
         className={`${className}__postCards mobile:px-10 px-6 pb-10 bg-[#c8ced3] gap-8 flex flex-col`}
@@ -220,22 +220,27 @@ const FeedPage = () => {
           <ProposalLoaderSkeleton />
         ) : proposals.length === 0 ? (
           <Container className="w-full flex flex-col items-center justify-center ">
-            <img src={nodata} alt="No Data" className="mb-1  ml-[100px] " />
+
+            <img src={nodata} alt="No Data" className="mb-1  desktop:ml-[100px]  mobile:ml-0" />
             <p className="text-center text-gray-700 text-2xl">
+
               There are no proposals available yet!
             </p>
           </Container>
         ) : (
-          <Container className="w-full">
+          <div className="mx-2 small_phone:mx-4 mobile:mx-1 lg:mx-16 desktop:mx-20">
+          <Container >
             <ProposalsContent
               proposals={proposals}
               isMember={true}
               showActions={false}
             />
+
           </Container>
+          </div>
         )}
       </div>
-      
+
       {/* Login Modal */}
       {showLoginModal && (
         <LoginModal
@@ -245,62 +250,20 @@ const FeedPage = () => {
           onNFIDLogin={handleNFIDLogin}
         />
       )}
-      
+
       {/* Pagination Controls */}
-      {!loading && (
+      {!loading && proposals.length > 0 && (
         <div className={`${className}__pagination mobile:px-10 px-6 pb-10 bg-[#c8ced3] gap-8 flex flex-col`}>
-        <Pagination
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          hasMore={hasMore}
-        />
-      </div>
+          <Pagination
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            hasMore={hasMore}
+          />
+        </div>
       )}
     </div>
   );
 };
 
-// Correctly named Pagination component
-// const Pagination = ({ currentPage, setCurrentPage, hasMore }) => {
-//   const handleNext = () => {
-//     if (hasMore) {
-//       setCurrentPage((prevPage) => prevPage + 1);
-//     }
-//   };
-
-//   const handlePrevious = () => {
-//     if (currentPage > 1) {
-//       setCurrentPage((prevPage) => prevPage - 1);
-//     }
-//   };
-
-//   return (
-//     <div className="pagination-container flex justify-center gap-10 items-center pb-10">
-//       <button
-//         className={`text-xl flex items-center ml-1 ${
-//           currentPage === 1
-//             ? "text-gray-400 cursor-not-allowed"
-//             : "text-black hover:text-gray-500 cursor-pointer"
-//         }`}
-//         onClick={handlePrevious}
-//         disabled={currentPage === 1}
-//       >
-//         <FaArrowLeft /> Prev
-//       </button>
-//       <span className="text-xl">Page {currentPage}</span> {/* Optional: Display current page */}
-//       <button
-//         className={`text-xl flex items-center px-3 py-1 transition duration-300 ease-in-out ${
-//           !hasMore
-//             ? "text-gray-400 cursor-not-allowed"
-//             : "text-black hover:text-gray-500 cursor-pointer"
-//         }`}
-//         onClick={handleNext}
-//         disabled={!hasMore}
-//       >
-//         Next <FaArrowRight />
-//       </button>
-//     </div>
-//   );
-// };
 
 export default FeedPage;

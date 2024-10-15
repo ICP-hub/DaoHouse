@@ -58,7 +58,7 @@ const MyPosts = () => {
 
   return (
     <div className={className}>
-      <div className="mt-2 md:mt-10">
+      <div className="mt-5 md:mt-10">
         <div className="flex gap-10">
         <h3 className="text-[#05212C] md:text-[24px] text-[18px] md:font-bold font-mulish self-center">
           Submitted Proposals

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Lottie from "react-lottie";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaArrowRightLong } from "react-icons/fa6";
 
 import EditPen from "../../../assets/edit_pen.png";
@@ -33,6 +33,15 @@ const MyProfile = ({ childComponent }) => {
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
   const [imageSrc, setImageSrc] = useState(MyProfileImage);
+  const location = useLocation(); // Initialize useLocation
+
+  // Map paths to tab indices
+  const tabPathMap = {
+    "/my-profile": 0,
+    "/my-profile/posts": 1,
+    "/my-profile/followers": 2,
+    "/my-profile/following": 3,
+  };
 
   useEffect(() => {
     console.log("User Profile Image:", userProfile?.profile_img);
@@ -55,7 +64,7 @@ const MyProfile = ({ childComponent }) => {
   const [showNoFollowing, setShowNoFollowing] = useState(false); // New state for NoFollowing component
   const navigate = useNavigate();
   const className = "MyProfile";
-  const tabButtonsStyle = "my-1 big_phone:text-base mobile:text-md text-sm flex flex-row items-center gap-2 hover:text-white";
+  const tabButtonsStyle = "my-1 big_phone:text-base mobile:text-md text-sm flex flex-row items-center gap-2 ";
 
   const defaultOptions = {
     loop: true,
@@ -123,6 +132,12 @@ const MyProfile = ({ childComponent }) => {
       setShowNoFollowing(false);
     }
   }, [activeTab, following]); // Updated to include following
+
+  useEffect(() => {
+    const currentPath = location.pathname;
+    const tabIndex = tabPathMap[currentPath] !== undefined ? tabPathMap[currentPath] : 0;
+    setActiveTab(tabIndex);
+  }, [location.pathname]);
 
   return (
     <div className={`${className} bg-zinc-200 w-full relative `}>
@@ -525,7 +540,8 @@ const MyProfile = ({ childComponent }) => {
                 {/* Dark gray base line */}
               
                 {/* Thicker line to overlap and change width */}
-                <div className="absolute bottom-0 flex justify-center left-4 w-full h-[1px]  bg-gray-500 transition-all duration-300 hover:w-[50px]"></div>
+                <div className="absolute bottom-1 flex justify-center   w-full h-[2px] bg-black transition-all duration-300 hover:w-[20px]"></div>
+
 
                 {/* First tab */}
 
