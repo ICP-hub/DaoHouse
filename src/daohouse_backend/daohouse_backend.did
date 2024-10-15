@@ -32,12 +32,12 @@ type DaoInput = record {
   dao_groups : vec DaoGroup;
   dao_name : text;
   image_id : text;
-  proposal_entiry : vec ProposalPlace;
   members_permissions : vec text;
   link_of_document : text;
   image_content_type : text;
   cool_down_period : nat32;
   token_name : text;
+  proposal_entry : vec ProposalPlace;
   purpose : text;
   token_supply : nat32;
   required_votes : nat32;
