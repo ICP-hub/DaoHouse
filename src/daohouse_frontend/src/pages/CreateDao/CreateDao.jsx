@@ -164,7 +164,7 @@ const CreateDao = () => {
       image_content_type: step6.image_content_type || "just image content bro",
       image_id: "12",
       dao_groups: data.dao_groups,
-      proposal_entiry: proposalEntity,
+      proposal_entry: proposalEntity,
       // [{
       //   group_members: [Principal.fromText("aaaaa-aa")],
       //   quorem: 5,

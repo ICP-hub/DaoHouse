@@ -77,7 +77,7 @@ pub async fn create_dao_canister(dao_detail: crate::DaoInput) -> Result<Principa
         None => return Err(String::from("Canister Meta data not found.")),
     };
 
-    let proposal_entiry: Vec<crate::ProposalPlace> = dao_detail.proposal_entiry.iter().map(|proposal| {
+    let proposal_entry: Vec<crate::ProposalPlace> = dao_detail.proposal_entry.iter().map(|proposal| {
         crate::ProposalPlace {
             place_name: proposal.place_name.clone(),
             min_required_thredshold: proposal.min_required_thredshold,
@@ -103,7 +103,7 @@ pub async fn create_dao_canister(dao_detail: crate::DaoInput) -> Result<Principa
         token_symbol: dao_detail.token_symbol,
         token_supply: dao_detail.token_supply,
         daohouse_canister_id: ic_cdk::api::id(),
-        proposal_entiry : proposal_entiry,
+        proposal_entry : proposal_entry,
     };
 
     // encoding params that is to be passed to new canister

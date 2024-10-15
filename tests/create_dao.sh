@@ -37,7 +37,7 @@ for ((i = 1; i <= COUNT; i++)); do
       members_permissions = vec{
         "permission";
     };
-    proposal_entiry = vec {
+    proposal_entry = vec {
         record {
             place_name = "Council";
             min_required_thredshold = 53;

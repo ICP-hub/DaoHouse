@@ -32,7 +32,7 @@ const [paymentDetails, setPaymentDetails] = useState({
 });
   const [proposalType, setProposalType] = useState('');
   const [dao, setDao] = useState(null);
-  const [proposalEntry, setProposalEntry] = useState(''); // New state for proposal_entiry
+  const [proposalEntry, setProposalEntry] = useState(''); // New state for proposal_entry
 
   const [tokenTransfer, setTokenTransfer] = useState({
     to: '',
@@ -136,7 +136,7 @@ const [paymentDetails, setPaymentDetails] = useState({
             setDao(daoDetails); // Set dao to the fetched details
             console.log("dao", dao);
 
-            const names = await daoDetails.proposal_entiry.map(
+            const names = await daoDetails.proposal_entry.map(
               (group) => group.place_name
             );
             console.log("GR", names);
@@ -346,7 +346,7 @@ const [paymentDetails, setPaymentDetails] = useState({
           console.log("dfnsdjlflksdfjlksdfjlksd");
 
           await submitBountyClaim({
-            proposal_entiry: proposalEntry,
+            proposal_entry: proposalEntry,
             associated_proposal_id: bountyClaim.associated_proposal_id,
             description: bountyClaim.description,
             link_of_task: bountyClaim.link_of_task,
@@ -357,7 +357,7 @@ const [paymentDetails, setPaymentDetails] = useState({
 
           case 'GeneralPurp':
             await submitGeneralPurp({
-              proposal_entiry: proposalEntry,
+              proposal_entry: proposalEntry,
               // proposal_expired_at: generalPurp.days_until_expiration, // Send the days difference to the backend
               description: generalPurp.description,
               // action_member: Principal.fromText(generalPurp.actionMember),
@@ -369,7 +369,7 @@ const [paymentDetails, setPaymentDetails] = useState({
 
         case "DaoConfig":
           await submitDaoConfig({
-            proposal_entiry: proposalEntry,
+            proposal_entry: proposalEntry,
             daotype: daoConfig.daotype,
             description: daoConfig.description,
             new_dao_name: daoConfig.new_dao_name,
@@ -381,7 +381,7 @@ const [paymentDetails, setPaymentDetails] = useState({
 
         case "AddMember":
           await submitAddMember({
-            proposal_entiry: proposalEntry,
+            proposal_entry: proposalEntry,
             group_name: addMember.group_name,
             description: addMember.description,
             new_member: Principal.fromText(addMember.new_member),
@@ -390,7 +390,7 @@ const [paymentDetails, setPaymentDetails] = useState({
 
         case 'RemoveMember':
           await submitRemoveMember({
-            proposal_entiry: proposalEntry,
+            proposal_entry: proposalEntry,
             group_name: removeMember.group_name,
             description: removeMember.description,
             action_member: Principal.fromText(removeMember.action_member),
@@ -404,7 +404,7 @@ const [paymentDetails, setPaymentDetails] = useState({
 
         case 'ChangePolicy':
           await submitChangePolicy({
-            proposal_entiry: proposalEntry,
+            proposal_entry: proposalEntry,
             description: changePolicy.description,
             // action_member: Principal.fromText(changePolicy.action_member),
             // action_member: Principal.fromText(changePolicy.action_member),
@@ -415,7 +415,7 @@ const [paymentDetails, setPaymentDetails] = useState({
 
         case "Poll":
           await submitPoll({
-            proposal_entiry: proposalEntry,
+            proposal_entry: proposalEntry,
             proposal_expired_at: poll.days_until_expiration, // Pass the days difference to the backend
             poll_title: poll.poll_title,
             description: poll.description,
@@ -429,7 +429,7 @@ const [paymentDetails, setPaymentDetails] = useState({
 
         case 'RemoveDaoMember':
           await submitRemoveDaoMember({
-            proposal_entiry: proposalEntry,
+            proposal_entry: proposalEntry,
             description: removeDaoMember.description,
             action_member: Principal.fromText(removeDaoMember.action_member),
           });
@@ -743,7 +743,7 @@ const [paymentDetails, setPaymentDetails] = useState({
     try {
       if(proposalType === "BountyRaised" ) {
         await submitBountyRaised({
-          proposal_entiry: proposalEntry,
+          proposal_entry: proposalEntry,
           proposal_expired_at: bountyRaised.proposal_expired_in_days, // Send difference in days
           description: bountyRaised.description,
           tokens: Number(bountyRaised.tokens),
@@ -756,7 +756,7 @@ const [paymentDetails, setPaymentDetails] = useState({
           to: Principal.fromText(tokenTransfer.to),
           description: tokenTransfer.description,
           tokens: Number(tokenTransfer.tokens),
-          proposal_entiry: proposalEntry,
+          proposal_entry: proposalEntry,
           // action_member: Principal.fromText(tokenTransfer.action_member),
           // action_member: Principal.fromText(tokenTransfer.action_member),
         });
@@ -945,9 +945,9 @@ const [paymentDetails, setPaymentDetails] = useState({
                     >
                       <option value="">Select Proposal Entry</option>
                       {dao &&
-                      dao.proposal_entiry &&
-                      dao.proposal_entiry.length > 0 ? (
-                        dao.proposal_entiry.map((entry, index) => (
+                      dao.proposal_entry &&
+                      dao.proposal_entry.length > 0 ? (
+                        dao.proposal_entry.map((entry, index) => (
                           <option key={index} value={entry.place_name}>
                             {entry.place_name}
                           </option>
