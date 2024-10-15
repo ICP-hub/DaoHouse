@@ -30,9 +30,6 @@ pub async fn create_proposal_controller(
         dao_members = state.dao.members.clone();
     });
 
-    // let proposal_expire_time =
-    //     ic_cdk::api::time() + (state.dao.cool_down_period as u64 * 86_400 * 1_000_000_000);
-
     let new_proposal = Proposals {
         proposal_id: proposal_id.clone(),
         proposal_title: proposal.proposal_title.clone(),

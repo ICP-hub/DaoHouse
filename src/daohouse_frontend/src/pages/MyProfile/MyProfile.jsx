@@ -24,10 +24,15 @@ import Container from "../../Components/Container/Container";
 import { useAuth } from "../../Components/utils/useAuthClient";
 import NoFollowers from "./NoFollowers";
 import NoFollowing from "./NoFollowing";
+import { Principal } from "@dfinity/principal";
+import { createActor } from "../../../../declarations/icp_ledger_canister";
+
 
 
 const MyProfile = ({ childComponent }) => {
-  const { backendActor, identity } = useAuth();
+  const { backendActor, identity, stringPrincipal } = useAuth();
+  console.log("sandlkansdlknasld", stringPrincipal);
+
   const { userProfile } = useUserProfile() || {};
 
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
@@ -138,7 +143,75 @@ const MyProfile = ({ childComponent }) => {
     const tabIndex = tabPathMap[currentPath] !== undefined ? tabPathMap[currentPath] : 0;
     setActiveTab(tabIndex);
   }, [location.pathname]);
+  // Remove this duplicated function
+  const LEDGER_CANISTER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai";
+  const createTokenActor = async (canisterId) => {
+    console.log("canister id", canisterId);
 
+    try {
+      const tokenActorrr = createActor(Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"), { agentOptions: { identity } });
+      console.log("Created token actor successfully:", tokenActorrr);
+      return tokenActorrr;
+    } catch (err) {
+      console.error("Error creating token actor:", err);
+      throw err;
+    }
+  };
+  const fetchMetadataAndBalance = async (tokenActor, ownerPrincipal) => {
+    try {
+      const [metadata, balance] = await Promise.all([
+        tokenActor.icrc1_metadata(),
+        tokenActor.icrc1_balance_of({ owner: ownerPrincipal, subaccount: [] }),
+      ]);
+      console.log("Metadata and balance fetched:", { metadata, balance });
+      return { metadata, balance };
+    } catch (err) {
+      console.error("Error fetching metadata and balance:", err);
+      throw err;
+    }
+  };
+
+  createTokenActor();
+  async function paymentTest() {
+    console.log("owner principal is ", stringPrincipal);
+    console.log("printing payment");
+
+    const backendCanisterId = process.env.CANISTER_ID_DAOHOUSE_BACKEND;
+    console.log("backend", backendCanisterId);
+    console.log("ledger", LEDGER_CANISTER_ID);
+    const a = Principal.fromText(LEDGER_CANISTER_ID)
+    console.log("a", a);
+
+    const actor = await createTokenActor(Principal.fromText(LEDGER_CANISTER_ID));
+    console.log("actor", actor);
+
+
+    try {
+
+      const actor = await createTokenActor(Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"));
+
+      console.log("backend canister id: ", backendCanisterId);
+      console.log("actor is ", actor);
+
+      const name = await actor.icrc1_name();
+      console.log("balance is ", name);
+
+      const { metadata, balance } = await fetchMetadataAndBalance(actor, Principal.fromText(stringPrincipal));
+
+      const formattedMetadata = formatTokenMetaData(metadata);
+      const parsedBalance = parseInt(balance, 10);
+      console.log("Balance:", parsedBalance);
+
+      const sendableAmount = parseInt(10000);
+      if (sendableAmount) {
+        afterPaymentApprove(sendableAmount);
+      }
+    } catch (err) {
+      toast.error("Payment failed. Please try again.");
+      setLoadingPayment(false);
+    }
+  }
+  paymentTest();
   return (
     <div className={`${className} bg-zinc-200 w-full relative `}>
 
@@ -211,23 +284,23 @@ const MyProfile = ({ childComponent }) => {
         <div className={`bg-[#c8ced3]`}>
           <Container classes={`__mainComponent big_phone:py-8 big_phone:pb-20 py-7 md:px-8 flex md:flex-row gap-2 flex-col w-full user-container`}>
             <div className="flex justify-between w-[100%] big_phone:mx-2 lg:mx-16  gap-16">
-            
+
               <div className={`${className}__mainComponent__leftSide md:mx-0 mx-5 left lg:px-20 flex flex-col tablet:items-start justify-center md:w-[204px] md:h-[600px] lg:w-[252px] lg:h-[600px] md:px-28 rounded-[10px] bg-[#0E3746] text-white text-opacity-50 font-normal  z-20`}>
                 <div
-                      className="fixed-image-container w-[180px] h-[180px] lg:w-[206px] lg:h-[206px] rounded-md overflow-hidden 
+                  className="fixed-image-container w-[180px] h-[180px] lg:w-[206px] lg:h-[206px] rounded-md overflow-hidden 
                   z-50 sm:z-40 md:z-20 lg:z-20 md:translate-x-[-90px] lg:translate-x-[-55px]"
-                      style={{
-                        boxShadow: "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
-                        // Adjust values as needed
-                      }}
-                    >
-                      <img
-                        className="w-full h-full object-cover"
-                        src={imageSrc} // Dynamically set to user's profile image or default
-                        alt="profile-pic"
-                        onError={handleImageError} // Handle image loading errors
-                      />
-                    </div>
+                  style={{
+                    boxShadow: "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
+                    // Adjust values as needed
+                  }}
+                >
+                  <img
+                    className="w-full h-full object-cover"
+                    src={imageSrc} // Dynamically set to user's profile image or default
+                    alt="profile-pic"
+                    onError={handleImageError} // Handle image loading errors
+                  />
+                </div>
                 <div
                   className="
                     flex md:flex-col flex-row 
@@ -244,12 +317,12 @@ const MyProfile = ({ childComponent }) => {
                   "
                 >
                   <Link to="/my-profile" onClick={() => setActiveTab(0)}>
-                        <p className={`${tabButtonsStyle} ${activeTab === 0 ? "text-white " : ""}`}> 
-                          <img  src={add_reaction} alt="MyProfile" className="inline mr-2 w-4 h-4" />
-                          My Profile
-                          {activeTab === 0 ? <FaArrowRightLong className="md:inline hidden" /> : ""}</p> 
-                    
-                        </Link> 
+                    <p className={`${tabButtonsStyle} ${activeTab === 0 ? "text-white " : ""}`}>
+                      <img src={add_reaction} alt="MyProfile" className="inline mr-2 w-4 h-4" />
+                      My Profile
+                      {activeTab === 0 ? <FaArrowRightLong className="md:inline hidden" /> : ""}</p>
+
+                  </Link>
                   <Link to="/my-profile/posts" onClick={() => setActiveTab(1)}>
                     <p className={`${tabButtonsStyle} ${activeTab === 1 ? "text-white" : ""}`}>
                       <img src={post_add} alt="Submitted Proposals" className="inline mr-2 w-4 h-4" />
@@ -273,41 +346,53 @@ const MyProfile = ({ childComponent }) => {
                   </Link>
                 </div>
               </div>
-            <div className={`w-full flex-col`}>
-              <div className="flex md:justify-between w-full gap-2 relative">
-                <div className="flex items-start relative">
-                  <div className="flex justify-between w-full">
-                    <div className="">
-                      <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C]">
-                        {name || "Username.user"}{" "}
-                      </h2>
-                      <p className="md:text-[14px] text-[10px] tablet:text-[16px] font-normal text-left text-[#646464]">
-                        {email || "gmail@gmail.xyz"}{" "}
-                      </p>
-                      <div className="md:flex gap-2 hidden  mt-3">
-                        <span className=" tablet:text-[32px] text-[24px] font-normal text-[#05212C] user-acc-info">
-                          {post}
-                          <span className="tablet:text-[16px] text-[14px] mx-1">
-                            Submitted Proposals
+              <div className={`w-full flex-col`}>
+                <div className="flex md:justify-between w-full gap-2 relative">
+                  <div className="flex items-start relative">
+                    <div className="flex justify-between w-full">
+                      <div className="">
+                        <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C]">
+                          {name || "Username.user"}{" "}
+                        </h2>
+                        <p className="md:text-[14px] text-[10px] tablet:text-[16px] font-normal text-left text-[#646464]">
+                          {email || "gmail@gmail.xyz"}{" "}
+                        </p>
+
+
+
+                        {/* user information */}
+                        <div className="md:flex gap-2 hidden  mt-3">
+                          <div className="mr-6">
+                            <span className=" tablet:text-[32px] text-[24px] font-normal text-[#05212C] user-acc-info">
+                              {post}
+                              <span className="tablet:text-[16px] text-[14px] mx-1">
+                                Balance
+                              </span>
+                            </span>
+                          </div>
+                          <span className=" tablet:text-[32px] text-[24px] font-normal text-[#05212C] user-acc-info">
+                            {post}
+                            <span className="tablet:text-[16px] text-[14px] mx-1">
+                              Submitted Proposals
+                            </span>
                           </span>
-                        </span>
-                        <span className=" tablet:text-[32px] text-[24px] font-normal text-[#05212C] user-acc-info">
-                          {followers}
-                          <span className="tablet:text-[16px] text-[14px] mx-1">
-                            Followed Dao
+                          <span className=" tablet:text-[32px] text-[24px] font-normal text-[#05212C] user-acc-info">
+                            {followers}
+                            <span className="tablet:text-[16px] text-[14px] mx-1">
+                              Followed Dao
+                            </span>
                           </span>
-                        </span>
-                        <span className=" tablet:text-[32px] text-[24px] font-normal text-[#05212C] user-acc-info">
-                          {following}
-                          <span className="tablet:text-[16px] text-[14px] mx-1">
-                            Dao Joined
+                          <span className=" tablet:text-[32px] text-[24px] font-normal text-[#05212C] user-acc-info">
+                            {following}
+                            <span className="tablet:text-[16px] text-[14px] mx-1">
+                              Dao Joined
+                            </span>
                           </span>
-                        </span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className="flex justify-end gap-4 ">
+                  <div className="flex justify-end gap-4 ">
                     {activeTab === 0 && (
                       <button
                         onClick={() => navigate("/edit-profile")}
@@ -323,14 +408,14 @@ const MyProfile = ({ childComponent }) => {
                         </span>
                       </button>
                     )}
+                  </div>
                 </div>
+                {childComponent}
+                {activeTab === 2 && showNoFollowers && <NoFollowers setFollowers={setShowNoFollowers} />}
+                {activeTab === 3 && showNoFollowing && <NoFollowing />}
+                {/* Render NoFollowing component */}
               </div>
-              {childComponent}
-              {activeTab === 2 && showNoFollowers && <NoFollowers setFollowers={setShowNoFollowers} />}
-               {activeTab === 3 && showNoFollowing && <NoFollowing />} 
-               {/* Render NoFollowing component */}
-            </div>
-            
+
             </div>
           </Container>
         </div>
@@ -338,7 +423,7 @@ const MyProfile = ({ childComponent }) => {
 
       {/* Mobile View */}
       <div className="block md:hidden">
-      <div style={{
+        <div style={{
           backgroundImage: `url("${MyProfileRectangle}")`,
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
@@ -403,7 +488,7 @@ const MyProfile = ({ childComponent }) => {
         </div>
         <Container classes={`__mainComponent big_phone:py-8 big_phone:pb-20 py-7 md:px-8 flex md:flex-row gap-2 flex-col w-full user-container`}>
           <div className={`${className}__mainComponent__leftSide md:mx-0 mx-5 lg:px-20 flex flex-col tablet:items-start justify-center md:w-[204px] md:h-[600px] lg:w-[252px] translate-y-[50px] lg:h-[600px] md:px-14 rounded-[10px] bg-[#0E3746] text-white text-opacity-50 font-normal md:mt-[-65px] mt-[-45px] z-20`}>
-           {/* <div
+            {/* <div
               className="
         flex md:flex-col flex-row 
         items-start md:justify-center justify-around 
@@ -464,12 +549,20 @@ const MyProfile = ({ childComponent }) => {
                 </div>
 
                 <div className="mr-20  ">
-                 
+
                   <div className="md:flex justify- translate-x-[60px] translate-y-[30px] translate top-[204px] left-[20px] mt-3">
+                    <div className="">
+                      <span className="md:mr-5 tablet:text-[32px] text-[18px] font-mulish text-[#05212C] user-acc-info">
+                        {post}
+                        <span className="tablet:text-[16px] text-[8px] mx-1">
+                          Balance
+                        </span>
+                      </span>
+                    </div>
                     <span className="md:mr-5 tablet:text-[32px] text-[18px] font-mulish text-[#05212C] user-acc-info">
                       {post}
                       <span className="tablet:text-[16px] text-[8px] mx-1">
-                      Proposals
+                        Proposals
                       </span>
                     </span>
                     <span className="md:mx-5 tablet:text-[32px] text-[18px] font-mulish text-[#05212C] user-acc-info">
@@ -481,51 +574,51 @@ const MyProfile = ({ childComponent }) => {
                     <span className="md:mx-5 tablet:text-[32px] text-[18px] font-mulish text-[#05212C] user-acc-info">
                       {followers}
                       <span className="tablet:text-[16px]  text-[8px] mx-1">
-                      Dao  Followed 
+                        Dao  Followed
                       </span>
                     </span>
-                   
+
                   </div>
                 </div>
               </div>
-           
+
             </div>
             <div className="flex justify-start gap-8 p-4 mx-6 md:hidden text-center text-[#05212C]">
-        <div className="mr-20 translate-y-[30px] translate-x-[-20px]">  
-         <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C]">
-                    {name || "Username.user"}{" "}
-                  </h2>
-                  <p className="md:text-[14px] text-[10px] tablet:text-[16px] font-normal text-left text-[#646464]">
-                    {email || "gmail@gmail.xyz"}{" "}
-                  </p></div>
+              <div className="mr-20 translate-y-[30px] translate-x-[-20px]">
+                <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C]">
+                  {name || "Username.user"}{" "}
+                </h2>
+                <p className="md:text-[14px] text-[10px] tablet:text-[16px] font-normal text-left text-[#646464]">
+                  {email || "gmail@gmail.xyz"}{" "}
+                </p></div>
             </div>
-            
-            <div className="flex justify-end gap-4 tablet:mt-4 translate-x-[-40px] translate-y-[-30px] tablet:mr-4">
-                {activeTab === 0 && (
-                  <button
-                    onClick={() => navigate("/edit-profile")}
-                    className="bg-white text-[10px] text-[#05212C] gap-1 shadow-2xl md:px-3 rounded-[27px] tablet:w-[190px] tablet:h-[40px] md:w-[170px] md:h-[35px] w-[6.5rem] h-[2.5rem] flex items-center justify-center space-x-4 rounded-2xl"
-                  >
-                    
-                    <img
-                      src={EditPen}
-                      alt="edit"
-                      className="tablet:mr-2 h-4 w-4 edit-pen"
-                    />
-                   <span className="md:inline whitespace- text-xs">
-                 Edit Profile
-                   </span>
-                  </button>
-                  
-                )}
-                
-              </div>
-             
-           {/* {childComponent}*/} 
-           <div className={`${className}__mainComponent__leftSide md:mx-0 mx-5 lg:px-20 flex flex-col tablet:items-start justify-center md:w-[320px] md:h-[36px] lg:w-[320px] translate-y-[50px] lg:h-[36px] md:px-14 rounded-[10px] bg-[#0E3746] text-white text-opacity-50 font-normal md:mt-[-65px] mt-[-45px] z-20`}>
-              </div>
 
-              <div className="
+            <div className="flex justify-end gap-4 tablet:mt-4 translate-x-[-40px] translate-y-[-30px] tablet:mr-4">
+              {activeTab === 0 && (
+                <button
+                  onClick={() => navigate("/edit-profile")}
+                  className="bg-white text-[10px] text-[#05212C] gap-1 shadow-2xl md:px-3 rounded-[27px] tablet:w-[190px] tablet:h-[40px] md:w-[170px] md:h-[35px] w-[6.5rem] h-[2.5rem] flex items-center justify-center space-x-4 rounded-2xl"
+                >
+
+                  <img
+                    src={EditPen}
+                    alt="edit"
+                    className="tablet:mr-2 h-4 w-4 edit-pen"
+                  />
+                  <span className="md:inline whitespace- text-xs">
+                    Edit Profile
+                  </span>
+                </button>
+
+              )}
+
+            </div>
+
+            {/* {childComponent}*/}
+            <div className={`${className}__mainComponent__leftSide md:mx-0 mx-5 lg:px-20 flex flex-col tablet:items-start justify-center md:w-[320px] md:h-[36px] lg:w-[320px] translate-y-[50px] lg:h-[36px] md:px-14 rounded-[10px] bg-[#0E3746] text-white text-opacity-50 font-normal md:mt-[-65px] mt-[-45px] z-20`}>
+            </div>
+
+            <div className="
                 flex md:flex-col flex-row 
                 items-start md:justify-center justify-around 
                 gap-x-4 gap-y-8 
@@ -537,52 +630,52 @@ const MyProfile = ({ childComponent }) => {
                 font-mulish font-bold text-[10px]  text-left 
                 relative
               ">
-                {/* Dark gray base line */}
-              
-                {/* Thicker line to overlap and change width */}
-                <div className="absolute bottom-1 flex justify-center   w-full h-[2px] bg-black transition-all duration-300 hover:w-[20px]"></div>
+              {/* Dark gray base line */}
+
+              {/* Thicker line to overlap and change width */}
+              <div className="absolute bottom-1 flex justify-center   w-full h-[2px] bg-black transition-all duration-300 hover:w-[20px]"></div>
 
 
-                {/* First tab */}
+              {/* First tab */}
 
-                <Link to="/my-profile/posts" onClick={() => setActiveTab(1)}>
-                  <p className={`${tabButtonsStyle} ${activeTab === 1 ? "text-hex text-[14px] border-b-1 border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
+              <Link to="/my-profile/posts" onClick={() => setActiveTab(1)}>
+                <p className={`${tabButtonsStyle} ${activeTab === 1 ? "text-hex text-[14px] border-b-1 border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
                   Proposals
-                    {activeTab === 1 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
-                    {/* Tab underlining effect */}
-                    <span className={`${activeTab === 1 ? "absolute w-full h-[4px] bg-black  text-[14px] left-0 bottom-0 -z-10" : "hover:w-full hover:h-[4px] hover:bg-black left-0 bottom-0 -z-10 transition-all duration-300"}`}></span>
-                  </p>
-                </Link>
+                  {activeTab === 1 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
+                  {/* Tab underlining effect */}
+                  <span className={`${activeTab === 1 ? "absolute w-full h-[4px] bg-black  text-[14px] left-0 bottom-0 -z-10" : "hover:w-full hover:h-[4px] hover:bg-black left-0 bottom-0 -z-10 transition-all duration-300"}`}></span>
+                </p>
+              </Link>
 
-                {/* Second tab */}
-                <Link to="/my-profile/followers" onClick={() => setActiveTab(2)}>
-                  <p className={`${tabButtonsStyle} ${activeTab === 2 ? "text-black border-b-1 text-[14px]  border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
-                    Followed Dao
-                    {activeTab === 2 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
-                    {/* Tab underlining effect */}
-                    <span className={`${activeTab === 2 ? "absolute w-full h-[4px] bg-black left-0 text-[14px]  bottom-0 -z-10" : "hover:w-full hover:h-[4px]  hover:bg-black left-0 bottom-0 -z-10 transition-all duration-300"}`}></span>
-                  </p>
-                </Link>
+              {/* Second tab */}
+              <Link to="/my-profile/followers" onClick={() => setActiveTab(2)}>
+                <p className={`${tabButtonsStyle} ${activeTab === 2 ? "text-black border-b-1 text-[14px]  border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
+                  Followed Dao
+                  {activeTab === 2 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
+                  {/* Tab underlining effect */}
+                  <span className={`${activeTab === 2 ? "absolute w-full h-[4px] bg-black left-0 text-[14px]  bottom-0 -z-10" : "hover:w-full hover:h-[4px]  hover:bg-black left-0 bottom-0 -z-10 transition-all duration-300"}`}></span>
+                </p>
+              </Link>
 
-                {/* Third tab */}
-                <Link to="/my-profile/following" onClick={() => setActiveTab(3)}>
-                  <p className={`${tabButtonsStyle} ${activeTab === 3 ? "text-black border-b-1 text-[14px]  border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
-                    Dao Joined
-                    {activeTab === 3 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
-                    {/* Tab underlining effect */}
-                    <span className={`${activeTab === 3 ? "absolute w-full h-[4px] bg-black left-0 bottom-0 -z-10" : "hover:w-full hover:h-[4px] hover:bg-black left-0 bottom-0 -z-10 transition-all duration-300"}`}></span>
-                  </p>
-                </Link>
-              </div>
+              {/* Third tab */}
+              <Link to="/my-profile/following" onClick={() => setActiveTab(3)}>
+                <p className={`${tabButtonsStyle} ${activeTab === 3 ? "text-black border-b-1 text-[14px]  border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
+                  Dao Joined
+                  {activeTab === 3 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
+                  {/* Tab underlining effect */}
+                  <span className={`${activeTab === 3 ? "absolute w-full h-[4px] bg-black left-0 bottom-0 -z-10" : "hover:w-full hover:h-[4px] hover:bg-black left-0 bottom-0 -z-10 transition-all duration-300"}`}></span>
+                </p>
+              </Link>
+            </div>
 
-              <div className="mx-6">
+            <div className="mx-6">
               {childComponent}
               {activeTab === 2 && showNoFollowers && <NoFollowers setFollowers={setShowNoFollowers} />}
-               {activeTab === 3 && showNoFollowing && <NoFollowing />} 
-               {/* Render NoFollowing component */}
-              </div>
+              {activeTab === 3 && showNoFollowing && <NoFollowing />}
+              {/* Render NoFollowing component */}
             </div>
-          
+          </div>
+
         </Container>
       </div>
     </div>

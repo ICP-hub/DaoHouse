@@ -1,6 +1,6 @@
 use crate::functions::icrc_transfer;
 use crate::{
-    guards::*, AddMemberArgs, BountyClaim, BountyRaised, ChangeDaoConfigArg, ChangeDaoPolicy, CreateGeneralPurpose, CreatePoll, DaoGroup, LedgerCanisterId, ProposalInput, ProposalState, RemoveDaoMemberArgs, RemoveMemberArgs, TokenTransferPolicy, UpdateDaoSettings,Test
+    guards::*, AddMemberArgs, BountyClaim, BountyRaised, ChangeDaoConfigArg, ChangeDaoPolicy, CreateGeneralPurpose, CreatePoll, DaoGroup, LedgerCanisterId, ProposalInput, ProposalState, RemoveDaoMemberArgs, RemoveMemberArgs, Test, TokenTransferPolicy, UpdateDaoSettings
 };
 use crate::{icrc_get_balance, TokenTransferArgs};
 use crate::{with_state, ProposalType};
@@ -8,7 +8,6 @@ use candid::{Nat, Principal};
 use ic_cdk::api;
 use ic_cdk::api::call::{CallResult, RejectionCode};
 use ic_cdk::{query, update};
-use ic_cdk::api::time;
 use icrc_ledger_types::icrc1::account::Account;
 use icrc_ledger_types::icrc1::transfer::BlockIndex;
 use icrc_ledger_types::icrc2::transfer_from::{TransferFromArgs, TransferFromError};
@@ -23,15 +22,14 @@ async fn get_members_of_group(group: String) -> Result<Vec<Principal>, String> {
 
 #[update(guard=guard_check_members)]
 async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, String> {
-    // check_user_in_group(&args.group_name)?;
     let mut required_thredshold = 0;
 
     let _ = with_state(|state| {
         match state
             .dao
-            .proposal_entiry
+            .proposal_entry
             .iter()
-            .find(|place| place.place_name == args.proposal_entiry)
+            .find(|place| place.place_name == args.proposal_entry)
         {
             Some(val) => {
                 ic_cdk::println!("this is dao proposal place : {:?} ", val);
@@ -65,7 +63,7 @@ async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, 
         group_to_remove: None,
         minimum_threadsold: required_thredshold,
         link_of_task: None,
-        associated_proposal_id : None,
+        associated_proposal_id: None,
     };
 
     with_state(|state| {
@@ -89,18 +87,14 @@ async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, 
 #[update(guard=guard_check_members)]
 async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<String, String> {
     check_user_and_member_in_group(&args.group_name, args.action_member)?;
-    // let proposal_entiry = ProposalPlace {
-    //     place_name: args.proposal_entiry,
-    //     min_required_thredshold: 12,
-    // };
     let mut required_thredshold = 0;
 
     let _ = with_state(|state| {
         match state
             .dao
-            .proposal_entiry
+            .proposal_entry
             .iter()
-            .find(|place| place.place_name == args.proposal_entiry)
+            .find(|place| place.place_name == args.proposal_entry)
         {
             Some(val) => {
                 ic_cdk::println!("this is dao proposal place : {:?} ", val);
@@ -156,19 +150,14 @@ async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<St
 
 #[update(guard=guard_check_members)]
 async fn proposal_to_remove_member_to_dao(args: RemoveDaoMemberArgs) -> Result<String, String> {
-    // let proposal_entiry = ProposalPlace {
-    //     place_name: args.proposal_entiry,
-    //     min_required_thredshold: 12,
-    // };
-
     let mut required_thredshold = 0;
 
     let _ = with_state(|state| {
         match state
             .dao
-            .proposal_entiry
+            .proposal_entry
             .iter()
-            .find(|place| place.place_name == args.proposal_entiry)
+            .find(|place| place.place_name == args.proposal_entry)
         {
             Some(val) => {
                 ic_cdk::println!("this is dao proposal place : {:?} ", val);
@@ -227,9 +216,9 @@ async fn proposal_to_change_dao_config(args: ChangeDaoConfigArg) -> Result<Strin
     let _ = with_state(|state| {
         match state
             .dao
-            .proposal_entiry
+            .proposal_entry
             .iter()
-            .find(|place| place.place_name == args.proposal_entiry)
+            .find(|place| place.place_name == args.proposal_entry)
         {
             Some(val) => {
                 ic_cdk::println!("this is dao proposal place : {:?} ", val);
@@ -281,9 +270,9 @@ async fn proposal_to_change_dao_policy(args: ChangeDaoPolicy) -> Result<String, 
     let _ = with_state(|state| {
         match state
             .dao
-            .proposal_entiry
+            .proposal_entry
             .iter()
-            .find(|place| place.place_name == args.proposal_entiry)
+            .find(|place| place.place_name == args.proposal_entry)
         {
             Some(val) => {
                 required_thredshold = val.min_required_thredshold;
@@ -315,7 +304,7 @@ async fn proposal_to_change_dao_policy(args: ChangeDaoPolicy) -> Result<String, 
         cool_down_period: Some(args.cool_down_period),
         minimum_threadsold: required_thredshold,
         link_of_task: None,
-        associated_proposal_id : None,
+        associated_proposal_id: None,
     };
     crate::proposal_route::create_proposal_controller(
         with_state(|state| state.dao.daohouse_canister_id),
@@ -347,9 +336,9 @@ async fn proposal_to_transfer_token(args: TokenTransferPolicy) -> Result<String,
     let _ = with_state(|state| {
         match state
             .dao
-            .proposal_entiry
+            .proposal_entry
             .iter()
-            .find(|place| place.place_name == args.proposal_entiry)
+            .find(|place| place.place_name == args.proposal_entry)
         {
             Some(val) => {
                 ic_cdk::println!("this is dao proposal place : {:?} ", val);
@@ -395,7 +384,7 @@ async fn proposal_to_transfer_token(args: TokenTransferPolicy) -> Result<String,
 
 async fn transfer(tokens: u64, user_principal: Principal) -> Result<BlockIndex, String> {
     let canister_id: Principal = ic_cdk::api::id();
-    
+
     let transfer_args = TransferFromArgs {
         amount: tokens.into(),
         to: Account {
@@ -429,13 +418,10 @@ async fn make_payment(tokens: u64, user: Principal) -> Result<Nat, String> {
     transfer(tokens, user).await
 }
 
-#[update]
+#[update(guard = prevent_anonymous)]
 async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String> {
-    // let proposal_expired_at = args.proposal_expired_at * 60 * 60 * 1_000_000_000;
-   let proposal_expire_time =
-    ic_cdk::api::time() + (args.proposal_expired_at as u64 * 86_400 * 1_000_000_000);
-
-    // const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
+    let proposal_expire_time =
+        ic_cdk::api::time() + (args.proposal_expired_at as u64 * 86_400 * 1_000_000_000);
     let principal_id: Principal = api::caller();
     let canister_id: Principal = ic_cdk::api::id();
 
@@ -444,9 +430,9 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
     let _ = with_state(|state| {
         match state
             .dao
-            .proposal_entiry
+            .proposal_entry
             .iter()
-            .find(|place| place.place_name == args.proposal_entiry)
+            .find(|place| place.place_name == args.proposal_entry)
         {
             Some(val) => {
                 ic_cdk::println!("this is dao proposal place : {:?} ", val);
@@ -491,53 +477,50 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
     Ok(String::from(crate::utils::MESSAGE_BOUNTY_RAISED))
 }
 
-#[update]
+#[update(guard = prevent_anonymous)]
 async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
-    // let proposal_expired_at = args.proposal_expired_at * 60 * 60 * 1_000_000_000;
-    const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
-    // let timestamp = time();
-    // let check_expired = with_state(|state| {
-    //     if let Some(proposal) = state.proposals.get(&args.associated_proposal_id) {
-           
-    //        let time_diff = timestamp.saturating_sub(proposal.proposal_submitted_at);
-    //        let user_propsal_expire_date = proposal.proposal_expired_at;
-
-    //         if proposal.proposal_status == ProposalState::Succeeded && proposal.proposal_type == ProposalType::BountyRaised && time_diff >= user_propsal_expire_date && !proposal.has_been_processed_secound {
-    //             Ok(())
-    //         } else{
-    //             return Err(format!("Proposal has been {:?}", proposal.proposal_status)); 
-    //         }
-    //     } else {
-    //         Err("Proposal not found".to_string())
-    //     }
-    // });
-
-    // if let Err(e) = check_expired {
-    //     return Err(e);
-    // }
-
     let mut required_thredshold = 0;
     let mut tokens: u64 = 0;
+    let mut expired_at: u64 = 0;
     let mut token_from: Option<Principal> = None;
-
     let proposals_data = with_state(|state| state.proposals.get(&args.associated_proposal_id));
 
     if let Some(proposal) = proposals_data {
-        tokens = proposal.tokens.unwrap_or(0); 
+        let proposal_type = proposal.proposal_type;
+        let proposal_status = proposal.proposal_status; 
+
+        if proposal_type != ProposalType::BountyRaised {
+            return Err(String::from("The Proposal you wish to claim is not related to the bounty raised"));
+        };
+        
+        if proposal_status != ProposalState::Accepted{
+            return Err(String::from("The Proposal you wish to claim is not under the Accepted status"));
+        }
+
+        if proposal_status == ProposalState::Succeeded{
+            return Err(String::from("Proposal you wish to claim has already been completed"));
+        }
+
+        // make condition for successfully transfer tokens then no claim
+        
+        tokens = proposal.tokens.unwrap_or(0);
         token_from = proposal.token_from;
-    }     
+        expired_at = proposal.proposal_expired_at;
+    }
 
     let _ = with_state(|state| {
         match state
             .dao
-            .proposal_entiry
+            .proposal_entry
             .iter()
-            .find(|place| place.place_name == args.proposal_entiry)
+            .find(|place| place.place_name == args.proposal_entry)
         {
             Some(val) => {
                 required_thredshold = val.min_required_thredshold;
             }
-            None => {eprintln!("No Data Found");}
+            None => {
+                eprintln!("No Data Found");
+            }
         }
     });
 
@@ -550,10 +533,10 @@ async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
         group_to_join: None,
         dao_purpose: None,
         tokens: Some(tokens),
-        token_from: token_from,
+        token_from,
         token_to: Some(api::caller()),
         proposal_created_at: None,
-        proposal_expired_at: Some(EXPIRATION_TIME),
+        proposal_expired_at: Some(expired_at),
         bounty_task: Some(args.bounty_task),
         poll_title: None,
         required_votes: None,
@@ -567,30 +550,23 @@ async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
     crate::proposal_route::create_proposal_controller(
         with_state(|state| state.dao.daohouse_canister_id),
         proposal,
-    ).await;
-    Ok(String::from(crate::utils::MESSAGE_BOUNTY_RAISED))
+    )
+    .await;
+    Ok(String::from(crate::utils::MESSAGE_BOUNTY_CLAIM))
 }
 
 #[update(guard=guard_check_members)]
 async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
-    // let proposal_expired_at = args.proposal_expired_at * 60 * 60 * 1_000_000_000;
-    // const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
-
-    // let proposal_entiry = ProposalPlace {
-    //     place_name: args.proposal_entiry,
-    //     min_required_thredshold: 12,
-    // };
     let mut required_thredshold = 0;
     let proposal_expire_time =
-    ic_cdk::api::time() + (args.proposal_expired_at as u64 * 86_400 * 1_000_000_000);
-
+        ic_cdk::api::time() + (args.proposal_expired_at as u64 * 86_400 * 1_000_000_000);
 
     let _ = with_state(|state| {
         match state
             .dao
-            .proposal_entiry
+            .proposal_entry
             .iter()
-            .find(|place| place.place_name == args.proposal_entiry)
+            .find(|place| place.place_name == args.proposal_entry)
         {
             Some(val) => {
                 ic_cdk::println!("this is dao proposal place : {:?} ", val);
@@ -641,9 +617,9 @@ async fn proposal_to_create_general_purpose(args: CreateGeneralPurpose) -> Resul
     let _ = with_state(|state| {
         match state
             .dao
-            .proposal_entiry
+            .proposal_entry
             .iter()
-            .find(|place| place.place_name == args.proposal_entiry)
+            .find(|place| place.place_name == args.proposal_entry)
         {
             Some(val) => {
                 ic_cdk::println!("this is dao proposal place : {:?} ", val);
@@ -781,7 +757,7 @@ async fn ask_to_join_dao(daohouse_backend_id: Principal) -> Result<String, Strin
 
     let principal_id = api::caller();
     let dao_id = ic_cdk::api::id();
-    // let proposal_entiry = ProposalPlace {
+    // let proposal_entry = ProposalPlace {
     //     place_name: "Council".to_string(),
     //     min_required_thredshold: min_required_thredshold,
     // };
@@ -790,7 +766,7 @@ async fn ask_to_join_dao(daohouse_backend_id: Principal) -> Result<String, Strin
     let _ = with_state(|state| {
         match state
             .dao
-            .proposal_entiry
+            .proposal_entry
             .iter()
             .find(|place| place.place_name == "Council".to_string())
         {
@@ -1070,7 +1046,7 @@ async fn transfer_token(proposal: Test) -> Result<String, String> {
     let token_transfer_args = TokenTransferArgs {
         from: proposal.token_from,
         to: proposal.token_to,
-        tokens : proposal.tokens,
+        tokens: proposal.tokens,
     };
 
     icrc_transfer(token_transfer_args)

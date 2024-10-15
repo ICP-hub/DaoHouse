@@ -136,7 +136,7 @@ dfx deploy dao_canister --argument "(record {
         \"mai hi permission hai\";
     };
 
-    proposal_entiry = vec {
+    proposal_entry = vec {
         record {
             place_name = \"Council\";
             min_required_thredshold = 53;

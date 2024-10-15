@@ -16,7 +16,7 @@ pub const TITLE_BOUNTY_RAISED : &str = "Bounty raised";
 pub const TITLE_BOUNTY_CLAIM : &str = "Bounty claim";
 pub const TITLE_BOUNTY_DONE : &str = "Bounty done";
 pub const TITLE_CREATE_POLL : &str = "Create poll";
-pub const TITLE_CREATE_GENERAL_PURPOSE : &str = "Create general purpose";
+pub const TITLE_CREATE_GENERAL_PURPOSE : &str = "general purpose";
 
 pub const REQUEST_ADD_MEMBER: &str = "proposal successfully created !.";
 pub const NOTFOUND_GROUP: &str = "No groups found with the given name";
@@ -40,6 +40,7 @@ pub const MESSAGE_CHANGE_DAO_CONFIG: &str = "Change dao config proposal created 
 pub const MESSAGE_CHANGE_DAO_POLICY: &str =  "Change dao policy proposal created successfully";
 pub const MESSAGE_TOKEN_TRANSFER_POLICY: &str =  "token transfer policy proposal created successfully";
 pub const MESSAGE_BOUNTY_RAISED: &str =  "Bounty raised proposal created successfully";
+pub const MESSAGE_BOUNTY_CLAIM: &str =  "Bounty claim proposal created successfully";
 pub const MESSAGE_POLL_CREATE_DONE: &str =  "Poll creation proposal created successfully";
 pub const MESSAGE_GENERAL_PURPOSE_CREATED: &str =  "General purpose proposal created successfully";
 
