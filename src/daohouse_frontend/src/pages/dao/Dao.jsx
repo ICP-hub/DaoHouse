@@ -235,7 +235,7 @@ const Dao = () => {
           </div>
         ) : (
           <div className="bg-gray">
-            <Container classes="__cards tablet:px-10 px-4 small_phone:px-8 md:px-0 pb-10 grid grid-cols-1 big_phone:grid-cols-2 tablet:gap-2 gap-4">
+            <Container classes="__cards tablet:px-10 px-4 small_phone:px-8 md:px-0 pb-10 grid grid-cols-1 md:grid-cols-2 tablet:gap-2 gap-4">
               {(searchTerm ? fetchedDAOs : dao).map((daos, index) => (
                 <DaoCard
                   key={index}
