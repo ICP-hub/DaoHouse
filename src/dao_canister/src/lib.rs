@@ -256,7 +256,7 @@ fn check_proposals() {
                         }
                         ProposalType::BountyDone => {
                             if !proposal.has_been_processed_second {
-                                ic_cdk::println!(" BountyDone unsucess ");
+                                ic_cdk::println!(" BountyDone unsuccess");
 
                                 if let Some(associated_proposal_id) = proposal.associated_proposal_id.clone() {
                                     
