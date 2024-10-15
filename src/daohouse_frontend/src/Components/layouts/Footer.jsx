@@ -26,29 +26,29 @@ const Footer = () => {
 
 
             {/* Navigation Links */}
-            <div className=" flex flex-row  translate-y-[22px] justify-center lg:mt-3  md:ml-12 md:mb-12  my-1 gap-6  small_phone:mb-12 " >
-              <Link
-                to="/"
-                className="text-[#3D3D3D] small_phone:text-base text-sm font-inter font-normal hover:underline small_phone:mb-10"
-              >
-                Home
-              </Link>
-              <Link
-                to="/social-feed"
-                className="text-[#3D3D3D] small_phone:text-base text-sm font-inter font-normal hover:underline small_phone:mb-10"
-              >
-                Social Feed
-              </Link>
-              <Link
-                to="/dao"
-                className="text-[#3D3D3D] small_phone:text-base text-sm font-inter font-normal hover:underline small_phone:mb-10"
-              >
-                DAOs
-              </Link>
-            </div>
+            <div className="flex flex-row justify-center  items-center gap-4 sm:gap-6 md:gap-8 py-4 sm:py-6 px-4 mt-8 sm:mt-12 mb-4 sm:mb-8">
+  <Link
+    to="/"
+    className="text-[#3D3D3D] text-sm sm:text-base md:text-lg font-inter font-normal hover:underline"
+  >
+    Home
+  </Link>
+  <Link
+    to="/social-feed"
+    className="text-[#3D3D3D] text-sm sm:text-base md:text-lg font-inter font-normal hover:underline"
+  >
+    Social Feed
+  </Link>
+  <Link
+    to="/dao"
+    className="text-[#3D3D3D] text-sm sm:text-base md:text-lg font-inter font-normal hover:underline"
+  >
+    DAOs
+  </Link>
+</div>
 
             {/* Social Icons */}
-            <div className="flex  items-center translate-y-0 translate-y-[10px] small_phone:translate-y-[20px] gap-6 my-4 lg:mr-12 ">
+            <div className="flex  items-center   small_phone:translate-y-[12px] gap-6 my-4 lg:mr-12 ">
               <svg className="small_phone:w-8 w-6 small_phone:h-8 h-6 object-contain" width="26" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g clip-path="url(#clip0_5508_42685)">
                   <path d="M25.2407 0.527719C24.9432 0.264677 24.5834 0.0918571 24.1997 0.027801C23.816 -0.0362551 23.423 0.0108704 23.0628 0.164121L1.08224 9.42577C0.761826 9.56588 0.488027 9.80279 0.295412 10.1066C0.102797 10.4104 0 10.7674 0 11.1327C0 11.4979 0.102797 11.855 0.295412 12.1588C0.488027 12.4625 0.761826 12.6994 1.08224 12.8396L2.5022 13.4557C2.73632 13.5599 3.00017 13.5621 3.23583 13.4617C3.47148 13.3614 3.65966 13.1667 3.75905 12.9204C3.80781 12.7977 3.83308 12.6661 3.83342 12.5332C3.83376 12.4002 3.80915 12.2685 3.76102 12.1455C3.71288 12.0226 3.64216 11.9109 3.55292 11.8168C3.46367 11.7227 3.35766 11.6481 3.24096 11.5973L2.18559 11.1428L23.7824 2.05281C23.8156 2.03138 23.8538 2.02004 23.8927 2.02004C23.9316 2.02004 23.9698 2.03138 24.003 2.05281C24.0343 2.0808 24.058 2.11711 24.0715 2.15795C24.085 2.1988 24.0878 2.2427 24.0798 2.28511L20.1365 21.6568C20.1236 21.7258 20.0938 21.79 20.05 21.8432C20.0063 21.8963 19.9501 21.9365 19.8871 21.9598C19.8252 21.9856 19.7579 21.9937 19.6922 21.983C19.6264 21.9723 19.5645 21.9434 19.5129 21.8992L11.8375 15.5968L19.3498 7.60778C19.5103 7.43251 19.6052 7.20212 19.6172 6.95901C19.6291 6.7159 19.5572 6.47644 19.4148 6.28468C19.2723 6.09292 19.0689 5.96178 18.8418 5.91539C18.6148 5.869 18.3796 5.91047 18.1793 6.03219L7.16503 12.9002C7.0427 12.9584 6.93333 13.0429 6.84399 13.1484C6.75466 13.2539 6.68735 13.378 6.64642 13.5126C6.60548 13.6471 6.59184 13.7893 6.60636 13.9298C6.62088 14.0703 6.66325 14.206 6.73072 14.3282C6.7982 14.4503 6.88928 14.5562 6.99807 14.639C7.10687 14.7218 7.23096 14.7797 7.36232 14.8088C7.49368 14.838 7.62939 14.8377 7.76067 14.8082C7.89196 14.7787 8.01589 14.7205 8.12446 14.6373L12.7585 11.7589L10.5038 14.1727C10.2976 14.3768 10.1367 14.6263 10.0329 14.9034C9.92897 15.1806 9.88461 15.4785 9.90295 15.7758C9.92129 16.0731 10.0019 16.3624 10.1389 16.6231C10.276 16.8838 10.4661 17.1093 10.6957 17.2835L18.3712 23.495C18.7752 23.8232 19.2712 24.0008 19.7815 24C20.0533 23.9979 20.3226 23.9467 20.5779 23.8485C20.9444 23.71 21.2709 23.4747 21.5263 23.1652C21.7817 22.8558 21.9572 22.4824 22.0362 22.081L25.9507 2.72951C26.0338 2.32923 26.0116 1.91268 25.8865 1.52471C25.7614 1.13673 25.5381 0.792032 25.2407 0.527719Z" fill="#3D3D3D" />
