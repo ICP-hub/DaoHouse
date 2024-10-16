@@ -190,7 +190,7 @@ const FeedPage = () => {
       {/* Filter Section */}
       <div className="bg-[#c8ced3]">
         <Container
-          classes={`__label small_phone:py-8 py-5 mobile:px-10 tablet:px-20 px-5 flex flex-col gap-4 md:flex-row w-full justify-between items-center md:items-center ${className}`}
+          classes={`__label small_phone:py-8 py-5  mx-4 flex flex-col gap-4 md:flex-row w-full justify-between items-start md:mx-8 big_phone:mx-20 tablet:mx-20 xl:mx-20 desktop:mx-64 md:items-center ${className}`}
         >
           <p className="small_phone:text-4xl text-3xl big_phone:px-2 tablet:px-6 flex flex-row items-center gap-4">
             Most Recent

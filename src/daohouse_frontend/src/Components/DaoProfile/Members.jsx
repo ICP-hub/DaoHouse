@@ -92,7 +92,7 @@ const Members = ({ daoGroups, daoMembers }) => {
             >
               <p className="font-semibold big_phone:text-lg text-sm">Council</p>
               <p className="font-semibold big_phone:text-base text-sm">
-                {councilMembers.length} {councilMembers.length === 1 ? "Member" : "Members"}
+                {councilMembers.length ? councilMembers.length : "Loading..."} {councilMembers.length ? councilMembers.length === 1 ? "Member" : "Members" : ""}
               </p>
               {isCouncilOpen ? <IoIosArrowDown /> : <IoIosArrowUp />}
             </header>
