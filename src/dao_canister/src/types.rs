@@ -13,6 +13,7 @@ pub enum ProposalState {
     Succeeded,
     Expired,
     Unreachable,
+    LateSubmission
 }
 
 

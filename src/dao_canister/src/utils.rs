@@ -15,6 +15,7 @@ pub const TITLE_TOKEN_TRANSFER_POLICY : &str = "Token transfer policy";
 pub const TITLE_BOUNTY_RAISED : &str = "Bounty raised";
 pub const TITLE_BOUNTY_CLAIM : &str = "Bounty claim";
 pub const TITLE_BOUNTY_DONE : &str = "Bounty done";
+pub const DESCRIPTION_BOUNTY_DONE : &str = "This proposal is based on the successful completion of the bounty task. As a result, all tokens will be distributed accordingly. Users who claim their tokens will receive them promptly.";
 pub const TITLE_CREATE_POLL : &str = "Create poll";
 pub const TITLE_CREATE_GENERAL_PURPOSE : &str = "general purpose";
 
