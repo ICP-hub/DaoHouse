@@ -14,7 +14,7 @@ const Footer = () => {
         <Container>
           {/* Main Content */}
           {/* <div className="w-full flex flex-col md:flex-row items-center justify-between small_phone:mb-8 lg:gap-[270px] md:gap-[200px] gap-8 border border-red-300"> */}
-          <div className="w-full flex flex-col md:flex-row md:px-8  px-20px items-center justify-between small_phone:mb-12 lg:gap-[200px] md:gap-[80px] lg:gap-8 md:gap-8 sm:gap-4">
+          <div className="w-full flex flex-col md:flex-row md:px-8  px-20px items-center justify-between small_phone:mb-12 lg:gap-[200px] md:gap-[80px] lg:gap-10 md:gap-10 sm:gap-4">
             {/* Logo Section */}
             <Link to="/" onClick={handleLogoClick}>
               <img

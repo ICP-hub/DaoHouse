@@ -145,7 +145,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
           {/* Follow button for larger screens (hidden on mobile) */}
           <button
             onClick={toggleFollow}
-            className="flex-1 mt-2 text-blue-400 p-1 sm:text-sm md:text-lg hidden big_phone:block"
+            className="flex-1 mt-2 text-blue-400 p-1 sm:text-sm md:text-lg  big_phone:block"
           >
             {isFollowing ? 'Unfollow' : '+ Follow'}
           </button>
