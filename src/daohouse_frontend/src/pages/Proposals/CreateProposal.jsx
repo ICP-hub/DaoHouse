@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import proposals from "../../../assets/proposals.png";
-import createProposalNew from "../../../assets/createProposalNew.png";
+import createProposalNew from "../../../assets/gif/createProposalNew.svg";
 import Container from "../../Components/Container/Container";
 import { useAuth } from "../../Components/utils/useAuthClient";
 import { toast } from "react-toastify";
@@ -26,10 +26,10 @@ function CreateProposal() {
   const [proposalDescription, setProposalDescription] = useState('');
   const [requiredVotes, setRequiredVotes] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-const [loadingPayment, setLoadingPayment] = useState(false);
-const [paymentDetails, setPaymentDetails] = useState({
- 
-});
+  const [loadingPayment, setLoadingPayment] = useState(false);
+  const [paymentDetails, setPaymentDetails] = useState({
+
+  });
   const [proposalType, setProposalType] = useState('');
   const [dao, setDao] = useState(null);
   const [proposalEntry, setProposalEntry] = useState(''); // New state for proposal_entry
@@ -355,17 +355,17 @@ const [paymentDetails, setPaymentDetails] = useState({
           });
           break;
 
-          case 'GeneralPurp':
-            await submitGeneralPurp({
-              proposal_entry: proposalEntry,
-              // proposal_expired_at: generalPurp.days_until_expiration, // Send the days difference to the backend
-              description: generalPurp.description,
-              // action_member: Principal.fromText(generalPurp.actionMember),
-              proposal_title: generalPurp.proposalTitle,
-              // proposal_created_at: 0, // Set Created At to 0 as per your requirement
-            });
-            break;
-          
+        case 'GeneralPurp':
+          await submitGeneralPurp({
+            proposal_entry: proposalEntry,
+            // proposal_expired_at: generalPurp.days_until_expiration, // Send the days difference to the backend
+            description: generalPurp.description,
+            // action_member: Principal.fromText(generalPurp.actionMember),
+            proposal_title: generalPurp.proposalTitle,
+            // proposal_created_at: 0, // Set Created At to 0 as per your requirement
+          });
+          break;
+
 
         case "DaoConfig":
           await submitDaoConfig({
@@ -400,7 +400,7 @@ const [paymentDetails, setPaymentDetails] = useState({
         case 'BountyRaised':
           setIsModalOpen(true);
           break;
-          
+
 
         case 'ChangePolicy':
           await submitChangePolicy({
@@ -425,7 +425,7 @@ const [paymentDetails, setPaymentDetails] = useState({
 
           break;
 
-          
+
 
         case 'RemoveDaoMember':
           await submitRemoveDaoMember({
@@ -456,7 +456,7 @@ const [paymentDetails, setPaymentDetails] = useState({
       );
       const parsedBalance = parseInt(balance, 10);
       const formattedMetadata = await formatTokenMetaData(metadata);
-  
+
       // Call transferApprove to process the payment
       await transferApprove(
         parsedBalance,
@@ -464,13 +464,13 @@ const [paymentDetails, setPaymentDetails] = useState({
         formattedMetadata,
         tokenTransfer.tokens
       );
-  
+
       // After payment, create the proposal
       const daoCanister = await createDaoActor(daoCanisterId);
       const response = await daoCanister.proposal_to_transfer_token(tokenTransfer);
       console.log(response.Err);
-      
-      
+
+
       if (response.Ok) {
         toast.success("Token transfer proposal created successfully");
         setIsModalOpen(false);
@@ -480,7 +480,7 @@ const [paymentDetails, setPaymentDetails] = useState({
       }
     } catch (err) {
       console.error("Error submitting Token Transfer proposal:", err);
-        toast.error("Failed to create Token Transfer proposal");
+      toast.error("Failed to create Token Transfer proposal");
     }
   };
 
@@ -489,10 +489,10 @@ const [paymentDetails, setPaymentDetails] = useState({
       const daoCanister = await createDaoActor(daoCanisterId);
       console.log("DAO Canister ID:", daoCanisterId);
       console.log("Bounty Claim Proposal Payload:", bountyClaim);
-      
+
       const response = await daoCanister.proposal_to_bounty_claim(bountyClaim);
       console.log("Response of Bounty Claim:", response);
-      
+
       toast.success("Bounty Claim proposal created successfully");
       movetodao();
     } catch (error) {
@@ -507,10 +507,10 @@ const [paymentDetails, setPaymentDetails] = useState({
       const daoCanister = await createDaoActor(daoCanisterId);
       console.log("DAO Canister ID:", daoCanisterId);
       console.log("General Purpose Proposal Payload:", generalPurp);
-      
+
       const response = await daoCanister.proposal_to_create_general_purpose(generalPurp);
       console.log("Response of General Purpose:", response);
-      
+
       toast.success("General Purpose proposal created successfully");
       movetodao();
     } catch (error) {
@@ -566,10 +566,10 @@ const [paymentDetails, setPaymentDetails] = useState({
       const daoCanister = await createDaoActor(daoCanisterId);
       console.log("DAO Canister ID:", daoCanisterId);
       console.log("Add Member Proposal Payload:", addMemberData);
-      
+
       const response = await daoCanister.proposal_to_add_member_to_group(addMemberData);
       console.log("Response from Add Member Proposal:", response);
-      
+
       if (response.Ok) {
         toast.success("Add member proposal created successfully");
         movetodao();
@@ -593,10 +593,10 @@ const [paymentDetails, setPaymentDetails] = useState({
       const daoCanister = await createDaoActor(daoCanisterId);
       console.log("DAO Canister ID:", daoCanisterId);
       console.log("Remove Member Proposal Payload:", removeMemberData);
-      
+
       const response = await daoCanister.proposal_to_remove_member_to_group(removeMemberData);
       console.log("Response from Remove Member Proposal:", response);
-      
+
       if (response.Ok) {
         toast.success("Remove member proposal created successfully");
         movetodao();
@@ -711,7 +711,7 @@ const [paymentDetails, setPaymentDetails] = useState({
       );
       const parsedBalance = parseInt(balance, 10);
       const formattedMetadata = await formatTokenMetaData(metadata);
-  
+
       // Call transferApprove to process the payment
       await transferApprove(
         parsedBalance,
@@ -719,13 +719,19 @@ const [paymentDetails, setPaymentDetails] = useState({
         formattedMetadata,
         bountyRaised.tokens
       );
-  
+
       // After payment, create the proposal
       const daoCanister = await createDaoActor(daoCanisterId);
+      console.log("bounty raised", bountyRaised);
+
       const response = await daoCanister.proposal_to_bounty_raised(bountyRaised);
-      
+      console.log("response.ok", response.Ok);
+      console.log("response ok tokens", response.tokens);
+
+
       if (response.Ok) {
         toast.success("Bounty raised proposal created successfully");
+        console.log("tokens", response.Ok.tokens);
         setIsModalOpen(false);
         movetodao();
       } else {
@@ -736,12 +742,12 @@ const [paymentDetails, setPaymentDetails] = useState({
       toast.error("Payment or proposal submission failed");
     }
   };
-  
+
   const handleConfirmPayment = async () => {
-     // Close the modal
+    // Close the modal
     setLoadingPayment(true); // Show loading indicator during payment and submission
     try {
-      if(proposalType === "BountyRaised" ) {
+      if (proposalType === "BountyRaised") {
         await submitBountyRaised({
           proposal_entry: proposalEntry,
           proposal_expired_at: bountyRaised.proposal_expired_in_days, // Send difference in days
@@ -751,7 +757,7 @@ const [paymentDetails, setPaymentDetails] = useState({
           proposal_created_at: 0,
           bounty_task: bountyRaised.bounty_task,
         }); // Trigger payment and proposal submission
-      } else if(proposalType === "tokenTransfer") {
+      } else if (proposalType === "tokenTransfer") {
         await submitTokenTransferProposal({
           to: Principal.fromText(tokenTransfer.to),
           description: tokenTransfer.description,
@@ -762,33 +768,35 @@ const [paymentDetails, setPaymentDetails] = useState({
         });
       } else {
         console.log("Wrong Proposal type");
-        
+
       }
-      
+
     } catch (error) {
       console.error("Payment submission failed:", error);
       toast.error("Payment failed. Please try again.");
       setIsModalOpen(false);
     } finally {
       setLoadingPayment(false);
-      
+
     }
   };
-  
+
   const handleCancelPayment = () => {
     setIsModalOpen(false); // Close the modal when cancel is clicked
   };
-  
-  
+
+
   const submitChangePolicy = async (changePolicy) => {
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
       console.log("DAO Canister ID:", daoCanisterId);
       console.log("Change Policy Proposal Payload:", changePolicy);
-      
+
       const response = await daoCanister.proposal_to_change_dao_policy(changePolicy);
       console.log("Response of Change Policy:", response);
-      
+      console.log("tokens", response.tokens);
+
+
       toast.success("Change DAO Policy proposal created successfully");
       movetodao();
     } catch (error) {
@@ -797,8 +805,8 @@ const [paymentDetails, setPaymentDetails] = useState({
     }
   };
   const submitPoll = async (poll) => {
-    console.log("Poll",poll);
-    
+    console.log("Poll", poll);
+
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
       console.log("DAO Canister ID:", daoCanisterId);
@@ -806,7 +814,7 @@ const [paymentDetails, setPaymentDetails] = useState({
 
       const response = await daoCanister.proposal_to_create_poll(poll);
       console.log("Response of Poll Proposal:", response);
-      
+
       toast.success("Poll proposal created successfully");
       movetodao();
     } catch (error) {
@@ -823,10 +831,10 @@ const [paymentDetails, setPaymentDetails] = useState({
       const daoCanister = await createDaoActor(daoCanisterId);
       console.log("DAO Canister ID:", daoCanisterId);
       console.log("Remove DAO Member Proposal Payload:", removeDaoMember);
-      
+
       const response = await daoCanister.proposal_to_remove_member_to_dao(removeDaoMember);
       console.log("Response of Remove DAO Member:", response);
-      
+
       toast.success("Remove DAO Member proposal created successfully");
       movetodao();
     } catch (error) {
@@ -859,7 +867,7 @@ const [paymentDetails, setPaymentDetails] = useState({
         onConfirm={handleConfirmPayment}
         paymentDetails={paymentDetails}
         loadingPayment={loadingPayment}
-/>
+      />
 
 
       <div className="bg-[#F5F5F5]">
@@ -945,8 +953,8 @@ const [paymentDetails, setPaymentDetails] = useState({
                     >
                       <option value="">Select Proposal Entry</option>
                       {dao &&
-                      dao.proposal_entry &&
-                      dao.proposal_entry.length > 0 ? (
+                        dao.proposal_entry &&
+                        dao.proposal_entry.length > 0 ? (
                         dao.proposal_entry.map((entry, index) => (
                           <option key={index} value={entry.place_name}>
                             {entry.place_name}
@@ -1036,28 +1044,28 @@ const [paymentDetails, setPaymentDetails] = useState({
 
                   {/* Submit Button */}
                   <div className="flex justify-center my-8">
-                        <button
-                          className="bg-[#0E3746] hover:bg-[#819499] text-white font-normal text-center rounded-full text-[16px] py-2 px-6 rounded focus:outline-none focus:shadow-outline"
-                          type="submit"
-                          disabled={loading || !proposalEntry} // Disable if loading or proposalEntry not selected
-                        >
-                          {loading ? (
-                            <CircularProgress size={24} />
-                          ) : (
-                            "Submit"
-                          )}
-                        </button>
+                    <button
+                      className="bg-[#0E3746] hover:bg-[#819499] text-white font-normal text-center rounded-full text-[16px] py-2 px-6 rounded focus:outline-none focus:shadow-outline"
+                      type="submit"
+                      disabled={loading || !proposalEntry} // Disable if loading or proposalEntry not selected
+                    >
+                      {loading ? (
+                        <CircularProgress size={24} />
+                      ) : (
+                        "Submit"
+                      )}
+                    </button>
                   </div>
                 </div>
 
-              <div className="md:flex self-start hidden">
-                <img
-                  src={createProposalNew}
-                  alt="Illustration"
-                  className="w-[350px] h-[350px]"
-                />
+                <div className="md:flex self-start hidden">
+                  <img
+                    src={createProposalNew}
+                    alt="Illustration"
+                    className="w-[350px] h-[350px]"
+                  />
+                </div>
               </div>
-            </div>
             </form>
           </div>
         </Container>
