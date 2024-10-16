@@ -7,18 +7,14 @@ import { MdOutlineVerifiedUser } from "react-icons/md";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import Container from "../Container/Container";
 import ViewModal from "./ViewModal";
-import CircularProgress from '@mui/material/CircularProgress'; // Ensure this import exists
+import CircularProgress from '@mui/material/CircularProgress';
 
 const Step5 = ({ setData, setActiveStep, data }) => {
-  console.log("data", data);
-
   const [loadingNext, setLoadingNext] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMembers, setSelectedMembers] = useState([]);
-  const { council, groups, members } = data.step3;
+  const { council, groups } = data.step3;
   const users = useMemo(() => data.step3, [data.step3]);
-  console.log("user", users);
-
 
   const [quorum, setQuorum] = useState(() => [
     { name: "Council", memberCount: council.length, vote: 51, members: council },
@@ -67,9 +63,9 @@ const Step5 = ({ setData, setActiveStep, data }) => {
         <div
           className={`${className}__form w-full bg-[#F5F5F5] big_phone:p-10 mobile:p-6 p-3 big_phone:mx-4 mx-0 rounded-lg flex flex-col gap-4`}
         >
-          {/* Desktop View */}
-          <section className="heading big_phone:flex hidden items-center bg-[#F5F5F5] w-full">
-            <p className="flex items-center gap-2 w-1/3 font-semibold ">
+          {/* Desktop and Medium Screen View */}
+          <section className="hidden md:flex heading items-center bg-[#F5F5F5] w-full">
+            <p className="flex items-center gap-2 w-1/3 font-semibold">
               <RiGroupLine /> Groups
             </p>
 
@@ -82,7 +78,7 @@ const Step5 = ({ setData, setActiveStep, data }) => {
             </p>
           </section>
 
-          <section className="bg-white rounded-2xl w-full p-4 gap-4 big_phone:flex hidden flex-col">
+          <section className="hidden md:flex bg-white rounded-2xl w-full p-4 gap-4 flex-col">
             {quorum.map((item, i) => (
               <div
                 key={i}
@@ -102,24 +98,24 @@ const Step5 = ({ setData, setActiveStep, data }) => {
 
                 <div className="w-1/3 gap-2 flex items-center">
                   <RangeInput arrayIndex={i} value={item.vote} handleVoteChange={handleVoteChange} />
-                  <span className="text-nowrap hidden sm:block ">{item.vote} %</span>
+                  <span className="text-nowrap">{item.vote} %</span>
                 </div>
               </div>
             ))}
           </section>
 
           {/* Mobile View */}
-          <section className="bg-[#EBEBEB] rounded-lg w-full p-4 gap-4 sm:hidden mt-2 big_phone:hidden flex flex-col gap-10">
+          <section className="flex md:hidden bg-[#EBEBEB] rounded-lg w-full p-4 gap-4 mt-2 flex-col gap-10">
             <section className="flex justify-between items-center border-b pb-2">
               <p className="flex items-center gap-2 font-semibold font-mulish">
                 Groups
               </p>
-              <p className="flex items-center gap-2 translate-x-[34px] sm:translate-x-0 font-semibold font-mulish">
+              <p className="flex items-center gap-2 translate-x-[34px] font-semibold font-mulish">
                 Voting Policy
               </p>
               <LuAlertCircle className="text-blue-300" />
             </section>
-            <hr className="border-t-2 border-gray-400 sm:hidden mt-2" />
+            <hr className="border-t-2 border-gray-400 mt-2" />
 
             {quorum.map((item, i) => (
               <div
@@ -142,7 +138,7 @@ const Step5 = ({ setData, setActiveStep, data }) => {
                   </div>
 
                   <div className="flex flex-col items-end gap-6">
-                    <h2 className="text-sm hidden sm:block">{item.vote} %</h2>
+                    <h2 className="text-sm">{item.vote} %</h2>
                     <RangeInput arrayIndex={i} value={item.vote} handleVoteChange={handleVoteChange} />
                   </div>
                 </section>

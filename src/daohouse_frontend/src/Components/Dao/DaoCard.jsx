@@ -129,27 +129,29 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
 
   return (
     <div className="bg-[#F4F2EC] shadow-lg tablet:p-6 big_phone:p-3 small_phone:p-5 p-3 rounded-lg md:mx-8 tablet:mx-16">
-      <div className="flex big_phone:flex-row small_phone:flex-col justify-start items-start mb-4 gap-2">
-        {/* Image Container */}
-        <div className="w-full big_phone:w-40 lg:w-60 mobile:h-[120px] border border-black rounded">
-          <img
-            src={imageUrl}
-            alt="DAO Image"
-            className="w-full h-32 big_phone:h-full object-cover rounded"
-          />
-        </div>
-        <div className="flex flex-col items-start big_phone:ml-4 small_phone:ml-0 small_phone:mt-4">
-          {/* Name for larger screens */}
-          <h2 className="text-lg font-semibold truncate big_phone:w-36 hidden big_phone:block">{name}</h2>
+  <div className="flex flex-col items-center big_phone:flex-row small_phone:flex-col justify-center mb-4 gap-2">
+    {/* Image Container */}
+    <div className="w-full big_phone:w-40 lg:w-60 mobile:h-[120px] border border-black rounded">
+      <img
+        src={imageUrl}
+        alt="DAO Image"
+        className="w-full h-32 big_phone:h-full object-cover rounded"
+      />
+    </div>
+       
+    {/* Centered name and follow button */}
+    <div className="flex flex-col items-center justify-center mt-4 big_phone:mt-0">
+      {/* Name for all screens */}
+      <h2 className="text-lg font-semibold truncate big_phone:w-36 text-center">{name}</h2>
 
-          {/* Follow button for larger screens (hidden on mobile) */}
-          <button
-            onClick={toggleFollow}
-            className="flex-1 mt-2 text-blue-400 p-1 sm:text-sm md:text-lg hidden big_phone:block"
-          >
-            {isFollowing ? 'Unfollow' : '+ Follow'}
-          </button>
-        </div>
+      {/* Follow button centered below the name */}
+      <button
+        onClick={toggleFollow}
+        className="mt-2 text-blue-400 p-1 sm:text-sm md:text-lg text-center"
+      >
+        {isFollowing ? 'Unfollow' : '+ Follow'}
+      </button>
+    </div>
       </div>
 
       {/* Follow button and username for mobile view (hidden on larger screens) */}
