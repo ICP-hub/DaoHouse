@@ -72,6 +72,20 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
 
 
   useEffect(() => {
+    if (isShareModalOpen) {
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+    }
+  
+    return () => {
+      document.body.classList.remove('overflow-hidden');
+    };
+  }, [isShareModalOpen]);
+  
+
+
+  useEffect(() => {
     const fetchDaoName = async () => {
       if (!daoId || !daoId._arr) {
         console.error("Invalid daoId:", daoId);
@@ -279,6 +293,23 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
       setIsVoteLoading(false);
     }
   };
+
+  
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      body.overflow-hidden {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+      }
+    `;
+    document.head.append(style);
+    return () => style.remove();
+  }, []);
+  
+  
 
 
 
@@ -570,25 +601,41 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                 </div>
               )}
             </div>
-          </>
-        )}
 
-        <ShareModal
-          isOpen={isShareModalOpen}
-          proposalId={proposal?.proposal_id}
-          daoCanisterId={daoId}
-          toggleModal={toggleShareModal}
-          copyToClipboard={copyToClipboard}
-        />
+            {!showActions && (
+              <div className="flex gap-2">
+                <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
+                <button className="px-6 py-2 font-mulish" onClick={handleViewMore}>View More</button>
+              </div>
+              {(proposal?.proposal_title === "Bounty raised" || proposal.propsal_title === "Bounty raised") && (
+                <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
+              
+                <button className="px-2 py-2 font-mulish" onClick={() => navigate(`/create-proposal/${daoCanisterId}`)}>Claim Bounty</button>
+              </div>
+              )}
+              </div>
+            )}
+          </div>
+        </>
+      )}
 
-        <ViewModal
-          open={isModalOpen}
-          onClose={handleOnClose}
-          approvedVotesList={votersList?.approvedVotes}
-          rejectedVotesList={votersList?.rejectedVotes}
-          showVotes={true}
-        />
-      </div>
-    );
-  }
-}
+<ShareModal
+  isOpen={isShareModalOpen}
+  proposalId={proposal?.proposal_id}
+  daoCanisterId={daoId}
+  toggleModal={toggleShareModal}
+  copyToClipboard={copyToClipboard}
+  className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center"
+/>
+
+      <ViewModal 
+        open={isModalOpen} 
+        onClose={handleOnClose} 
+        approvedVotesList={votersList?.approvedVotes} 
+        rejectedVotesList={votersList?.rejectedVotes} 
+        showVotes={true} 
+      />
+    </div>
+  );
+}}
+
