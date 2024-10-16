@@ -32,27 +32,47 @@ const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
   const [loading, setLoading] = useState(false);
 
   const searchChange = async (event) => {
-    setSearchTerm(event.target.value)
-    if (searchTerm === "") {
+    const value = event.target.value.trim();
+    setSearchTerm(value);
+    console.log("Val",value);
+    
+    if (value === "") {
       setFetchFollower([]);
+      setLoading(false);
       return;
     }
+  
+    setLoading(true);
+    
     try {
-      const daoActor = createDaoActor(daoCanisterId)
-      const response = await daoActor.search_follower(event.target.value);
-      const userProfiles = await Promise.all(
-        response.map(async (userPrincipalId) => {
-          const userProfile = await backendActor.get_profile_by_id(userPrincipalId);
-          return { ...userProfile };
-        })
-      );
-      setFetchFollower(userProfiles);
-      console.log("userprofile", userProfiles);
-
+      const daoActor = createDaoActor(daoCanisterId);
+      console.log("Val2", value);
+      
+      const response = await daoActor.search_follower(value);
+      console.log("Followers", response);
+      
+      if (Array.isArray(response)) {
+        const userProfiles = await Promise.all(
+          response.map(async (userPrincipalId) => {
+            const userProfile = await backendActor.get_profile_by_id(userPrincipalId);
+            return userProfile?.Ok ? { ...userProfile.Ok } : null;
+          })
+        );
+        const validProfiles = userProfiles.filter(profile => profile !== null);
+        setFetchFollower(validProfiles);
+        console.log("userprofile", validProfiles);
+      } else {
+        setFetchFollower([]);
+      }
+      
     } catch (error) {
       console.log("error is : ", error);
+      setFetchFollower([]);
+    } finally {
+      setLoading(false);
     }
   }
+  
 
   useEffect(() => {
     async function fetchFollowerProfiles() {
