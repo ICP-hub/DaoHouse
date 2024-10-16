@@ -63,6 +63,16 @@ const DaoProfile = () => {
   const [followersCount, setFollowersCount] = useState(0);
   const [userProfile, setUserProfile] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
+  const totalPages = Math.ceil((dao?.proposals_count || 0) / itemsPerPage);
+
+// Function to handle page change
+const handlePageChange = (newPage) => {
+  if (newPage >= 1 && newPage <= totalPages) {
+    setCurrentPage(newPage);
+  }
+};
+
 
   const truncateText = (text, wordLimit) => {
     const words = text.split('');
@@ -127,24 +137,23 @@ const DaoProfile = () => {
     };
 
     const fetchProposals = async () => {
-    //  setLoadingProposals(true)
+      setLoadingProposals(true);
       if (daoCanisterId) {
-          // Start loading proposals
         try {
           const daoActor = createDaoActor(daoCanisterId);
-          const itemsPerPage = 20;
           const start = (currentPage - 1) * itemsPerPage;
           const end = start + itemsPerPage;
-
+    
           const proposals = await daoActor.get_all_proposals({ start, end });
           setProposals(proposals);
         } catch (error) {
-          console.error('Error fetching proposals:', error);
+          console.error("Error fetching proposals:", error);
         } finally {
-          setLoadingProposals(false);  // Proposals data loading finished
+          setLoadingProposals(false);
         }
       }
     };
+    
 
     fetchDaoDetails();
     fetchProposals();

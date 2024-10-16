@@ -10,6 +10,8 @@ const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, da
   const { backendActor, createDaoActor } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [fetchedProposals, setFetchedProposals] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const proposalsPerPage = 4; 
 
   const allProposals = proposals && Array.isArray(proposals) ? proposals : [];
 
@@ -41,6 +43,29 @@ const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, da
   const displayedProposals =
     searchTerm.trim() === "" ? allProposals : fetchedProposals;
 
+  // Pagination logic
+  const totalPages = Math.ceil(displayedProposals.length / proposalsPerPage);
+  const indexOfLastProposal = currentPage * proposalsPerPage;
+  const indexOfFirstProposal = indexOfLastProposal - proposalsPerPage;
+  const currentProposals = displayedProposals.slice(indexOfFirstProposal, indexOfLastProposal);
+
+  // Handle next and previous pages
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handlePageClick = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <div className="mt-6 mb-6">
       {isMember && showActions && (
@@ -61,7 +86,6 @@ const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, da
             </span>
             <span className="ml-6 hidden md:block">Create Proposals</span>
           </Link>
-
         </div>
       )}
       <div className={`${showActions ? "bg-[#F4F2EC] pt-3 pb-8 mt-4 mb-8 rounded-[10px] " : ""} `}>
@@ -84,19 +108,47 @@ const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, da
         )}
         <div className={`${showActions ? "w-full border-t py-6 border-[#0000004D] rounded-[10px] mb-4" : ""}`}>
           <div className="bg-transparent rounded flex flex-col gap-8">
-            {displayedProposals.length === 0 ? (
+            {currentProposals.length === 0 ? (
               <p className="text-center font-black">
                 <img src={nodata} alt="No Data" className="mx-auto block " />
                 <p className="text-xl mt-5 font-bold">No Proposal Found!</p>
               </p>
             ) : (
-              displayedProposals.map((proposal, index) => (
-                <div className="desktop:mx-6">
+              currentProposals.map((proposal, index) => (
+                <div className="desktop:mx-6" key={index}>
                   <Card key={index} proposal={proposal} voteApi={voteApi} />
                 </div>
               ))
             )}
           </div>
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={handlePreviousPage}
+                disabled={currentPage === 1}
+                className="mr-2 p-2 border"
+              >
+                Previous
+              </button>
+              {[...Array(totalPages)].map((_, pageNumber) => (
+                <button
+                  key={pageNumber + 1}
+                  onClick={() => handlePageClick(pageNumber + 1)}
+                  className={`p-2 border ${currentPage === pageNumber + 1 ? "bg-gray-300" : ""}`}
+                >
+                  {pageNumber + 1}
+                </button>
+              ))}
+              <button
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+                className="ml-2 p-2 border"
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -104,7 +156,6 @@ const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, da
 };
 
 export default ProposalsContent;
-
 export const SearchProposals = ({
   width,
   bgColor,

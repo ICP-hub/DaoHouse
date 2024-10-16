@@ -370,11 +370,13 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
 
   const skeletonLoader = () => {
     return (
-      <div className="w-full flex bg-gray-100 py-4 px-8 flex-col mobile:items-start md:flex-row md:items-center justify-between mb-2 animate-pulse">
+      <div className="w-full flex bg-gray-100 py-2 px-8 items-center justify-between mb-2 animate-pulse">
         {/* Simulated Username */}
-        <p className="font-semibold mobile:text-base text-sm bg-gray-300 h-6 w-1/6 rounded-md"></p>
+        <div className="flex-col space-y-1">
+        <p className="font-semibold mobile:text-base text-sm bg-gray-300 h-6 w-20 rounded-md"></p>
         {/* Simulated Principal ID */}
-        <p className="text-sm bg-gray-300 h-6 w-1/3 rounded-md"></p>
+        <p className="text-sm bg-gray-300 h-6 w-96 rounded-md"></p>
+        </div>
         {/* Simulated Delete Button */}
         <button className="w-6 h-6 bg-gray-300 rounded-full"></button>
       </div>
@@ -449,9 +451,11 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
 
               return (
                 <section key={index} className="w-full bg-white py-2 p-2 md:px-8 flex flex-col items-center justify-between  mb-4">
-                  <div className="w-full flex flex-col mobile:items-start md:flex-row md:items-center justify-between mb-2">
+                  <div className="w-full flex  items-center justify-between mb-2">
+                    <div>
                     <p className="font-semibold mobile:text-base text-sm border-black">{username}</p>
-                    <p className="text-sm">{formattedPrincipalId}</p> {/* Display Principal ID on the right */}
+                    <p className="text-sm">{formattedPrincipalId}</p> 
+                    </div>
                     <button onClick={() => handleRemoveMember('council', formattedPrincipalId)}>
                       <MdOutlineDeleteOutline className="text-red-500 mobile:text-2xl text-lg" />
                     </button>
