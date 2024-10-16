@@ -199,16 +199,16 @@ const FeedPage = () => {
               <div className="mobile:w-14 w-8 small_phone:mt-2 mt-1 border-t-2 border-black"></div>
             </div>
           </p>
-          <div className="flex flex-grow justify-center px-6 mx-2">
-            <SearchProposals
-              onChange={handleSearchChange}
-              value={searchTerm}
-              width="100%"
-              bgColor="transparent"
-              placeholder="Search by proposal ID"
-              className="border-2 border-[#AAC8D6] w-full max-w-lg"
-            />
-          </div>
+          <div className="hidden md:flex flex-grow justify-center px-6 mx-2">
+      <SearchProposals
+        onChange={handleSearchChange}
+        value={searchTerm}
+        width="100%"
+        bgColor="transparent"
+        placeholder="Search by proposal ID"
+        className="border-2 border-[#AAC8D6] w-full max-w-lg"
+      />
+    </div>
         </Container>
       </div>
 
