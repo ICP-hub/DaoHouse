@@ -69,6 +69,18 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const daoId = proposal.dao_canister_id || proposal.associated_dao_canister_id || daoCanisterId;
     
   // console.log(daoCanisterId);
+
+  useEffect(() => {
+    if (isShareModalOpen) {
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+    }
+  
+    return () => {
+      document.body.classList.remove('overflow-hidden');
+    };
+  }, [isShareModalOpen]);
   
 
   useEffect(() => {
@@ -135,7 +147,6 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const toggleShareModal = () => {
     setIsShareModalOpen(!isShareModalOpen);
   };
-  
 
   const [isModalOpen,setIsModalOpen]=useState(false)
   const navigate = useNavigate()
@@ -280,7 +291,19 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
     }
   };
   
-
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      body.overflow-hidden {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+      }
+    `;
+    document.head.append(style);
+    return () => style.remove();
+  }, []);
   
   
   const handleVotesClick = () => {
@@ -545,13 +568,14 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
         </>
       )}
 
-      <ShareModal
-        isOpen={isShareModalOpen}
-        proposalId={proposal?.proposal_id}
-        daoCanisterId={daoId}
-        toggleModal={toggleShareModal}
-        copyToClipboard={copyToClipboard}
-      />
+<ShareModal
+  isOpen={isShareModalOpen}
+  proposalId={proposal?.proposal_id}
+  daoCanisterId={daoId}
+  toggleModal={toggleShareModal}
+  copyToClipboard={copyToClipboard}
+  className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center"
+/>
 
       <ViewModal 
         open={isModalOpen} 
