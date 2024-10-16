@@ -26,11 +26,13 @@ import NoFollowers from "./NoFollowers";
 import NoFollowing from "./NoFollowing";
 import { Principal } from "@dfinity/principal";
 import { createActor } from "../../../../declarations/icp_ledger_canister";
+import { toast } from "react-toastify";
 
 
 
 const MyProfile = ({ childComponent }) => {
   const { backendActor, identity, stringPrincipal } = useAuth();
+
   console.log("sandlkansdlknasld", stringPrincipal);
 
   const { userProfile } = useUserProfile() || {};
@@ -68,6 +70,7 @@ const MyProfile = ({ childComponent }) => {
   const [showNoFollowers, setShowNoFollowers] = useState(false);
   const [showNoFollowing, setShowNoFollowing] = useState(false); // New state for NoFollowing component
   const navigate = useNavigate();
+  const [loadingPayment, setLoadingPayment] = useState(false);
   const className = "MyProfile";
   const tabButtonsStyle = "my-1 big_phone:text-base mobile:text-md text-sm flex flex-row items-center gap-2 ";
 
@@ -102,9 +105,11 @@ const MyProfile = ({ childComponent }) => {
   };
 
   const [data, setData] = useState({});
+  const [tokens, setTokens] = useState(0);
+  console.log("tokens", tokens);
   const followers = data?.followers_count ? Number(data.followers_count) : 0;
   const post = data?.submitted_proposals ? Number(data.submitted_proposals) : 0;
-  const following = data?.join_dao ? Number(data.join_dao.length) : 0; 
+  const following = data?.join_dao ? Number(data.join_dao.length) : 0;
   const email = data?.email_id;
   const name = data?.username;
 
@@ -164,6 +169,7 @@ const MyProfile = ({ childComponent }) => {
         tokenActor.icrc1_balance_of({ owner: ownerPrincipal, subaccount: [] }),
       ]);
       console.log("Metadata and balance fetched:", { metadata, balance });
+      setTokens(balance);
       return { metadata, balance };
     } catch (err) {
       console.error("Error fetching metadata and balance:", err);
@@ -207,7 +213,7 @@ const MyProfile = ({ childComponent }) => {
         afterPaymentApprove(sendableAmount);
       }
     } catch (err) {
-      toast.error("Payment failed. Please try again.");
+      // toast.error("Payment failed. Please try again.");
       setLoadingPayment(false);
     }
   }
@@ -364,7 +370,7 @@ const MyProfile = ({ childComponent }) => {
                         <div className="md:flex gap-2 hidden  mt-3">
                           <div className="mr-6">
                             <span className=" tablet:text-[32px] text-[24px] font-normal text-[#05212C] user-acc-info">
-                              {post}
+                              {Number(tokens)}
                               <span className="tablet:text-[16px] text-[14px] mx-1">
                                 Balance
                               </span>
