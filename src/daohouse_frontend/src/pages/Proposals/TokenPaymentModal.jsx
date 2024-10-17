@@ -1,13 +1,18 @@
 import { CircularProgress } from '@mui/material';
 
-const TokenPaymentModal = ({ isOpen, onClose, onConfirm, paymentDetails, loadingPayment }) => {
+const TokenPaymentModal = ({bountyRaised,tokenTransfer,isOpen, onClose, onConfirm, paymentDetails, loadingPayment }) => {
+  console.log("toeknpaymentmodal",bountyRaised.tokens);
+
+  
+
+  
     if (!isOpen) return null;
   
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
         <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-1/3 p-6">
           <h2 className="text-2xl mb-4">Confirm Payment</h2>
-          <p className="mb-4">Are you sure you want to proceed with the payment of <strong>{paymentDetails.tokens} Tokens</strong>?</p>
+          <p className="mb-4">Are you sure you want to proceed with the payment of <strong>{bountyRaised.tokens} Tokens</strong>?</p>
           {/* Add more payment details if necessary */}
           <div className="flex justify-end space-x-4">
             <button

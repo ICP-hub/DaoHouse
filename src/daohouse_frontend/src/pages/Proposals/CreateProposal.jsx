@@ -26,6 +26,9 @@ function CreateProposal() {
   const [proposalDescription, setProposalDescription] = useState('');
   const [requiredVotes, setRequiredVotes] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [bountyTokens, setBountyTokens] = useState(0);
+  console.log("bounty raised tokems", bountyTokens);
+
   const [loadingPayment, setLoadingPayment] = useState(false);
   const [paymentDetails, setPaymentDetails] = useState({
 
@@ -107,13 +110,13 @@ function CreateProposal() {
   });
 
   const [groupNames, setGroupNames] = useState([]);
-  console.log("group", groupNames);
+
 
   const [loading, setLoading] = useState(false);
   const { createDaoActor, stringPrincipal, identity } = useAuth();
 
   const movetodao = () => {
-    navigate(`/dao/profile/${daoCanisterId}`);
+    // navigate(`/dao/profile/${daoCanisterId}`);
     console.log("Proposal Submitted");
   };
 
@@ -132,14 +135,14 @@ function CreateProposal() {
 
           if (daoActor) {
             const daoDetails = await daoActor.get_dao_detail();
-            console.log("DAO Details Returned:", daoDetails);
-            setDao(daoDetails); // Set dao to the fetched details
-            console.log("dao", dao);
+
+            setDao(daoDetails);
+
 
             const names = await daoDetails.proposal_entry.map(
               (group) => group.place_name
             );
-            console.log("GR", names);
+
             setGroupNames(names);
           } else {
             console.error("daoActor is null");
@@ -266,13 +269,13 @@ function CreateProposal() {
         proposal_expired_at: value, // Set the actual selected date for display in the input field
         proposal_expired_in_days: differenceInDays, // Store the difference in days for backend submission
       });
-      console.log("Bounty", bountyRaised);
+
     } else {
       setBountyRaised({
         ...bountyRaised,
         [name]: value,
       });
-      console.log("BountyE", bountyRaised);
+
     }
   };
 
@@ -302,13 +305,13 @@ function CreateProposal() {
         proposal_expired_at: value, // Store the selected date for frontend display
         days_until_expiration: differenceInDays, // Store the difference for backend submission
       });
-      console.log("if", poll);
+
     } else {
       setPoll({
         ...poll,
         [name]: value,
       });
-      console.log("Else", poll);
+
     }
   };
 
@@ -343,7 +346,7 @@ function CreateProposal() {
           break;
 
         case "bountyClaim":
-          console.log("dfnsdjlflksdfjlksdfjlksd");
+
 
           await submitBountyClaim({
             proposal_entry: proposalEntry,
@@ -487,8 +490,7 @@ function CreateProposal() {
   const submitBountyClaim = async (bountyClaim) => {
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
-      console.log("DAO Canister ID:", daoCanisterId);
-      console.log("Bounty Claim Proposal Payload:", bountyClaim);
+
 
       const response = await daoCanister.proposal_to_bounty_claim(bountyClaim);
       console.log("Response of Bounty Claim:", response);
@@ -501,12 +503,12 @@ function CreateProposal() {
     }
   };
   const submitGeneralPurp = async (generalPurp) => {
-    console.log("general purpose", generalPurp);
+
 
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
-      console.log("DAO Canister ID:", daoCanisterId);
-      console.log("General Purpose Proposal Payload:", generalPurp);
+
+
 
       const response = await daoCanister.proposal_to_create_general_purpose(generalPurp);
       console.log("Response of General Purpose:", response);
@@ -521,8 +523,7 @@ function CreateProposal() {
   const submitDaoConfig = async (daoConfig) => {
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
-      console.log("DAO Canister ID:", daoCanisterId);
-      console.log("DAO Config Proposal Payload:", daoConfig);
+
 
       const response = await daoCanister.proposal_to_change_dao_config(
         daoConfig
@@ -533,16 +534,17 @@ function CreateProposal() {
         toast.success("DAO configuration proposal created successfully");
         movetodao();
         const submitBountyRaised = async (bountyRaised) => {
+          setBountyTokens(bountyRaised.tokens)
           try {
             const daoCanister = await createDaoActor(daoCanisterId);
-            console.log("DAO Canister ID:", daoCanisterId);
-            console.log("Bounty Raised Proposal Payload:", bountyRaised);
+
 
             const response = await daoCanister.proposal_to_bounty_raised(
               bountyRaised
+
             );
             console.log("Response of Bounty Raised:", response);
-
+            setBountyTokens(bountyRaised.tokens)
             toast.success("Bounty raised proposal created successfully");
             movetodao();
           } catch (error) {
@@ -564,8 +566,7 @@ function CreateProposal() {
   const submitAddMember = async (addMemberData) => {
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
-      console.log("DAO Canister ID:", daoCanisterId);
-      console.log("Add Member Proposal Payload:", addMemberData);
+
 
       const response = await daoCanister.proposal_to_add_member_to_group(addMemberData);
       console.log("Response from Add Member Proposal:", response);
@@ -591,8 +592,7 @@ function CreateProposal() {
   const submitRemoveMember = async (removeMemberData) => {
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
-      console.log("DAO Canister ID:", daoCanisterId);
-      console.log("Remove Member Proposal Payload:", removeMemberData);
+
 
       const response = await daoCanister.proposal_to_remove_member_to_group(removeMemberData);
       console.log("Response from Remove Member Proposal:", response);
@@ -829,8 +829,7 @@ function CreateProposal() {
 
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
-      console.log("DAO Canister ID:", daoCanisterId);
-      console.log("Remove DAO Member Proposal Payload:", removeDaoMember);
+
 
       const response = await daoCanister.proposal_to_remove_member_to_dao(removeDaoMember);
       console.log("Response of Remove DAO Member:", response);
@@ -867,6 +866,10 @@ function CreateProposal() {
         onConfirm={handleConfirmPayment}
         paymentDetails={paymentDetails}
         loadingPayment={loadingPayment}
+        bountyRaised={bountyRaised}
+
+
+
       />
 
 
