@@ -170,7 +170,6 @@ const FeedPage = () => {
       {showPopup && (
         <div className="fixed inset-0 bg-black opacity-40 z-40"></div>
       )}
-
       {/* Header Section with Background Image */}
       <div
         style={{
@@ -190,7 +189,7 @@ const FeedPage = () => {
       {/* Filter Section */}
       <div className="bg-[#c8ced3]">
         <Container
-          classes={`__label small_phone:py-8 py-5  mx-4 flex flex-col gap-4 md:flex-row w-full justify-between items-start md:mx-8 big_phone:mx-20 tablet:mx-20 xl:mx-20 desktop:mx-64 md:items-center ${className}`}
+          classes={`__label small_phone:py-8 py-5 px-4 mobile:px-10 small_phone:px-8 desktop:px-20 flex justify-between items-center`}
         >
           <p className="small_phone:text-4xl text-3xl big_phone:px-2 tablet:px-6 flex flex-row items-center gap-4">
             Most Recent
@@ -203,7 +202,7 @@ const FeedPage = () => {
       <SearchProposals
         onChange={handleSearchChange}
         value={searchTerm}
-        width="100%"
+        width="70%"
         bgColor="transparent"
         placeholder="Search by proposal ID"
         className="border-2 border-[#AAC8D6] w-full max-w-lg"

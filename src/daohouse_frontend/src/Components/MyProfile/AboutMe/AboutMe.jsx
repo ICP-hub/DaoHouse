@@ -26,7 +26,7 @@ const AboutMe = () => {
   );
 
   return (
-    <div className={className + "w-full "}>
+    <div className={className + "w-full md:w-[100%] big_phone:w-full lg:w-[100%] xl:w-full"}>
       <div className=" mt-5">
         <h3 className="text-[#05212C] lg:text-[24px]  md:text-[18px] text-[16px] md:font-bold font-semibold">
           About Me

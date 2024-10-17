@@ -10,11 +10,11 @@ const Footer = () => {
 
   return (
     <React.Fragment>
-      <footer className="bg-[#ffffff]  h-auto small_phone:py-12   py-5 text-center  ">
+      <footer className="bg-[#ffffff]  h-auto  py-5 text-center  ">
         <Container>
           {/* Main Content */}
           {/* <div className="w-full flex flex-col md:flex-row items-center justify-between small_phone:mb-8 lg:gap-[270px] md:gap-[200px] gap-8 border border-red-300"> */}
-          <div className="w-full flex flex-col md:flex-row md:px-8  px-20px items-center justify-between small_phone:mb-12 lg:gap-[200px] md:gap-[80px] lg:gap-10 md:gap-10 sm:gap-4">
+          <div className="w-full flex flex-col md:flex-row md:px-8  px-20px items-center justify-between small_phone:mb-4 lg:gap-[200px] md:gap-[80px] lg:gap-10 md:gap-10 sm:gap-4">
             {/* Logo Section */}
             <Link to="/" onClick={handleLogoClick}>
               <img
@@ -26,7 +26,7 @@ const Footer = () => {
 
 
             {/* Navigation Links */}
-            <div className="flex flex-row justify-center md:translate-x-[30px] items-center gap-4 sm:gap-6 md:gap-8 py-4 sm:py-6 px-4 mt-8 sm:mt-12 mb-4 sm:mb-8">
+            <div className="flex flex-row justify-center md:translate-x-[30px] items-center gap-4 sm:gap-6 md:gap-8 py-4 sm:py-6 px-4">
   <Link
     to="/"
     className="text-[#3D3D3D] text-sm sm:text-base md:text-lg font-inter font-normal hover:underline"

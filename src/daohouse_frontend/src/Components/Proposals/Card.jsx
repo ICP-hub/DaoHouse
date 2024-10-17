@@ -618,32 +618,18 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                   )}
                 </div>
               )}
-
-            {!showActions && (
-              <div className="flex gap-2">
-                <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
-                <button className="px-6 py-2 font-mulish" onClick={handleViewMore}>View More</button>
-              </div>
-              {(proposal?.proposal_title === "Bounty raised" || proposal.propsal_title === "Bounty raised") && (
-                <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
-              
-                <button className="px-2 py-2 font-mulish" onClick={() => navigate(`/create-proposal/${daoCanisterId}`)}>Claim Bounty</button>
-              </div>
-              )}
-              </div>
-            )}
           </div>
         </>
       )}
 
-<ShareModal
-  isOpen={isShareModalOpen}
-  proposalId={proposal?.proposal_id}
-  daoCanisterId={daoId}
-  toggleModal={toggleShareModal}
-  copyToClipboard={copyToClipboard}
-  className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center"
-/>
+      <ShareModal
+        isOpen={isShareModalOpen}
+        proposalId={proposal?.proposal_id}
+        daoCanisterId={daoId}
+        toggleModal={toggleShareModal}
+        copyToClipboard={copyToClipboard}
+        className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center"
+      />
 
       <ViewModal 
         open={isModalOpen} 

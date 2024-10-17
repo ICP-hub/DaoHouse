@@ -289,7 +289,7 @@ const MyProfile = ({ childComponent }) => {
         </div>
         <div className={`bg-[#c8ced3]`}>
           <Container classes={`__mainComponent big_phone:py-8 big_phone:pb-20 py-7 md:px-8 flex md:flex-row gap-2 flex-col w-full user-container`}>
-            <div className="flex justify-between w-[100%] big_phone:mx-2 lg:mx-16  gap-16">
+            <div className="flex justify-between w-[100%] big_phone:mx-2 lg:mx-16 md:gap-10 lg:gap-16">
 
               <div className={`${className}__mainComponent__leftSide md:mx-0 mx-5 left lg:px-20 flex flex-col tablet:items-start justify-center md:w-[204px] md:h-[600px] lg:w-[252px] lg:h-[600px] md:px-28 rounded-[10px] bg-[#0E3746] text-white text-opacity-50 font-normal  z-20`}>
                 <div
@@ -354,21 +354,42 @@ const MyProfile = ({ childComponent }) => {
               </div>
               <div className={`w-full flex-col`}>
                 <div className="flex md:justify-between w-full gap-2 relative">
-                  <div className="flex items-start relative">
+                  <div className="flex items-start w-full relative">
                     <div className="flex justify-between w-full">
                       <div className="">
-                        <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C]">
-                          {name || "Username.user"}{" "}
-                        </h2>
-                        <p className="md:text-[14px] text-[10px] tablet:text-[16px] font-normal text-left text-[#646464]">
-                          {email || "gmail@gmail.xyz"}{" "}
-                        </p>
+                        <div className="flex justify-between big_phone:w-[107%] lg:w-[105%] xl:w-[157%] desktop:w-[175%]">
+                          <div>
+                            <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C]">
+                              {name || "Username.user"}{" "}
+                            </h2>
+                            <p className="md:text-[14px] text-[10px] tablet:text-[16px] font-normal text-left text-[#646464]">
+                              {email || "gmail@gmail.xyz"}{" "}
+                            </p>
+                          </div>
+                          <div className="flex justify-end gap-4 ">
+                            {activeTab === 0 && (
+                              <button
+                                onClick={() => navigate("/edit-profile")}
+                                className="bg-white text-[16px] text-[#05212C] gap-1  shadow-xl md:px-3  rounded-[27px] tablet:w-[181px] tablet:h-[40px] md:w-[151px] md:h-[35px] w-[2.5rem] h-[2.5rem] flex items-center justify-center space-x-4 rounded-2xl"
+                              >
+                                <img
+                                  src={EditPen}
+                                  alt="edit"
+                                  className=" h-4 w-4 edit-pen "
+                                />
+                                <span className="md:inline hidden whitespace-nowrap">
+                                  {userProfile === null ? "Complete Profile" : "Edit Profile"}
+                                </span>
+                              </button>
+                            )}
+                          </div>
+                        </div>
 
 
 
                         {/* user information */}
-                        <div className="md:flex gap-2 hidden  mt-3">
-                          <div className="mr-6">
+                        <div className="md:flex md:gap-1 lg: hidden  mt-3">
+                          <div className="">
                             <span className=" tablet:text-[32px] text-[24px] font-normal text-[#05212C] user-acc-info">
                               {Number(tokens)}
                               <span className="tablet:text-[16px] text-[14px] mx-1">
@@ -398,23 +419,7 @@ const MyProfile = ({ childComponent }) => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex justify-end gap-4 ">
-                    {activeTab === 0 && (
-                      <button
-                        onClick={() => navigate("/edit-profile")}
-                        className="bg-white text-[16px] text-[#05212C] gap-1  shadow-xl md:px-3  rounded-[27px] tablet:w-[181px] tablet:h-[40px] md:w-[151px] md:h-[35px] w-[2.5rem] h-[2.5rem] flex items-center justify-center space-x-4 rounded-2xl"
-                      >
-                        <img
-                          src={EditPen}
-                          alt="edit"
-                          className=" h-4 w-4 edit-pen "
-                        />
-                        <span className="md:inline hidden whitespace-nowrap">
-                          {userProfile === null ? "Complete Profile" : "Edit Profile"}
-                        </span>
-                      </button>
-                    )}
-                  </div>
+                  
                 </div>
                 {childComponent}
                 {activeTab === 2 && showNoFollowers && <NoFollowers setFollowers={setShowNoFollowers} />}
@@ -557,14 +562,12 @@ const MyProfile = ({ childComponent }) => {
                 <div className="mr-20  ">
 
                   <div className="md:flex justify- translate-x-[60px] translate-y-[30px] translate top-[204px] left-[20px] mt-3">
-                    <div className="">
                       <span className="md:mr-5 tablet:text-[32px] text-[18px] font-mulish text-[#05212C] user-acc-info">
                         {post}
                         <span className="tablet:text-[16px] text-[8px] mx-1">
                           Balance
                         </span>
                       </span>
-                    </div>
                     <span className="md:mr-5 tablet:text-[32px] text-[18px] font-mulish text-[#05212C] user-acc-info">
                       {post}
                       <span className="tablet:text-[16px] text-[8px] mx-1">
