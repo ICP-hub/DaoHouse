@@ -165,9 +165,12 @@ fn check_proposals() {
                                 if let Some(associated_proposal_id) = proposal.associated_proposal_id.clone() {
                                     if let Some(mut proposal_data) =
                                     state.proposals.get(&associated_proposal_id).clone() {
-                                        proposal_data.proposal_status = ProposalState::Executing;
-
-                                        ic_cdk::spawn(async move {
+                               
+                               if proposal_data.proposal_status != ProposalState::Executing {
+            
+                                    proposal_data.proposal_status = ProposalState::Executing;
+                                            
+                                            ic_cdk::spawn(async move {
                                             create_bounty_done_proposal(
                                                 daohouse_canister_id,
                                                 &proposal_clone,
@@ -175,10 +178,13 @@ fn check_proposals() {
                                         });
 
                                   state.proposals.insert(associated_proposal_id.clone(), proposal_data);
-                                  proposal.has_been_processed_second = true;
-                                  state.proposals.insert(proposal_id.clone(), proposal);
-
-                                    }
+                                  
+                                }else{
+                                    proposal.proposal_status = ProposalState::LateSubmission;
+                                }
+                                proposal.has_been_processed_second = true;
+                                state.proposals.insert(proposal_id.clone(), proposal);
+                                }
                                 }
                             }
                         }
@@ -262,24 +268,24 @@ fn check_proposals() {
                                     
                                     let mut proposal_data =
                                         state.proposals.get(&associated_proposal_id).unwrap().clone();
-
+                                    
+                                    if  proposal_data.proposal_status != ProposalState::Expired {
                                     let proposal_data_clone = proposal_data.clone();
-
-
-                                    ic_cdk::spawn(async move {
-                                        return_token_bounty_claim_or_done(
-                                            proposal_data_clone,
-                                            &proposal_clone,
-                                        )
-                                        .await;
-                                    });
-
-                                    proposal_data.proposal_status = ProposalState::Expired;
-
-                                    state.proposals.insert(associated_proposal_id.clone(), proposal_data);
-
-                                    proposal.has_been_processed_second = true;
-                                    state.proposals.insert(proposal.proposal_id.clone(), proposal);
+                                        ic_cdk::spawn(async move {
+                                            return_token_bounty_claim_or_done(
+                                                proposal_data_clone,
+                                                &proposal_clone,
+                                            )
+                                            .await;
+                                        });
+    
+                                        proposal_data.proposal_status = ProposalState::Expired;
+    
+                                        state.proposals.insert(associated_proposal_id.clone(), proposal_data);
+    
+                                        proposal.has_been_processed_second = true;
+                                        state.proposals.insert(proposal.proposal_id.clone(), proposal);
+                                    }
                                 }
                             }
                         }
@@ -304,7 +310,7 @@ fn check_proposals() {
 async fn create_bounty_done_proposal(daohouse_canister_id: Principal, proposal: &Proposals) {
     let proposal_input = ProposalInput {
         principal_of_action: Some(proposal.principal_of_action.clone()),
-        proposal_description: proposal.proposal_description.clone(),
+        proposal_description: String::from(crate::utils::DESCRIPTION_BOUNTY_DONE),
         proposal_title: String::from(crate::utils::TITLE_BOUNTY_DONE),
         proposal_type: ProposalType::BountyDone,
         new_dao_name: None,

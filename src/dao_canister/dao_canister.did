@@ -122,6 +122,7 @@ type ProposalState = variant {
   Rejected;
   Succeeded;
   Accepted;
+  LateSubmission;
   Expired;
 };
 type ProposalType = variant {
