@@ -154,6 +154,7 @@ type Proposals = record {
   associated_proposal_id : opt text;
   proposal_approved_votes : nat64;
   has_been_processed : bool;
+  new_required_votes : opt nat32;
   created_by : principal;
   link_of_task : opt text;
   new_dao_purpose : opt text;
