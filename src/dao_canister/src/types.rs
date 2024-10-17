@@ -97,6 +97,7 @@ pub struct Proposals {
     pub link_of_task : Option<String>,
     pub bounty_task : Option<String>,
     pub associated_proposal_id : Option<String>,
+    pub new_required_votes : Option<u32>,
 }
 
 // for proposal comments
@@ -146,6 +147,7 @@ pub struct ProposalInput {
     pub minimum_threadsold : u64,
     pub link_of_task : Option<String>,
     pub associated_proposal_id :  Option<String>,
+    pub new_required_votes : Option<u32>,
     // pub proposal_amount:String,
     // pub proposal_receiver_id:String,
     // pub created_by: Principal,
