@@ -41,10 +41,7 @@ const Step1 = ({ setData, setActiveStep, data }) => {
     // DAO Identifier Validation
     if (!inputData.DAOIdentifier.trim()) {
       newErrors.DAOIdentifier = "DAO Identifier is required.";
-    } else if (!/^[a-zA-Z0-9_]+$/.test(inputData.DAOIdentifier)) {
-      newErrors.DAOIdentifier =
-        "DAO Identifier can only contain letters, numbers, and underscores.";
-    } else if (inputData.DAOIdentifier.length < 3) {
+    }  else if (inputData.DAOIdentifier.length < 3) {
       newErrors.DAOIdentifier =
         "DAO Identifier must be at least 3 characters long.";
     }
@@ -77,14 +74,10 @@ const Step1 = ({ setData, setActiveStep, data }) => {
   // Handle input changes
 const handleChange = (e) => {
   const { name, value } = e.target;
-
-  // Remove spaces from DAO Identifier input
-  const updatedValue = name === "DAOIdentifier" ? value.replace(/\s+/g, "") : value;
-
   // Update input data
   setInputData({
     ...inputData,
-    [name]: updatedValue,
+    [name]: value,
   });
 
   // Remove error message for the field being edited
