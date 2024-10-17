@@ -26,7 +26,7 @@ const Step2 = ({ setData, setActiveStep, data }) => {
       setInputData({
         TokenName: data.TokenName || "",
         TokenSymbol: data.TokenSymbol || "",
-        TokenSupply: data.TokenSupply || 1,
+        TokenSupply: data.TokenSupply || 1000,
         VotesRequired: data.VotesRequired || 3,
       });
     }
@@ -65,7 +65,7 @@ const Step2 = ({ setData, setActiveStep, data }) => {
     // Token Supply Validation
     if (inputData.TokenSupply === "" || inputData.TokenSupply === null) {
       newErrors.TokenSupply = "Token Supply is required.";
-    } else if (!Number.isInteger(Number(inputData.TokenSupply)) || Number(inputData.TokenSupply) <= 0) {
+    } else if (!Number.isInteger(Number(inputData.TokenSupply)) || Number(inputData.TokenSupply) <= 1) {
       newErrors.TokenSupply = "Token Supply must be a positive integer.";
     }
 
@@ -227,7 +227,7 @@ const Step2 = ({ setData, setActiveStep, data }) => {
                 className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm border ${
                   errors.TokenSupply ? "border-red-500" : "border-gray-300"
                 }`}
-                min="1"
+                min="1000"
               />
               {errors.TokenSupply && (
                 <p className="text-red-500 text-xs">{errors.TokenSupply}</p>
