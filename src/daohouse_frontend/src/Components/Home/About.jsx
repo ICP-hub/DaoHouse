@@ -12,7 +12,7 @@ const About = () => {
   return (
     <div className="flex justify-center  items-center  ">
       {/* Mobile view */}
-      <div className="block lg:hidden bg-[#0F3746] rounded-[8px] w-[324px] h-[315px] shadow-lg p-[20px_32px] gap-[16px]  translate-y-[50px] opacity-100">
+      <div className="block lg:hidden bg-[#0F3746] rounded-[8px] w-[324px] h-[315px] shadow-lg p-[20px_32px] gap-[16px] opacity-100">
         <Container>
           <div className="w-full text-white flex flex-col items-center relative text-center">
             <div className="mb-4">

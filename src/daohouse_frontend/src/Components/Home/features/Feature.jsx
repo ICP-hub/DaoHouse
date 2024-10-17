@@ -35,7 +35,7 @@ const Feature = () => {
   return (
     <>
       {/* Mobile View */}
-      <div className='block lg:hidden bg-[#F5F5F5] py-16 translate-y-0 translate-y-[50px]'>
+      <div className='block lg:hidden bg-[#F5F5F5] py-16'>
         <Container className='w-full'>
           <div className="text-center px-4">
             <h2 className="text-about-heading font-mulish text-[#0E3746] font-bold text-[10px] leading-tight mb-2">

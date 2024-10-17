@@ -33,7 +33,7 @@ const Dao = () => {
 
 
   const handleJoinDaoClick = () => {
-    navigate("/dao");
+    setShowAll(true);
   };
 
   const fetchDaoDetails = async (daoList) => {
