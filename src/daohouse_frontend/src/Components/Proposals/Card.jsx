@@ -600,6 +600,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                   )}
                 </div>
               )}
+            </div>
 
             {!showActions && (
               <div className="flex gap-2">
