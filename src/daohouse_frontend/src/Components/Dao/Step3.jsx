@@ -370,12 +370,12 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
 
   const skeletonLoader = () => {
     return (
-      <div className="w-full flex bg-gray-100 py-2 px-8 items-center justify-between mb-2 animate-pulse">
+      <div className="w-full flex bg-gray-100 py-2 px-2 md:px-8 items-center justify-between mb-2 animate-pulse">
         {/* Simulated Username */}
         <div className="flex-col space-y-1">
         <p className="font-semibold mobile:text-base text-sm bg-gray-300 h-6 w-20 rounded-md"></p>
         {/* Simulated Principal ID */}
-        <p className="text-sm bg-gray-300 h-6 w-96 rounded-md"></p>
+        <p className="text-sm bg-gray-300 h-6 w-40 md:w-96 rounded-md"></p>
         </div>
         {/* Simulated Delete Button */}
         <button className="w-6 h-6 bg-gray-300 rounded-full"></button>

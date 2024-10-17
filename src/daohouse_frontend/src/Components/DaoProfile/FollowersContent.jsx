@@ -8,6 +8,7 @@ import { useAuth } from "../utils/useAuthClient";
 import Avatar from "../../../assets/Avatar.png";
 import nodata from "../../../assets/nodata.png";
 import FollowersSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/FollowersSkeleton";
+import { Principal } from "@dfinity/principal";
 
 
 const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
@@ -34,44 +35,48 @@ const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
   const searchChange = async (event) => {
     const value = event.target.value.trim();
     setSearchTerm(value);
-    console.log("Val",value);
-    
+
     if (value === "") {
       setFetchFollower([]);
       setLoading(false);
       return;
     }
-  
+
     setLoading(true);
-    
+
     try {
       const daoActor = createDaoActor(daoCanisterId);
-      console.log("Val2", value);
-      
+
       const response = await daoActor.search_follower(value);
-      console.log("Followers", response);
-      
-      if (Array.isArray(response)) {
+
+      // Check if response is an array with at least one item
+      if (Array.isArray(response) && response.length > 0) {
+        // Map over the response to get all principal IDs
+        const principalIds = response.map(user => Principal.fromUint8Array(user._arr));
+        console.log("Principal Ids:", principalIds);
+
+        // Fetch profiles for all principal IDs concurrently
         const userProfiles = await Promise.all(
-          response.map(async (userPrincipalId) => {
-            const userProfile = await backendActor.get_profile_by_id(userPrincipalId);
-            return userProfile?.Ok ? { ...userProfile.Ok } : null;
+          principalIds.map(async (principalId) => {
+            const userProfile = await backendActor.get_profile_by_id(principalId);
+            return userProfile?.Ok || null; // Return profile or null
           })
         );
+
+        // Filter out any null responses
         const validProfiles = userProfiles.filter(profile => profile !== null);
         setFetchFollower(validProfiles);
-        console.log("userprofile", validProfiles);
       } else {
         setFetchFollower([]);
       }
-      
+
     } catch (error) {
       console.log("error is : ", error);
       setFetchFollower([]);
     } finally {
       setLoading(false);
     }
-  }
+  };
   
 
   useEffect(() => {
@@ -151,74 +156,84 @@ const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
           <LuSearch className="ml-4 absolute left-0 bottom-3 text-slate-400" />
         </div>
         <div className="md:max-h-[400px] max-h-[300px] overflow-y-scroll">
+  <div
+    className="flex md:flex-row flex-col md:justify-center lg:justify-start flex-wrap bg-white md:mx-7 md:mt-2 mx-2 rounded-[10px] md:p-8 lg:p-6 mobile:p-4 p-2"
+    style={listContainerStyle}
+  >
+    {loading ? (
+      <FollowersSkeleton />
+    ) : searchTerm.trim() === "" ? (
+      followerProfiles.map((follower, index) => {
+        // Defensive checks
+        const profile = follower?.Ok;
+        return (
           <div
-            className="flex md:flex-row flex-col md:justify-center lg:justify-start flex-wrap bg-white md:mx-7 md:mt-2 mx-2 rounded-[10px] md:p-8 lg:p-6 mobile:p-4 p-2"
-            style={listContainerStyle}
+            key={index}
+            className="flex w-full flex-row items-center justify-between border border-[#97C3D3] rounded-lg big_phone:p-4 p-2"
           >
-            {loading ? (
-              <FollowersSkeleton />
-            ) : searchTerm.trim() === "" ? (
-              followerProfiles.map((follower, index) => (
-                <div
-                  key={index}
-                  className="flex w-full flex-row items-center justify-between border border-[#97C3D3] rounded-lg big_phone:p-4 p-2"
-                >
-                  <section className="flex flex-row items-center gap-2">
-                    <img
-                      src={
-                        follower?.Ok?.profile_img
-                          ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${follower.Ok.profile_img}`
-                          : Avatar
-                      }
-                      alt="User"
-                      className="big_phone:w-12 w-9 big_phone:h-12 h-9 rounded-full object-cover"
-                    />
-                    <div className="flex flex-col items-start">
-                      <p className="text-start font-semibold big_phone:text-1xl text-sm truncate w-40 lg:w-60">
-                        {follower?.Ok?.username || "Unknown User"}
-                      </p>
-                      <p className="text-center text-xs">{follower?.Ok?.email_id || ""}</p>
-                    </div>
-                  </section>
-                  <section>
-                    <MdAddBox className="mx-1 text-[#97C3D3] big_phone:text-2xl text-lg" />
-                  </section>
-                </div>
-              ))
-            ) : fetchFollower.length > 0 ? (
-              fetchFollower.map((follower, index) => (
-                <div
-                  key={index}
-                  className="flex w-full flex-row items-center justify-between border border-[#97C3D3] rounded-lg big_phone:p-4 p-2"
-                >
-                  <section className="flex flex-row items-center gap-2">
-                    <img
-                      src={`${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${follower.Ok.profile_img}`}
-                      alt="User"
-                      className="big_phone:w-12 w-9 big_phone:h-12 h-9 rounded-full object-cover"
-                    />
-                    <div className="flex flex-col items-start">
-                      <p className="text-start font-semibold big_phone:text-1xl text-sm truncate w-40 lg:w-60">
-                        {follower?.Ok?.username || "Unknown User"}
-                      </p>
-                      <p className="text-center text-xs">{follower?.Ok?.email_id || ""}</p>
-                    </div>
-                  </section>
-                  <section>
-                    <MdAddBox className="mx-1 text-[#97C3D3] big_phone:text-2xl text-lg" />
-                  </section>
-                </div>
-              ))
-            ) : (
-              <div style={noDataContainerStyle} className="col-span-5">
-                <img src={nodata} alt="nodata" />
-                <p className="text-xl mt-5">No Follower</p>
+            <section className="flex flex-row items-center gap-2">
+              <img
+                src={profile?.profile_img
+                  ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${profile.profile_img}`
+                  : Avatar}
+                alt="User"
+                className="big_phone:w-12 w-9 big_phone:h-12 h-9 rounded-full object-cover"
+              />
+              <div className="flex flex-col items-start">
+                <p className="text-start font-semibold big_phone:text-1xl text-sm truncate w-40 lg:w-60">
+                  {profile?.username || "Unknown User"}
+                </p>
+                <p className="text-center text-xs">{profile?.email_id || ""}</p>
               </div>
-            )}
-
-
+            </section>
+            <section>
+              <MdAddBox className="mx-1 text-[#97C3D3] big_phone:text-2xl text-lg" />
+            </section>
           </div>
-        </div>
+        );
+      })
+    ) : fetchFollower.length > 0 ? (
+      fetchFollower.map((profile, index) => {
+        // Defensive checks
+        
+        console.log("profile", profile);
+        
+        
+        return (
+          <div
+            key={index}
+            className="flex w-full flex-row items-center justify-between border border-[#97C3D3] rounded-lg big_phone:p-4 p-2"
+          >
+            <section className="flex flex-row items-center gap-2">
+              <img
+                src={profile?.profile_img
+                  ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${profile.profile_img}`
+                  : Avatar}
+                alt="User"
+                className="big_phone:w-12 w-9 big_phone:h-12 h-9 rounded-full object-cover"
+              />
+              <div className="flex flex-col items-start">
+                <p className="text-start font-semibold big_phone:text-1xl text-sm truncate w-40 lg:w-60">
+                  {profile?.username || "Unknown User"}
+                </p>
+                <p className="text-center text-xs">{profile?.email_id || ""}</p>
+              </div>
+            </section>
+            <section>
+              <MdAddBox className="mx-1 text-[#97C3D3] big_phone:text-2xl text-lg" />
+            </section>
+          </div>
+        );
+      })
+    ) : (
+      <div style={noDataContainerStyle} className="col-span-5">
+        <img src={nodata} alt="nodata" />
+        <p className="text-xl mt-5">No Follower</p>
+      </div>
+    )}
+  </div>
+</div>
+
       </div>
     </div>
   );
