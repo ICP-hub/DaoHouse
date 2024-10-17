@@ -326,16 +326,20 @@ async fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> 
     with_state(|state| match &mut state.proposals.get(&proposal_id) {
         Some(pro) => {
             if pro.proposal_status == ProposalState::Open {
-                if voting == VoteParam::Yes {
-                    pro.approved_votes_list.push(principal_id);
-                    pro.proposal_approved_votes += 1;
-                    state.proposals.insert(proposal_id, pro.to_owned());
-                    Ok(String::from("Successfully voted in favour of Proposal."))
-                } else {
-                    pro.rejected_votes_list.push(principal_id);
-                    pro.proposal_rejected_votes += 1;
-                    state.proposals.insert(proposal_id, pro.to_owned());
-                    Ok(String::from("Successfully voted against the proposal."))
+                if (pro.proposal_rejected_votes as u32 + pro.proposal_approved_votes as u32) < pro.required_votes {
+                    if voting == VoteParam::Yes {
+                        pro.approved_votes_list.push(principal_id);
+                        pro.proposal_approved_votes += 1;
+                        state.proposals.insert(proposal_id, pro.to_owned());
+                        Ok(String::from("Successfully voted in favour of Proposal."))
+                    } else {
+                        pro.rejected_votes_list.push(principal_id);
+                        pro.proposal_rejected_votes += 1;
+                        state.proposals.insert(proposal_id, pro.to_owned());
+                        Ok(String::from("Successfully voted against the proposal."))
+                    }
+                }else{
+                    Err(format!("The proposal received the maximum required votes"))
                 }
             } else {
                 Err(format!("Proposal has been {:?} ", pro.proposal_status))

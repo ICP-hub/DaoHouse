@@ -17,7 +17,7 @@ import ShareModal from "./ShareModal";
 
 export default function Card({ proposal, voteApi, showActions, isProposalDetails, isComment, setIsComment, commentCount, isSubmittedProposals, showComments, }) {
 
-  console.log("propsoal api", proposal);
+  // console.log("propsoal api", proposal.link_of_task);
 
   const { backendActor, createDaoActor, stringPrincipal } = useAuth();
   const [voteStatus, setVoteStatus] = useState(""); // Track user vote (Yes/No)
@@ -596,6 +596,24 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                     <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
 
                       <button className="px-2 py-2 font-mulish" onClick={() => navigate(`/create-proposal/${daoCanisterId}`)}> Bounty Claim</button>
+                    </div>
+                  )}
+                       {(proposal?.proposal_title === "Bounty claim" || proposal.propsal_title === "Bounty claim") && (
+                    <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
+
+                      <button className="px-2 py-2 font-mulish" onClick={() =>
+                       {
+                        // Check if the link_of_task is valid
+                        if (proposal.link_of_task) {
+                          console.log("link aa gyea oye",proposal.link_of_task);
+                          
+                          window.location.href = proposal.link_of_task; // Redirect to the link
+                        } else {
+                          console.error('Invalid task link'); // Log an error if the link is invalid
+                        }
+                      }
+                          
+                         }> Task Link claim</button>
                     </div>
                   )}
                 </div>
