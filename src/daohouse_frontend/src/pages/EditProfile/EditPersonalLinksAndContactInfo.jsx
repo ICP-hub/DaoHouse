@@ -22,11 +22,11 @@ const EditPersonalLinksAndContactInfo = ({
               <input
                 id="contact_number"
                 name="contact_number"
-                type="number" 
+                type="text" // Changed from number to text for maxLength to work properly
                 value={profileData.contact_number}
                 onChange={handleInputChange}
                 placeholder="0123456789"
-                pattern="[0-9]{10,16}"
+                maxLength="16" // Restrict input to a maximum of 16 digits
                 className="py-2 px-3 w-full md:w-full lg:w-[50%] border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-[#05212C] focus:border-[#05212C] sm:text-sm text-[12px]"
               />
             </div>
@@ -110,8 +110,8 @@ const EditPersonalLinksAndContactInfo = ({
               type="url"
               value={profileData.telegram}
               onChange={handleInputChange}
-              placeholder ="http://www.example.com"
-              className="py-2 px-3 w-full md:w-full sm:w-full  md:w-[80%] lg:w-[50%] border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-[#05212C] focus:border-[#05212C] sm:text-sm text-[12px]"
+              placeholder="http://www.example.com"
+              className="py-2 px-3 w-full md:w-full sm:w-full md:w-[80%] lg:w-[50%] border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-[#05212C] focus:border-[#05212C] sm:text-sm text-[12px]"
             />
           </div>
         </div>
@@ -132,7 +132,7 @@ const EditPersonalLinksAndContactInfo = ({
               value={profileData.website}
               onChange={handleInputChange}
               placeholder="http://www.example.com"
-              className="py-2 px-3 w-full md:w-full  sm:w-full lg:w-[50%] border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-[#05212C] focus:border-[#05212C] sm:text-sm text-[12px]"
+              className="py-2 px-3 w-full md:w-full sm:w-full lg:w-[50%] border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-[#05212C] focus:border-[#05212C] sm:text-sm text-[12px]"
             />
           </div>
         </div>
