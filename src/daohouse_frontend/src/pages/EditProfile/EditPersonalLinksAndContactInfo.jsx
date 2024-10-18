@@ -22,11 +22,11 @@ const EditPersonalLinksAndContactInfo = ({
               <input
                 id="contact_number"
                 name="contact_number"
-                type="tel"
+                type="number" 
                 value={profileData.contact_number}
                 onChange={handleInputChange}
                 placeholder="0123456789"
-                pattern="[0-9]{10,}"
+                pattern="[0-9]{10,16}"
                 className="py-2 px-3 w-full md:w-full lg:w-[50%] border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-[#05212C] focus:border-[#05212C] sm:text-sm text-[12px]"
               />
             </div>
@@ -34,9 +34,9 @@ const EditPersonalLinksAndContactInfo = ({
           {errors.contact_number && (
             <p className="text-red-500 text-xs mt-1">{errors.contact_number}</p>
           )}
-          {profileData.contact_number && profileData.contact_number.length < 10 && (
+          {profileData.contact_number && (profileData.contact_number.length < 10 || profileData.contact_number.length > 16) && (
             <p className="text-red-500 text-xs mt-1">
-              Please enter a valid 10-digit contact number.
+              Please enter a valid contact number between 10 and 16 digits.
             </p>
           )}
           {!errors.contact_number &&

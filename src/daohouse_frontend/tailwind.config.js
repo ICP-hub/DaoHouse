@@ -35,6 +35,7 @@ module.exports = {
         small_phone: "400px",
         mobile: "500px",
         big_phone: "800px",
+        surface_pro: "900px",
         tablet: "1000px",
         laptop: "1280px",
         desktop: "1440px",

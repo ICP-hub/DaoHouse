@@ -230,7 +230,7 @@ const MyProfile = ({ childComponent }) => {
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}>
-          <Container classes={` ${className} __topComponent w-full lg:h-[25vh] h-[18vh] md:p-20 pt-6 pl-2 flex flex-col items-start md:justify-center relative`}>
+          <Container classes={` ${className} __topComponent w-full desktop:h-[220px] h-[168px] md:p-4 big_phone:p-20 surface_pro:p-4 tablet:p-20 pt-6 pl-2 flex flex-col items-start md:justify-center relative`}>
             <div className="absolute z-22 top-0 left-0 w-full h-full ">
               {/* Big circle image */}
               <div className="absolute md:right-[3.7%] -right-[3.7%] top-1/2 -translate-y-1/2">
@@ -356,13 +356,34 @@ const MyProfile = ({ childComponent }) => {
                 <div className="flex md:justify-between w-full gap-2 relative">
                   <div className="flex items-start relative">
                     <div className="flex justify-between w-full">
-                      <div className="">
-                        <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C]">
-                          {name || "Username.user"}{" "}
-                        </h2>
-                        <p className="md:text-[14px] text-[10px] tablet:text-[16px] font-normal text-left text-[#646464]">
-                          {email || "gmail@gmail.xyz"}{" "}
-                        </p>
+                      <div className="w-full">
+                        <div className="flex justify-between">
+                          <div>
+                            <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C]">
+                              {name || "Username.user"}{" "}
+                            </h2>
+                            <p className="md:text-[14px] text-[10px] tablet:text-[16px] font-normal text-left text-[#646464]">
+                              {email || "gmail@gmail.xyz"}{" "}
+                            </p>
+                          </div>
+                          <div className="flex justify-end gap-4 ">
+                            {activeTab === 0 && (
+                              <button
+                                onClick={() => navigate("/edit-profile")}
+                                className="bg-white text-[16px] text-[#05212C] gap-1  shadow-xl md:px-3  rounded-[27px] tablet:w-[181px] tablet:h-[40px] md:w-[151px] md:h-[35px] w-[2.5rem] h-[2.5rem] flex items-center justify-center space-x-4 rounded-2xl"
+                              >
+                                <img
+                                  src={EditPen}
+                                  alt="edit"
+                                  className=" h-4 w-4 edit-pen "
+                                />
+                                <span className="md:inline hidden whitespace-nowrap">
+                                  {userProfile === null ? "Complete Profile" : "Edit Profile"}
+                                </span>
+                              </button>
+                            )}
+                          </div>
+                        </div>
 
 
 
@@ -435,7 +456,7 @@ const MyProfile = ({ childComponent }) => {
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}>
-          <Container classes={` ${className} __topComponent w-full lg:h-[25vh] h-[18vh] md:p-20 pt-6 pl-2 flex flex-col items-start md:justify-center relative`}>
+          <Container classes={` ${className} __topComponent w-full desktop:h-[220px] h-[168px] md:p-20 pt-6 pl-2 flex flex-col items-start md:justify-center relative`}>
             <div className="absolute z-22 top-0 left-0 w-full h-full overflow-x-hidden">
               {/* Big circle image */}
               <div className="absolute md:right-[3.7%] -right-[3.7%] top-1/2 -translate-y-1/2">
@@ -559,7 +580,7 @@ const MyProfile = ({ childComponent }) => {
                   <div className="md:flex justify- translate-x-[60px] translate-y-[30px] translate top-[204px] left-[20px] mt-3">
                     <div className="">
                       <span className="md:mr-5 tablet:text-[32px] text-[18px] font-mulish text-[#05212C] user-acc-info">
-                        {post}
+                        {Number(tokens)}
                         <span className="tablet:text-[16px] text-[8px] mx-1">
                           Balance
                         </span>
