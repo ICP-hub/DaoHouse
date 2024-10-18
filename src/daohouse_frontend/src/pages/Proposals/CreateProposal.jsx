@@ -867,8 +867,7 @@ function CreateProposal() {
         paymentDetails={paymentDetails}
         loadingPayment={loadingPayment}
         bountyRaised={bountyRaised}
-
-
+tokenTransfer={tokenTransfer}
 
       />
 

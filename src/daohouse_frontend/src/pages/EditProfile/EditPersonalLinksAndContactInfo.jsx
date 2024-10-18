@@ -34,7 +34,7 @@ const EditPersonalLinksAndContactInfo = ({
           {errors.contact_number && (
             <p className="text-red-500 text-xs mt-1">{errors.contact_number}</p>
           )}
-          {profileData.contact_number && (profileData.contact_number.length < 10 || profileData.contact_number.length > 16) && (
+          {profileData.contact_number && String(profileData.contact_number.length < 10 || profileData.contact_number.length > 16) && (
             <p className="text-red-500 text-xs mt-1">
               Please enter a valid contact number between 10 and 16 digits.
             </p>
