@@ -284,7 +284,7 @@ const handlePageChange = (newPage) => {
       <div
   className={
     className +
-    "__topComponent w-full lg:h-[25vh] h-[20vh] md:p-20 pt-6 pl-2 flex flex-col items-start md:justify-center relative"
+    "__topComponent w-full desktop:h-[220px] h-[168px] md:p-20 pt-6 pl-2 flex flex-col items-start md:justify-center relative"
   }
   style={{
     backgroundImage: `url("${MyProfileRectangle}")`,

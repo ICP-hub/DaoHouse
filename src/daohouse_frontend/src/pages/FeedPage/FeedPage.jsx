@@ -180,7 +180,7 @@ const FeedPage = () => {
         }}
       >
         <Container
-          classes={`__filter w-100 mobile:h-[25vh] h-[17vh] top-[70px] big_phone:p-20 small_phone:p-10 p-4 flex flex-col items-start justify-center ${className}`}
+          classes={`__filter w-100 desktop:h-[220px] h-[168px] top-[70px] big_phone:p-20 small_phone:p-10 p-4 flex flex-col items-start justify-center ${className}`}
         >
           <h1 className="mobile:text-5xl text-3xl p-3 text-white">Social Feed</h1>
         </Container>
@@ -229,12 +229,14 @@ const FeedPage = () => {
         </div>
         ) : (
           <div className="mx-2 small_phone:mx-4 mobile:mx-1 lg:mx-16 desktop:mx-20">
-          <Container >
+          <Container>
+            <div className="desktop:mx-6">
             <ProposalsContent
               proposals={proposals}
               isMember={true}
               showActions={false}
             />
+            </div>
 
           </Container>
           </div>
