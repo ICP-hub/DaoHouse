@@ -14,7 +14,7 @@ const TopComponent = ({ showButtons, showAll, setShowAll }) => {
                 backgroundSize: "cover",
                 backgroundPosition: "center",
             }}>
-            <Container classes={`__filter w-100 mobile:h-[25vh] h-[17vh] tablet:p-[72px] lg:p-[88px] desktop:p-24 small_phone:p-6 p-2 flex flex-col items-start justify-center ${className}`}>
+            <Container classes={`__filter w-100 desktop:h-[220px] h-[168px] tablet:p-[72px] lg:p-[88px] desktop:p-24 small_phone:p-6 p-2 flex flex-col items-start justify-center ${className}`}>
                 <h1 className="mobile:text-5xl text-3xl p-3 text-white">DAOs</h1>
 
                 {showButtons &&

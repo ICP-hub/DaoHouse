@@ -293,7 +293,7 @@ const EditProfile = () => {
           backgroundPosition: "center",
         }}
       >
-        <Container classes="w-full lg:h-[25vh] h-[18vh] md:p-20 pt-6 pl-2 flex flex-col items-start md:justify-center relative hero-container">
+        <Container classes="w-full desktop:h-[220px] h-[168px] md:p-4 big_phone:p-20 surface_pro:p-4 tablet:p-20 pt-6 pl-2 flex flex-col items-start md:justify-center relative hero-container">
 
           <div className="absolute z-22 top-0 left-0 w-full h-full overflow-x-hidden">
             <div className="absolute md:right-[3.7%] -right-[3.7%] top-1/2 -translate-y-1/2">
