@@ -161,8 +161,9 @@ const GridView = ({ member }) => {
     : userImage;
 
   return (
-    <div className="big_phone:flex hidden flex-col px-4 py-2 border border-[#97C3D3] rounded-lg">
+    <div className="big_phone:flex  flex-col px-4 py-2 border border-[#97C3D3] rounded-lg">
       <div className="top flex flex-row items-start justify-between">
+        <div class="flex gap-4">
         <section className="relative w-16 h-16">
           <img src={profileImgSrc} alt="Image" className="rounded-[50%] w-full h-full object-cover" />
         </section>
@@ -170,6 +171,7 @@ const GridView = ({ member }) => {
           <p className="font-semibold text-lg">{member.Ok.username}</p>
           <p className="text-sm">{member.Ok.email_id}</p>
         </section>
+        </div>
         <MdAddBox className="mx-2 text-[#97C3D3] text-2xl" />
       </div>
     </div>
