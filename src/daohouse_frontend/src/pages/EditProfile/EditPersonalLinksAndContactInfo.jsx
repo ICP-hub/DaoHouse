@@ -1,11 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 
 const EditPersonalLinksAndContactInfo = ({
   profileData,
   handleInputChange,
   handleSaveChangesClick,
+  closeModal,
   errors,
 }) => {
+  const [contactNumberError, setContactNumberError] = useState("");
+
+  const handleContactNumberChange = (event) => {
+    const { name, value } = event.target;
+    const numericValue = value.replace(/\D/g, ""); // Only allow digits
+
+    // Set error message when exceeding 16 digits
+    if (numericValue.length > 16) {
+      setContactNumberError("You cannot enter more than 16 digits.");
+    } else {
+      setContactNumberError(""); // Clear error
+      handleInputChange({
+        target: { name, value: numericValue },
+      });
+    }
+  };
+
+  const isSaveDisabled = () => {
+    // Disable Save button if contact number is less than 10 digits
+    return !profileData.contact_number || profileData.contact_number.length < 10 || contactNumberError !== "";
+  };
+
   return (
     <div className="bg-white p-4 rounded-lg shadow-md">
       <div className="mb-4 flex flex-col">
@@ -22,30 +45,23 @@ const EditPersonalLinksAndContactInfo = ({
               <input
                 id="contact_number"
                 name="contact_number"
-                type="text" // Changed from number to text for maxLength to work properly
+                type="text"
                 value={profileData.contact_number}
-                onChange={handleInputChange}
+                onChange={handleContactNumberChange} // Custom handler for contact number
                 placeholder="0123456789"
-                maxLength="16" // Restrict input to a maximum of 16 digits
                 className="py-2 px-3 w-full md:w-full lg:w-[50%] border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-[#05212C] focus:border-[#05212C] sm:text-sm text-[12px]"
               />
             </div>
           </div>
-          {errors.contact_number && (
-            <p className="text-red-500 text-xs mt-1">{errors.contact_number}</p>
+          {/* Error message for contact number */}
+          {contactNumberError && (
+            <p className="text-red-500 text-xs mt-1">{contactNumberError}</p>
           )}
-          {profileData.contact_number && (profileData.contact_number.length < 10 || profileData.contact_number.length > 16) && (
+          {profileData.contact_number.length < 10 && (
             <p className="text-red-500 text-xs mt-1">
-              Please enter a valid contact number between 10 and 16 digits.
+              Please enter at least 10 digits.
             </p>
           )}
-          {!errors.contact_number &&
-            !profileData.contact_number &&
-            profileData.contact_number !== "" && (
-              <p className="text-gray-500 text-xs mt-1">
-                Please enter a valid contact number with at least 10 digits.
-              </p>
-            )}
         </div>
 
         {/* Email */}
@@ -137,13 +153,23 @@ const EditPersonalLinksAndContactInfo = ({
           </div>
         </div>
       </div>
+      
+      {/* Buttons */}
       <div className="flex justify-center gap-5 mt-8 md:text-[16px] text-[12px] sm:hidden">
-        <button className="py-2 w-[126px] border border-[#0E3746] hover:bg-[#0E3746] hover:text-white rounded-[27px] transition duration-200 ease-in-out">
+        <button
+          className="py-2 w-[126px] border border-[#0E3746] hover:bg-[#0E3746] hover:text-white rounded-[27px] transition duration-200 ease-in-out"
+          onClick={closeModal}
+        >
           Discard
         </button>
         <button
           onClick={handleSaveChangesClick}
-          className="py-2 w-[126px] border border-[#0E3746] bg-[#0E3746] text-white hover:bg-[#0E37464D] hover:border-[#0E37464D] rounded-[27px] transition duration-200 ease-in-out"
+          className={`py-2 w-[126px] border border-[#0E3746] text-white rounded-[27px] transition duration-200 ease-in-out ${
+            isSaveDisabled()
+              ? "bg-gray-300 cursor-not-allowed"
+              : "bg-[#0E3746] hover:bg-[#0E37464D] hover:border-[#0E37464D]"
+          }`}
+          disabled={isSaveDisabled()} // Disable button if contact number is less than 10 digits or if there is an error
         >
           Save Changes
         </button>
