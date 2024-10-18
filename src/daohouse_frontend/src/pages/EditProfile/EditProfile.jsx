@@ -425,12 +425,13 @@ const EditProfile = () => {
                 Personal Links & Contact Info
               </p>
               <EditPersonalLinksAndContactInfo
-                profileData={profileData}
-                handleInputChange={handleInputChange}
-                handleSaveChangesClick={handleSaveChangesClick}
-                closeModal={closeModal}
-                errors={errors}
-              />
+  profileData={profileData}
+  handleInputChange={handleInputChange}
+  handleSaveChangesClick={handleSaveChangesClick}
+  closeModal={closeModal}
+  errors={errors}
+/>
+
               <div className="hidden sm:flex justify-center gap-5 mt-8">
                 <button
                   onClick={handleDiscardClick}
