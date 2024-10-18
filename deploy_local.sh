@@ -134,7 +134,9 @@ dfx deploy dao_canister --argument "(record {
     };
     image_canister = principal \"aaaaa-aa\";
     members_permissions = vec {
-        \"mai hi permission hai\";
+        variant { AddMemberToGroupProposal };
+        variant { Polls };
+        variant { TokenTransfer };
     };
 
     proposal_entry = vec {
@@ -160,21 +162,13 @@ dfx deploy dao_canister --argument "(record {
         record {
             group_name = \"Example Group\";
             group_members = vec { principal \"yxtej-lmfuu-rp3yv-xzu2h-6q43c-7iast-yiwff-z552q-6ugas-pyd6b-fae\" };
-            group_permissions = vec { \"example_permission\" };
+            group_permissions = vec {
+              variant { AddMemberToGroupProposal };
+              variant { Polls };
+              variant { TokenTransfer };
+            };
             quorem = 75;
         };
-        record {
-            group_name = \"Example Group2\";
-            group_members = vec { principal \"yxtej-lmfuu-rp3yv-xzu2h-6q43c-7iast-yiwff-z552q-6ugas-pyd6b-fae\" };
-            group_permissions = vec { \"example_permission\" };
-            quorem = 85;
-        };
-        record {
-            group_name = \"Example Group3\";
-            group_members = vec { principal \"aaaaa-aa\" };
-            group_permissions = vec { \"example_permission\" };
-            quorem = 65;
-        }
     };
 })"
 

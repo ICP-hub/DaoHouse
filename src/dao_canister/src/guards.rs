@@ -1,7 +1,7 @@
 use candid::Principal;
 use ic_cdk::api;
 
-use crate::{with_state, ProposalType};
+use crate::{with_state, ProposalCreation, ProposalType};
 
 //  prevent anonymous user
 pub fn prevent_anonymous() -> Result<(), String> {
@@ -24,18 +24,18 @@ pub fn guard_check_members() -> Result<(), String> {
 }
 
 // to check members permissions
-pub fn member_permission(permission: String) -> Result<(), String> {
-    prevent_anonymous()?;
-    guard_check_members()?;
+// pub fn member_permission(permission: String) -> Result<(), String> {
+//     prevent_anonymous()?;
+//     guard_check_members()?;
 
-    with_state(|state| {
-        if state.dao.members_permissions.contains(&permission) {
-            return Ok(());
-        } else {
-            return Err(String::from(crate::utils::WARNING_NOT_ALLOWED));
-        }
-    })
-}
+//     with_state(|state| {
+//         if state.dao.members_permissions.contains(&permission) {
+//             return Ok(());
+//         } else {
+//             return Err(String::from(crate::utils::WARNING_NOT_ALLOWED));
+//         }
+//     })
+// }
 
 // check for user who has already voted
 pub fn check_voting_right(proposal_id: &String) -> Result<(), String> {
@@ -57,42 +57,72 @@ pub fn check_voting_right(proposal_id: &String) -> Result<(), String> {
     })
 }
 
-// check group member permission
-pub fn check_group_member_permission(
-    group_name: &String,
-    permission: String,
-) -> Result<(), String> {
-    prevent_anonymous()?;
-    with_state(|state| match state.dao_groups.get(&group_name) {
-        Some(val) => {
-            if val.group_permissions.contains(&permission) {
-                Ok(())
+pub fn guard_check_proposal_creation(proposal_data : ProposalCreation) -> Result<(), String> {
+    with_state(|state| {
+        if let Some(proposal_place) = state.dao.proposal_entry.iter().find(|p| p.place_name == proposal_data.entry) {
+            if let Some(group) = state.dao_groups.get(&proposal_data.entry) {
+                if group.group_members.contains(&api::caller()) {
+                    if group.group_permissions.contains(&proposal_data.proposal_type) {
+                        return Ok(());
+                    } else {
+                        return Err(format!("{:?} doesn't have permission for creating this proposal", proposal_place));
+                    }
+                } else {
+                    return Err(format!("You are not part of group {:?}", proposal_place));
+                }
             } else {
-                Err(String::from(crate::utils::WARNING_NOT_ALLOWED))
+                if state.dao.members.contains(&api::caller()) {
+                    if state.dao.members_permissions.contains(&proposal_data.proposal_type) {
+                        return Ok(());
+                    } else {
+                        return Err(format!("Members don't have permission for creating this type of proposal"));
+                    }
+                } else {
+                    return Err(format!("No group or member found with the name of {:?}", proposal_data.entry));
+                }
             }
+        } else {
+            return Err(format!("No place found with the name {:?}", proposal_data.entry));
         }
-        None => Err(format!("{} {}", crate::utils::NOTFOUND_GROUP, group_name)),
     })
 }
 
+// check group member permission
+// pub fn check_group_member_permission(
+//     group_name: &String,
+//     permission: ProposalType,
+// ) -> Result<(), String> {
+//     prevent_anonymous()?;
+//     with_state(|state| match state.dao_groups.get(&group_name) {
+//         Some(val) => {
+//             if val.group_permissions.contains(&permission) {
+//                 Ok(())
+//             } else {
+//                 Err(String::from(crate::utils::WARNING_NOT_ALLOWED))
+//             }
+//         }
+//         None => Err(format!("{} {}", crate::utils::NOTFOUND_GROUP, group_name)),
+//     })
+// }
+
 // check user in a group
-pub fn check_user_in_group(group_name: &String) -> Result<(), String> {
-    prevent_anonymous()?;
-    with_state(|state| match state.dao_groups.get(&group_name) {
-        Some(val) => {
-            if val.group_members.contains(&api::caller()) {
-                Ok(())
-            } else {
-                Err(format!(
-                    "{} {}",
-                    crate::utils::WARNING_NOT_IN_GROUP,
-                    group_name
-                ))
-            }
-        }
-        None => Err(format!("{} {}", crate::utils::NOTFOUND_GROUP, group_name)),
-    })
-}
+// pub fn check_user_in_group(group_name: &String) -> Result<(), String> {
+//     prevent_anonymous()?;
+//     with_state(|state| match state.dao_groups.get(&group_name) {
+//         Some(val) => {
+//             if val.group_members.contains(&api::caller()) {
+//                 Ok(())
+//             } else {
+//                 Err(format!(
+//                     "{} {}",
+//                     crate::utils::WARNING_NOT_IN_GROUP,
+//                     group_name
+//                 ))
+//             }
+//         }
+//         None => Err(format!("{} {}", crate::utils::NOTFOUND_GROUP, group_name)),
+//     })
+// }
 
 pub fn check_user_and_member_in_group(
     group_name: &String,
@@ -105,14 +135,13 @@ pub fn check_user_and_member_in_group(
                 && val.group_members.contains(&action_member)
             {
                 Ok(())
-            } else if !val.group_members.contains(&action_member){
+            } else if !val.group_members.contains(&action_member) {
                 Err(format!(
                     "{} {}",
                     crate::utils::WARNING_NO_MEMBER_IN_GROUP,
                     action_member
                 ))
-            }
-             else {
+            } else {
                 Err(format!(
                     "{} {}",
                     crate::utils::WARNING_NOT_IN_GROUP,
@@ -150,19 +179,19 @@ pub fn guard_daohouse_exclusive_method() -> Result<(), String> {
 }
 
 // check council member
-pub fn guard_council_members_only() -> Result<(), String> {
-    prevent_anonymous()?;
+// pub fn guard_council_members_only() -> Result<(), String> {
+//     prevent_anonymous()?;
 
-    with_state(|state| {
-        match state
-            .dao_groups
-            .get(&String::from(crate::utils::COUNCIL_GROUP_NAME))
-        {
-            Some(_val) => Ok(()),
-            None => return Err(String::from(crate::utils::NOTFOUND_GROUP)),
-        }
-    })
-}
+//     with_state(|state| {
+//         match state
+//             .dao_groups
+//             .get(&String::from(crate::utils::COUNCIL_GROUP_NAME))
+//         {
+//             Some(_val) => Ok(()),
+//             None => return Err(String::from(crate::utils::NOTFOUND_GROUP)),
+//         }
+//     })
+// }
 
 // // get group permissions
 // pub fn guard_check_group_permission(group_name: &String, permission: &String) -> Result<(), String> {
