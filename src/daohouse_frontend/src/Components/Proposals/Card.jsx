@@ -15,11 +15,11 @@ import { CircularProgress } from "@mui/material";
 import ShareModal from "./ShareModal";
 
 
-export default function Card({ proposal, voteApi, showActions, isProposalDetails, isComment, setIsComment, commentCount, isSubmittedProposals, showComments, }) {
+export default function Card({ proposal, voteApi, showActions, isProposalDetails, isComment, setIsComment, commentCount, isSubmittedProposals, showComments}) {
 
-  // console.log("propsoal api", proposal.link_of_task);
-
-  const { backendActor, createDaoActor, stringPrincipal } = useAuth();
+  // console.log("Vote API", proposal);
+  
+  const {backendActor, createDaoActor, stringPrincipal} = useAuth();
   const [voteStatus, setVoteStatus] = useState(""); // Track user vote (Yes/No)
   const [approvedVotes, setApprovedVotes] = useState(Number(proposal?.proposal_approved_votes || 0n));
   const [rejectedVotes, setRejectedVotes] = useState(Number(proposal?.proposal_rejected_votes || 0n));
@@ -33,14 +33,14 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [copySuccess, setCopySuccess] = useState("");
   const [daoName, setDaoName] = useState("");
-  const { daoCanisterId } = useParams();
+  const {daoCanisterId} = useParams();
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
   // console.log(votersList);
-
+  
   // console.log("voters", proposal?.approved_votes_list + proposal?.rejected_votes_list); 
 
-
+  
   useEffect(() => {
     async function fetchUserProfile() {
       try {
@@ -67,26 +67,12 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   // console.log(proposal.dao_canister_id);
   const proposalId = proposal.proposal_id
   const daoId = proposal.dao_canister_id || proposal.associated_dao_canister_id || daoCanisterId;
-
+    
   // console.log(daoCanisterId);
-
-
-  useEffect(() => {
-    if (isShareModalOpen) {
-      document.body.classList.add('overflow-hidden');
-    } else {
-      document.body.classList.remove('overflow-hidden');
-    }
-  
-    return () => {
-      document.body.classList.remove('overflow-hidden');
-    };
-  }, [isShareModalOpen]);
   
 
-
   useEffect(() => {
-    const fetchDaoName = async () => {
+    const fetchDaoName = async() => {
       if (!daoId || !daoId._arr) {
         console.error("Invalid daoId:", daoId);
         // toast.error("DAO ID is invalid or missing.");
@@ -128,11 +114,11 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
 
 
     fetchDaoName();
-  }, [createDaoActor, proposal?.associated_dao_canister_id, daoId])
+  }, [ createDaoActor, proposal?.associated_dao_canister_id, daoId])
 
   const copyToClipboard = () => {
     console.log("daoCaniste", daoCanisterId);
-
+    
     const proposalUrl = `${window.location.origin}/social-feed/proposal/${proposal?.proposal_id}/dao/${daoId}`;
     navigator.clipboard.writeText(proposalUrl).then(
       () => {
@@ -149,9 +135,9 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const toggleShareModal = () => {
     setIsShareModalOpen(!isShareModalOpen);
   };
+  
 
-
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalOpen,setIsModalOpen]=useState(false)
   const navigate = useNavigate()
 
   const a = proposal?.proposal_description;
@@ -159,8 +145,8 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const approvedProposals = Number(BigInt(proposal?.proposal_approved_votes || 0));
   const rejectedvoters = Number(BigInt(proposal?.proposal_rejected_votes || 0));
   const status = proposal?.proposal_status
-    ? Object.keys(proposal?.proposal_status)[0] || "No Status"
-    : "No Status";
+  ? Object.keys(proposal?.proposal_status)[0] || "No Status"
+  : "No Status";
 
   const requiredVotes = Number(BigInt(proposal?.required_votes || 0))
   useEffect(() => {
@@ -169,7 +155,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
     setVoteCount((proposal?.approved_votes_list?.length || 0) + (proposal?.rejected_votes_list?.length || 0));
   }, [proposal]);
   // console.log(proposal);
-
+  
 
   // Convert BigInt timestamps to dates
   const submittedOn = new Date(Number(proposal?.proposal_submitted_at) / 1_000_000); // Convert nanoseconds to milliseconds
@@ -216,31 +202,31 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
     ? Principal.fromUint8Array(new Uint8Array(proposal?.created_by)).toText()
     : "Unknown";
 
-  const getTimeRemaining = (expiryDate) => {
-    const now = new Date();
-    const timeDiff = expiryDate - now;
+    const getTimeRemaining = (expiryDate) => {
+      const now = new Date();
+      const timeDiff = expiryDate - now;
+  
+      if (timeDiff <= 0) return "00d 00h 00m 00s left";
+  
+      const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+  
+      return `${days}d ${hours}h ${minutes}m ${seconds}s left`;
+    };
 
-    if (timeDiff <= 0) return "00d 00h 00m 00s left";
+    const [timeRemaining, setTimeRemaining] = useState(getTimeRemaining(expiresOn));
 
-    const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+    useEffect(() => {
+      const intervalId = setInterval(() => {
+        setTimeRemaining(getTimeRemaining(expiresOn));
+      }, 1000);
+  
+      return () => clearInterval(intervalId);
+    }, [expiresOn]);
 
-    return `${days}d ${hours}h ${minutes}m ${seconds}s left`;
-  };
-
-  const [timeRemaining, setTimeRemaining] = useState(getTimeRemaining(expiresOn));
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setTimeRemaining(getTimeRemaining(expiresOn));
-    }, 1000);
-
-    return () => clearInterval(intervalId);
-  }, [expiresOn]);
-
-  function handleOnClose() {
+  function handleOnClose(){
     setIsModalOpen(false)
   }
 
@@ -258,15 +244,15 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const handleVoteSubmit = async (e) => {
     e.preventDefault();
     if (!voteStatus) return;
-
+  
     try {
       setIsVoteLoading(true);
       const voteParam = voteStatus === "In Favor" ? { Yes: null } : { No: null };
       const result = await voteApi?.vote(proposal?.proposal_id, voteParam);
-
+  
       if (result?.Ok) {
         toast.success("Vote submitted successfully");
-
+  
         // Update vote counts based on user's vote
         if (voteStatus === "In Favor") {
           setApprovedVotes((prev) => prev + 1);
@@ -274,14 +260,14 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
           setRejectedVotes((prev) => prev + 1);
         }
         setVoteCount((prev) => prev + 1);
-
+  
         // Fetch the updated voter lists
         const updatedProposal = await voteApi?.get_proposal_by_id(proposal?.proposal_id);
         setVotersList({
           approvedVotes: updatedProposal?.approved_votes_list || [],
           rejectedVotes: updatedProposal?.rejected_votes_list || [],
         });
-
+  
       } else {
         console.error("Error voting:", result.Err);
         toast.error(result.Err);
@@ -293,27 +279,10 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
       setIsVoteLoading(false);
     }
   };
-
-  
-  useEffect(() => {
-    const style = document.createElement('style');
-    style.textContent = `
-      body.overflow-hidden {
-        overflow: hidden;
-        position: fixed;
-        width: 100%;
-        height: 100%;
-      }
-    `;
-    document.head.append(style);
-    return () => style.remove();
-  }, []);
-  
   
 
-
-
-
+  
+  
   const handleVotesClick = () => {
     setIsModalOpen(true); // Open modal
     setVotersList({
@@ -321,12 +290,38 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
       rejectedVotes: rejectedVotersList,
     });
   };
+  
+ // stop scrolling behnd share modal
+ useEffect(() => {
+  if (isShareModalOpen) {
+    document.body.classList.add('overflow-hidden');
+  } else {
+    document.body.classList.remove('overflow-hidden');
+  }
 
+  return () => {
+    document.body.classList.remove('overflow-hidden');
+  };
+}, [isShareModalOpen]);
+
+useEffect(() => {
+  const style = document.createElement('style');
+  style.textContent = `
+    body.overflow-hidden {
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+    }
+  `;
+  document.head.append(style);
+  return () => style.remove();
+}, []);
 
 
   const handleCommentToggle = () => {
     setIsComment(!isComment);
-  };
+ };
 
   const defaultOptions = {
     loop: true,
@@ -357,7 +352,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                   <h4 className="text-white text-sm sm:text-base lg:text-xl font-semibold">{userProfile?.username || "Username"}</h4>
                 )}
               </div>
-
+  
               <div className="flex justify-center mt-4 sm:mt-0 space-x-4 sm:space-x-6">
                 <div className="flex flex-col items-center">
                   <CircularProgressBar percentage={Math.floor(approvedVotes / requiredVotes * 100)} color="#4CAF50" size={32} />
@@ -369,36 +364,35 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                 </div>
               </div>
             </div>
-
+  
             {/* Bottom Section for Submitted Proposals */}
             <div className="w-full sm:w-4/6 p-4 sm:p-6 lg:p-8 flex flex-col space-y-4">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-
                 <h4 className="text-lg sm:text-xl font-bold text-[#0E3746] truncate w-full sm:w-3/4">
                   {proposal.proposal_title || proposal.propsal_title}
                   <span className="block text-sm sm:text-base mt-1">Proposal ID: #{proposal?.proposal_id}</span>
                 </h4>
-
-                <span className="mt-2 sm:mt-0 px-2 py-1 text-xs sm:text-sm rounded-full bg-[#4993B0] text-white font-semibold ">
+                <span className="mt-2 sm:mt-0 px-2 py-1 text-xs sm:text-sm rounded-full bg-[#4993B0] text-white font-semibold">
                   {timeRemaining}
                 </span>
               </div>
-
+  
               <div className="flex flex-wrap gap-2">
-                <span className={`px-2 py-1 text-xs sm:text-sm rounded-full text-white font-semibold ${status === "Approved" ? "bg-[#4CAF50]" : status === "Rejected" ? "bg-red-500" : "bg-[#4993B0]"
-                  }`}>
+                <span className={`px-2 py-1 text-xs sm:text-sm rounded-full text-white font-semibold ${
+                  status === "Approved" ? "bg-[#4CAF50]" : status === "Rejected" ? "bg-red-500" : "bg-[#4993B0]"
+                }`}>
                   {status}
                 </span>
                 <span className="px-2 py-1 text-xs sm:text-sm bg-[#4993B0] text-white rounded-full">
                   {daoName || "DaoName"}
                 </span>
               </div>
-
+  
               <div className="flex flex-wrap justify-start space-x-2 sm:space-x-4">
                 <button className="flex items-center justify-center gap-1 sm:gap-2 text-gray-600" onClick={handleVotesClick}>
                   <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z" />
-                    <path d="M19.07 18.93C17.66 17.52 15.48 16.5 12 16.5s-5.66 1.02-7.07 2.43A2 2 0 0 0 6.34 22h11.32a2 2 0 0 0 1.41-3.07z" />
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"/>
+                    <path d="M19.07 18.93C17.66 17.52 15.48 16.5 12 16.5s-5.66 1.02-7.07 2.43A2 2 0 0 0 6.34 22h11.32a2 2 0 0 0 1.41-3.07z"/>
                   </svg>
                   <span className="text-xs sm:text-sm">{voteCount} Voters</span>
                 </button>
@@ -408,12 +402,11 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                   </svg>
                   <span className="text-xs sm:text-sm">Share</span>
                 </button>
-
               </div>
-
+  
               <div className="mt-4 sm:mt-6">
-                <button
-                  className="bg-[#CDEFFE] w-full desktop:ml-[270px] sm:w-auto px-4 py-2 rounded-xl text-sm sm:text-base font-semibold transition-colors hover:bg-[#B8E0F5]"
+                <button 
+                  className="bg-[#CDEFFE] w-full desktop:ml-[270px] sm:w-auto px-4 py-2 rounded-xl text-sm sm:text-base font-semibold transition-colors hover:bg-[#B8E0F5]" 
                   onClick={handleViewMore}
                 >
                   View More
@@ -437,7 +430,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                   <h4 className="text-white text-sm md:text-xl font-semibold self-center">{userProfile?.username || "Username"}</h4>
                 )}
               </div>
-
+  
               <div className="flex gap-4">
                 <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
                   <CircularProgressBar percentage={Math.floor(approvedVotes / requiredVotes * 100)} color="#4CAF50" />
@@ -449,7 +442,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                 </div>
               </div>
             </div>
-
+  
             {/* Bottom Section */}
             <div className="w-full px-4 lg:px-12 py-4 md:py-8">
               <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-4 gap-4">
@@ -458,22 +451,22 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                     {proposal.proposal_title || proposal.propsal_title} | <span className="md:text-[1rem] text-[1rem] block"> Proposal ID: #{proposal?.proposal_id}</span>
                   </h4>
                 </div>
-
-                <div className="flex col-span-4  gap-4 self-start">
-
+  
+                <div className="flex gap-4 self-start">
                   <span className="md:py-1 px-2 md:px-2 md:w-[185px] rounded-full bg-[#4993B0] text-white font-semibold text-sm small_phone:text-base">
                     {timeRemaining}
                   </span>
                   <span
-                    className={`px-4 md:py-1 rounded-full text-white font-semibold text-sm small_phone:text-base ${status === "Approved" ? "bg-[#4CAF50]" : status === "Rejected" ? "bg-red-500" : "bg-[#4993B0]"
-                      } flex`}
+                    className={`px-4 md:py-1 rounded-full text-white font-semibold text-sm small_phone:text-base ${
+                      status === "Approved" ? "bg-[#4CAF50]" : status === "Rejected" ? "bg-red-500" : "bg-[#4993B0]"
+                    } flex`}
                   >
                     {status}
                   </span>
                 </div>
               </div>
               <p className="text-gray-900 text-sm mobile:text-xl mb-4">{proposal?.proposal_description}</p>
-
+              
               <div className="flex flex-wrap gap-4 flex-col md:flex-row md:justify-between items-start md:items-center space-y-4 md:space-y-0 xl:space-x-8">
                 <div className="flex flex-col gap-4 items-start justify-start">
                   <div className="flex mobile:space-x-2 xl:space-x-8">
@@ -489,135 +482,91 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                       <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Votes Required </span>
                       <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{requiredVotes}</span>
                     </div>
-                    {(proposal?.proposal_title === "Bounty raised" || proposal.propsal_title === "Bounty raised") && (
-                      <div className="flex flex-col items-start">
-                        <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">•tokens </span>
-
-                        <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">
-                          {/* {proposal?.tokens || 0 } */}
-                          {proposal?.tokens?.[0]?.toString() || '0'}
-                        </span>
-
-
-                      </div>
-                    )}
-                    {(proposal?.proposal_title === "Token transfer policy" || proposal.propsal_title === "Token transfer policy") && (
-                      <div className="flex flex-col items-start">
-                        <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">•tokens </span>
-
-                        <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">
-                          {/* {proposal?.tokens || 0 } */}
-                          {proposal?.tokens?.[0]?.toString() || '0'}
-                        </span>
-
-
-                      </div>
-                    )}
                   </div>
-
+  
                   <div className="flex flex-wrap justify-start md:justify-start md:mt-0 space-x-2 small_phone:space-x-4">
-                    {showActions && (
-                      <button className={`flex items-center justify-center gap-1 mobile:gap-2 ${isComment ? 'bg-gray-200 text-black rounded-lg p-2' : 'text-gray-600 bg-none'
-                        }`} onClick={handleCommentToggle}>
+                    {showActions && (              
+                      <button className={`flex items-center justify-center gap-1 mobile:gap-2 ${
+                        isComment ? 'bg-gray-200 text-black rounded-lg p-2' : 'text-gray-600 bg-none'
+                      }`} onClick={handleCommentToggle}>
                         <svg className="mb-1" width="16" height="15" viewBox="0 0 16 15">
                           <path d="M3.11111 9.22293H12.8889V8.34456H3.11111V9.22293ZM3.11111 6.58781H12.8889V5.70943H3.11111V6.58781ZM3.11111 3.95269H12.8889V3.07431H3.11111V3.95269ZM16 15L13.2649 12.2972H1.43556C1.02667 12.2972 0.685333 12.162 0.411556 11.8914C0.137778 11.6209 0.000592593 11.2833 0 10.8787V1.41857C0 1.01452 0.137185 0.677227 0.411556 0.406687C0.685926 0.136148 1.02726 0.000585583 1.43556 0H14.5644C14.9733 0 15.3147 0.135562 15.5884 0.406687C15.8622 0.677812 15.9994 1.01511 16 1.41857V15ZM1.43556 11.4189H13.6444L15.1111 12.8629V1.41857C15.1111 1.28389 15.0542 1.16004 14.9404 1.04702C14.8267 0.934005 14.7013 0.877789 14.5644 0.878374H1.43556C1.29926 0.878374 1.17393 0.93459 1.05956 1.04702C0
                           .945185 1.15945 0.888296 1.2833 0.888889 1.41857V10.8787C0.888889 11.0134 0.945778 11.1372 1.05956 11.2502C1.17333 11.3632 1.29867 11.4195 1.43556 11.4189Z" fill="black" />
-                        </svg>
-                        <span className="md:ml-2 text-sm mobile:text-base">{commentCount || 0} Comments</span>
-                      </button>
-                    )}
-
-                    <button className="flex items-center justify-center mobile:gap-2 text-gray-600" onClick={handleVotesClick}>
-                      <svg className="mb-1" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z" />
-                        <path d="M19.07 18.93C17.66 17.52 15.48 16.5 12 16.5s-5.66 1.02-7.07 2.43A2 2 0 0 0 6.34 22h11.32a2 2 0 0 0 1.41-3.07z" />
                       </svg>
-                      <span className="md:ml-2 text-sm mobile:text-base">{voteCount} Voters</span>
+                      <span className="md:ml-2 text-sm mobile:text-base">{commentCount || 0} Comments</span>
                     </button>
-                    <button className="flex items-center justify-center mobile:gap-2 text-gray-600" onClick={toggleShareModal}>
-                      <svg className="mb-1" width="17" height="17" viewBox="0 0 17 17">
-                        <path d="M16 1L1 5.85294L6.73529 8.5L12.9118 4.08824L8.5 10.2647L11.1471 16L16 1Z" stroke="black" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                      <span className="md:ml-2 text-sm mobile:text-base">Share</span>
+                  )}
 
-                    </button>
-
-                  </div>
-
+                  <button className="flex items-center justify-center mobile:gap-2 text-gray-600" onClick={handleVotesClick}>
+                    <svg className="mb-1" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"/>
+                      <path d="M19.07 18.93C17.66 17.52 15.48 16.5 12 16.5s-5.66 1.02-7.07 2.43A2 2 0 0 0 6.34 22h11.32a2 2 0 0 0 1.41-3.07z"/>
+                    </svg>
+                    <span className="md:ml-2 text-sm mobile:text-base">{voteCount} Voters</span>
+                  </button>
+                  <button className="flex items-center justify-center mobile:gap-2 text-gray-600" onClick={toggleShareModal}>
+                    <svg className="mb-1" width="17" height="17" viewBox="0 0 17 17">
+                      <path d="M16 1L1 5.85294L6.73529 8.5L12.9118 4.08824L8.5 10.2647L11.1471 16L16 1Z" stroke="black" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    <span className="md:ml-2 text-sm mobile:text-base">Share</span>
+                  </button>
                 </div>
-
-                {/* Cast Vote Section  */}
-                {showActions && (
-                  <div className="bg-sky-200 w-full md:w-96 p-4 rounded-md mt-6">
-                    <h1 className="text-lg font-semibold mb-2">Cast Vote</h1>
-                    <form className="flex flex-col md:flex-row items-start md:items-center" onSubmit={handleVoteSubmit}>
-                      <div className="flex items-center space-x-4 mr-0 md:mr-4 mb-4 md:mb-0">
-                        <label className="text-md text-[#0E3746] flex items-center">
-                          <input
-                            type="radio"
-                            name="vote"
-                            value="In Favor"
-                            className="mr-2"
-                            onChange={() => setVoteStatus("In Favor")}
-                          />
-                          In Favor
-                        </label>
-                        <label className="text-md text-[#0E3746] flex-col items-center">
-                          <input
-                            type="radio"
-                            name="vote"
-                            value="Against"
-                            className="mr-2"
-                            onChange={() => setVoteStatus("Against")}
-                          />
-                          Against
-                        </label>
-                      </div>
-                      <button
-                        type="submit"
-                        className={`bg-[#0E3746] w-[100px] h-[30px] flex justify-center items-center text-white rounded-2xl p-2 mobile:text-base text-sm transition hover:bg-[#123b50]`}
-                      >
-                        {isVoteLoading ? (
-                          <div className="w-4 h-4 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
-                        ) : (
-                          "Submit"
-                        )}
-                      </button>
-                    </form>
-                  </div>
-                )}
               </div>
-              {!showActions && (
-                <div className="flex gap-2">
-                  <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
-                    <button className="px-6 py-2 font-mulish" onClick={handleViewMore}>View More</button>
-                  </div>
-                  {(proposal?.proposal_title === "Bounty raised" || proposal.propsal_title === "Bounty raised") && (
-                    <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
 
-                      <button className="px-2 py-2 font-mulish" onClick={() => navigate(`/create-proposal/${daoCanisterId}`)}> Bounty Claim</button>
+              {/* Cast Vote Section  */}
+              {showActions && (
+                <div className="bg-sky-200 w-full md:w-96 p-4 rounded-md mt-6">
+                  <h1 className="text-lg font-semibold mb-2">Cast Vote</h1>
+                  <form className="flex flex-col md:flex-row items-start md:items-center" onSubmit={handleVoteSubmit}>
+                    <div className="flex items-center space-x-4 mr-0 md:mr-4 mb-4 md:mb-0">
+                      <label className="text-md text-[#0E3746] flex items-center">
+                        <input
+                          type="radio"
+                          name="vote"
+                          value="In Favor"
+                          className="mr-2"
+                          onChange={() => setVoteStatus("In Favor")}
+                        />
+                        In Favor
+                      </label>
+                      <label className="text-md text-[#0E3746] flex-col items-center">
+                        <input
+                          type="radio"
+                          name="vote"
+                          value="Against"
+                          className="mr-2"
+                          onChange={() => setVoteStatus("Against")}
+                        />
+                        Against
+                      </label>
                     </div>
-                  )}
-                       {(proposal?.proposal_title === "Bounty claim" || proposal.propsal_title === "Bounty claim") && (
-                    <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
-
-                      <button className="px-2 py-2 font-mulish" onClick={() =>
-                       {
-                        // Check if the link_of_task is valid
-                        if (proposal.link_of_task) {
-                          console.log("link aa gyea oye",proposal.link_of_task);
-                          
-                          window.location.href = proposal.link_of_task; // Redirect to the link
-                        } else {
-                          console.error('Invalid task link'); // Log an error if the link is invalid
-                        }
-                      }
-                          
-                         }> Task Link claim</button>
-                    </div>
-                  )}
+                    <button
+                      type="submit"
+                      className={`bg-[#0E3746] w-[100px] h-[30px] flex justify-center items-center text-white rounded-2xl p-2 mobile:text-base text-sm transition hover:bg-[#123b50]`}
+                    >
+                      {isVoteLoading ? (
+                        <div className="w-4 h-4 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+                      ) : (
+                        "Submit"
+                      )}
+                    </button>
+                  </form>
                 </div>
               )}
+            </div>
+            {!showActions && (
+              <div className="flex gap-2">
+                <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
+                <button className="px-6 py-2 font-mulish" onClick={handleViewMore}>View More</button>
+              </div>
+              {(proposal?.proposal_title === "Bounty raised" || proposal.propsal_title === "Bounty raised") && (
+                <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
+              
+                <button className="px-2 py-2 font-mulish" onClick={() => navigate(`/create-proposal/${daoCanisterId}`)}>Claim Bounty</button>
+              </div>
+              )}
+              </div>
+            )}
           </div>
         </>
       )}
@@ -628,7 +577,6 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
         daoCanisterId={daoId}
         toggleModal={toggleShareModal}
         copyToClipboard={copyToClipboard}
-        className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center"
       />
 
       <ViewModal 
@@ -641,4 +589,3 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
     </div>
   );
 }}
-

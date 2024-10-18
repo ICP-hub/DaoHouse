@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect ,useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Principal } from "@dfinity/principal";
 import { useAuth } from "../utils/useAuthClient";
@@ -127,8 +127,39 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
     navigate(`/dao/profile/${daoCanisterId}`);
   };
 
+  const preventScroll = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  useEffect(() => {
+    if (showConfirmModal) {
+      // Disable scrolling
+      document.body.style.overflow = 'hidden';
+      document.body.style.height = '100vh';
+      document.addEventListener('wheel', preventScroll, { passive: false });
+      document.addEventListener('touchmove', preventScroll, { passive: false });
+    } else {
+      // Re-enable scrolling
+      document.body.style.overflow = '';
+      document.body.style.height = '';
+      document.removeEventListener('wheel', preventScroll);
+      document.removeEventListener('touchmove', preventScroll);
+    }
+
+    // Cleanup function
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.height = '';
+      document.removeEventListener('wheel', preventScroll);
+      document.removeEventListener('touchmove', preventScroll);
+    };
+  }, [showConfirmModal, preventScroll]);
+
+
+
   return (
-    <div className="bg-[#F4F2EC] shadow-lg tablet:p-6 big_phone:p-3 small_phone:p-5 p-3 rounded-lg md:mx-8 tablet:mx-16">
+    <div className="bg-[#F4F2EC] shadow-lg tablet:p-6 big_phone:p-3 small_phone:p-5 p-3 rounded-lg md:mx-8 tablet:mx-16 ">
   <div className="flex flex-col items-center big_phone:flex-row small_phone:flex-col justify-center mb-4 gap-2">
     {/* Image Container */}
     <div className="w-full big_phone:w-40 lg:w-60 mobile:h-[120px] border border-black rounded">
@@ -213,7 +244,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
       </div>
       {/* Confirmation Modal */}
       {showConfirmModal && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center backdrop-blur-md ">
     <div className="bg-white p-6 rounded-lg shadow-lg md:w-[800px] mx-auto text-center">
       <h3 className="text-xl font-mulish font-semibold text-[#234A5A]">Ready to join this DAO?</h3>
       <p className="mt-4 text-[16px] md:px-24 font-mulish">
