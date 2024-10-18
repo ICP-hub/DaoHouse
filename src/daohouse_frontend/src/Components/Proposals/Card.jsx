@@ -333,6 +333,33 @@ useEffect(() => {
     },
   };
 
+  useEffect(() => {
+    if (isShareModalOpen) {
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+    }
+  
+    return () => {
+      document.body.classList.remove('overflow-hidden');
+    };
+  }, [isShareModalOpen]);
+  
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      body.overflow-hidden {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+      }
+    `;
+    document.head.append(style);
+    return () => style.remove();
+  }, []);
+  
+
   {
     return (
       <div className={`bg-white font-mulish ${isProposalDetails ? "rounded-t-xl tablet:mx-16" : "rounded-xl desktop:mx-20"} shadow-md ${isSubmittedProposals ? "flex flex-col sm:flex-row" : "flex flex-col md:flex-col"}`}>
@@ -372,7 +399,8 @@ useEffect(() => {
                   {proposal.proposal_title || proposal.propsal_title}
                   <span className="block text-sm sm:text-base mt-1">Proposal ID: #{proposal?.proposal_id}</span>
                 </h4>
-                <span className="mt-2 sm:mt-0 px-2 py-1 text-xs sm:text-sm rounded-full bg-[#4993B0] text-white font-semibold">
+
+                <span className="mt-2 sm:mt-0 px-2 py-1 text-xs self-start rounded-full bg-[#4993B0] text-white font-semibold ">
                   {timeRemaining}
                 </span>
               </div>

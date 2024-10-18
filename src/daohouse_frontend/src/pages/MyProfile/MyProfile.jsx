@@ -230,7 +230,7 @@ const MyProfile = ({ childComponent }) => {
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}>
-          <Container classes={` ${className} __topComponent w-full lg:h-[25vh] h-[18vh] md:p-20 pt-6 pl-2 flex flex-col items-start md:justify-center relative`}>
+          <Container classes={` ${className} __topComponent w-full desktop:h-[220px] h-[168px] md:p-4 big_phone:p-20 surface_pro:p-4 tablet:p-20 pt-6 pl-2 flex flex-col items-start md:justify-center relative`}>
             <div className="absolute z-22 top-0 left-0 w-full h-full ">
               {/* Big circle image */}
               <div className="absolute md:right-[3.7%] -right-[3.7%] top-1/2 -translate-y-1/2">
@@ -356,8 +356,8 @@ const MyProfile = ({ childComponent }) => {
                 <div className="flex md:justify-between w-full gap-2 relative">
                   <div className="flex items-start w-full relative">
                     <div className="flex justify-between w-full">
-                      <div className="">
-                        <div className="flex justify-between big_phone:w-[107%] lg:w-[105%] xl:w-[157%] desktop:w-[175%]">
+                      <div className="w-full">
+                        <div className="flex justify-between">
                           <div>
                             <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C]">
                               {name || "Username.user"}{" "}
@@ -440,7 +440,7 @@ const MyProfile = ({ childComponent }) => {
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}>
-          <Container classes={` ${className} __topComponent w-full lg:h-[25vh] h-[18vh] md:p-20 pt-6 pl-2 flex flex-col items-start md:justify-center relative`}>
+          <Container classes={` ${className} __topComponent w-full desktop:h-[220px] h-[168px] md:p-20 pt-6 pl-2 flex flex-col items-start md:justify-center relative`}>
             <div className="absolute z-22 top-0 left-0 w-full h-full overflow-x-hidden">
               {/* Big circle image */}
               <div className="absolute md:right-[3.7%] -right-[3.7%] top-1/2 -translate-y-1/2">
@@ -563,7 +563,7 @@ const MyProfile = ({ childComponent }) => {
 
                   <div className="md:flex justify- translate-x-[60px] translate-y-[30px] translate top-[204px] left-[20px] mt-3">
                       <span className="md:mr-5 tablet:text-[32px] text-[18px] font-mulish text-[#05212C] user-acc-info">
-                        {post}
+                        {Number(tokens)}
                         <span className="tablet:text-[16px] text-[8px] mx-1">
                           Balance
                         </span>

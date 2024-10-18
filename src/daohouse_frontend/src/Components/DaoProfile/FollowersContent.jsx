@@ -134,7 +134,7 @@ const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
                 onChange={searchChange}
                 width="100%"
                 bgColor="transparent"
-                placeholder="Search by name"
+                placeholder="Search by principal id"
                 className="border-2 border-[#AAC8D6] w-full max-w-lg"
               />
             </div>
@@ -150,7 +150,7 @@ const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
             type="search"
             name="groups"
             className="big_phone:w-[400px] w-full rounded-[2rem] py-2 pl-10 bg-[#F4F2EC] border border-[#AAC8D6]"
-            placeholder="Search by Name"
+            placeholder="Search by principal id"
             onChange={searchChange}
           />
           <LuSearch className="ml-4 absolute left-0 bottom-3 text-slate-400" />

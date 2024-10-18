@@ -180,34 +180,34 @@ const FeedPage = () => {
         }}
       >
         <Container
-          classes={`__filter w-100 mobile:h-[25vh] h-[17vh] top-[70px] big_phone:p-20 small_phone:p-10 p-4 flex flex-col items-start justify-center ${className}`}
+          classes={`__filter w-100 desktop:h-[220px] h-[168px] top-[70px] big_phone:p-20 small_phone:p-10 py-4 flex flex-col items-start justify-center ${className}`}
         >
-          <h1 className="mobile:text-5xl text-3xl p-3 text-white">Social Feed</h1>
+          <h1 className="mobile:text-5xl text-3xl p-4 small_phone:mx-[-24px] big_phone:mx-[-60px] lg:mx-2 text-white">Social Feed</h1>
         </Container>
       </div>
 
       {/* Filter Section */}
       <div className="bg-[#c8ced3]">
         <Container
-          classes={`__label small_phone:py-8 py-5 px-4 mobile:px-10 small_phone:px-8 desktop:px-20 flex justify-between items-center`}
+          classes={`__label small_phone:py-8 py-5 px-4 small_phone:px-8 desktop:px-20 flex justify-between items-center`}
         >
-          <p className="small_phone:text-4xl text-3xl big_phone:px-2 tablet:px-6 flex flex-row items-center gap-4">
+          <p className="small_phone:text-4xl text-3xl big_phone:px-2 tablet:px-6 lg:px-[70px] desktop:px-6 flex flex-row items-center gap-4">
             Most Recent
             <div className="flex flex-col items-start">
-              <div className="mobile:w-32 w-12 border-t-2 border-black"></div>
+              <div className="xl:w-32 md:w-20 w-12 border-t-2 border-black"></div>
               <div className="mobile:w-14 w-8 small_phone:mt-2 mt-1 border-t-2 border-black"></div>
             </div>
           </p>
           <div className="hidden md:flex flex-grow justify-center px-6 mx-2">
-      <SearchProposals
-        onChange={handleSearchChange}
-        value={searchTerm}
-        width="70%"
-        bgColor="transparent"
-        placeholder="Search by proposal ID"
-        className="border-2 border-[#AAC8D6] w-full max-w-lg"
-      />
-    </div>
+            <SearchProposals
+              onChange={handleSearchChange}
+              value={searchTerm}
+              width="70%"
+              bgColor="transparent"
+              placeholder="Search by proposal ID"
+              className="border-2 border-[#AAC8D6] w-full max-w-lg"
+            />
+          </div>
         </Container>
       </div>
 
@@ -229,12 +229,14 @@ const FeedPage = () => {
         </div>
         ) : (
           <div className="mx-2 small_phone:mx-4 mobile:mx-1 lg:mx-16 desktop:mx-20">
-          <Container >
+          <Container>
+            <div className="desktop:mx-12">
             <ProposalsContent
               proposals={proposals}
               isMember={true}
               showActions={false}
             />
+            </div>
 
           </Container>
           </div>
