@@ -68,7 +68,7 @@ type Dao = record {
   proposal_ids : vec text;
   image_id : text;
   groups_count : nat64;
-  members_permissions : vec text;
+  members_permissions : vec ProposalType;
   link_of_document : text;
   members_count : nat32;
   followers : vec principal;
@@ -83,7 +83,7 @@ type DaoGroup = record {
   group_members : vec principal;
   quorem : nat8;
   group_name : text;
-  group_permissions : vec text;
+  group_permissions : vec ProposalType;
 };
 type DaoInput = record {
   image_canister : principal;
@@ -96,7 +96,7 @@ type DaoInput = record {
   dao_groups : vec DaoGroup;
   dao_name : text;
   image_id : text;
-  members_permissions : vec text;
+  members_permissions : vec ProposalType;
   link_of_document : text;
   followers : vec principal;
   cool_down_period : nat32;

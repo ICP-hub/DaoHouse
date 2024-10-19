@@ -1,6 +1,6 @@
 use crate::functions::icrc_transfer;
 use crate::{
-    guards::*, AddMemberArgs, BountyClaim, BountyRaised, ChangeDaoConfigArg, ChangeDaoPolicy, CreateGeneralPurpose, CreatePoll, DaoGroup, LedgerCanisterId, ProposalInput, ProposalState, RemoveDaoMemberArgs, RemoveMemberArgs, Test, TokenTransferPolicy, UpdateDaoSettings
+    guards::*, AddMemberArgs, BountyClaim, BountyRaised, ChangeDaoConfigArg, ChangeDaoPolicy, CreateGeneralPurpose, CreatePoll, DaoGroup, LedgerCanisterId, ProposalCreation, ProposalInput, ProposalState, RemoveDaoMemberArgs, RemoveMemberArgs, Test, TokenTransferPolicy, UpdateDaoSettings
 };
 use crate::{icrc_get_balance, TokenTransferArgs};
 use crate::{with_state, ProposalType};
@@ -22,6 +22,12 @@ async fn get_members_of_group(group: String) -> Result<Vec<Principal>, String> {
 
 #[update(guard=guard_check_members)]
 async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, String> {
+    let proposal_data = ProposalCreation {
+        entry : args.proposal_entry.clone(),
+        proposal_type : ProposalType::AddMemberToGroupProposal
+    };
+    guard_check_proposal_creation(proposal_data)?;
+
     let mut required_thredshold = 0;
 
     let _ = with_state(|state| {
@@ -87,7 +93,12 @@ async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, 
 
 #[update(guard=guard_check_members)]
 async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<String, String> {
-    check_user_and_member_in_group(&args.group_name, args.action_member)?;
+    let proposal_data = ProposalCreation {
+        entry : args.proposal_entry.clone(),
+        proposal_type : ProposalType::RemoveMemberToGroupProposal
+    };
+    guard_check_proposal_creation(proposal_data)?;
+
     let mut required_thredshold = 0;
 
     let _ = with_state(|state| {
@@ -153,6 +164,11 @@ async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<St
 #[update(guard=guard_check_members)]
 async fn proposal_to_remove_member_to_dao(args: RemoveDaoMemberArgs) -> Result<String, String> {
     let mut required_thredshold = 0;
+    let proposal_data = ProposalCreation {
+        entry : args.proposal_entry.clone(),
+        proposal_type : ProposalType::RemoveMemberToDaoProposal
+    };
+    guard_check_proposal_creation(proposal_data)?;
 
     let _ = with_state(|state| {
         match state
@@ -215,6 +231,11 @@ async fn proposal_to_remove_member_to_dao(args: RemoveDaoMemberArgs) -> Result<S
 #[update(guard=guard_check_members)]
 async fn proposal_to_change_dao_config(args: ChangeDaoConfigArg) -> Result<String, String> {
     let mut required_thredshold = 0;
+    let proposal_data = ProposalCreation {
+        entry : args.proposal_entry.clone(),
+        proposal_type : ProposalType::ChangeDaoConfig
+    };
+    guard_check_proposal_creation(proposal_data)?;
 
     let _ = with_state(|state| {
         match state
@@ -270,6 +291,11 @@ async fn proposal_to_change_dao_config(args: ChangeDaoConfigArg) -> Result<Strin
 #[update(guard=guard_check_members)]
 async fn proposal_to_change_dao_policy(args: ChangeDaoPolicy) -> Result<String, String> {
     let mut required_thredshold = 0;
+    let proposal_data = ProposalCreation {
+        entry : args.proposal_entry.clone(),
+        proposal_type : ProposalType::ChangeDaoPolicy
+    };
+    guard_check_proposal_creation(proposal_data)?;
 
     let _ = with_state(|state| {
         match state
@@ -321,6 +347,12 @@ async fn proposal_to_change_dao_policy(args: ChangeDaoPolicy) -> Result<String, 
 
 #[update(guard=guard_check_members)]
 async fn proposal_to_transfer_token(args: TokenTransferPolicy) -> Result<String, String> {
+    let proposal_data = ProposalCreation {
+        entry : args.proposal_entry.clone(),
+        proposal_type : ProposalType::TokenTransfer
+    };
+    guard_check_proposal_creation(proposal_data)?;
+
     let principal_id: Principal = api::caller();
 
     if principal_id == args.to {
@@ -426,6 +458,12 @@ async fn make_payment(tokens: u64, user: Principal) -> Result<Nat, String> {
 
 #[update(guard = prevent_anonymous)]
 async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String> {
+    let proposal_data = ProposalCreation {
+        entry : args.proposal_entry.clone(),
+        proposal_type : ProposalType::BountyRaised
+    };
+    guard_check_proposal_creation(proposal_data)?;
+
     let proposal_expire_time =
         ic_cdk::api::time() + (args.proposal_expired_at as u64 * 86_400 * 1_000_000_000);
     let principal_id: Principal = api::caller();
@@ -486,6 +524,13 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
 
 #[update(guard = prevent_anonymous)]
 async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
+    
+    let proposal_data = ProposalCreation {
+        entry : args.proposal_entry.clone(),
+        proposal_type : ProposalType::BountyClaim
+    };
+    guard_check_proposal_creation(proposal_data)?;
+
     let mut required_thredshold = 0;
     let mut tokens: u64 = 0;
     let mut expired_at: u64 = 0;
@@ -565,6 +610,12 @@ async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
 
 #[update(guard=guard_check_members)]
 async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
+    let proposal_data = ProposalCreation {
+        entry : args.proposal_entry.clone(),
+        proposal_type : ProposalType::Polls
+    };
+    guard_check_proposal_creation(proposal_data)?;
+
     let mut required_thredshold = 0;
     let proposal_expire_time =
         ic_cdk::api::time() + (args.proposal_expired_at as u64 * 86_400 * 1_000_000_000);
@@ -621,6 +672,14 @@ async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
 
 #[update(guard=guard_check_members)]
 async fn proposal_to_create_general_purpose(args: CreateGeneralPurpose) -> Result<String, String> {
+    
+    let proposal_data = ProposalCreation {
+        entry : args.proposal_entry.clone(),
+        proposal_type : ProposalType::GeneralPurpose
+    };
+
+    guard_check_proposal_creation(proposal_data)?;
+
     let mut required_thredshold = 0;
 
     let _ = with_state(|state| {
@@ -918,7 +977,7 @@ pub async fn follow_dao(daohouse_backend_id: Principal) -> Result<String, String
 #[update(guard=guard_check_members)]
 fn update_dao_settings(update_dao_details: UpdateDaoSettings) -> Result<String, String> {
     // member_permission(String::from("ChangeDAOConfig"))?;
-    member_permission(String::from(crate::utils::PERMISSION_CHANGE_DAO_CONFIG))?;
+    // member_permission(String::from(crate::utils::PERMISSION_CHANGE_DAO_CONFIG))?;
 
     with_state(|state| {
         let mut original_dao = state.dao.clone();
