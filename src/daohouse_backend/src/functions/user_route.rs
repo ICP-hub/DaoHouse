@@ -209,7 +209,6 @@ async fn delete_profile() -> Result<(), String> {
 // #[update(guard = prevent_anonymous)]
 // fn follow_user(user_id: Principal) -> Result<String, String> {
 //     let my_principal_id = api::caller();
-
 //     with_state(|state| {
 //         let my_profile_response = match &mut state.user_profile.get(&api::caller()) {
 //             Some(profile) => {
@@ -219,7 +218,6 @@ async fn delete_profile() -> Result<(), String> {
 //                     state
 //                         .user_profile
 //                         .insert(my_principal_id, profile.to_owned());
-
 //                     Ok(())
 //                 } else {
 //                     Err(String::from("You are already following the user"))
@@ -227,24 +225,20 @@ async fn delete_profile() -> Result<(), String> {
 //             }
 //             None => Err(String::from("user does not exist")),
 //         };
-
 //         let other_person_response = match &mut state.user_profile.get(&user_id) {
 //             Some(profile) => {
 //                 profile.followers_list.push(my_principal_id);
 //                 profile.followers_count += 1;
 //                 state.user_profile.insert(user_id, profile.to_owned());
-
 //                 Ok(())
 //             }
 //             None => Err(String::from("Operation failed")),
 //         };
-
 //         match (my_profile_response, other_person_response) {
 //             (Ok(()), Ok(())) => Ok(String::from("Successfully followed")),
 //             (Err(e), _) | (_, Err(e)) => Err(e),
 //         }
 //     })
-
 //     // Ok("()".to_string())
 // }
 
@@ -622,7 +616,7 @@ pub async fn create_ledger(
 }
 
 // TODO REMOVE THIS
-#[query]
+#[query(guard = prevent_anonymous)]
 fn get_canister_meta_data() -> Result<CanisterData, String> {
     with_state(|state| match state.canister_data.get(&0) {
         Some(val) => Ok(val),

@@ -1,5 +1,6 @@
 // Proposal routes
 use candid::Principal;
+use crate::guards::*;
 
 use crate::{
     routes::{
@@ -9,7 +10,7 @@ use crate::{
     with_state, ProposalValueStore,
 };
 
-#[ic_cdk::update]
+#[ic_cdk::update(guard = prevent_anonymous)]
 pub async fn store_follow_dao(dao_id: Principal, principal_id: Principal) -> Result<(), String> {
     with_state(|state| {
         if let Some(profile) = state.user_profile.get(&principal_id) {
@@ -27,7 +28,7 @@ pub async fn store_follow_dao(dao_id: Principal, principal_id: Principal) -> Res
     })
 }
 
-#[ic_cdk::update]
+#[ic_cdk::update(guard = prevent_anonymous)]
 pub async fn remove_follow_dao(dao_id: Principal, principal_id: Principal) -> Result<(), String> {
     with_state(|state| {
         if let Some(profile) = state.user_profile.get(&principal_id) {
@@ -50,9 +51,7 @@ pub async fn remove_follow_dao(dao_id: Principal, principal_id: Principal) -> Re
     })
 }
 
-
-
-#[ic_cdk::update]
+#[ic_cdk::update(guard = prevent_anonymous)]
 pub async fn store_join_dao(dao_id: Principal, principal_id: Principal) -> Result<(), String> {
     with_state(|state| {
         if let Some(profile) = state.user_profile.get(&principal_id) {
@@ -69,7 +68,7 @@ pub async fn store_join_dao(dao_id: Principal, principal_id: Principal) -> Resul
     })
 }
 
-#[ic_cdk::update]
+#[ic_cdk::update(guard = prevent_anonymous)]
 pub fn add_proposal(args: crate::ProposalValueStore) -> Result<String, String> {
     // with_state(|state| add_proposal_controller(state, args))
     //     .map_err(|err| return format!("Error in proposal: {:?}", err))
@@ -92,17 +91,16 @@ pub fn add_proposal(args: crate::ProposalValueStore) -> Result<String, String> {
     })
 }
 
-#[ic_cdk::query]
+#[ic_cdk::query(guard = prevent_anonymous)]
 pub fn get_proposals(args: crate::Pagination) -> Vec<ProposalValueStore> {
     with_state(|state| get_proposal_controller(state, args))
 }
 
 // #[update]
 // pub async fn my_follow_dao()->Vec<Principal>{
-
 // }
 
-#[ic_cdk::query]
+#[ic_cdk::query(guard = prevent_anonymous)]
 pub async fn get_my_proposals(args: crate::Pagination) -> Vec<ProposalValueStore> {
     let mut my_proposals: Vec<ProposalValueStore> = Vec::new();
 
@@ -132,12 +130,12 @@ pub async fn get_my_proposals(args: crate::Pagination) -> Vec<ProposalValueStore
 }
 
 // get latest proposals
-#[ic_cdk::query]
+#[ic_cdk::query(guard = prevent_anonymous)]
 pub fn get_latest_proposals(args: crate::Pagination) -> Vec<ProposalValueStore> {
     with_state(|state| get_latest_proposal_controller(state, args))
 }
 
-#[ic_cdk::update]
+#[ic_cdk::update(guard = prevent_anonymous)]
 pub fn delete_proposal(proposal_id: String) -> Result<String, String> {
     with_state(|state| delete_proposal_controller(state, &proposal_id))
 }

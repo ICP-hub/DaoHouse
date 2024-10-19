@@ -1,6 +1,6 @@
 use crate::functions::icrc_transfer;
 use crate::{
-    guards::*, AddMemberArgs, BountyClaim, BountyRaised, ChangeDaoConfigArg, ChangeDaoPolicy, CreateGeneralPurpose, CreatePoll, DaoGroup, LedgerCanisterId, ProposalCreation, ProposalInput, ProposalState, RemoveDaoMemberArgs, RemoveMemberArgs, Test, TokenTransferPolicy, UpdateDaoSettings
+    guards::*, AddMemberArgs, BountyClaim, BountyRaised, ChangeDaoConfigArg, ChangeDaoPolicy, CreateGeneralPurpose, CreatePoll, DaoGroup, LedgerCanisterId, ProposalCreation, ProposalInput, ProposalState, RemoveDaoMemberArgs, RemoveMemberArgs, Test, TokenTransferPolicy,
 };
 use crate::{icrc_get_balance, TokenTransferArgs};
 use crate::{with_state, ProposalType};
@@ -12,7 +12,7 @@ use icrc_ledger_types::icrc1::account::Account;
 use icrc_ledger_types::icrc1::transfer::BlockIndex;
 use icrc_ledger_types::icrc2::transfer_from::{TransferFromArgs, TransferFromError};
 
-#[query]
+#[query(guard = prevent_anonymous)]
 async fn get_members_of_group(group: String) -> Result<Vec<Principal>, String> {
     with_state(|state| match state.dao_groups.get(&group) {
         Some(val) => Ok(val.group_members),
@@ -20,13 +20,26 @@ async fn get_members_of_group(group: String) -> Result<Vec<Principal>, String> {
     })
 }
 
-#[update(guard=guard_check_members)]
+#[update(guard = prevent_anonymous)]
 async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, String> {
     let proposal_data = ProposalCreation {
         entry : args.proposal_entry.clone(),
         proposal_type : ProposalType::AddMemberToGroupProposal
     };
     guard_check_proposal_creation(proposal_data)?;
+
+    let result = with_state(|state| {
+        match state.dao_groups.iter().find(|(_, group)| group.group_name == args.group_name) {
+            Some(_) => Ok(()),
+            None => Err(format!("No Group Name found with '{}'", args.group_name)),
+        }
+    });
+
+    if result.is_err() {
+        return Err(format!("No Group Name found with '{}' ", args.group_name));
+    }
+
+    //create condition for check if group is exit or not for adding member , removing members 
 
     let mut required_thredshold = 0;
 
@@ -38,12 +51,11 @@ async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, 
             .find(|place| place.place_name == args.proposal_entry)
         {
             Some(val) => {
-                ic_cdk::println!("this is dao proposal place : {:?} ", val);
-
                 required_thredshold = val.min_required_thredshold;
+                Ok(())
             }
             None => {
-                eprintln!("No Data Found");
+                return Err(format!("No place Found with the name of {:?}",args.proposal_entry));
             }
         }
     });
@@ -91,14 +103,22 @@ async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, 
     Ok(String::from(crate::utils::REQUEST_ADD_MEMBER))
 }
 
-#[update(guard=guard_check_members)]
+#[update(guard = prevent_anonymous)]
 async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<String, String> {
     let proposal_data = ProposalCreation {
         entry : args.proposal_entry.clone(),
         proposal_type : ProposalType::RemoveMemberToGroupProposal
     };
     guard_check_proposal_creation(proposal_data)?;
-
+    let result = with_state(|state| {
+        match state.dao_groups.iter().find(|(_, group)| group.group_name == args.group_name) {
+            Some(_) => Ok(()),
+            None => Err(format!("No Group Name found with '{}'", args.group_name)),
+        }
+    });
+    if result.is_err() {
+        return Err(format!("No Group Name found with '{}' ", args.group_name));
+    }
     let mut required_thredshold = 0;
 
     let _ = with_state(|state| {
@@ -109,12 +129,11 @@ async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<St
             .find(|place| place.place_name == args.proposal_entry)
         {
             Some(val) => {
-                ic_cdk::println!("this is dao proposal place : {:?} ", val);
-
                 required_thredshold = val.min_required_thredshold;
+                Ok(())
             }
             None => {
-                eprintln!("No Data Found");
+                return Err(format!("No place Found with the name of {:?}",args.proposal_entry));
             }
         }
     });
@@ -161,7 +180,7 @@ async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<St
     Ok(String::from(crate::utils::TITLE_DELETE_MEMBER))
 }
 
-#[update(guard=guard_check_members)]
+#[update(guard = prevent_anonymous)]
 async fn proposal_to_remove_member_to_dao(args: RemoveDaoMemberArgs) -> Result<String, String> {
     let mut required_thredshold = 0;
     let proposal_data = ProposalCreation {
@@ -178,12 +197,11 @@ async fn proposal_to_remove_member_to_dao(args: RemoveDaoMemberArgs) -> Result<S
             .find(|place| place.place_name == args.proposal_entry)
         {
             Some(val) => {
-                ic_cdk::println!("this is dao proposal place : {:?} ", val);
-
                 required_thredshold = val.min_required_thredshold;
+                Ok(())
             }
             None => {
-                eprintln!("No Data Found");
+                return Err(format!("No place Found with the name of {:?}",args.proposal_entry));
             }
         }
     });
@@ -228,7 +246,7 @@ async fn proposal_to_remove_member_to_dao(args: RemoveDaoMemberArgs) -> Result<S
     Ok(String::from(crate::utils::TITLE_DELETE_MEMBER))
 }
 
-#[update(guard=guard_check_members)]
+#[update(guard = prevent_anonymous)]
 async fn proposal_to_change_dao_config(args: ChangeDaoConfigArg) -> Result<String, String> {
     let mut required_thredshold = 0;
     let proposal_data = ProposalCreation {
@@ -245,12 +263,11 @@ async fn proposal_to_change_dao_config(args: ChangeDaoConfigArg) -> Result<Strin
             .find(|place| place.place_name == args.proposal_entry)
         {
             Some(val) => {
-                ic_cdk::println!("this is dao proposal place : {:?} ", val);
-
                 required_thredshold = val.min_required_thredshold;
+                Ok(())
             }
             None => {
-                eprintln!("No Data Found");
+                return Err(format!("No place Found with the name of {:?}",args.proposal_entry));
             }
         }
     });
@@ -288,7 +305,7 @@ async fn proposal_to_change_dao_config(args: ChangeDaoConfigArg) -> Result<Strin
     Ok(String::from(crate::utils::MESSAGE_CHANGE_DAO_CONFIG))
 }
 
-#[update(guard=guard_check_members)]
+#[update(guard = prevent_anonymous)]
 async fn proposal_to_change_dao_policy(args: ChangeDaoPolicy) -> Result<String, String> {
     let mut required_thredshold = 0;
     let proposal_data = ProposalCreation {
@@ -306,9 +323,10 @@ async fn proposal_to_change_dao_policy(args: ChangeDaoPolicy) -> Result<String, 
         {
             Some(val) => {
                 required_thredshold = val.min_required_thredshold;
+                Ok(())
             }
             None => {
-                eprintln!("No Data Found");
+                return Err(format!("No place Found with the name of {:?}",args.proposal_entry));
             }
         }
     });
@@ -345,7 +363,7 @@ async fn proposal_to_change_dao_policy(args: ChangeDaoPolicy) -> Result<String, 
     Ok(String::from(crate::utils::MESSAGE_CHANGE_DAO_POLICY))
 }
 
-#[update(guard=guard_check_members)]
+#[update(guard = prevent_anonymous)]
 async fn proposal_to_transfer_token(args: TokenTransferPolicy) -> Result<String, String> {
     let proposal_data = ProposalCreation {
         entry : args.proposal_entry.clone(),
@@ -378,12 +396,11 @@ async fn proposal_to_transfer_token(args: TokenTransferPolicy) -> Result<String,
             .find(|place| place.place_name == args.proposal_entry)
         {
             Some(val) => {
-                ic_cdk::println!("this is dao proposal place : {:?} ", val);
-
                 required_thredshold = val.min_required_thredshold;
+                Ok(())
             }
             None => {
-                eprintln!("No Data Found");
+                return Err(format!("No place Found with the name of {:?}",args.proposal_entry));
             }
         }
     });
@@ -479,12 +496,11 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
             .find(|place| place.place_name == args.proposal_entry)
         {
             Some(val) => {
-                ic_cdk::println!("this is dao proposal place : {:?} ", val);
-
                 required_thredshold = val.min_required_thredshold;
+                Ok(())
             }
             None => {
-                eprintln!("No Data Found");
+               return Err(format!("No place Found with the name of {:?}",args.proposal_entry));
             }
         }
     });
@@ -552,8 +568,6 @@ async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
         if proposal_status == ProposalState::Succeeded{
             return Err(String::from("Proposal you wish to claim has already been completed"));
         }
-
-        // make condition for successfully transfer tokens then no claim
         
         tokens = proposal.tokens.unwrap_or(0);
         token_from = proposal.token_from;
@@ -569,9 +583,10 @@ async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
         {
             Some(val) => {
                 required_thredshold = val.min_required_thredshold;
+                Ok(())
             }
             None => {
-                eprintln!("No Data Found");
+                return Err(format!("No place Found with the name of {:?}",args.proposal_entry));
             }
         }
     });
@@ -608,7 +623,7 @@ async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
     Ok(String::from(crate::utils::MESSAGE_BOUNTY_CLAIM))
 }
 
-#[update(guard=guard_check_members)]
+#[update(guard = prevent_anonymous)]
 async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
     let proposal_data = ProposalCreation {
         entry : args.proposal_entry.clone(),
@@ -628,12 +643,11 @@ async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
             .find(|place| place.place_name == args.proposal_entry)
         {
             Some(val) => {
-                ic_cdk::println!("this is dao proposal place : {:?} ", val);
-
                 required_thredshold = val.min_required_thredshold;
+                Ok(())
             }
             None => {
-                eprintln!("No Data Found");
+                return Err(format!("No place Found with the name of {:?}",args.proposal_entry));
             }
         }
     });
@@ -670,7 +684,7 @@ async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
     Ok(String::from(crate::utils::MESSAGE_POLL_CREATE_DONE))
 }
 
-#[update(guard=guard_check_members)]
+#[update(guard = prevent_anonymous)]
 async fn proposal_to_create_general_purpose(args: CreateGeneralPurpose) -> Result<String, String> {
     
     let proposal_data = ProposalCreation {
@@ -690,12 +704,11 @@ async fn proposal_to_create_general_purpose(args: CreateGeneralPurpose) -> Resul
             .find(|place| place.place_name == args.proposal_entry)
         {
             Some(val) => {
-                ic_cdk::println!("this is dao proposal place : {:?} ", val);
-
                 required_thredshold = val.min_required_thredshold;
+                Ok(())
             }
             None => {
-                eprintln!("No Data Found");
+                return Err(format!("No place Found with the name of {:?}",args.proposal_entry));
             }
         }
     });
@@ -738,53 +751,44 @@ async fn proposal_to_create_general_purpose(args: CreateGeneralPurpose) -> Resul
 //     // if principal_id == Principal::anonymous() {
 //     //     return "Anonymous principal not allowed to make calls.".to_string();
 //     // }
-
 //     // let council_group = "council".to_string();
-
 //     // let is_allowed = with_state(|state| {
 //     //     state
 //     //         .dao_groups
 //     //         .get(&council_group)
 //     //         .map_or(false, |group_list| group_list.users.contains(&principal_id))
 //     // });
-
 //     // if !is_allowed {
 //     //     return format!(
 //     //         "Caller with principal {:?} is not allowed to add members to group {}",
 //     //         principal_id, group
 //     //     );
 //     // }
-
 //     // let result =
 //     //     with_state(|state| proposal_route::add_member_to_group(state, group.clone(), principal));
 //     // result
 //     "to".to_string()
 // }
 
-//
 // #[update]
 // async fn remove_member_from_group(group: String, principal: Principal) -> String {
 //     let principal_id = api::caller();
 //     if principal_id == Principal::anonymous() {
 //         return "Anonymous principal not allowed to make calls.".to_string();
 //     }
-
 //     let council_group = "council".to_string();
-
 //     let is_allowed = with_state(|state| {
 //         state
 //             .groups
 //             .get(&council_group)
 //             .map_or(false, |group_list| group_list.users.contains(&principal_id))
 //     });
-
 //     if !is_allowed {
 //         return format!(
 //             "Caller with principal {:?} is not allowed to remove members from group {}",
 //             principal_id, group
 //         );
 //     }
-
 //     let result = with_state(|state| {
 //         proposal_route::remove_member_from_group(state, group.clone(), principal)
 //     });
@@ -794,16 +798,12 @@ async fn proposal_to_create_general_purpose(args: CreateGeneralPurpose) -> Resul
 // #[update(guard = prevent_anonymous)]
 // fn join_dao() -> Result<String, String> {
 //     let principal_id = api::caller();
-
 //     with_state(|state| -> Result<String, String> {
 //         if state.dao.members.contains(&principal_id) {
 //             return Err("You are already member of this Dao".to_string());
 //         }
-
 //         let mut members = state.dao.members.clone();
-
 //         members.push(principal_id.clone());
-
 //         state.dao.members = members;
 //         Ok("Successfully joined DAO".to_string())
 //     })
@@ -840,12 +840,11 @@ async fn ask_to_join_dao(daohouse_backend_id: Principal) -> Result<String, Strin
             .find(|place| place.place_name == "Council".to_string())
         {
             Some(val) => {
-                ic_cdk::println!("this is dao proposal place : {:?} ", val);
-
                 required_thredshold = val.min_required_thredshold;
+                Ok(())
             }
             None => {
-                eprintln!("No Data Found");
+                return Err(format!("No place Found for join this dao"));
             }
         }
     });
@@ -904,7 +903,6 @@ async fn ask_to_join_dao(daohouse_backend_id: Principal) -> Result<String, Strin
 // #[query]
 // fn get_dao_members() -> Vec<Principal> {
 //     let mut all_members: Vec<Principal> = Vec::new();
-
 //     with_state(|state| {
 //         all_members = state.dao.members.clone();
 //         for (_, group) in state.dao_groups.iter() {
@@ -915,16 +913,15 @@ async fn ask_to_join_dao(daohouse_backend_id: Principal) -> Result<String, Strin
 //             }
 //         }
 //     });
-
 //     all_members
 // }
 
-#[query]
+#[query(guard = prevent_anonymous)]
 fn get_dao_members() -> Vec<Principal> {
     with_state(|state| state.dao.members.clone())
 }
 
-#[query]
+#[query(guard = prevent_anonymous)]
 fn get_dao_followers() -> Vec<Principal> {
     with_state(|state| state.dao.followers.clone())
 }
@@ -974,44 +971,37 @@ pub async fn follow_dao(daohouse_backend_id: Principal) -> Result<String, String
     Ok(String::from(crate::utils::SUCCESS_FOLLOW_DAO))
 }
 
-#[update(guard=guard_check_members)]
-fn update_dao_settings(update_dao_details: UpdateDaoSettings) -> Result<String, String> {
-    // member_permission(String::from("ChangeDAOConfig"))?;
-    // member_permission(String::from(crate::utils::PERMISSION_CHANGE_DAO_CONFIG))?;
-
-    with_state(|state| {
-        let mut original_dao = state.dao.clone();
-        original_dao.dao_name = update_dao_details.dao_name;
-        original_dao.purpose = update_dao_details.purpose;
-        original_dao.link_of_document = update_dao_details.link_of_document;
-        original_dao.members = update_dao_details.members;
-        original_dao.followers = update_dao_details.followers;
-
-        state.dao = original_dao;
-
-        Ok(String::from(crate::utils::SUCCESS_DAO_UPDATED))
-    })
-}
+// #[update(guard=guard_check_members)]
+// fn update_dao_settings(update_dao_details: UpdateDaoSettings) -> Result<String, String> {
+//     // member_permission(String::from("ChangeDAOConfig"))?;
+//     // member_permission(String::from(crate::utils::PERMISSION_CHANGE_DAO_CONFIG))?;
+//     with_state(|state| {
+//         let mut original_dao = state.dao.clone();
+//         original_dao.dao_name = update_dao_details.dao_name;
+//         original_dao.purpose = update_dao_details.purpose;
+//         original_dao.link_of_document = update_dao_details.link_of_document;
+//         original_dao.members = update_dao_details.members;
+//         original_dao.followers = update_dao_details.followers;
+//         state.dao = original_dao;
+//         Ok(String::from(crate::utils::SUCCESS_DAO_UPDATED))
+//     })
+// }
 
 // // #[update(guard=)]
 // #[update(guard = prevent_anonymous)]
 // pub async fn unfollow_dao(daohouse_backend_id: Principal) -> Result<String, String> {
-
 //     let principal_id = api::caller();
 //     let dao_id = ic_cdk::api::id();
-
 //     with_state(|state| {
 //         let dao = &mut state.dao;
 //         if dao.followers.contains(&api::caller()) {
 //             dao.followers.retain(|s| s != &api::caller());
 //             state.dao.followers_count -= 1;
-
 //             let response: CallResult<(Result<(), String>,)> = ic_cdk::call(
 //                 daohouse_backend_id,
 //                 "remove_follow_dao",
 //                 (dao_id, principal_id),
 //             ).await;
-
 //             match response {
 //                 Ok((Ok(()),)) => (),
 //                 Ok((Err(err),)) => return Err(err),
@@ -1027,7 +1017,6 @@ fn update_dao_settings(update_dao_details: UpdateDaoSettings) -> Result<String, 
 //                     return Err(err_msg);
 //                 }
 //             };
-
 //             Ok(String::from(crate::utils::SUCCESS_FOLLOW_DAO))
 //         } else {
 //             Err(String::from(crate::utils::WARNING_DONT_FOLLOW))
@@ -1079,7 +1068,6 @@ pub async fn unfollow_dao(daohouse_backend_id: Principal) -> Result<String, Stri
     }
 }
 
-// add members guard
 #[update(guard=guard_daohouse_exclusive_method)]
 fn add_ledger_canister_id(id: LedgerCanisterId) -> Result<(), String> {
     with_state(|state| state.dao.token_ledger_id = id);
@@ -1087,8 +1075,7 @@ fn add_ledger_canister_id(id: LedgerCanisterId) -> Result<(), String> {
     Ok(())
 }
 
-// get dao groups
-#[query]
+#[query(guard = prevent_anonymous)]
 fn get_dao_groups() -> Vec<DaoGroup> {
     let mut groups: Vec<DaoGroup> = Vec::new();
 
@@ -1101,7 +1088,7 @@ fn get_dao_groups() -> Vec<DaoGroup> {
     groups
 }
 
-#[update]
+#[update(guard=prevent_anonymous)]
 async fn transfer_token(proposal: Test) -> Result<String, String> {
     let balance = icrc_get_balance(proposal.token_from)
         .await

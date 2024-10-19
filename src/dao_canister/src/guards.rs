@@ -65,10 +65,10 @@ pub fn guard_check_proposal_creation(proposal_data : ProposalCreation) -> Result
                     if group.group_permissions.contains(&proposal_data.proposal_type) {
                         return Ok(());
                     } else {
-                        return Err(format!("{:?} doesn't have permission for creating this proposal", proposal_place));
+                        return Err(format!("{} doesn't have permission for creating this proposal", proposal_place.place_name));
                     }
                 } else {
-                    return Err(format!("You are not part of group {:?}", proposal_place));
+                    return Err(format!("You are not part of group {}", proposal_place.place_name));
                 }
             } else {
                 if state.dao.members.contains(&api::caller()) {
@@ -78,11 +78,11 @@ pub fn guard_check_proposal_creation(proposal_data : ProposalCreation) -> Result
                         return Err(format!("Members don't have permission for creating this type of proposal"));
                     }
                 } else {
-                    return Err(format!("No group or member found with the name of {:?}", proposal_data.entry));
+                    return Err(format!("You are not a member of {}", proposal_data.entry));
                 }
             }
         } else {
-            return Err(format!("No place found with the name {:?}", proposal_data.entry));
+            return Err(format!("No place found with the name of {}", proposal_data.entry));
         }
     })
 }
@@ -124,34 +124,34 @@ pub fn guard_check_proposal_creation(proposal_data : ProposalCreation) -> Result
 //     })
 // }
 
-pub fn check_user_and_member_in_group(
-    group_name: &String,
-    action_member: Principal,
-) -> Result<(), String> {
-    prevent_anonymous()?;
-    with_state(|state| match state.dao_groups.get(&group_name) {
-        Some(val) => {
-            if val.group_members.contains(&api::caller())
-                && val.group_members.contains(&action_member)
-            {
-                Ok(())
-            } else if !val.group_members.contains(&action_member) {
-                Err(format!(
-                    "{} {}",
-                    crate::utils::WARNING_NO_MEMBER_IN_GROUP,
-                    action_member
-                ))
-            } else {
-                Err(format!(
-                    "{} {}",
-                    crate::utils::WARNING_NOT_IN_GROUP,
-                    group_name
-                ))
-            }
-        }
-        None => Err(format!("{} {}", crate::utils::NOTFOUND_GROUP, group_name)),
-    })
-}
+// pub fn check_user_and_member_in_group(
+//     group_name: &String,
+//     action_member: Principal,
+// ) -> Result<(), String> {
+//     prevent_anonymous()?;
+//     with_state(|state| match state.dao_groups.get(&group_name) {
+//         Some(val) => {
+//             if val.group_members.contains(&api::caller())
+//                 && val.group_members.contains(&action_member)
+//             {
+//                 Ok(())
+//             } else if !val.group_members.contains(&action_member) {
+//                 Err(format!(
+//                     "{} {}",
+//                     crate::utils::WARNING_NO_MEMBER_IN_GROUP,
+//                     action_member
+//                 ))
+//             } else {
+//                 Err(format!(
+//                     "{} {}",
+//                     crate::utils::WARNING_NOT_IN_GROUP,
+//                     group_name
+//                 ))
+//             }
+//         }
+//         None => Err(format!("{} {}", crate::utils::NOTFOUND_GROUP, group_name)),
+//     })
+// }
 
 // check if proposal exists
 pub fn guard_check_if_proposal_exists(

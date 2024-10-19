@@ -79,7 +79,6 @@ type ProposalType = variant {
   RemoveMemberToDaoProposal;
   ChangeDaoConfig;
   BountyDone;
-  UpgradeRemote;
   Polls;
   TokenTransfer;
   AddMemberToDaoProposal;
@@ -88,8 +87,6 @@ type ProposalType = variant {
   BountyClaim;
   BountyRaised;
   AddMemberToGroupProposal;
-  FunctionCall;
-  UpdateSelf;
   GeneralPurpose;
 };
 type ProposalValueStore = record {
