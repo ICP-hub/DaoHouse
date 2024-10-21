@@ -570,9 +570,12 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
                               <p className="font-semibold mobile:text-base text-sm">{username}</p>
                               <p className="text-sm mobile:mt-1 md:mt-0">{member}</p>
                             </div>
-                            <button onClick={() => handleRemoveMember(item.index, member)}>
-                              <MdOutlineDeleteOutline className="text-red-500 mobile:text-2xl text-lg" />
-                            </button>
+                            <button 
+    onClick={() => handleRemoveMember(item.index, member)} 
+    className="ml-auto"
+  >
+    <MdOutlineDeleteOutline className="text-red-500 text-xl sm:text-2xl md:text-2xl lg:text-2xl" />
+  </button>
                           </div>
                         </div>
                       );

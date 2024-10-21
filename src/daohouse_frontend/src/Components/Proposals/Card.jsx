@@ -379,7 +379,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                   <img src={profileImg || avatar} alt="user avatar" className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 rounded-full" />
                 )}
                 {isLoading ? (
-                  <div className="w-24 h-6 sm:w-32 sm:h-8 bg-gray-400"></div>
+                  <div className="w-24  h-6 sm:w-32 sm:h-8 bg-gray-400"></div>
                 ) : (
                   <h4 className="text-white text-sm sm:text-base lg:text-xl font-semibold">{userProfile?.username || "Username"}</h4>
                 )}
