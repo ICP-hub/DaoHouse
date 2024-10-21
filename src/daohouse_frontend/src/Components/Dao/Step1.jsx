@@ -7,7 +7,7 @@ const Step1 = ({ setData, setActiveStep, data }) => {
   const [inputData, setInputData] = useState({
     DAOIdentifier: "",
     Purpose: "",
-    SetUpPeriod: data?.step1?.SetUpPeriod || 3,
+    SetUpPeriod: data?.step1?.SetUpPeriod || 1,
   });
 
   const [errors, setErrors] = useState({});
@@ -24,7 +24,7 @@ const Step1 = ({ setData, setActiveStep, data }) => {
       setInputData({
         DAOIdentifier: data.DAOIdentifier || "",
         Purpose: data.Purpose || "",
-        SetUpPeriod: data?.step1?.SetUpPeriod || 3,
+        SetUpPeriod: data?.step1?.SetUpPeriod || 1,
       });
     }
   }, [data]);
@@ -41,7 +41,7 @@ const Step1 = ({ setData, setActiveStep, data }) => {
     // DAO Identifier Validation
     if (!inputData.DAOIdentifier.trim()) {
       newErrors.DAOIdentifier = "DAO Identifier is required.";
-    }  else if (inputData.DAOIdentifier.length < 3) {
+    } else if (inputData.DAOIdentifier.length < 3) {
       newErrors.DAOIdentifier =
         "DAO Identifier must be at least 3 characters long.";
     }
@@ -72,22 +72,22 @@ const Step1 = ({ setData, setActiveStep, data }) => {
   };
 
   // Handle input changes
-const handleChange = (e) => {
-  const { name, value } = e.target;
-  // Update input data
-  setInputData({
-    ...inputData,
-    [name]: value,
-  });
-
-  // Remove error message for the field being edited
-  if (errors[name]) {
-    setErrors({
-      ...errors,
-      [name]: null,
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    // Update input data
+    setInputData({
+      ...inputData,
+      [name]: value,
     });
-  }
-};
+
+    // Remove error message for the field being edited
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: null,
+      });
+    }
+  };
 
 
   // Handle Setup Period separately to ensure it's a number
@@ -163,11 +163,10 @@ const handleChange = (e) => {
               name="DAOIdentifier"
               value={inputData.DAOIdentifier}
               placeholder="Enter DAO Identifier"
-              className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm ${
-                errors.DAOIdentifier
+              className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm ${errors.DAOIdentifier
                   ? "border border-red-500"
                   : "border border-gray-300"
-              }`}
+                }`}
               onChange={handleChange}
             />
             {errors.DAOIdentifier && (
@@ -190,9 +189,8 @@ const handleChange = (e) => {
               name="Purpose"
               value={inputData.Purpose}
               placeholder="Specify the primary purpose or objectives the DAO aims to achieve, such as governance, funding, community building, etc."
-              className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm h-32 resize-none ${
-                errors.Purpose ? "border border-red-500" : "border border-gray-300"
-              }`}
+              className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm h-32 resize-none ${errors.Purpose ? "border border-red-500" : "border border-gray-300"
+                }`}
               onChange={handleChange}
             />
             {errors.Purpose && (
@@ -214,11 +212,10 @@ const handleChange = (e) => {
               name="SetUpPeriod"
               value={inputData.SetUpPeriod}
               placeholder="Enter setup period in days"
-              className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm ${
-                errors.SetUpPeriod
+              className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm ${errors.SetUpPeriod
                   ? "border border-red-500"
                   : "border border-gray-300"
-              }`}
+                }`}
               onChange={(e) => changePeriod(e.target.value)}
               min="1"
             />
