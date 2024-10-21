@@ -320,7 +320,7 @@ async fn create_bounty_done_proposal(daohouse_canister_id: Principal, proposal: 
         token_from: proposal.token_from.clone(),
         token_to: proposal.token_to.clone(),
         proposal_created_at: None,
-        proposal_expired_at: Some(proposal.proposal_expired_at),
+        proposal_expired_at: None,
         bounty_task: proposal.bounty_task.clone(),
         poll_title: None,
         required_votes: None,
@@ -589,9 +589,6 @@ async fn init(dao_input: DaoInput) {
     //     polls: "council".to_string(),
     //     removemembers: "council".to_string(),
     //     addmembers: "council".to_string(),
-    //     functioncall: "council".to_string(),
-    //     upgradeself: "council".to_string(),
-    //     upgraderemote: "council".to_string(),
     //     setvotetoken: "council".to_string(),
     //     votingpermision: "council".to_string(),
     // };

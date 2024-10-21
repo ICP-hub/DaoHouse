@@ -48,18 +48,10 @@ for ((i = 1; i <= COUNT; i++)); do
             place_name = "Example Group";
             min_required_thredshold = 94;
         };
-        record {
-            place_name = "Example Group2";
-            min_required_thredshold = 56;
-        };
-        record {
-            place_name = "Example Group3";
-            min_required_thredshold = 65;
-        };
     };
      dao_groups = vec {
         record {
-            group_name = "Example Group ji";
+            group_name = "Example Group";
             group_members = vec {
             principal "6ydm4-srext-xsaic-y3v2x-cticp-5n6pf-2meh7-j43r6-rghg7-pt5nd-bqe";
             principal "nrfrq-ss3nl-ygga2-lnir6-ci34y-sn6kn-3ggec-pqwic-ckqhj-hwu2z-qqe";

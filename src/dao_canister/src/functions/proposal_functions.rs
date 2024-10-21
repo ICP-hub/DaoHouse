@@ -5,7 +5,7 @@ use crate::{with_state, ProposalState, VoteParam};
 use candid::Principal;
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::api::{self};
-use ic_cdk::{caller, query, update};
+use ic_cdk::{query, update};
 use sha2::{Digest, Sha256};
 use std::collections::HashSet;
 
@@ -16,14 +16,12 @@ use std::collections::HashSet;
 //         let proposal_id = format!("{:x}", Sha256::digest(&uuids));
 //         proposal_route::create_new_proposal(state, proposal.clone(), proposal_id.clone(), daohouse_backend_id.clone());
 //     }).await;
-
 //     // let _res: CallResult<(String,)> = ic_cdk::call(
 //     //     daohouse_backend_id,
 //     //     "update_proposal_count",
 //     //     (),
 //     // )
 //     // .await;
-
 //     String::from("value")
 //     // response
 // }
@@ -55,7 +53,7 @@ fn get_all_proposals(page_data: Pagination) -> Vec<Proposals> {
 }
 
 // get user specific user
-#[update(guard=prevent_anonymous)]
+#[query(guard=prevent_anonymous)]
 fn get_my_proposal() -> Result<Vec<Proposals>, String> {
     // with_state(|state| state.proposals.)
 
@@ -71,7 +69,7 @@ fn get_my_proposal() -> Result<Vec<Proposals>, String> {
     })
 }
 
-#[update(guard=prevent_anonymous)]
+#[query(guard=prevent_anonymous)]
 async fn get_proposal_by_id(proposal_id: String) -> Proposals {
     with_state(|state| state.proposals.get(&proposal_id).unwrap().clone())
 }
@@ -82,8 +80,7 @@ async fn get_proposal_by_id(proposal_id: String) -> Proposals {
 // }
 
 // get Dao details with unique members always
-
-#[update(guard=prevent_anonymous)]
+#[query(guard=prevent_anonymous)]
 async fn get_dao_detail() -> Dao {
     with_state(|state| {
         let mut dao = state.dao.clone();
@@ -176,13 +173,11 @@ async fn reply_comment(args: ReplyCommentArgs) -> Result<String, String> {
 //     with_state(|state| match state.proposals.get(&args.proposal_id) {
 //         Some(val) => {
 //             for comment in val.comments_list.iter() {
-//                 if comment == args.comment_id {
-
+//                if comment == args.comment_id {
 //                 }
 //             }
 //         },
 //         None => Err(String::from("No proposal found with following ID")),
-
 //     })
 // }
 
@@ -200,7 +195,7 @@ fn refresh_proposals(id: &String) {
     })
 }
 
-#[update]
+#[update(guard = prevent_anonymous)]
 fn proposal_refresh() -> Result<String, String> {
     let mut ids: Vec<String> = Vec::new();
 
@@ -223,19 +218,16 @@ fn proposal_refresh() -> Result<String, String> {
 // fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> {
 //     check_voting_right(&proposal_id)?;
 //     let principal_id = api::caller();
-
 //     with_state(|state| match &mut state.proposals.get(&proposal_id) {
 //         Some(pro) => {
 //             if voting == VoteParam::Yes {
 //                 pro.approved_votes_list.push(principal_id);
 //                 pro.proposal_approved_votes += 1;
-
 //                 state.proposals.insert(proposal_id, pro.to_owned());
 //                 Ok(String::from("Successfully voted in favour of Proposal."))
 // } else {
 //     pro.rejected_votes_list.push(principal_id);
 //     pro.proposal_rejected_votes += 1;
-
 //     state.proposals.insert(proposal_id, pro.to_owned());
 //     Ok(String::from("Successfully voted against the proposal."))
 // }
@@ -251,16 +243,12 @@ fn proposal_refresh() -> Result<String, String> {
 // async fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> {
 //     // to check if user has already voted
 //     check_voting_right(&proposal_id)?;
-
 //     let principal_id = api::caller();
-
 //     // user balance validation
 //     let balance = icrc_get_balance(principal_id)
 //         .await
 //         .map_err(|err| format!("Error while fetching user balance {}", err))?;
-
 //     let min_vote_req = with_state(|state| state.dao.tokens_required_to_vote);
-
 //     if balance < min_vote_req {
 //         return Err(String::from(
 //             "User token balance is less then the required threshold",
@@ -276,37 +264,31 @@ fn proposal_refresh() -> Result<String, String> {
 //         icrc_transfer(token_transfer_args)
 //             .await
 //             .map_err(|err| format!("Error in transfer of tokens: {}", String::from(err)))?;
-
 //         // storing staked tokens
 //         with_state(|state| {
 //             let account_balance = AccountBalance {
 //                 id: principal_id.clone(),
 //                 staked: state.dao.tokens_required_to_vote,
 //             };
-
 //             let proposal_stake = ProposalStakes {
 //                 proposal_id: proposal_id.clone(),
 //                 balances: vec![account_balance],
 //             };
-
 //             state
 //                 .proposal_balances
 //                 .insert(proposal_id.clone(), proposal_stake);
 //         });
-
 //         // perform voting
 //         with_state(|state| match &mut state.proposals.get(&proposal_id) {
 //             Some(pro) => {
 //                 if voting == VoteParam::Yes {
 //                     pro.approved_votes_list.push(principal_id);
 //                     pro.proposal_approved_votes += 1;
-
 //                     state.proposals.insert(proposal_id, pro.to_owned());
 //                     Ok(String::from("Successfully voted in favour of Proposal."))
 //                 } else {
 //                     pro.rejected_votes_list.push(principal_id);
 //                     pro.proposal_rejected_votes += 1;
-
 //                     state.proposals.insert(proposal_id, pro.to_owned());
 //                     Ok(String::from("Successfully voted against the proposal."))
 //                 }
@@ -314,11 +296,10 @@ fn proposal_refresh() -> Result<String, String> {
 //             None => Err(String::from("Proposal ID is invalid !")),
 //         })
 //     }
-
 //     // Ok("()".to_string())
 // }
 
-#[update]
+#[update(guard=prevent_anonymous)]
 async fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> {
     check_voting_right(&proposal_id)?;
 
@@ -380,8 +361,6 @@ fn search_follower(dao_follower: String) -> Vec<Principal> {
     daos_follower
 }
 
-
-
 // #[query]
 fn execute_add_proposals(id: &String) {
     with_state(|state| match state.proposals.get(&id) {
@@ -428,7 +407,7 @@ fn execute_add_proposals(id: &String) {
 }
 
 // get all groups
-#[update]
+#[query(guard = prevent_anonymous)]
 fn get_all_groups() -> Vec<DaoGroup> {
     with_state(|state| {
         let mut groups: Vec<DaoGroup> = Vec::new();
@@ -443,7 +422,7 @@ fn get_all_groups() -> Vec<DaoGroup> {
 // TODO debug functions
 
 // to get all stakes
-#[query]
+#[query(guard = prevent_anonymous)]
 fn get_all_balances(proposal_id: String) -> ProposalStakes {
     with_state(|state| state.proposal_balances.get(&proposal_id).unwrap())
 }
