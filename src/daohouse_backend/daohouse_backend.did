@@ -80,10 +80,10 @@ type ProposalType = variant {
   ChangeDaoConfig;
   BountyDone;
   Polls;
+  ChangeDaoPolicy;
   TokenTransfer;
   AddMemberToDaoProposal;
   RemoveMemberToGroupProposal;
-  ChnageDaoPolicy;
   BountyClaim;
   BountyRaised;
   AddMemberToGroupProposal;
