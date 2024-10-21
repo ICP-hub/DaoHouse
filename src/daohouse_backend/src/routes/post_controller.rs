@@ -6,7 +6,7 @@ use ic_cdk::update;
 
 use crate::types::{PostInfo, PostInput};
 use crate::{with_state, ImageData, State};
-
+use crate::guards::*;
 // pub async fn create_new_post(state: &mut State, canister_id: String, post_id: String, postdetail: PostInput) -> Result<String, String> {
 
 //     // upload image
@@ -40,7 +40,7 @@ use crate::{with_state, ImageData, State};
 type ReturnResult = Result<u32, String>;
 
 // upload image
-#[update] // temp
+#[update(guard = prevent_anonymous)] // temp
 pub async fn upload_image(image_data: ImageData) -> Result<String, String> {
     // dao canister id
     // with_state(|state|)
