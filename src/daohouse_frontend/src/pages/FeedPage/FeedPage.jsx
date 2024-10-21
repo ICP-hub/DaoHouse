@@ -170,6 +170,7 @@ const FeedPage = () => {
       {showPopup && (
         <div className="fixed inset-0 bg-black opacity-40 z-40"></div>
       )}
+
       {/* Header Section with Background Image */}
       <div
         style={{

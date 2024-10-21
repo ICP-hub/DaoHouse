@@ -37,7 +37,7 @@ const CreateDao = () => {
   useEffect(() => {
     setShowLoginModal(!isAuthenticated);
   }, [isAuthenticated]);
-  
+
 
   const handleLogin = async () => {
     setLoading(true);
@@ -102,9 +102,9 @@ const CreateDao = () => {
       localStorage.removeItem('step5Data');
       localStorage.removeItem('step6Data');
     };
-  
+
     window.addEventListener('beforeunload', clearDataOnUnload);
-  
+
     return () => {
       window.removeEventListener('beforeunload', clearDataOnUnload);
     };
@@ -115,51 +115,58 @@ const CreateDao = () => {
     setLoadingNext(true);
     const { step1, step2, step3, step4, step5, step6 } = data;
     console.log("Data", data);
-    
-    const council = step4.voting?.Council;
-    const councilArray = Object.entries(council)
-      .filter(([permission, hasPermission]) => hasPermission)
-      .map(([permission]) => permission);
-  
-    console.log("councilArray", councilArray);
-    console.log("council", council);
-  
+
+    // const council = step4.voting?.Council;
+    // // const councilArray = Object.entries(council)
+    // //   .filter(([permission, hasPermission]) => hasPermission)
+    // //   .map(([permission]) => permission);
+
+    // // console.log("councilArray", councilArray);
+    // // console.log("council", council);
+
     const allMembers = new Set(); // Using a Set to avoid duplicates
-  
+
     // Add council members
     const councilMembers = step3.council || [];
     councilMembers.forEach(member => allMembers.add(Principal.fromText(member).toText()));
-  
+
     // Add members from each group
-  
+
     const principalMembers = Array.from(allMembers).map(member => Principal.fromText(member));
 
     console.log(step2);
     console.log(data.dao_groups);
-    
+
     const proposalEntity = step5.map(q => ({
       place_name: q.name,
       min_required_thredshold: BigInt(q.vote), // Ensure it's a nat64
     }));
 
     console.log(proposalEntity);
-    
-  
+
+    console.log("cashgdshgd", JSON.stringify(data.members_permissions));
+    const a = data.members_permissions;
+    const a1 = Object.values(a).slice(0, a.length);;
+    console.log("kdasljdas", a1);
+
+
+
+
     const daoPayload = {
       dao_name: step1.DAOIdentifier || "my dao hai",
-      purpose:  step1.Purpose || "my proposal hai",
+      purpose: step1.Purpose || "my proposal hai",
       daotype: "just proposal type bro",
       link_of_document: "my link.org",
       cool_down_period: step1.SetUpPeriod || 3,
       members: principalMembers || [Principal.fromText("aaaaa-aa")],
-      members_permissions: councilArray || ["just", "pesmi"],
-      token_name: step2.TokenName ||"GOLD Token",
+      members_permissions: JSON.stringify(data.members_permissions) || ["just", "pesmi"],
+      token_name: step2.TokenName || "GOLD Token",
       token_symbol: step2.TokenSymbol || "TKN",
       tokens_required_to_vote: 12,
       linksandsocials: ["just send f"],
       required_votes: parseInt(step2.VotesRequired, 10) || 3,
-      image_content: step6.image_content ? Array.from(new Uint8Array(step6.image_content)) : 
-      Array.from(new Uint8Array()),
+      image_content: step6.image_content ? Array.from(new Uint8Array(step6.image_content)) :
+        Array.from(new Uint8Array()),
       image_title: step6.image_title || "this is just my title",
       image_content_type: step6.image_content_type || "just image content bro",
       image_id: "12",
@@ -174,14 +181,14 @@ const CreateDao = () => {
       token_supply: Number(step2.TokenSupply) || 4,
     };
 
-    console.log("daoPayload",daoPayload);
-    
-  
+    console.log("daoPayload", daoPayload);
+
+
 
     try {
       const response = await backendActor.create_dao(daoPayload);
-      console.log("response",response);
-      
+      console.log("response", response);
+
       if (response.Err) {
         toast.error(`${response.Err}`);
         toast.error(`Failed to create Dao`);
@@ -246,7 +253,7 @@ const CreateDao = () => {
             </div>
           </div>
         </Container>
-        {showLoginModal && <LoginModal isOpen={showLoginModal} onClose={handleModalClose} onLogin={handleLogin} 
+        {showLoginModal && <LoginModal isOpen={showLoginModal} onClose={handleModalClose} onLogin={handleLogin}
           onNFIDLogin={handleNFIDLogin} loading={loading} />}
         <Container>
           <div className={className + "__steps overflow-x-scroll small_phone:px-4 mobile:px-4 mobile:py-4 py-2 big_phone:px-4 tablet:px-12 lg:px-20 desktop:px-24 mobile:gap-20 gap-6 flex flex-row w-full mobile:items-center justify-between"}>
@@ -268,7 +275,7 @@ const CreateDao = () => {
           <div className="form-wrapper w-full small_phone:px-4 mobile:px-4 big_phone:mx-0 big_phone:px-0 tablet:mx-[-2px] tablet:px-16 desktop:px-20  py-4 ">
             {Form()}
           </div>
-    </Container>
+        </Container>
       </div>
     </Fragment>
   );

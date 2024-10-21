@@ -330,7 +330,6 @@ async fn create_bounty_done_proposal(daohouse_canister_id: Principal, proposal: 
         minimum_threadsold: proposal.minimum_threadsold.clone(),
         link_of_task: None,
         associated_proposal_id: proposal.associated_proposal_id.clone(),
-        new_required_votes : None,
     };
     ic_cdk::spawn(async move {
         crate::proposal_route::create_proposal_controller(
@@ -400,9 +399,7 @@ fn change_dao_policy(state: &mut State, proposal: &Proposals) {
     if let Some(cool_down_period) = proposal.cool_down_period {
         state.dao.cool_down_period = cool_down_period;
     }
-    if let Some(new_required_votes) = proposal.new_required_votes {
-        state.dao.required_votes = new_required_votes;
-    }
+    state.dao.required_votes = proposal.required_votes;
 }
 
 async fn transfer_tokens_to_user(proposal: &Proposals) {

@@ -48,29 +48,33 @@ const Step4 = ({ data, setData, setActiveStep }) => {
   }, [data.step3.groups, data.step3.council]);
 
   const defaultPermissions = (groupName) => ({
-    ChangeDAOConfig: groupName === "Council" ? true : false,
-    ChangeDAOPolicy: groupName === "Council" ? true : false,
-    Transfer: groupName === "Council" ? true : false,
+    ChangeDaoConfig: groupName === "Council" ? true : false,
+    ChangeDaoPolicy: groupName === "Council" ? true : false,
+    TokenTransfer: groupName === "Council" ? true : false,
     Polls: groupName === "Council" ? true : false,
-    AddMemberToGroup: groupName === "Council" ? true : false,
+    AddMemberToDaoProposal: groupName === "Council" ? true : false,
+    AddMemberToGroupProposal: groupName === "Council" ? true : false,
     BountyDone: groupName === "Council" ? true : false,
+    BountyClaim: groupName === "Council" ? true : false,
     BountyRaised: groupName === "Council" ? true : false,
     GeneralPurpose: groupName === "Council" ? true : false,
-    RemoveMemberToGroup: groupName === "Council" ? true : false,
-    RemoveDaoMember: groupName === "Council" ? true : false,
+    RemoveMemberToGroupProposal: groupName === "Council" ? true : false,
+    RemoveMemberToDaoProposal: groupName === "Council" ? true : false,
   });
 
   const permissionList = [
     "ChangeDAOConfig",
     "ChangeDAOPolicy",
-    "Transfer",
+    "TokenTransfer",
     "Polls",
-    "AddMemberToGroup",
+    "AddMemberToDaoProposal",
+    "AddMemberGroupProposal",
     "BountyDone",
+    "BountyClaim",
     "BountyRaised",
     "GeneralPurpose",
-    "RemoveMemberToGroup",
-    "RemoveDaoMember",
+    "RemoveMemberToGroupProposal",
+    "RemoveMemberToDaoProposal",
   ];
 
   const initializePermissions = () => {
@@ -86,9 +90,9 @@ const Step4 = ({ data, setData, setActiveStep }) => {
     return savedData
       ? JSON.parse(savedData)
       : {
-          proposal: initializePermissions(),
-          voting: initializePermissions(),
-        };
+        proposal: initializePermissions(),
+        voting: initializePermissions(),
+      };
   });
 
   function toggleCheckbox(step, groupName, permissionName) {
@@ -177,9 +181,8 @@ const Step4 = ({ data, setData, setActiveStep }) => {
         >
           <ul className={`${className}__steps flex flex-row mobile:gap-8 gap-6 px-4`}>
             <li
-              className={`list-disc mobile:text-lg text-sm font-semibold ${
-                activeStage === 0 ? "" : "opacity-50"
-              }`}
+              className={`list-disc mobile:text-lg text-sm font-semibold ${activeStage === 0 ? "" : "opacity-50"
+                }`}
             >
               Proposal Creation
             </li>

@@ -63,8 +63,7 @@ pub async fn create_proposal_controller(
         minimum_threadsold : proposal.minimum_threadsold.clone(),
         link_of_task : proposal.link_of_task,
         bounty_task : proposal.bounty_task,
-        associated_proposal_id : proposal.associated_proposal_id.clone(),
-        new_required_votes : proposal.new_required_votes,
+        associated_proposal_id : proposal.associated_proposal_id.clone()
     };
 
     // to record proposals on Parent canister

@@ -9,7 +9,7 @@ const Step2 = ({ setData, setActiveStep, data }) => {
     TokenName: "",
     TokenSymbol: "",
     TokenSupply: 1,
-    VotesRequired: 3,
+    VotesRequired: 1,
   });
 
   const [errors, setErrors] = useState({});
@@ -26,8 +26,8 @@ const Step2 = ({ setData, setActiveStep, data }) => {
       setInputData({
         TokenName: data.TokenName || "",
         TokenSymbol: data.TokenSymbol || "",
-        TokenSupply: data.TokenSupply || 1000,
-        VotesRequired: data.VotesRequired || 3,
+        TokenSupply: data.TokenSupply || 1,
+        VotesRequired: data.VotesRequired || 1,
       });
     }
   }, [data]);
@@ -93,8 +93,8 @@ const Step2 = ({ setData, setActiveStep, data }) => {
         name === "TokenSupply" || name === "VotesRequired"
           ? Math.max(0, value)
           : name === "TokenSymbol"
-          ? value.toUpperCase().trim()
-          : value,
+            ? value.toUpperCase().trim()
+            : value,
     }));
 
     // Remove error message for the field being edited
@@ -176,9 +176,8 @@ const Step2 = ({ setData, setActiveStep, data }) => {
                 value={inputData.TokenName}
                 onChange={handleChange}
                 placeholder="Enter Token Name"
-                className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm border ${
-                  errors.TokenName ? "border-red-500" : "border-gray-300"
-                }`}
+                className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm border ${errors.TokenName ? "border-red-500" : "border-gray-300"
+                  }`}
               />
               {errors.TokenName && (
                 <p className="text-red-500 text-xs">{errors.TokenName}</p>
@@ -200,9 +199,8 @@ const Step2 = ({ setData, setActiveStep, data }) => {
                 value={inputData.TokenSymbol}
                 onChange={handleChange}
                 placeholder="Enter Token Symbol"
-                className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm border ${
-                  errors.TokenSymbol ? "border-red-500" : "border-gray-300"
-                }`}
+                className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm border ${errors.TokenSymbol ? "border-red-500" : "border-gray-300"
+                  }`}
               />
               {errors.TokenSymbol && (
                 <p className="text-red-500 text-xs">{errors.TokenSymbol}</p>
@@ -224,9 +222,8 @@ const Step2 = ({ setData, setActiveStep, data }) => {
                 value={inputData.TokenSupply}
                 onChange={handleChange}
                 placeholder="Enter Token Supply"
-                className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm border ${
-                  errors.TokenSupply ? "border-red-500" : "border-gray-300"
-                }`}
+                className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm border ${errors.TokenSupply ? "border-red-500" : "border-gray-300"
+                  }`}
                 min="1000"
               />
               {errors.TokenSupply && (
@@ -249,9 +246,8 @@ const Step2 = ({ setData, setActiveStep, data }) => {
                 value={inputData.VotesRequired}
                 onChange={handleChange}
                 placeholder="Enter Votes Required"
-                className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm border ${
-                  errors.VotesRequired ? "border-red-500" : "border-gray-300"
-                }`}
+                className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm border ${errors.VotesRequired ? "border-red-500" : "border-gray-300"
+                  }`}
                 min="3"
               />
               {errors.VotesRequired && (
