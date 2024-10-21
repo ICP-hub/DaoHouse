@@ -891,7 +891,7 @@ pub enum ProposalType {
     RemoveMemberToDaoProposal,
     RemoveMemberToGroupProposal,
     ChangeDaoConfig,
-    ChnageDaoPolicy,
+    ChangeDaoPolicy,
     BountyRaised,
     BountyDone,
     Polls,
