@@ -19,7 +19,7 @@ type DaoGroup = record {
   group_members : vec principal;
   quorem : nat8;
   group_name : text;
-  group_permissions : vec text;
+  group_permissions : vec ProposalType;
 };
 type DaoInput = record {
   members : vec principal;
@@ -32,7 +32,7 @@ type DaoInput = record {
   dao_groups : vec DaoGroup;
   dao_name : text;
   image_id : text;
-  members_permissions : vec text;
+  members_permissions : vec ProposalType;
   link_of_document : text;
   image_content_type : text;
   cool_down_period : nat32;
@@ -79,7 +79,6 @@ type ProposalType = variant {
   RemoveMemberToDaoProposal;
   ChangeDaoConfig;
   BountyDone;
-  UpgradeRemote;
   Polls;
   TokenTransfer;
   AddMemberToDaoProposal;
@@ -88,8 +87,6 @@ type ProposalType = variant {
   BountyClaim;
   BountyRaised;
   AddMemberToGroupProposal;
-  FunctionCall;
-  UpdateSelf;
   GeneralPurpose;
 };
 type ProposalValueStore = record {

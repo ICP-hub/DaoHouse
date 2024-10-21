@@ -35,7 +35,9 @@ for ((i = 1; i <= COUNT; i++)); do
       image_title = "sample.jpg";
       image_content_type = "image/jpg";
       members_permissions = vec{
-        "permission";
+        variant { AddMemberToGroupProposal };
+        variant { Polls };
+        variant { TokenTransfer };
     };
     proposal_entry = vec {
         record {
@@ -46,14 +48,6 @@ for ((i = 1; i <= COUNT; i++)); do
             place_name = "Example Group";
             min_required_thredshold = 94;
         };
-        record {
-            place_name = "Example Group2";
-            min_required_thredshold = 56;
-        };
-        record {
-            place_name = "Example Group3";
-            min_required_thredshold = 65;
-        };
     };
      dao_groups = vec {
         record {
@@ -63,25 +57,13 @@ for ((i = 1; i <= COUNT; i++)); do
             principal "nrfrq-ss3nl-ygga2-lnir6-ci34y-sn6kn-3ggec-pqwic-ckqhj-hwu2z-qqe";
             principal "yxtej-lmfuu-rp3yv-xzu2h-6q43c-7iast-yiwff-z552q-6ugas-pyd6b-fae";  
            };
-            group_permissions = vec { "example_permission" };
+            group_permissions = vec { 
+            variant { AddMemberToGroupProposal };
+            variant { Polls };
+            variant { TokenTransfer };  
+          };
             quorem = 65;
         };
-        record {
-            group_name = "Example Group2";
-            group_members = vec {
-            principal "6ydm4-srext-xsaic-y3v2x-cticp-5n6pf-2meh7-j43r6-rghg7-pt5nd-bqe";
-            principal "6ydm4-srext-xsaic-y3v2x-cticp-5n6pf-2meh7-j43r6-rghg7-pt5nd-bqe";
-            principal "ui2dz-muwb7-dhwzj-545cc-ets5d-wc3gr-hi5qi-zavzz-arybg-fsh6r-eae";  
-           };
-            group_permissions = vec { "example_permission" };
-            quorem = 65;
-        };
-        record {
-            group_name = "Example Group3";
-            group_members = vec { principal "aaaaa-aa" };
-            group_permissions = vec { "example_permission" };
-            quorem = 65;
-        }
     };
       
     }

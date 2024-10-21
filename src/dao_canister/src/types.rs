@@ -25,6 +25,13 @@ pub struct ProposalPlace {
     pub min_required_thredshold : u64,
 }
 
+
+#[derive(Clone, CandidType, Deserialize, Serialize)]
+pub struct ProposalCreation{
+    pub entry: String, 
+    pub proposal_type: ProposalType
+}
+
 #[derive(Debug, Clone, CandidType, Deserialize, Serialize, PartialEq, Eq)]
 pub enum ProposalType {
     AddMemberToDaoProposal,
@@ -36,9 +43,6 @@ pub enum ProposalType {
     BountyRaised,
     BountyDone,
     Polls,
-    UpgradeRemote,
-    UpdateSelf,
-    FunctionCall,
     TokenTransfer,
     GeneralPurpose,
     BountyClaim,
@@ -205,7 +209,7 @@ pub struct Dao {
     pub members: Vec<Principal>,
     pub members_count: u32,
     pub followers: Vec<Principal>,
-    pub members_permissions: Vec<String>,
+    pub members_permissions: Vec<ProposalType>,
     pub followers_count: u32,
     pub proposals_count: u32,
     pub proposal_ids: Vec<String>,
@@ -240,7 +244,7 @@ pub struct ChangeDaoPolicyArg {
 pub struct DaoGroup {
     pub group_name: String,
     pub group_members: Vec<Principal>,
-    pub group_permissions: Vec<String>,
+    pub group_permissions: Vec<ProposalType>,
     pub quorem: u8,
 }
 
@@ -259,7 +263,7 @@ pub struct DaoInput {
     pub image_canister: Principal,
     pub image_id: String,
     pub followers: Vec<Principal>,
-    pub members_permissions: Vec<String>,
+    pub members_permissions: Vec<ProposalType>,
     pub tokens_required_to_vote: u32,
     pub token_symbol: String,
     pub token_supply: u32,
@@ -381,9 +385,6 @@ pub struct CreateGeneralPurpose{
 //     pub polls: String,
 //     pub removemembers: String,
 //     pub addmembers: String,
-//     pub functioncall: String,
-//     pub upgradeself: String,
-//     pub upgraderemote: String,
 //     pub setvotetoken: String,
 //     pub votingpermision: String,
 // }

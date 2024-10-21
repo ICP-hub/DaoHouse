@@ -576,7 +576,7 @@ pub struct MinimalProfileinput {
 pub struct DaoGroup {
     pub group_name: String,
     pub group_members: Vec<Principal>,
-    pub group_permissions: Vec<String>,
+    pub group_permissions: Vec<ProposalType>,
     pub quorem: u8,
 }
 
@@ -651,7 +651,7 @@ pub struct DaoInput {
     pub image_content: ByteBuf,
     pub image_title: String,
     pub image_content_type: String,
-    pub members_permissions: Vec<String>,
+    pub members_permissions: Vec<ProposalType>,
     pub proposal_entry : Vec<ProposalPlace>,
 }
 
@@ -670,7 +670,7 @@ pub struct DaoCanisterInput {
     pub token_supply: u32,
     pub followers: Vec<Principal>,
     pub image_id: String,
-    pub members_permissions: Vec<String>,
+    pub members_permissions: Vec<ProposalType>,
     pub dao_groups: Vec<DaoGroup>,
     pub tokens_required_to_vote: u32,
     pub image_canister: Principal,
@@ -895,9 +895,6 @@ pub enum ProposalType {
     BountyRaised,
     BountyDone,
     Polls,
-    UpgradeRemote,
-    UpdateSelf,
-    FunctionCall,
     TokenTransfer,
     GeneralPurpose,
     BountyClaim,

@@ -68,7 +68,7 @@ type Dao = record {
   proposal_ids : vec text;
   image_id : text;
   groups_count : nat64;
-  members_permissions : vec text;
+  members_permissions : vec ProposalType;
   link_of_document : text;
   members_count : nat32;
   followers : vec principal;
@@ -83,7 +83,7 @@ type DaoGroup = record {
   group_members : vec principal;
   quorem : nat8;
   group_name : text;
-  group_permissions : vec text;
+  group_permissions : vec ProposalType;
 };
 type DaoInput = record {
   image_canister : principal;
@@ -96,7 +96,7 @@ type DaoInput = record {
   dao_groups : vec DaoGroup;
   dao_name : text;
   image_id : text;
-  members_permissions : vec text;
+  members_permissions : vec ProposalType;
   link_of_document : text;
   followers : vec principal;
   cool_down_period : nat32;
@@ -129,7 +129,6 @@ type ProposalType = variant {
   RemoveMemberToDaoProposal;
   ChangeDaoConfig;
   BountyDone;
-  UpgradeRemote;
   Polls;
   ChangeDaoPolicy;
   TokenTransfer;
@@ -138,8 +137,6 @@ type ProposalType = variant {
   BountyClaim;
   BountyRaised;
   AddMemberToGroupProposal;
-  FunctionCall;
-  UpdateSelf;
   GeneralPurpose;
 };
 type Proposals = record {
@@ -215,15 +212,6 @@ type TokenTransferPolicy = record {
   tokens : nat64;
   proposal_entry : text;
 };
-type UpdateDaoSettings = record {
-  members : vec principal;
-  linksandsocials : vec text;
-  daotype : text;
-  dao_name : text;
-  link_of_document : text;
-  followers : vec principal;
-  purpose : text;
-};
 type VoteParam = variant { No; Yes };
 service : (DaoInput) -> {
   add_ledger_canister_id : (LedgerCanisterId) -> (Result);
@@ -232,15 +220,15 @@ service : (DaoInput) -> {
   comment_on_proposal : (text, text) -> (Result_1);
   follow_dao : (principal) -> (Result_1);
   get_all_balances : (text) -> (ProposalStakes) query;
-  get_all_groups : () -> (vec DaoGroup);
+  get_all_groups : () -> (vec DaoGroup) query;
   get_all_proposals : (Pagination) -> (vec Proposals);
-  get_dao_detail : () -> (Dao);
+  get_dao_detail : () -> (Dao) query;
   get_dao_followers : () -> (vec principal) query;
   get_dao_groups : () -> (vec DaoGroup) query;
   get_dao_members : () -> (vec principal) query;
   get_members_of_group : (text) -> (Result_2) query;
-  get_my_proposal : () -> (Result_3);
-  get_proposal_by_id : (text) -> (Proposals);
+  get_my_proposal : () -> (Result_3) query;
+  get_proposal_by_id : (text) -> (Proposals) query;
   icrc_transfer : (TokenTransferArgs) -> (Result_4);
   make_payment : (nat64, principal) -> (Result_4);
   proposal_refresh : () -> (Result_1);
@@ -259,6 +247,5 @@ service : (DaoInput) -> {
   search_proposal : (text) -> (vec Proposals) query;
   transfer_token : (Test) -> (Result_1);
   unfollow_dao : (principal) -> (Result_1);
-  update_dao_settings : (UpdateDaoSettings) -> (Result_1);
   vote : (text, VoteParam) -> (Result_1);
 }

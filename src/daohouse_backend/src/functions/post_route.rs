@@ -22,7 +22,6 @@ use sha2::{Digest, Sha256};
 // #[update(guard = prevent_anonymous)]
 // async fn create_new_post(post_details: PostInput) -> Result<String, String> {
 //     let principal_id = api::caller();
-
 //     let uuids = match raw_rand().await {
 //         Ok(uuids) => uuids.0,
 //         Err(_) => {
@@ -30,7 +29,6 @@ use sha2::{Digest, Sha256};
 //         }
 //     };
 //     let post_id = format!("{:x}", Sha256::digest(&uuids));
-
 //     // upload image
 //     let image_id: Result<String, String> = upload_image(
 //         // canister_id,
@@ -41,7 +39,6 @@ use sha2::{Digest, Sha256};
 //         },
 //     )
 //     .await;
-
 //     let mut id = String::new();
 //     let image_create_res: bool = (match image_id {
 //         Ok(value) => {
@@ -395,7 +392,7 @@ use sha2::{Digest, Sha256};
 //     // })
 // }
 
-#[query]
+#[query(guard = prevent_anonymous)]
 fn get_all_dao(page_data: Pagination) -> Vec<DaoDetails> {
     let mut daos: Vec<DaoDetails> = Vec::new();
 
@@ -518,7 +515,7 @@ fn get_wasm() -> Result<Vec<u8>, String> {
     })
 }
 
-#[query]
+#[query(guard = prevent_anonymous)]
 fn search_dao(dao_name: String) -> Vec<DaoDetails> {
     let mut daos: Vec<DaoDetails> = Vec::new();
 
@@ -556,12 +553,9 @@ fn icrc28_trusted_origins() -> Icrc28TrustedOriginsResponse {
 // #[update]
 // async fn dao_create(canister_id: String, dao_detail: DaoInput) -> Result<String, String> {
 //     let principal_id = api::caller();
-
 //     let mut updated_members = dao_detail.members.clone();
 //     updated_members.push(principal_id.clone());
-
 //     // image upload
-
 //     let image_id: Result<String, String> = upload_image(
 //         canister_id,
 //         ImageData {
@@ -571,7 +565,6 @@ fn icrc28_trusted_origins() -> Icrc28TrustedOriginsResponse {
 //         },
 //     )
 //     .await;
-
 //     let mut id = String::new();
 //     let image_create_res: bool = (match image_id {
 //         Ok(value) => {
@@ -584,11 +577,9 @@ fn icrc28_trusted_origins() -> Icrc28TrustedOriginsResponse {
 //         }
 //     })
 //     .is_err();
-
 //     if image_create_res {
 //         return Err("Image upload failed".to_string());
 //     }
-
 //     let update_dau_detail = DaoCanisterInput {
 //         dao_name: dao_detail.dao_name.clone(),
 //         purpose: dao_detail.purpose.clone(),
@@ -603,9 +594,7 @@ fn icrc28_trusted_origins() -> Icrc28TrustedOriginsResponse {
 //         image_id: id.clone(),
 //         members_permissions: dao_detail.members_permissions,
 //     };
-
 //     let canister_args = CreateCanisterArgument { settings: None };
-
 //     let dao_detail_bytes: Vec<u8> = match candid::encode_one(&update_dau_detail) {
 //         Ok(bytes) => bytes,
 //         Err(e) => {
@@ -613,7 +602,6 @@ fn icrc28_trusted_origins() -> Icrc28TrustedOriginsResponse {
 //         }
 //     };
 // 100_000_000_000
-
 //     let record = create_canister(
 //         CreateCanisterArgument {
 //             settings: Some(CanisterSettings {
@@ -628,19 +616,15 @@ fn icrc28_trusted_origins() -> Icrc28TrustedOriginsResponse {
 //         100_000_000_000u128 + 2000000,
 //     )
 //     .await;
-
 //     let mut wasm_mod: Vec<u8> = Vec::new();
-
 //     with_state(|state| match state.wasm_module.get(&0) {
 //         Some(val) => wasm_mod = val.wasm,
 //         None => panic!("wasm load nhi hua bro"),
 //     });
-
 //     match record {
 //         Err((_, message)) => Err(["Failed to create canister.", &message].join(" - ")),
 //         Ok(record) => {
 //             let canister_id = record.0.canister_id;
-
 //             let install = install_code(
 //                 canister_id,
 //                 &WasmArg {
@@ -650,14 +634,12 @@ fn icrc28_trusted_origins() -> Icrc28TrustedOriginsResponse {
 //                 CanisterInstallMode::Install,
 //             )
 //             .await;
-
 //             match install {
 //                 Err(_) => Err("Failed to install code in canister.".to_string()),
 //                 Ok(_) => Ok(canister_id.to_string()),
 //             }
 //         }
 //     }
-
 //     // let result = match create_canister(canister_args, 120_000_000_000).await {
 //     //     Ok((canister_id,)) => (canister_id,),
 //     //     Err(err) => {
@@ -665,18 +647,13 @@ fn icrc28_trusted_origins() -> Icrc28TrustedOriginsResponse {
 //     //         return Err(err.1);
 //     //     }
 //     // };
-
 //     // call_with_payment128(result.0.canister_id.clone(), "deposit_cycles", Vec::new(), 100000000).await;
-
 //     // ic_cdk::println!("Created canister: {:?}", result.0.canister_id.to_text());
-
 //     // let mut wasm_mod: Vec<u8> = Vec::new();
-
 //     // with_state(|state| match state.wasm_module.get(&0) {
 //     //     Some(val) => wasm_mod = val.wasm,
 //     //     None => panic!("wasm load nhi hua bro"),
 //     // });
-
 //     // let install_code_argument = InstallCodeArgument {
 //     //     mode: CanisterInstallMode::Install,
 //     //     canister_id: result.0.canister_id,
@@ -684,10 +661,8 @@ fn icrc28_trusted_origins() -> Icrc28TrustedOriginsResponse {
 //     //     // arg: dao_detail_bytes,
 //     //     arg: vec![],
 //     // };
-
 //     // let installed_result =
 //     //     ic_cdk::api::management_canister::main::install_code(install_code_argument).await;
-
 //     // match installed_result {
 //     //     Ok(_) => {
 //     //         let dao_details: DaoDetails = DaoDetails {
@@ -697,18 +672,15 @@ fn icrc28_trusted_origins() -> Icrc28TrustedOriginsResponse {
 //     //             // image_id: id,
 //     //             dao_id: result.0.canister_id.clone(),
 //     //         };
-
 //     //         with_state(|state| {
 //     //             state
 //     //                 .dao_details
 //     //                 .insert(result.0.canister_id.to_string().clone(), dao_details)
 //     //         });
-
 //     //         Ok(result.0.canister_id.to_string())
 //     //     }
 //     //     Err(err) => Err(err.1),
 //     // }
-
 //     // Ok(result.0.canister_id.to_string())
 // }
 
@@ -723,6 +695,5 @@ fn icrc28_trusted_origins() -> Icrc28TrustedOriginsResponse {
 //         wasm_module: wasm.clone(),
 //         arg: install_arg.clone(),
 //     };
-
 //     ic_install_code(arg).await
 // }
