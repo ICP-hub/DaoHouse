@@ -20,7 +20,7 @@ for ((i = 1; i <= COUNT; i++)); do
       token_supply = 1000;
       token_symbol = "GOKU";
       members = vec{
-        principal "xtbxv-f7q6j-ophog-cryki-6oaez-j7agl-i74rt-wnpbm-bywl2-62j32-vqe";
+        principal "pgmei-dad4b-dtov2-dsddu-ps5wj-abu2y-wsl7w-sk52f-jzij4-ltxwo-fae";
         principal "6ydm4-srext-xsaic-y3v2x-cticp-5n6pf-2meh7-j43r6-rghg7-pt5nd-bqe";
         principal "yxtej-lmfuu-rp3yv-xzu2h-6q43c-7iast-yiwff-z552q-6ugas-pyd6b-fae";
       };
@@ -65,7 +65,7 @@ for ((i = 1; i <= COUNT; i++)); do
             quorem = 65;
         };
     };
-      
+    ask_to_join_dao = true;
     }
   )')
 
