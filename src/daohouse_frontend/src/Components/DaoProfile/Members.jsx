@@ -7,7 +7,7 @@ import { Principal } from "@dfinity/principal";
 import { MdAddBox } from "react-icons/md";
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 import userImage from "../../../assets/commentUser.jpg";
-import MyProfileSkelton from "../SkeletonLoaders/MyProfileSkelton";
+import MemberSkeleton from "../SkeletonLoaders/MemberSkeleton";
 
 const Members = ({ daoGroups, daoMembers }) => {
   const { backendActor } = useAuth();
@@ -92,7 +92,12 @@ const Members = ({ daoGroups, daoMembers }) => {
             >
               <p className="font-semibold big_phone:text-lg text-sm">Council</p>
               <p className="font-semibold big_phone:text-base text-sm">
-                {councilMembers.length ? councilMembers.length : "Loading..."} {councilMembers.length ? councilMembers.length === 1 ? "Member" : "Members" : ""}
+                {councilMembers.length ? councilMembers.length : "Loading..."}{" "}
+                {councilMembers.length
+                  ? councilMembers.length === 1
+                    ? "Member"
+                    : "Members"
+                  : ""}
               </p>
               {isCouncilOpen ? <IoIosArrowDown /> : <IoIosArrowUp />}
             </header>
@@ -100,7 +105,7 @@ const Members = ({ daoGroups, daoMembers }) => {
             {isCouncilOpen && (
               <div className="bg-white rounded-lg p-8">
                 {loading ? ( // Show skeleton loader while loading
-                  <MyProfileSkelton />
+                  <MemberSkeleton gridView={gridView} />
                 ) : (
                   <div style={gridView ? gridContainerStyle : listContainerStyle}>
                     {councilMembers.map((member, index) => (
@@ -121,8 +126,13 @@ const Members = ({ daoGroups, daoMembers }) => {
                 onClick={() => toggleOpenGroup(index)}
                 className="cursor-pointer flex flex-row items-center justify-between bg-[#AAC8D6] p-3 rounded-lg"
               >
-                <p className="font-semibold big_phone:text-lg text-sm">{group.group_name}</p>
-                <p className="font-semibold big_phone:text-base text-sm">{group.group_members.length} {group.group_members.length === 1 ? "Member": "Members"}</p>
+                <p className="font-semibold big_phone:text-lg text-sm">
+                  {group.group_name}
+                </p>
+                <p className="font-semibold big_phone:text-base text-sm">
+                  {group.group_members.length}{" "}
+                  {group.group_members.length === 1 ? "Member" : "Members"}
+                </p>
                 {openedGroupIndex === index ? (
                   <IoIosArrowDown className="font-bold big_phone:text-base text-sm" />
                 ) : (
@@ -131,15 +141,18 @@ const Members = ({ daoGroups, daoMembers }) => {
               </header>
 
               {openedGroupIndex === index && (
-                <div
-                  className="mobile:px-8 px-2 gap-2 big_phone:py-8 pb-4"
-                  style={gridView ? gridContainerStyle : listContainerStyle}
-                >
-                  {(groupMembers[group.group_name] || []).map((member, index) => (
-                    <React.Fragment key={index}>
-                      {gridView ? <GridView member={member} /> : <ListView member={member} />}
-                    </React.Fragment>
-                  ))}
+                <div className="bg-white rounded-lg p-8">
+                  {loading ? (
+                    <MemberSkeleton gridView={gridView} /> // Show skeleton loader for group members
+                  ) : (
+                    <div style={gridView ? gridContainerStyle : listContainerStyle}>
+                      {groupMembers[group.group_name]?.map((member, memberIndex) => (
+                        <React.Fragment key={memberIndex}>
+                          {gridView ? <GridView member={member} /> : <ListView member={member} />}
+                        </React.Fragment>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -161,12 +174,16 @@ const GridView = ({ member }) => {
     : userImage;
 
   return (
-    <div className="big_phone:flex hidden flex-col px-4 py-2 border border-[#97C3D3] rounded-lg">
+    <div className="big_phone:flex flex-col px-4 py-2 border border-[#97C3D3] rounded-lg">
       <div className="top flex flex-row items-start justify-between">
-        <section className="relative w-16 h-16">
-          <img src={profileImgSrc} alt="Image" className="rounded-[50%] w-full h-full object-cover" />
+        <section className="relative w-12 h-12 sm:w-16 sm:h-16">
+          <img
+            src={profileImgSrc}
+            alt="Image"
+            className="rounded-full w-full h-full object-cover" // Ensure circular shape
+          />
         </section>
-        <section className="details flex flex-col items-start">
+        <section className="details flex flex-col items-start ml-2"> {/* Added margin-left */}
           <p className="font-semibold text-lg">{member.Ok.username}</p>
           <p className="text-sm">{member.Ok.email_id}</p>
         </section>
@@ -185,10 +202,14 @@ const ListView = ({ member }) => {
     : userImage;
 
   return (
-    <div className="big_phone:hidden flex flex-col big_phone:p-2 px-1 py-2 gap-y-4 border border-[#97C3D3] rounded-lg">
+    <div className="flex flex-col big_phone:p-2 px-1 py-2 gap-y-2 border border-[#97C3D3] rounded-lg">
       <section className="top flex flex-row items-start justify-between">
-        <img src={profileImgSrc} alt="Image" className="w-12 h-12 rounded-[50%] object-cover" />
-        <section className="details flex flex-col items-start">
+        <img
+          src={profileImgSrc}
+          alt="Image"
+          className="w-12 h-12 rounded-full object-cover" // Ensure circular shape
+        />
+        <section className="details flex flex-col items-start ml-2"> {/* Added margin-left */}
           <p className="font-semibold text-base">{member.Ok.username}</p>
           <p className="text-sm">{member.Ok.email_id}</p>
         </section>
