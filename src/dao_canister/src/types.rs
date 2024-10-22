@@ -62,6 +62,12 @@ pub struct ProposalStakes {
     // pub staked_balances: Vec<AccountBalance>,
 }
 
+#[derive(Clone, CandidType, Deserialize, Serialize)]
+pub struct JoinDao {
+    pub daohouse_backend_id: Principal,
+    pub place_to_join : String,
+}
+
 #[derive(Clone, CandidType, Deserialize, Debug)]
 pub struct Proposals {
     pub proposal_id: String,
@@ -152,6 +158,7 @@ pub struct ProposalInput {
     pub link_of_task : Option<String>,
     pub associated_proposal_id :  Option<String>,
     pub new_required_votes : Option<u32>,
+    pub task_completion_day : Option<u64>,
     // pub proposal_amount:String,
     // pub proposal_receiver_id:String,
     // pub created_by: Principal,
@@ -221,6 +228,7 @@ pub struct Dao {
     pub tokens_required_to_vote: u32, // pub dao_groups: Vec<DaoGroup>,
     pub daohouse_canister_id: Principal,
     pub proposal_entry : Vec<ProposalPlace>,
+    pub ask_to_join_dao : bool,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
@@ -271,6 +279,7 @@ pub struct DaoInput {
     pub token_supply: u32,
     pub daohouse_canister_id: Principal,
     pub proposal_entry : Vec<ProposalPlace>,
+    pub ask_to_join_dao : bool,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
@@ -329,30 +338,29 @@ pub struct TokenTransferPolicy{
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct BountyRaised{
     pub description: String,
-    pub tokens: u64,
     pub bounty_task : String,
-    pub proposal_created_at: u64,
-    pub proposal_expired_at: u64,
     pub proposal_entry : String,
+    pub tokens: u64,
+    pub task_completion_day : u64,
 }
 
-#[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
-pub struct BountyClaim{
-    pub description: String,
-    pub bounty_task : String,
-    pub link_of_task : String,
-    pub proposal_entry : String,
-    pub associated_proposal_id : String,
-}
+// #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
+// pub struct BountyClaim{
+//     pub description: String,
+//     pub bounty_task : String,
+//     pub link_of_task : String,
+//     pub proposal_entry : String,
+//     pub associated_proposal_id : String,
+// }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct BountyDone{
-    pub action_member: Principal,
     pub description: String,
     pub tokens: u64,
     pub bounty_task : String,
-    pub to: Principal,
     pub proposal_entry : String,
+    pub daohouse_canister_id : Principal,
+    pub associated_proposal_id : String,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]

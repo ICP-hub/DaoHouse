@@ -162,6 +162,7 @@ dfx deploy dao_canister --argument "(record {
             quorem = 75;
         };
     };
+    ask_to_join_dao = true;
 })"
 
 

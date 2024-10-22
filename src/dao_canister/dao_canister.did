@@ -71,6 +71,7 @@ type Dao = record {
   members_permissions : vec ProposalType;
   link_of_document : text;
   members_count : nat32;
+  ask_to_join_dao : bool;
   followers : vec principal;
   followers_count : nat32;
   total_tokens : nat32;
@@ -98,6 +99,7 @@ type DaoInput = record {
   image_id : text;
   members_permissions : vec ProposalType;
   link_of_document : text;
+  ask_to_join_dao : bool;
   followers : vec principal;
   cool_down_period : nat32;
   proposal_entry : vec ProposalPlace;
@@ -105,6 +107,7 @@ type DaoInput = record {
   token_supply : nat32;
   required_votes : nat32;
 };
+type JoinDao = record { place_to_join : text; daohouse_backend_id : principal };
 type LedgerCanisterId = record { id : principal };
 type Pagination = record { end : nat32; start : nat32 };
 type ProposalPlace = record {
@@ -216,7 +219,7 @@ type TokenTransferPolicy = record {
 type VoteParam = variant { No; Yes };
 service : (DaoInput) -> {
   add_ledger_canister_id : (LedgerCanisterId) -> (Result);
-  ask_to_join_dao : (principal) -> (Result_1);
+  ask_to_join_dao : (JoinDao) -> (Result_1);
   change_proposal_state : (text, ProposalState) -> (Result_1);
   comment_on_proposal : (text, text) -> (Result_1);
   follow_dao : (principal) -> (Result_1);

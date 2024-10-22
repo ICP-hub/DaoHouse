@@ -1,6 +1,9 @@
 use crate::functions::icrc_transfer;
+use crate::proposal_route::create_proposal_controller;
 use crate::{
-    guards::*, AddMemberArgs, BountyClaim, BountyRaised, ChangeDaoConfigArg, ChangeDaoPolicy, CreateGeneralPurpose, CreatePoll, DaoGroup, LedgerCanisterId, ProposalCreation, ProposalInput, ProposalState, RemoveDaoMemberArgs, RemoveMemberArgs, Test, TokenTransferPolicy,
+    guards::*, AddMemberArgs, BountyDone, BountyRaised, ChangeDaoConfigArg, ChangeDaoPolicy,
+    CreateGeneralPurpose, CreatePoll, DaoGroup, JoinDao, LedgerCanisterId, ProposalCreation,
+    ProposalInput, RemoveDaoMemberArgs, RemoveMemberArgs, Test, TokenTransferPolicy,
 };
 use crate::{icrc_get_balance, TokenTransferArgs};
 use crate::{with_state, ProposalType};
@@ -23,13 +26,17 @@ async fn get_members_of_group(group: String) -> Result<Vec<Principal>, String> {
 #[update(guard = prevent_anonymous)]
 async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, String> {
     let proposal_data = ProposalCreation {
-        entry : args.proposal_entry.clone(),
-        proposal_type : ProposalType::AddMemberToGroupProposal
+        entry: args.proposal_entry.clone(),
+        proposal_type: ProposalType::AddMemberToGroupProposal,
     };
     guard_check_proposal_creation(proposal_data)?;
 
     let result = with_state(|state| {
-        match state.dao_groups.iter().find(|(_, group)| group.group_name == args.group_name) {
+        match state
+            .dao_groups
+            .iter()
+            .find(|(_, group)| group.group_name == args.group_name)
+        {
             Some(_) => Ok(()),
             None => Err(format!("No Group Name found with '{}'", args.group_name)),
         }
@@ -39,7 +46,7 @@ async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, 
         return Err(format!("No Group Name found with '{}' ", args.group_name));
     }
 
-    //create condition for check if group is exit or not for adding member , removing members 
+    //create condition for check if group is exit or not for adding member , removing members
 
     let mut required_thredshold = 0;
 
@@ -55,7 +62,10 @@ async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, 
                 Ok(())
             }
             None => {
-                return Err(format!("No place Found with the name of {:?}",args.proposal_entry));
+                return Err(format!(
+                    "No place Found with the name of {:?}",
+                    args.proposal_entry
+                ));
             }
         }
     });
@@ -82,7 +92,8 @@ async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, 
         minimum_threadsold: required_thredshold,
         link_of_task: None,
         associated_proposal_id: None,
-        new_required_votes : None,
+        new_required_votes: None,
+        task_completion_day: None,
     };
 
     with_state(|state| {
@@ -106,12 +117,16 @@ async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, 
 #[update(guard = prevent_anonymous)]
 async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<String, String> {
     let proposal_data = ProposalCreation {
-        entry : args.proposal_entry.clone(),
-        proposal_type : ProposalType::RemoveMemberToGroupProposal
+        entry: args.proposal_entry.clone(),
+        proposal_type: ProposalType::RemoveMemberToGroupProposal,
     };
     guard_check_proposal_creation(proposal_data)?;
     let result = with_state(|state| {
-        match state.dao_groups.iter().find(|(_, group)| group.group_name == args.group_name) {
+        match state
+            .dao_groups
+            .iter()
+            .find(|(_, group)| group.group_name == args.group_name)
+        {
             Some(_) => Ok(()),
             None => Err(format!("No Group Name found with '{}'", args.group_name)),
         }
@@ -133,7 +148,10 @@ async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<St
                 Ok(())
             }
             None => {
-                return Err(format!("No place Found with the name of {:?}",args.proposal_entry));
+                return Err(format!(
+                    "No place Found with the name of {:?}",
+                    args.proposal_entry
+                ));
             }
         }
     });
@@ -160,7 +178,8 @@ async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<St
         minimum_threadsold: required_thredshold,
         link_of_task: None,
         associated_proposal_id: None,
-        new_required_votes : None,
+        new_required_votes: None,
+        task_completion_day: None,
     };
 
     with_state(|state| {
@@ -184,8 +203,8 @@ async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<St
 async fn proposal_to_remove_member_to_dao(args: RemoveDaoMemberArgs) -> Result<String, String> {
     let mut required_thredshold = 0;
     let proposal_data = ProposalCreation {
-        entry : args.proposal_entry.clone(),
-        proposal_type : ProposalType::RemoveMemberToDaoProposal
+        entry: args.proposal_entry.clone(),
+        proposal_type: ProposalType::RemoveMemberToDaoProposal,
     };
     guard_check_proposal_creation(proposal_data)?;
 
@@ -201,7 +220,10 @@ async fn proposal_to_remove_member_to_dao(args: RemoveDaoMemberArgs) -> Result<S
                 Ok(())
             }
             None => {
-                return Err(format!("No place Found with the name of {:?}",args.proposal_entry));
+                return Err(format!(
+                    "No place Found with the name of {:?}",
+                    args.proposal_entry
+                ));
             }
         }
     });
@@ -228,7 +250,8 @@ async fn proposal_to_remove_member_to_dao(args: RemoveDaoMemberArgs) -> Result<S
         minimum_threadsold: required_thredshold,
         link_of_task: None,
         associated_proposal_id: None,
-        new_required_votes : None,
+        new_required_votes: None,
+        task_completion_day: None,
     };
 
     with_state(|state| {
@@ -250,8 +273,8 @@ async fn proposal_to_remove_member_to_dao(args: RemoveDaoMemberArgs) -> Result<S
 async fn proposal_to_change_dao_config(args: ChangeDaoConfigArg) -> Result<String, String> {
     let mut required_thredshold = 0;
     let proposal_data = ProposalCreation {
-        entry : args.proposal_entry.clone(),
-        proposal_type : ProposalType::ChangeDaoConfig
+        entry: args.proposal_entry.clone(),
+        proposal_type: ProposalType::ChangeDaoConfig,
     };
     guard_check_proposal_creation(proposal_data)?;
 
@@ -267,7 +290,10 @@ async fn proposal_to_change_dao_config(args: ChangeDaoConfigArg) -> Result<Strin
                 Ok(())
             }
             None => {
-                return Err(format!("No place Found with the name of {:?}",args.proposal_entry));
+                return Err(format!(
+                    "No place Found with the name of {:?}",
+                    args.proposal_entry
+                ));
             }
         }
     });
@@ -294,7 +320,8 @@ async fn proposal_to_change_dao_config(args: ChangeDaoConfigArg) -> Result<Strin
         minimum_threadsold: required_thredshold,
         link_of_task: None,
         associated_proposal_id: None,
-        new_required_votes : None,
+        new_required_votes: None,
+        task_completion_day: None,
     };
 
     crate::proposal_route::create_proposal_controller(
@@ -309,8 +336,8 @@ async fn proposal_to_change_dao_config(args: ChangeDaoConfigArg) -> Result<Strin
 async fn proposal_to_change_dao_policy(args: ChangeDaoPolicy) -> Result<String, String> {
     let mut required_thredshold = 0;
     let proposal_data = ProposalCreation {
-        entry : args.proposal_entry.clone(),
-        proposal_type : ProposalType::ChangeDaoPolicy
+        entry: args.proposal_entry.clone(),
+        proposal_type: ProposalType::ChangeDaoPolicy,
     };
     guard_check_proposal_creation(proposal_data)?;
 
@@ -326,7 +353,10 @@ async fn proposal_to_change_dao_policy(args: ChangeDaoPolicy) -> Result<String, 
                 Ok(())
             }
             None => {
-                return Err(format!("No place Found with the name of {:?}",args.proposal_entry));
+                return Err(format!(
+                    "No place Found with the name of {:?}",
+                    args.proposal_entry
+                ));
             }
         }
     });
@@ -353,7 +383,8 @@ async fn proposal_to_change_dao_policy(args: ChangeDaoPolicy) -> Result<String, 
         minimum_threadsold: required_thredshold,
         link_of_task: None,
         associated_proposal_id: None,
-        new_required_votes : Some(args.required_votes),
+        new_required_votes: Some(args.required_votes),
+        task_completion_day: None,
     };
     crate::proposal_route::create_proposal_controller(
         with_state(|state| state.dao.daohouse_canister_id),
@@ -366,8 +397,8 @@ async fn proposal_to_change_dao_policy(args: ChangeDaoPolicy) -> Result<String, 
 #[update(guard = prevent_anonymous)]
 async fn proposal_to_transfer_token(args: TokenTransferPolicy) -> Result<String, String> {
     let proposal_data = ProposalCreation {
-        entry : args.proposal_entry.clone(),
-        proposal_type : ProposalType::TokenTransfer
+        entry: args.proposal_entry.clone(),
+        proposal_type: ProposalType::TokenTransfer,
     };
     guard_check_proposal_creation(proposal_data)?;
 
@@ -400,7 +431,10 @@ async fn proposal_to_transfer_token(args: TokenTransferPolicy) -> Result<String,
                 Ok(())
             }
             None => {
-                return Err(format!("No place Found with the name of {:?}",args.proposal_entry));
+                return Err(format!(
+                    "No place Found with the name of {:?}",
+                    args.proposal_entry
+                ));
             }
         }
     });
@@ -427,7 +461,8 @@ async fn proposal_to_transfer_token(args: TokenTransferPolicy) -> Result<String,
         minimum_threadsold: required_thredshold,
         link_of_task: None,
         associated_proposal_id: None,
-        new_required_votes : None,
+        new_required_votes: None,
+        task_completion_day: None,
     };
     crate::proposal_route::create_proposal_controller(
         with_state(|state| state.dao.daohouse_canister_id),
@@ -439,6 +474,7 @@ async fn proposal_to_transfer_token(args: TokenTransferPolicy) -> Result<String,
 
 async fn transfer(tokens: u64, user_principal: Principal) -> Result<BlockIndex, String> {
     let canister_id: Principal = ic_cdk::api::id();
+    let ledger_canister_id = with_state(|state| state.dao.token_ledger_id.id);
 
     let transfer_args = TransferFromArgs {
         amount: tokens.into(),
@@ -457,8 +493,7 @@ async fn transfer(tokens: u64, user_principal: Principal) -> Result<BlockIndex, 
     };
 
     ic_cdk::call::<(TransferFromArgs,), (Result<BlockIndex, TransferFromError>,)>(
-        Principal::from_text("ryjl3-tyaaa-aaaaa-aaaba-cai")
-            .expect("Could not decode the principal if ICP ledger."),
+        ledger_canister_id,
         "icrc2_transfer_from",
         (transfer_args,),
     )
@@ -476,16 +511,10 @@ async fn make_payment(tokens: u64, user: Principal) -> Result<Nat, String> {
 #[update(guard = prevent_anonymous)]
 async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String> {
     let proposal_data = ProposalCreation {
-        entry : args.proposal_entry.clone(),
-        proposal_type : ProposalType::BountyRaised
+        entry: args.proposal_entry.clone(),
+        proposal_type: ProposalType::BountyRaised,
     };
     guard_check_proposal_creation(proposal_data)?;
-
-    let proposal_expire_time =
-        ic_cdk::api::time() + (args.proposal_expired_at as u64 * 86_400 * 1_000_000_000);
-    let principal_id: Principal = api::caller();
-    let canister_id: Principal = ic_cdk::api::id();
-
     let mut required_thredshold = 0;
 
     let _ = with_state(|state| {
@@ -500,13 +529,16 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
                 Ok(())
             }
             None => {
-               return Err(format!("No place Found with the name of {:?}",args.proposal_entry));
+                return Err(format!(
+                    "No place Found with the name of {:?}",
+                    args.proposal_entry
+                ));
             }
         }
     });
 
     let proposal = ProposalInput {
-        principal_of_action: Some(principal_id),
+        principal_of_action: Some(api::caller()),
         proposal_description: args.description,
         proposal_title: String::from(crate::utils::TITLE_BOUNTY_RAISED),
         proposal_type: ProposalType::BountyRaised,
@@ -514,10 +546,10 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
         group_to_join: None,
         dao_purpose: None,
         tokens: Some(args.tokens),
-        token_from: Some(principal_id),
-        token_to: Some(canister_id),
+        token_from: Some(ic_cdk::api::id()),
+        token_to: Some(api::caller()),
         proposal_created_at: None,
-        proposal_expired_at: Some(proposal_expire_time),
+        proposal_expired_at: None,
         bounty_task: Some(args.bounty_task),
         poll_title: None,
         required_votes: None,
@@ -527,7 +559,8 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
         minimum_threadsold: required_thredshold,
         link_of_task: None,
         associated_proposal_id: None,
-        new_required_votes : None,
+        new_required_votes: None,
+        task_completion_day: Some(args.task_completion_day),
     };
 
     crate::proposal_route::create_proposal_controller(
@@ -535,45 +568,19 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
         proposal,
     )
     .await;
+
     Ok(String::from(crate::utils::MESSAGE_BOUNTY_RAISED))
 }
 
 #[update(guard = prevent_anonymous)]
-async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
-    
+async fn create_bounty_done_proposal(args: BountyDone) -> Result<String, String> {
     let proposal_data = ProposalCreation {
-        entry : args.proposal_entry.clone(),
-        proposal_type : ProposalType::BountyClaim
+        entry: args.proposal_entry.clone(),
+        proposal_type: ProposalType::BountyRaised,
     };
+
     guard_check_proposal_creation(proposal_data)?;
-
     let mut required_thredshold = 0;
-    let mut tokens: u64 = 0;
-    let mut expired_at: u64 = 0;
-    let mut token_from: Option<Principal> = None;
-    let proposals_data = with_state(|state| state.proposals.get(&args.associated_proposal_id));
-
-    if let Some(proposal) = proposals_data {
-        let proposal_type = proposal.proposal_type;
-        let proposal_status = proposal.proposal_status; 
-
-        if proposal_type != ProposalType::BountyRaised {
-            return Err(String::from("The Proposal you wish to claim is not related to the bounty raised"));
-        };
-        
-        if proposal_status != ProposalState::Accepted{
-            return Err(String::from("The Proposal you wish to claim is not under the Accepted status"));
-        }
-
-        if proposal_status == ProposalState::Succeeded{
-            return Err(String::from("Proposal you wish to claim has already been completed"));
-        }
-        
-        tokens = proposal.tokens.unwrap_or(0);
-        token_from = proposal.token_from;
-        expired_at = proposal.proposal_expired_at;
-    }
-
     let _ = with_state(|state| {
         match state
             .dao
@@ -586,48 +593,124 @@ async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
                 Ok(())
             }
             None => {
-                return Err(format!("No place Found with the name of {:?}",args.proposal_entry));
+                return Err(format!(
+                    "No place Found with the name of {:?}",
+                    args.proposal_entry
+                ));
             }
         }
     });
 
-    let proposal = ProposalInput {
+    let proposal_input = ProposalInput {
         principal_of_action: Some(api::caller()),
         proposal_description: args.description,
-        proposal_title: String::from(crate::utils::TITLE_BOUNTY_CLAIM),
-        proposal_type: ProposalType::BountyClaim,
+        proposal_title: String::from(crate::utils::TITLE_BOUNTY_DONE),
+        proposal_type: ProposalType::BountyDone,
         new_dao_name: None,
         group_to_join: None,
         dao_purpose: None,
-        tokens: Some(tokens),
-        token_from,
+        tokens: Some(args.tokens),
+        token_from: Some(api::id()),
         token_to: Some(api::caller()),
         proposal_created_at: None,
-        proposal_expired_at: Some(expired_at),
-        bounty_task: Some(args.bounty_task),
+        proposal_expired_at: None,
+        bounty_task: Some(args.bounty_task.clone()),
         poll_title: None,
         required_votes: None,
         cool_down_period: None,
         group_to_remove: None,
         new_dao_type: None,
         minimum_threadsold: required_thredshold,
-        link_of_task: Some(args.link_of_task),
-        associated_proposal_id: Some(args.associated_proposal_id),
-        new_required_votes : None,
+        link_of_task: None,
+        associated_proposal_id: Some(args.associated_proposal_id.clone()),
+        new_required_votes: None,
+        task_completion_day: None,
     };
-    crate::proposal_route::create_proposal_controller(
-        with_state(|state| state.dao.daohouse_canister_id),
-        proposal,
-    )
-    .await;
-    Ok(String::from(crate::utils::MESSAGE_BOUNTY_CLAIM))
+    create_proposal_controller(args.daohouse_canister_id.clone(), proposal_input.clone()).await;
+    Ok(String::from(crate::utils::MESSAGE_BOUNTY_DONE))
 }
+
+// #[update(guard = prevent_anonymous)]
+// async fn proposal_to_bounty_claim(args: BountyClaim) -> Result<String, String> {
+//     let proposal_data = ProposalCreation {
+//         entry : args.proposal_entry.clone(),
+//         proposal_type : ProposalType::BountyClaim
+//     };
+//     guard_check_proposal_creation(proposal_data)?;
+//     let mut required_thredshold = 0;
+//     let mut tokens: u64 = 0;
+//     let mut expired_at: u64 = 0;
+//     let mut token_from: Option<Principal> = None;
+//     let proposals_data = with_state(|state| state.proposals.get(&args.associated_proposal_id));
+//     if let Some(proposal) = proposals_data {
+//         let proposal_type = proposal.proposal_type;
+//         let proposal_status = proposal.proposal_status;
+//         if proposal_type != ProposalType::BountyRaised {
+//             return Err(String::from("The Proposal you wish to claim is not related to the bounty raised"));
+//         };
+//         if proposal_status != ProposalState::Accepted{
+//             return Err(String::from("The Proposal you wish to claim is not under the Accepted status"));
+//         }
+//         if proposal_status == ProposalState::Succeeded{
+//             return Err(String::from("Proposal you wish to claim has already been completed"));
+//         }
+//         tokens = proposal.tokens.unwrap_or(0);
+//         token_from = proposal.token_from;
+//         expired_at = proposal.proposal_expired_at;
+//     }
+//     let _ = with_state(|state| {
+//         match state
+//             .dao
+//             .proposal_entry
+//             .iter()
+//             .find(|place| place.place_name == args.proposal_entry)
+//         {
+//             Some(val) => {
+//                 required_thredshold = val.min_required_thredshold;
+//                 Ok(())
+//             }
+//             None => {
+//                 return Err(format!("No place Found with the name of {:?}",args.proposal_entry));
+//             }
+//         }
+//     });
+//     let proposal = ProposalInput {
+//         principal_of_action: Some(api::caller()),
+//         proposal_description: args.description,
+//         proposal_title: String::from(crate::utils::TITLE_BOUNTY_CLAIM),
+//         proposal_type: ProposalType::BountyClaim,
+//         new_dao_name: None,
+//         group_to_join: None,
+//         dao_purpose: None,
+//         tokens: Some(tokens),
+//         token_from,
+//         token_to: Some(api::caller()),
+//         proposal_created_at: None,
+//         proposal_expired_at: Some(expired_at),
+//         bounty_task: Some(args.bounty_task),
+//         poll_title: None,
+//         required_votes: None,
+//         cool_down_period: None,
+//         group_to_remove: None,
+//         new_dao_type: None,
+//         minimum_threadsold: required_thredshold,
+//         link_of_task: Some(args.link_of_task),
+//         associated_proposal_id: Some(args.associated_proposal_id),
+//         new_required_votes : None,
+//     };
+//     crate::proposal_route::create_proposal_controller(
+//         with_state(|state| state.dao.daohouse_canister_id),
+//         proposal,
+//     )
+//     .await;
+//     Ok(String::from(crate::utils::MESSAGE_BOUNTY_CLAIM))
+// }
 
 #[update(guard = prevent_anonymous)]
 async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
     let proposal_data = ProposalCreation {
-        entry : args.proposal_entry.clone(),
-        proposal_type : ProposalType::Polls
+        entry: args.proposal_entry.clone(),
+        proposal_type: ProposalType::Polls,
     };
     guard_check_proposal_creation(proposal_data)?;
 
@@ -647,7 +730,10 @@ async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
                 Ok(())
             }
             None => {
-                return Err(format!("No place Found with the name of {:?}",args.proposal_entry));
+                return Err(format!(
+                    "No place Found with the name of {:?}",
+                    args.proposal_entry
+                ));
             }
         }
     });
@@ -674,7 +760,8 @@ async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
         minimum_threadsold: required_thredshold,
         link_of_task: None,
         associated_proposal_id: None,
-        new_required_votes : None,
+        new_required_votes: None,
+        task_completion_day: None,
     };
     crate::proposal_route::create_proposal_controller(
         with_state(|state| state.dao.daohouse_canister_id),
@@ -686,10 +773,9 @@ async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
 
 #[update(guard = prevent_anonymous)]
 async fn proposal_to_create_general_purpose(args: CreateGeneralPurpose) -> Result<String, String> {
-    
     let proposal_data = ProposalCreation {
-        entry : args.proposal_entry.clone(),
-        proposal_type : ProposalType::GeneralPurpose
+        entry: args.proposal_entry.clone(),
+        proposal_type: ProposalType::GeneralPurpose,
     };
 
     guard_check_proposal_creation(proposal_data)?;
@@ -708,7 +794,10 @@ async fn proposal_to_create_general_purpose(args: CreateGeneralPurpose) -> Resul
                 Ok(())
             }
             None => {
-                return Err(format!("No place Found with the name of {:?}",args.proposal_entry));
+                return Err(format!(
+                    "No place Found with the name of {:?}",
+                    args.proposal_entry
+                ));
             }
         }
     });
@@ -735,7 +824,8 @@ async fn proposal_to_create_general_purpose(args: CreateGeneralPurpose) -> Resul
         minimum_threadsold: required_thredshold,
         link_of_task: None,
         associated_proposal_id: None,
-        new_required_votes : None,
+        new_required_votes: None,
+        task_completion_day: None,
     };
     crate::proposal_route::create_proposal_controller(
         with_state(|state| state.dao.daohouse_canister_id),
@@ -810,13 +900,12 @@ async fn proposal_to_create_general_purpose(args: CreateGeneralPurpose) -> Resul
 // }
 
 #[update(guard = prevent_anonymous)]
-async fn ask_to_join_dao(daohouse_backend_id: Principal) -> Result<String, String> {
+async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
     crate::guards::guard_check_if_proposal_exists(
         api::caller(),
         ProposalType::AddMemberToDaoProposal,
     )?;
 
-    // let min_required_thredshold = 51 as u64;
     with_state(|state| {
         if state.dao.members.contains(&api::caller()) {
             return Err(format!("Member already exist in this dao"));
@@ -824,20 +913,24 @@ async fn ask_to_join_dao(daohouse_backend_id: Principal) -> Result<String, Strin
         Ok(())
     })?;
 
+    let should_ask = with_state(|state| state.dao.ask_to_join_dao);
+    if !should_ask {
+        with_state(|state| {
+            state.dao.members.push(api::caller());
+            state.dao.members_count += 1;
+        });
+        return Ok(String::from("Dao Joined successfully"));
+    };
     let principal_id = api::caller();
     let dao_id = ic_cdk::api::id();
-    // let proposal_entry = ProposalPlace {
-    //     place_name: "Council".to_string(),
-    //     min_required_thredshold: min_required_thredshold,
-    // };
     let mut required_thredshold = 0;
 
-    let _ = with_state(|state| {
+    let result = with_state(|state| {
         match state
             .dao
             .proposal_entry
             .iter()
-            .find(|place| place.place_name == "Council".to_string())
+            .find(|place| place.place_name == args.place_to_join)
         {
             Some(val) => {
                 required_thredshold = val.min_required_thredshold;
@@ -848,6 +941,10 @@ async fn ask_to_join_dao(daohouse_backend_id: Principal) -> Result<String, Strin
             }
         }
     });
+
+    if result.is_err() {
+        return Err(format!("No place Found for join this dao"));
+    }
 
     let proposal = ProposalInput {
         proposal_description: String::from(crate::utils::REQUEST_JOIN_DAO),
@@ -871,11 +968,12 @@ async fn ask_to_join_dao(daohouse_backend_id: Principal) -> Result<String, Strin
         minimum_threadsold: required_thredshold,
         link_of_task: None,
         associated_proposal_id: None,
-        new_required_votes : None,
+        new_required_votes: None,
+        task_completion_day: None,
     };
 
     let response: CallResult<(Result<(), String>,)> = ic_cdk::call(
-        daohouse_backend_id,
+        args.daohouse_backend_id,
         "store_join_dao",
         (dao_id, principal_id),
     )
@@ -897,7 +995,7 @@ async fn ask_to_join_dao(daohouse_backend_id: Principal) -> Result<String, Strin
         }
     };
 
-    Ok(crate::proposal_route::create_proposal_controller(daohouse_backend_id, proposal).await)
+    Ok(crate::proposal_route::create_proposal_controller(args.daohouse_backend_id, proposal).await)
 }
 
 // #[query]

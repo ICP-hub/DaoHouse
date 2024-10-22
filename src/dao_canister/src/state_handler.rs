@@ -45,7 +45,8 @@ impl State {
                 token_symbol: String::new(),
                 image_canister: Principal::anonymous(),
                 daohouse_canister_id: Principal::anonymous(),
-                proposal_entry : vec![]
+                proposal_entry : vec![],
+                ask_to_join_dao : true,
             },
 
             // permision: Votingandpermissions {

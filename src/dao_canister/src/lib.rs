@@ -97,7 +97,7 @@ fn check_proposals() {
                     && !proposal.has_been_processed_second
                 {
                     let proposal_clone = proposal.clone();
-                    let daohouse_canister_id = state.dao.daohouse_canister_id.clone();
+                    // let daohouse_canister_id = state.dao.daohouse_canister_id.clone();
 
                     match proposal.proposal_type {
                         ProposalType::AddMemberToDaoProposal => {
@@ -158,36 +158,29 @@ fn check_proposals() {
                                 state.proposals.insert(proposal_id.clone(), proposal);
                             }
                         }
-                        ProposalType::BountyClaim => {
-                            if !proposal.has_been_processed_second {
-                                ic_cdk::println!(" BountyClaim ");
-
-                                if let Some(associated_proposal_id) = proposal.associated_proposal_id.clone() {
-                                    if let Some(mut proposal_data) =
-                                    state.proposals.get(&associated_proposal_id).clone() {
-                               
-                               if proposal_data.proposal_status != ProposalState::Executing {
-            
-                                    proposal_data.proposal_status = ProposalState::Executing;
-                                            
-                                            ic_cdk::spawn(async move {
-                                            create_bounty_done_proposal(
-                                                daohouse_canister_id,
-                                                &proposal_clone,
-                                            ).await;
-                                        });
-
-                                  state.proposals.insert(associated_proposal_id.clone(), proposal_data);
-                                  
-                                }else{
-                                    proposal.proposal_status = ProposalState::LateSubmission;
-                                }
-                                proposal.has_been_processed_second = true;
-                                state.proposals.insert(proposal_id.clone(), proposal);
-                                }
-                                }
-                            }
-                        }
+                        // ProposalType::BountyClaim => {
+                        //     if !proposal.has_been_processed_second {
+                        //         ic_cdk::println!(" BountyClaim ");
+                        //         if let Some(associated_proposal_id) = proposal.associated_proposal_id.clone() {
+                        //             if let Some(mut proposal_data) =
+                        //             state.proposals.get(&associated_proposal_id).clone() {     
+                        //        if proposal_data.proposal_status != ProposalState::Executing {
+                        //             proposal_data.proposal_status = ProposalState::Executing;                 
+                        //                     ic_cdk::spawn(async move {
+                        //                     create_bounty_done_proposal(
+                        //                         daohouse_canister_id,
+                        //                         &proposal_clone,
+                        //                     ).await;
+                        //                 });
+                        //           state.proposals.insert(associated_proposal_id.clone(), proposal_data);                        //         }else{
+                        //             proposal.proposal_status = ProposalState::LateSubmission;
+                        //         }
+                        //         proposal.has_been_processed_second = true;
+                        //         state.proposals.insert(proposal_id.clone(), proposal);
+                        //         }
+                        //         }
+                        //     }
+                        // }
                         ProposalType::BountyDone => {
                             if !proposal.has_been_processed_second {
                                 ic_cdk::println!(" BountyDone ");
@@ -307,39 +300,40 @@ fn check_proposals() {
     });
 }
 
-async fn create_bounty_done_proposal(daohouse_canister_id: Principal, proposal: &Proposals) {
-    let proposal_input = ProposalInput {
-        principal_of_action: Some(proposal.principal_of_action.clone()),
-        proposal_description: String::from(crate::utils::DESCRIPTION_BOUNTY_DONE),
-        proposal_title: String::from(crate::utils::TITLE_BOUNTY_DONE),
-        proposal_type: ProposalType::BountyDone,
-        new_dao_name: None,
-        group_to_join: None,
-        dao_purpose: None,
-        tokens: proposal.tokens,
-        token_from: proposal.token_from.clone(),
-        token_to: proposal.token_to.clone(),
-        proposal_created_at: None,
-        proposal_expired_at: None,
-        bounty_task: proposal.bounty_task.clone(),
-        poll_title: None,
-        required_votes: None,
-        cool_down_period: None,
-        group_to_remove: None,
-        new_dao_type: None,
-        minimum_threadsold: proposal.minimum_threadsold.clone(),
-        link_of_task: None,
-        associated_proposal_id: proposal.associated_proposal_id.clone(),
-        new_required_votes : None,
-    };
-    ic_cdk::spawn(async move {
-        crate::proposal_route::create_proposal_controller(
-            daohouse_canister_id.clone(),
-            proposal_input.clone(),
-        )
-        .await;
-    });
-}
+// async fn create_bounty_done_proposal(daohouse_canister_id: Principal, proposal: &Proposals) {
+//     let proposal_input = ProposalInput {
+//         principal_of_action: Some(proposal.principal_of_action.clone()),
+//         proposal_description: String::from(crate::utils::DESCRIPTION_BOUNTY_DONE),
+//         proposal_title: String::from(crate::utils::TITLE_BOUNTY_DONE),
+//         proposal_type: ProposalType::BountyDone,
+//         new_dao_name: None,
+//         group_to_join: None,
+//         dao_purpose: None,
+//         tokens: proposal.tokens,
+//         token_from: proposal.token_from.clone(),
+//         token_to: proposal.token_to.clone(),
+//         proposal_created_at: None,
+//         proposal_expired_at: None,
+//         bounty_task: proposal.bounty_task.clone(),
+//         poll_title: None,
+//         required_votes: None,
+//         cool_down_period: None,
+//         group_to_remove: None,
+//         new_dao_type: None,
+//         minimum_threadsold: proposal.minimum_threadsold.clone(),
+//         link_of_task: None,
+//         associated_proposal_id: proposal.associated_proposal_id.clone(),
+//         new_required_votes : None,
+//         task_completion_day : None,
+//     };
+//     ic_cdk::spawn(async move {
+//         crate::proposal_route::create_proposal_controller(
+//             daohouse_canister_id.clone(),
+//             proposal_input.clone(),
+//         )
+//         .await;
+//     });
+// }
 
 fn add_member_to_dao(state: &mut State, proposal: &Proposals) {
     let dao = &mut state.dao;
@@ -578,6 +572,7 @@ async fn init(dao_input: DaoInput) {
         daohouse_canister_id: dao_input.daohouse_canister_id,
         token_symbol: dao_input.token_symbol,
         proposal_entry: proposal_entry,
+        ask_to_join_dao : dao_input.ask_to_join_dao,
     };
 
     // let permission = Votingandpermissions {

@@ -35,6 +35,7 @@ type DaoInput = record {
   members_permissions : vec ProposalType;
   link_of_document : text;
   image_content_type : text;
+  ask_to_join_dao : bool;
   cool_down_period : nat32;
   token_name : text;
   proposal_entry : vec ProposalPlace;
