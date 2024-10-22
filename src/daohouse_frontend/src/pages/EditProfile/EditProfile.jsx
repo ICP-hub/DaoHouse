@@ -283,6 +283,12 @@ const EditProfile = () => {
     };
   }, [isModalOpen]); // STOP SCROLLING 
 
+  const isSaveDisabled = () => {
+    // Disable Save button if contact number is less than 10 digits
+    return !profileData.contact_number || profileData.contact_number.length < 10 || errors.contact_number;
+  };
+
+
   return (
     <div className="bg-zinc-200 w-full  pb-20 relative">
       <div
@@ -432,12 +438,13 @@ const EditProfile = () => {
                 Personal Links & Contact Info
               </p>
               <EditPersonalLinksAndContactInfo
-                profileData={profileData}
-                handleInputChange={handleInputChange}
-                handleSaveChangesClick={handleSaveChangesClick}
-                closeModal={closeModal}
-                errors={errors}
-              />
+              profileData={profileData}
+              handleInputChange={handleInputChange}
+              handleSaveChangesClick={handleSaveChangesClick}
+              closeModal={() => setIsModalOpen(false)}
+              errors={errors}
+              isSaveDisabled={isSaveDisabled} // Pass the function to disable the button
+            />
               <div className="hidden sm:flex justify-center gap-5 mt-8">
                 <button
                   onClick={handleDiscardClick}
@@ -451,8 +458,9 @@ const EditProfile = () => {
                   <button
                     onClick={handleSaveChangesClick}
                     className="py-2 px-10 border border-[#0E3746] bg-[#0E3746] text-white hover:bg-[#0E37464D] hover:border-[#0E37464D] rounded-[27px] transition duration-200 ease-in-out"
-                  >
-                    Save Changes
+                    disabled={isSaveDisabled()}
+                 >
+                    Save 
                   </button>
                 )}
               </div>
