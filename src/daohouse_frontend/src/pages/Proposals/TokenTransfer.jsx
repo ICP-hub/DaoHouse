@@ -11,17 +11,20 @@ const TokenTransfer = ({ tokenTransfer, handleInputTransferToken }) => (
         onChange={handleInputTransferToken}
         className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
         placeholder="Enter sender's principal"
+        required
       />
     </div>
     <div className="mb-4">
       <label className="mb-2 font-semibold text-xl">Description</label>
-      <input
+      <textarea
         type="text"
         name="description"
         value={tokenTransfer.description}
         onChange={handleInputTransferToken}
         className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
         placeholder="Enter description"
+        rows={4}
+        required
       />
     </div>
     <div className="mb-4">
@@ -33,6 +36,7 @@ const TokenTransfer = ({ tokenTransfer, handleInputTransferToken }) => (
         onChange={handleInputTransferToken}
         className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
         placeholder="Enter tokens"
+        required
       />
     </div>
     {/* <div className="mb-4">

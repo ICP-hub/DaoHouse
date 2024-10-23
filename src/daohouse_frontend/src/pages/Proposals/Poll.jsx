@@ -27,12 +27,13 @@ const Poll = ({ poll, handleInputPoll, setPoll }) => {
                     onChange={handleInputPoll}
                     className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                     placeholder="Enter Poll Title"
+                    required
                 />
             </div>
 
             <div className="mb-4">
                 <label htmlFor="description" className="mb-2 font-semibold text-xl">Description</label>
-                <input
+                <textarea
                     id="description"
                     type="text"
                     name="description"
@@ -40,6 +41,8 @@ const Poll = ({ poll, handleInputPoll, setPoll }) => {
                     onChange={handleInputPoll}
                     className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                     placeholder="Enter Description"
+                    rows={4}
+                    required
                 />
             </div>
 
@@ -66,6 +69,7 @@ const Poll = ({ poll, handleInputPoll, setPoll }) => {
                     onChange={handleInputPoll}
                     className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                     disabled // Disable the field
+                    required
                 />
             </div>
 
@@ -79,6 +83,7 @@ const Poll = ({ poll, handleInputPoll, setPoll }) => {
                     onChange={handleInputPoll}
                     className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                     min={getTodayDate()} // Set minimum date to today's date
+                    required
                 />
             </div>
             
