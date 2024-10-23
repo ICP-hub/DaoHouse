@@ -1,6 +1,5 @@
 use candid::{CandidType, Decode, Encode, Principal};
 use ic_stable_structures::{storable::Bound, Storable};
-// use serde::Deserialize;
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 
@@ -45,13 +44,11 @@ pub enum ProposalType {
     Polls,
     TokenTransfer,
     GeneralPurpose,
-    BountyClaim,
 }
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct AccountBalance {
     pub id: Principal,
-    // pub balance: u32,
     pub staked: u32,
 }
 
@@ -59,7 +56,6 @@ pub struct AccountBalance {
 pub struct ProposalStakes {
     pub proposal_id: String,
     pub balances: Vec<AccountBalance>,
-    // pub staked_balances: Vec<AccountBalance>,
 }
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
@@ -74,10 +70,8 @@ pub struct Proposals {
     pub proposal_title: String,
     pub proposal_description: String,
     pub proposal_status: ProposalState,
-    // pub proposal_amount:String,
     pub proposal_submitted_at: u64,
     pub proposal_expired_at: u64,
-    // pub proposal_receiver_id:String,
     pub proposal_approved_votes: u64,
     pub approved_votes_list: Vec<Principal>,
     pub proposal_rejected_votes: u64,
@@ -86,11 +80,10 @@ pub struct Proposals {
     pub created_by: Principal,
     pub comments: u32,
     pub likes: u32,
-    // pub comments_list:Vec<Comment>,
     pub comments_list: Vec<Comment>,
     pub proposal_type: ProposalType,
     pub share_count: u64,
-    pub principal_of_action: Principal, // principal id of user who is to be added, removed, transfered funds
+    pub principal_of_action: Principal, 
     pub group_to_join: Option<String>,
     pub new_dao_name : Option<String>,
     pub new_dao_purpose : Option<String>,
@@ -102,15 +95,14 @@ pub struct Proposals {
     pub token_to: Option<Principal>,
     pub has_been_processed: bool, 
     pub has_been_processed_second : bool,
-    // pub proposal_entry : ProposalPlace,
     pub minimum_threadsold : u64,
     pub link_of_task : Option<String>,
     pub bounty_task : Option<String>,
     pub associated_proposal_id : Option<String>,
     pub new_required_votes : Option<u32>,
+    pub task_completion_day : Option<u64>,
 }
 
-// for proposal comments
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct Comment {
     pub author_principal: Principal,
@@ -142,7 +134,7 @@ pub struct ProposalInput {
     pub group_to_join: Option<String>,
     pub group_to_remove: Option<String>,
     pub proposal_type: ProposalType,
-    pub principal_of_action: Option<Principal>, // principal id of user who is to be added, removed, transfered funds
+    pub principal_of_action: Option<Principal>,
     pub new_dao_name : Option<String>,
     pub new_dao_type : Option<String>,
     pub dao_purpose : Option<String>,
@@ -159,22 +151,7 @@ pub struct ProposalInput {
     pub associated_proposal_id :  Option<String>,
     pub new_required_votes : Option<u32>,
     pub task_completion_day : Option<u64>,
-    // pub proposal_amount:String,
-    // pub proposal_receiver_id:String,
-    // pub created_by: Principal,
 }
-
-// #[derive(Clone, CandidType, Serialize, Deserialize)]
-// pub struct NewProposal {
-//     pub proposal_title: String,
-//     pub proposal_description: String,
-//     pub required_votes: u32,
-//     pub proposal_type: ProposalType,
-//     // pub proposal_expired_at: u64,
-//     // pub proposal_amount:String,
-//     // pub proposal_receiver_id:String,
-//     // pub created_by: Principal,
-// }
 
 #[derive(CandidType, Serialize, Deserialize)]
 pub struct Pagination {
@@ -208,11 +185,9 @@ pub struct Dao {
     pub daotype: String,
     pub link_of_document: String,
     pub cool_down_period: u32,
-    // pub tokenissuer: String,
     pub linksandsocials: Vec<String>,
     pub required_votes: u32,
     pub groups_count: u64,
-    // pub group_name: Vec<String>,
     pub image_canister: Principal,
     pub image_id: String,
     pub members: Vec<Principal>,
@@ -225,7 +200,7 @@ pub struct Dao {
     pub token_ledger_id: LedgerCanisterId,
     pub total_tokens: u32,
     pub token_symbol: String,
-    pub tokens_required_to_vote: u32, // pub dao_groups: Vec<DaoGroup>,
+    pub tokens_required_to_vote: u32, 
     pub daohouse_canister_id: Principal,
     pub proposal_entry : Vec<ProposalPlace>,
     pub ask_to_join_dao : bool,
@@ -266,7 +241,6 @@ pub struct DaoInput {
     pub link_of_document: String,
     pub cool_down_period: u32,
     pub members: Vec<Principal>,
-    // pub tokenissuer: String,
     pub linksandsocials: Vec<String>,
     pub required_votes: u32,
     pub dao_groups: Vec<DaoGroup>,
@@ -288,9 +262,7 @@ pub struct UpdateDaoSettings {
     pub purpose: String,
     pub daotype: String,
     pub link_of_document: String,
-    // pub cool_down_period: String,
     pub linksandsocials: Vec<String>,
-    // pub required_votes: i8,
     pub members: Vec<Principal>,
     pub followers: Vec<Principal>,
 }
@@ -299,7 +271,6 @@ pub struct UpdateDaoSettings {
 pub struct AddMemberArgs {
     pub group_name: String,
     pub new_member: Principal,
-    // pub daohouse_canister: Principal,
     pub description: String,
     pub proposal_entry : String,
 }
@@ -343,21 +314,10 @@ pub struct BountyRaised{
     pub tokens: u64,
     pub task_completion_day : u64,
 }
-
-// #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
-// pub struct BountyClaim{
-//     pub description: String,
-//     pub bounty_task : String,
-//     pub link_of_task : String,
-//     pub proposal_entry : String,
-//     pub associated_proposal_id : String,
-// }
-
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct BountyDone{
     pub description: String,
     pub tokens: u64,
-    pub bounty_task : String,
     pub proposal_entry : String,
     pub daohouse_canister_id : Principal,
     pub associated_proposal_id : String,
@@ -379,26 +339,6 @@ pub struct CreateGeneralPurpose{
     pub proposal_entry : String,
 }
 
-
-// #[derive(Clone, CandidType, Serialize, Deserialize)]
-// pub struct GroupList {
-//     pub users: Vec<Principal>,
-// }
-
-// #[derive(Clone, CandidType, Serialize, Deserialize)]
-// pub struct Votingandpermissions {
-//     pub changedao_config: String,
-//     pub changedao_policy: String,
-//     pub bounty: String,
-//     pub bountydone: String,
-//     pub transfer: String,
-//     pub polls: String,
-//     pub removemembers: String,
-//     pub addmembers: String,
-//     pub setvotetoken: String,
-//     pub votingpermision: String,
-// }
-
 #[derive(Clone, CandidType, Serialize, Deserialize, PartialEq)]
 pub enum VoteParam {
     Yes,
@@ -418,7 +358,6 @@ pub struct ProposalInstance {
     pub proposal_type: ProposalType,
     pub principal_action : Principal,
     pub dao_members: Vec<Principal>,
-    // pub proposal_entry : ProposalPlace,
     pub minimum_threadsold : u64,
 }
 
@@ -427,7 +366,6 @@ pub struct TokenTransferArgs {
     pub tokens: u64,
     pub from: Principal,
     pub to: Principal,
-    // pub dao_canister: Principal
 }
 
 #[derive(CandidType, Serialize, Deserialize)]
@@ -435,12 +373,6 @@ pub struct TokenBalanceArgs {
     pub owner: Principal,
     pub subaccount: Option<Vec<u8>>,
 }
-
-// #[derive(Clone, CandidType, Serialize, Deserialize)]
-// pub struct Vote {
-//     vote_param: VoteParam,
-// }
-
 
 const MAX_VALUE_SIZE: u32 = 600;
 
@@ -452,28 +384,9 @@ impl Storable for Proposals {
     fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
         Decode!(bytes.as_ref(), Self).unwrap()
     }
-
-    // const BOUND: Bound = Bound::Bounded {
-    //     max_size: MAX_VALUE_SIZE,
-    //     is_fixed_size: false,
-    // };
     const BOUND: Bound = Bound::Unbounded;
 }
 
-// impl Storable for GroupList {
-//     fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
-//         Cow::Owned(Encode!(self).unwrap())
-//     }
-
-//     fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
-//         Decode!(bytes.as_ref(), Self).unwrap()
-//     }
-
-//     const BOUND: Bound = Bound::Bounded {
-//         max_size: MAX_VALUE_SIZE,
-//         is_fixed_size: false,
-//     };
-// }
 
 impl Storable for DaoGroup {
     fn to_bytes(&self) -> std::borrow::Cow<[u8]> {

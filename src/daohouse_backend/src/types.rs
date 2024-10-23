@@ -899,7 +899,6 @@ pub enum ProposalType {
     Polls,
     TokenTransfer,
     GeneralPurpose,
-    BountyClaim,
 }
 
 // const MAX_VALUE_SIZE: u32 = 800;

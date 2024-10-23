@@ -35,9 +35,17 @@ for ((i = 1; i <= COUNT; i++)); do
       image_title = "sample.jpg";
       image_content_type = "image/jpg";
       members_permissions = vec{
+        variant { AddMemberToDaoProposal };
         variant { AddMemberToGroupProposal };
+        variant { RemoveMemberToDaoProposal };
+        variant { RemoveMemberToGroupProposal };
+        variant { ChangeDaoConfig };
+        variant { ChangeDaoPolicy };
+        variant { BountyRaised };
+        variant { BountyDone };
         variant { Polls };
         variant { TokenTransfer };
+        variant { GeneralPurpose };
     };
     proposal_entry = vec {
         record {

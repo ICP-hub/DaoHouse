@@ -5,15 +5,13 @@ use icrc_ledger_types::{
     icrc2::transfer_from::{TransferFromArgs, TransferFromError},
 };
 
-use crate::{with_state, TokenTransferArgs};
+use crate::TokenTransferArgs;
 
 use super::call_inter_canister;
 
 // TODO REMOVE THIS UPDATE FROM HERE (INTERNAL FUNCTION)
 #[update]
-pub async fn icrc_transfer(args: TokenTransferArgs) -> Result<BlockIndex, String> {
-    let ledger_canister_id = with_state(|state| state.dao.token_ledger_id.id);
-
+pub async fn icrc_transfer(ledger_canister_id : Principal , args: TokenTransferArgs) -> Result<BlockIndex, String> {
     let transfer_args = TransferFromArgs {
         amount: args.tokens.into(),
         to: Account {
@@ -41,9 +39,7 @@ pub async fn icrc_transfer(args: TokenTransferArgs) -> Result<BlockIndex, String
     .map_err(|e| format!("ledger transfer error {:?}", e))
 }
 
-pub async fn icrc_get_balance(id: Principal) -> Result<Nat, String> {
-    let ledger_canister_id = with_state(|state| state.dao.token_ledger_id.id);
-
+pub async fn icrc_get_balance(ledger_canister_id : Principal, id: Principal) -> Result<Nat, String> {
     call_inter_canister::<Account, Nat>(
         "icrc1_balance_of",
         Account {
@@ -51,6 +47,5 @@ pub async fn icrc_get_balance(id: Principal) -> Result<Nat, String> {
             subaccount: None,
         },
         ledger_canister_id,
-    )
-    .await
+    ).await
 }

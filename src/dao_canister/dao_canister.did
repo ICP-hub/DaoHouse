@@ -5,18 +5,17 @@ type AddMemberArgs = record {
   new_member : principal;
   proposal_entry : text;
 };
-type BountyClaim = record {
+type BountyDone = record {
+  daohouse_canister_id : principal;
   associated_proposal_id : text;
   description : text;
-  link_of_task : text;
+  tokens : nat64;
   proposal_entry : text;
-  bounty_task : text;
 };
 type BountyRaised = record {
-  proposal_expired_at : nat64;
   description : text;
   tokens : nat64;
-  proposal_created_at : nat64;
+  task_completion_day : nat64;
   proposal_entry : text;
   bounty_task : text;
 };
@@ -137,7 +136,6 @@ type ProposalType = variant {
   TokenTransfer;
   AddMemberToDaoProposal;
   RemoveMemberToGroupProposal;
-  BountyClaim;
   BountyRaised;
   AddMemberToGroupProposal;
   GeneralPurpose;
@@ -170,6 +168,7 @@ type Proposals = record {
   approved_votes_list : vec principal;
   comments : nat32;
   new_daotype : opt text;
+  task_completion_day : opt nat64;
   group_to_join : opt text;
   comments_list : vec Comment;
   token_from : opt principal;
@@ -233,11 +232,11 @@ service : (DaoInput) -> {
   get_members_of_group : (text) -> (Result_2) query;
   get_my_proposal : () -> (Result_3) query;
   get_proposal_by_id : (text) -> (Proposals) query;
-  icrc_transfer : (TokenTransferArgs) -> (Result_4);
+  icrc_transfer : (principal, TokenTransferArgs) -> (Result_4);
   make_payment : (nat64, principal) -> (Result_4);
   proposal_refresh : () -> (Result_1);
   proposal_to_add_member_to_group : (AddMemberArgs) -> (Result_1);
-  proposal_to_bounty_claim : (BountyClaim) -> (Result_1);
+  proposal_to_bounty_done : (BountyDone) -> (Result_1);
   proposal_to_bounty_raised : (BountyRaised) -> (Result_1);
   proposal_to_change_dao_config : (ChangeDaoConfigArg) -> (Result_1);
   proposal_to_change_dao_policy : (ChangeDaoPolicy) -> (Result_1);

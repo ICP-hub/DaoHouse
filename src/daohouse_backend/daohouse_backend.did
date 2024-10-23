@@ -85,7 +85,6 @@ type ProposalType = variant {
   TokenTransfer;
   AddMemberToDaoProposal;
   RemoveMemberToGroupProposal;
-  BountyClaim;
   BountyRaised;
   AddMemberToGroupProposal;
   GeneralPurpose;
