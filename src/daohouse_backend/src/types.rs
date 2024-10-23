@@ -644,7 +644,7 @@ pub struct DaoInput {
     pub token_supply: u32,
     pub tokens_required_to_vote: u32,
     // pub followers: Vec<Principal>,
-    // min_treadshold : Vec<u32>,
+    // min_treadshold : Vec<u32>,   
     // image data
     // pub image_id: Option<String>,
     pub image_id: String,
@@ -653,6 +653,7 @@ pub struct DaoInput {
     pub image_content_type: String,
     pub members_permissions: Vec<ProposalType>,
     pub proposal_entry : Vec<ProposalPlace>,
+    pub ask_to_join_dao : bool,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
@@ -676,6 +677,7 @@ pub struct DaoCanisterInput {
     pub image_canister: Principal,
     pub daohouse_canister_id: Principal,
     pub proposal_entry : Vec<ProposalPlace>,
+    pub ask_to_join_dao : bool,
 
 }
 
@@ -897,7 +899,6 @@ pub enum ProposalType {
     Polls,
     TokenTransfer,
     GeneralPurpose,
-    BountyClaim,
 }
 
 // const MAX_VALUE_SIZE: u32 = 800;

@@ -104,6 +104,7 @@ pub async fn create_dao_canister(dao_detail: crate::DaoInput) -> Result<Principa
         token_supply: dao_detail.token_supply,
         daohouse_canister_id: ic_cdk::api::id(),
         proposal_entry : proposal_entry,
+        ask_to_join_dao: dao_detail.ask_to_join_dao,
     };
 
     // encoding params that is to be passed to new canister
