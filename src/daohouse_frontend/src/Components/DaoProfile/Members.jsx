@@ -190,7 +190,7 @@ const GridView = ({ member }) => {
         </div>
         <MdAddBox className="mx-2 text-[#97C3D3] text-2xl" />
       </div>
-    </div>
+  
   );
 };
 
