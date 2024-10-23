@@ -12,11 +12,12 @@ const BountyClaim = ({ bountyClaim, handleInputBountyClaim }) => (
         onChange={handleInputBountyClaim}
         className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
         placeholder="Enter Proposal ID"
+        required
       />
     </div>
     <div className="mb-4">
       <label htmlFor="description" className="block mb-2 font-semibold text-xl">Description</label>
-      <input
+      <textarea
         id="description"
         type="text"
         name="description"
@@ -24,6 +25,8 @@ const BountyClaim = ({ bountyClaim, handleInputBountyClaim }) => (
         onChange={handleInputBountyClaim}
         className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
         placeholder="Enter description"
+        rows={4}
+        required
       />
     </div>
 
@@ -37,6 +40,7 @@ const BountyClaim = ({ bountyClaim, handleInputBountyClaim }) => (
         onChange={handleInputBountyClaim}
         className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
         placeholder="Enter the link of the task"
+        required
       />
     </div>
     {/* <div className="mb-4">
@@ -60,6 +64,7 @@ const BountyClaim = ({ bountyClaim, handleInputBountyClaim }) => (
         value={bountyClaim.bounty_task}
         onChange={handleInputBountyClaim}
         className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+        required
       />
     </div>
 
