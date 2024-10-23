@@ -367,92 +367,11 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
 
   {
     return (
-      <div className={`bg-white font-mulish ${isProposalDetails ? "rounded-t-xl tablet:mx-16" : "rounded-xl desktop:mx-20"} shadow-md ${isSubmittedProposals ? "flex flex-col sm:flex-row" : "flex flex-col md:flex-col"}`}>
-        {isSubmittedProposals ? (
-          <>
-            {/* Top Section for Submitted Proposals */}
-            <div className="bg-[#0E3746] w-full sm:w-2/6 flex flex-row sm:flex-col justify-between sm:justify-center items-center p-4 sm:p-6 space-y-0 sm:space-y-4 rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none">
-              <div className="flex items-center justify-center space-x-4">
-                {isLoading ? (
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 rounded-full bg-gray-300 animate-pulse"></div>
-                ) : (
-                  <img src={profileImg || avatar} alt="user avatar" className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 rounded-full" />
-                )}
-                {isLoading ? (
-                  <div className="w-24 h-6 sm:w-32 sm:h-8 bg-gray-400"></div>
-                ) : (
-                  <h4 className="text-white text-sm sm:text-base lg:text-xl font-semibold">{userProfile?.username || "Username"}</h4>
-                )}
-              </div>
-
-              <div className="flex justify-center mt-4 sm:mt-0 space-x-4 sm:space-x-6">
-                <div className="flex flex-col items-center">
-                  <CircularProgressBar percentage={Math.floor(approvedVotes / requiredVotes * 100)} color="#4CAF50" size={32} />
-                  <span className="text-white mt-2 text-xs sm:text-sm">{approvedVotes} votes</span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <CircularProgressBar percentage={Math.floor(rejectedVotes / requiredVotes * 100)} color="red" size={32} />
-                  <span className="text-white mt-2 text-xs sm:text-sm">{rejectedVotes} votes</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom Section for Submitted Proposals */}
-            <div className="w-full sm:w-4/6 p-4 sm:p-6 lg:p-8 flex flex-col space-y-4">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-
-                <h4 className="text-lg sm:text-xl font-bold text-[#0E3746] truncate w-full sm:w-3/4">
-                  {proposal.proposal_title || proposal.propsal_title}
-                  <span className="block text-sm sm:text-base mt-1">Proposal ID: #{proposal?.proposal_id}</span>
-                </h4>
-
-                <span className="mt-2 sm:mt-0 px-2 py-1 text-xs self-start rounded-full bg-[#4993B0] text-white font-semibold ">
-                  {timeRemaining}
-                </span>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                <span className={`px-2 py-1 text-xs sm:text-sm rounded-full text-white font-semibold ${status === "Approved" ? "bg-[#4CAF50]" : status === "Rejected" ? "bg-red-500" : "bg-[#4993B0]"
-                  }`}>
-                  {status}
-                </span>
-                <span className="px-2 py-1 text-xs sm:text-sm bg-[#4993B0] text-white rounded-full">
-                  {daoName || "DaoName"}
-                </span>
-              </div>
-
-              <div className="flex flex-wrap justify-start space-x-2 sm:space-x-4">
-                <button className="flex items-center justify-center gap-1 sm:gap-2 text-gray-600" onClick={handleVotesClick}>
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z" />
-                    <path d="M19.07 18.93C17.66 17.52 15.48 16.5 12 16.5s-5.66 1.02-7.07 2.43A2 2 0 0 0 6.34 22h11.32a2 2 0 0 0 1.41-3.07z" />
-                  </svg>
-                  <span className="text-xs sm:text-sm">{voteCount} Voters</span>
-                </button>
-                <button className="flex items-center justify-center gap-1 sm:gap-2 text-gray-600" onClick={toggleShareModal}>
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 17 17" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M16 1L1 5.85294L6.73529 8.5L12.9118 4.08824L8.5 10.2647L11.1471 16L16 1Z" />
-                  </svg>
-                  <span className="text-xs sm:text-sm">Share</span>
-                </button>
-
-              </div>
-
-              <div className="mt-4 sm:mt-6">
-                <button
-                  className="bg-[#CDEFFE] w-full desktop:ml-[270px] sm:w-auto px-4 py-2 rounded-xl text-sm sm:text-base font-semibold transition-colors hover:bg-[#B8E0F5]"
-                  onClick={handleViewMore}
-                >
-                  View More
-                </button>
-              </div>
-            </div>
-          </>
-        ) : (
+      <div className={`bg-white font-mulish ${isProposalDetails ? "rounded-t-xl tablet:mx-16" : "rounded-xl desktop:mx-20"} shadow-md ${isSubmittedProposals ? "flex flex-col  big_phone:flex-row desktop:mx-0" : "flex flex-col md:flex-col"}`}>
           <>
             {/* Top Section */}
-            <div className="w-full flex justify-between items-center bg-[#0E3746] px-[20px] md:px-12 py-6 rounded-t-lg rounded-b-none">
-              <div className="flex gap-[12px] md:gap-8 justify-center items-center">
+            <div className={`${isSubmittedProposals ? "big_phone:w-1/3 big_phone:rounded-l-lg big_phone:rounded-r-none rounded-t-lg rounded-b-none flex justify-between big_phone:flex-col big_phone:space-y-8 bg-[#0E3746] px-[20px] lg:px-12 py-6" : "w-full flex justify-between items-center bg-[#0E3746] px-[20px] md:px-12 py-6 rounded-t-lg rounded-b-none"} `}>
+              <div className="flex gap-2 lg:gap-[12px] justify-center items-center">
                 {isLoading ? (
                   <div className="w-8 h-8 md:w-16 md:h-16 rounded-full bg-gray-300 animate-pulse"></div>
                 ) : (
@@ -465,12 +384,12 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                 )}
               </div>
 
-              <div className="flex gap-4">
-                <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
+              <div className={`${isSubmittedProposals ? "flex justify-center gap-4" : "flex gap-4"}`}>
+                <div className={`${isSubmittedProposals ? "flex-col" : "flex flex-col md:flex-row items-center gap-2 md:gap-4"}`}>
                   <CircularProgressBar percentage={Math.floor(approvedVotes / requiredVotes * 100)} color="#4CAF50" />
                   <span className="text-white mt-2 text-center">{approvedVotes} votes</span>
                 </div>
-                <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
+                <div className={`${isSubmittedProposals ? "flex-col" : "flex flex-col md:flex-row items-center gap-2 md:gap-4"}`}>
                   <CircularProgressBar percentage={Math.floor(rejectedVotes / requiredVotes * 100)} color="red" />
                   <span className="text-white mt-2 text-center">{rejectedVotes} votes</span>
                 </div>
@@ -478,32 +397,48 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
             </div>
 
             {/* Bottom Section */}
-            <div className="w-full px-4 lg:px-12 py-4 md:py-8">
-              <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-4 gap-4">
+            <div className={`${isSubmittedProposals ? "big_phone:w-2/3 px-4 desktop:px-12 py-4 md:py-8" : "w-full px-4 lg:px-12 py-4 md:py-8"}`}>
+              <div className={`${isSubmittedProposals ? "flex flex-wrap lg:gap-4 justify-between" : "flex flex-col xl:flex-row justify-between items-start xl:items-center mb-4 gap-4"}`}>
                 <div className="max-w-full lg:max-w-full">
-                  <h4 className="text-xl font-bold text-[#0E3746] overflow-hidden text-ellipsis whitespace-normal">
-                    {proposal.proposal_title || proposal.propsal_title} | <span className="md:text-[1rem] text-[1rem] block"> Proposal ID: #{proposal?.proposal_id}</span>
+                  <h4 className="text-xl font-bold text-[#0E3746] overflow-hidden break-words whitespace-normal">
+                    {proposal.proposal_title || proposal.propsal_title} | <span className={`md:text-[1rem] text-[1rem] block ${isSubmittedProposals ? " truncate ... w-60": ""}`}> Proposal ID: #{proposal?.proposal_id}</span>
                   </h4>
                 </div>
 
-                <div className="flex col-span-4  gap-4 self-start">
+                <div className="flex col-span-4 gap-1  small_phone:gap-4 self-start">
 
-                  <span className="md:py-1 px-2 md:px-2 md:w-[185px] rounded-full bg-[#4993B0] text-white font-semibold text-sm small_phone:text-base">
+                  <span className="md:py-1 px-1 mini_phone:px-2 big_phone:px-2 big_phone:w-[185px] rounded-full bg-[#4993B0] text-white font-semibold text-sm text-center big_phone:text-base">
                     {timeRemaining}
                   </span>
-                  <span
-                    className={`px-4 md:py-1 rounded-full text-white font-semibold text-sm small_phone:text-base ${status === "Approved" ? "bg-[#4CAF50]" : status === "Rejected" ? "bg-red-500" : "bg-[#4993B0]"
+                  {!isSubmittedProposals && (
+                    <span
+                    className={`px-1 mini_phone:px-2 md:px-4 md:py-1 rounded-full text-white font-semibold text-sm small_phone:text-base ${status === "Approved" ? "bg-[#4CAF50]" : status === "Rejected" ? "bg-red-500" : "bg-[#4993B0]"
                       } flex`}
                   >
                     {status}
                   </span>
+                  )}
                 </div>
               </div>
-              <p className="text-gray-900 text-sm mobile:text-xl mb-4">{proposal?.proposal_description}</p>
+              {isSubmittedProposals && (
+                  <div className="flex flex-wrap gap-2 my-2">
+                  <span className={`px-2 py-1 text-xs sm:text-sm rounded-full text-white font-semibold ${status === "Approved" ? "bg-[#4CAF50]" : status === "Rejected" ? "bg-red-500" : "bg-[#4993B0]"
+                    }`}>
+                    {status}
+                  </span>
+                  <span className="px-2 py-1 text-xs sm:text-sm bg-[#4993B0] text-white rounded-full">
+                    {daoName || "DaoName"}
+                  </span>
+                </div>
+                )}
+              {!isSubmittedProposals && (
+                <p className="text-gray-900 text-sm mobile:text-xl mb-4 break-words">{proposal?.proposal_description}</p>
+              )}
 
               <div className="flex flex-wrap gap-4 flex-col md:flex-row md:justify-between items-start md:items-center space-y-4 md:space-y-0 xl:space-x-8">
                 <div className="flex flex-col gap-4 items-start justify-start">
-                  <div className="flex mobile:space-x-2 xl:space-x-8">
+                  {!isSubmittedProposals && (
+                    <div className="flex mobile:space-x-2 xl:space-x-8">
                     <div className="flex flex-col items-start">
                       <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Submitted On </span>
                       <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{submittedOnDate} <span className="text-[8px] small_phone:text-[8px] md:text-xs font-normal text-gray-400">{submittedOnTime}</span></span>
@@ -541,33 +476,41 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                       </div>
                     )}
                   </div>
+                  )}
 
-                  <div className="flex flex-wrap justify-start md:justify-start md:mt-0 space-x-2 small_phone:space-x-4">
-                    {showActions && (
-                      <button className={`flex items-center justify-center gap-1 mobile:gap-2 ${isComment ? 'bg-gray-200 text-black rounded-lg p-2' : 'text-gray-600 bg-none'
+                  <div className="flex gap-4 big_phone:gap-8 flex-wrap">
+                   <div className="flex flex-wrap justify-start md:justify-start md:mt-0 space-x-2 small_phone:space-x-4 md:space-x-2">
+                   {(showActions || isSubmittedProposals) && (
+                      <button className={`flex items-center justify-center gap-1 mobile:gap-1 ${isComment ? 'bg-gray-200 text-black rounded-lg p-2' : 'text-gray-600 bg-none'
                         }`} onClick={handleCommentToggle}>
                         <svg className="mb-1" width="16" height="15" viewBox="0 0 16 15">
                           <path d="M3.11111 9.22293H12.8889V8.34456H3.11111V9.22293ZM3.11111 6.58781H12.8889V5.70943H3.11111V6.58781ZM3.11111 3.95269H12.8889V3.07431H3.11111V3.95269ZM16 15L13.2649 12.2972H1.43556C1.02667 12.2972 0.685333 12.162 0.411556 11.8914C0.137778 11.6209 0.000592593 11.2833 0 10.8787V1.41857C0 1.01452 0.137185 0.677227 0.411556 0.406687C0.685926 0.136148 1.02726 0.000585583 1.43556 0H14.5644C14.9733 0 15.3147 0.135562 15.5884 0.406687C15.8622 0.677812 15.9994 1.01511 16 1.41857V15ZM1.43556 11.4189H13.6444L15.1111 12.8629V1.41857C15.1111 1.28389 15.0542 1.16004 14.9404 1.04702C14.8267 0.934005 14.7013 0.877789 14.5644 0.878374H1.43556C1.29926 0.878374 1.17393 0.93459 1.05956 1.04702C0
                           .945185 1.15945 0.888296 1.2833 0.888889 1.41857V10.8787C0.888889 11.0134 0.945778 11.1372 1.05956 11.2502C1.17333 11.3632 1.29867 11.4195 1.43556 11.4189Z" fill="black" />
                         </svg>
-                        <span className="md:ml-2 text-sm mobile:text-base">{commentCount || 0} Comments</span>
+                        <span className=" text-sm mobile:text-base">{commentCount || 0} Comments</span>
                       </button>
                     )}
 
-                    <button className="flex items-center justify-center mobile:gap-2 text-gray-600" onClick={handleVotesClick}>
+                    <button className="flex items-center justify-center mobile:gap-1 text-gray-600" onClick={handleVotesClick}>
                       <svg className="mb-1" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z" />
                         <path d="M19.07 18.93C17.66 17.52 15.48 16.5 12 16.5s-5.66 1.02-7.07 2.43A2 2 0 0 0 6.34 22h11.32a2 2 0 0 0 1.41-3.07z" />
                       </svg>
-                      <span className="md:ml-2 text-sm mobile:text-base">{voteCount} Voters</span>
+                      <span className=" text-sm mobile:text-base">{voteCount} Voters</span>
                     </button>
-                    <button className="flex items-center justify-center mobile:gap-2 text-gray-600" onClick={toggleShareModal}>
+                    <button className="flex items-center justify-center mobile:gap-1 text-gray-600" onClick={toggleShareModal}>
                       <svg className="mb-1" width="17" height="17" viewBox="0 0 17 17">
                         <path d="M16 1L1 5.85294L6.73529 8.5L12.9118 4.08824L8.5 10.2647L11.1471 16L16 1Z" stroke="black" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
-                      <span className="md:ml-2 text-sm mobile:text-base">Share</span>
+                      <span className=" text-sm mobile:text-base">Share</span>
 
                     </button>
+                   </div>
+                    {isSubmittedProposals && (
+                      <div className="bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
+                        <button className="px-6 py-2 self-start font-mulish" onClick={handleViewMore}>View More</button>
+                      </div>
+                    )}
 
                   </div>
 
@@ -616,9 +559,11 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
               </div>
               {!showActions && (
                 <div className="flex gap-2">
-                  <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
-                    <button className="px-6 py-2 font-mulish" onClick={handleViewMore}>View More</button>
-                  </div>
+                  {!isSubmittedProposals && (
+                      <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
+                        <button className="px-6 py-2 font-mulish" onClick={handleViewMore}>View More</button>
+                      </div>
+                    )}
                   {(proposal?.proposal_title === "Bounty raised" || proposal.propsal_title === "Bounty raised") && (
                     <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
 
@@ -661,7 +606,6 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
             )}
           </div>
         </>
-      )}
 
 <ShareModal
   isOpen={isShareModalOpen}

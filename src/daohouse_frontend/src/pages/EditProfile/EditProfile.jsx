@@ -283,6 +283,12 @@ const EditProfile = () => {
     };
   }, [isModalOpen]); // STOP SCROLLING 
 
+  const isSaveDisabled = () => {
+    // Disable Save button if contact number is less than 10 digits
+    return !profileData.contact_number || profileData.contact_number.length < 10 || errors.contact_number;
+  };
+
+
   return (
     <div className="bg-zinc-200 w-full  pb-20 relative">
       <div
@@ -358,25 +364,32 @@ const EditProfile = () => {
                     "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
                 }}
               />
-              <label className="bg-white md:text-[16px] text-[12px] text-[#05212C] gap-1 shadow-xl md:h-[50px] h-[40px] md:px-6 px-3 rounded-[27px] flex items-center cursor-pointer">
-                <img
-                  src={UploadIcon}
-                  alt="edit"
-                  className="md:mr-2 mr-1 md:h-4 md:w-4 w-3 h-3 edit-pen"
-                />
-               <span className="text-[10px] lg:text-[13px]">
-                Upload New Photo (Max 2MB)
-                 </span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleImageChange}
-                />
-              </label>
+            <div className="flex flex-col items-center">
+  <label className="bg-white text-[12px] sm:text-[14px] md:text-[16px] text-[#05212C] gap-1 shadow-xl h-[40px] sm:h-[45px] md:h-[50px] px-3 sm:px-4 md:px-6 rounded-[27px] flex items-center cursor-pointer">
+    <img
+      src={UploadIcon}
+      alt="edit"
+      className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5"
+    />
+    <span className="text-[10px] sm:text-[11px] md:text-[13px] lg:text-[14px]">
+      Upload New Photo
+    </span>
+    <input
+      type="file"
+      accept="image/*"
+      className="hidden"
+      onChange={handleImageChange}
+    />
+  </label>
+  <span className="block mt-1 text-[7px] sm:text-[8px] md:text-[9px] lg:text-xs text-gray-500">
+    Upload JPG, PNG. Max 5 MB
+  </span>
+</div>
+
+
               <button
                 onClick={handleRemoveImage}
-                className="text-[12px] md:text-[14px] lg:text-[16px] text-black shadow-xl md:h-[50px] h-[40px] md:px-6 px-4 rounded-[27px] bg-red-300 border-solid border border-red-100 hover:bg-red-400 flex items-center transition duration-200 ease-in-out"
+                className="text-[12px] md:text-[14px] lg:text-[16px] text-black translate-y-[-7px] shadow-xl md:h-[50px] h-[40px] md:px-6 px-4 rounded-[27px] bg-red-300 border-solid border border-red-100 hover:bg-red-400 flex items-center transition duration-200 ease-in-out"
               >
                 Remove<span className="hidden sm:inline-block ml-1">Photo</span>
               </button>
@@ -425,12 +438,13 @@ const EditProfile = () => {
                 Personal Links & Contact Info
               </p>
               <EditPersonalLinksAndContactInfo
-                profileData={profileData}
-                handleInputChange={handleInputChange}
-                handleSaveChangesClick={handleSaveChangesClick}
-                closeModal={closeModal}
-                errors={errors}
-              />
+              profileData={profileData}
+              handleInputChange={handleInputChange}
+              handleSaveChangesClick={handleSaveChangesClick}
+              closeModal={() => setIsModalOpen(false)}
+              errors={errors}
+              isSaveDisabled={isSaveDisabled} // Pass the function to disable the button
+            />
               <div className="hidden sm:flex justify-center gap-5 mt-8">
                 <button
                   onClick={handleDiscardClick}
@@ -444,8 +458,9 @@ const EditProfile = () => {
                   <button
                     onClick={handleSaveChangesClick}
                     className="py-2 px-10 border border-[#0E3746] bg-[#0E3746] text-white hover:bg-[#0E37464D] hover:border-[#0E37464D] rounded-[27px] transition duration-200 ease-in-out"
-                  >
-                    Save Changes
+                    disabled={isSaveDisabled()}
+                 >
+                    Save 
                   </button>
                 )}
               </div>

@@ -136,22 +136,15 @@ const CreateDao = () => {
 
     console.log(step2);
     console.log(data.dao_groups);
-
-    const proposalEntity = step5.map(q => ({
+    
+    const proposalEntry = step5.map(q => ({
       place_name: q.name,
       min_required_thredshold: BigInt(q.vote), // Ensure it's a nat64
     }));
 
-    console.log(proposalEntity);
-
-    console.log("cashgdshgd", JSON.stringify(data.members_permissions));
-    const a = data.members_permissions;
-    const a1 = Object.values(a).slice(0, a.length);;
-    console.log("kdasljdas", a1);
-
-
-
-
+    const membersArray = Array.from(data.members_permissions) || [];
+    
+  
     const daoPayload = {
       dao_name: step1.DAOIdentifier || "my dao hai",
       purpose: step1.Purpose || "my proposal hai",
@@ -159,8 +152,8 @@ const CreateDao = () => {
       link_of_document: "my link.org",
       cool_down_period: step1.SetUpPeriod || 3,
       members: principalMembers || [Principal.fromText("aaaaa-aa")],
-      members_permissions: JSON.stringify(data.members_permissions) || ["just", "pesmi"],
-      token_name: step2.TokenName || "GOLD Token",
+      members_permissions: membersArray || ["just", "pesmi"],
+      token_name: step2.TokenName ||"GOLD Token",
       token_symbol: step2.TokenSymbol || "TKN",
       tokens_required_to_vote: 12,
       linksandsocials: ["just send f"],
@@ -171,7 +164,7 @@ const CreateDao = () => {
       image_content_type: step6.image_content_type || "just image content bro",
       image_id: "12",
       dao_groups: data.dao_groups,
-      proposal_entry: proposalEntity,
+      proposal_entry: proposalEntry,
       // [{
       //   group_members: [Principal.fromText("aaaaa-aa")],
       //   quorem: 5,

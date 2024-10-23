@@ -48,33 +48,33 @@ const Step4 = ({ data, setData, setActiveStep }) => {
   }, [data.step3.groups, data.step3.council]);
 
   const defaultPermissions = (groupName) => ({
+    RemoveMemberToDaoProposal: groupName === "Council" ? true : false,
     ChangeDaoConfig: groupName === "Council" ? true : false,
+    BountyDone: groupName === "Council" ? true : false,
+    Polls: groupName === "Council" ? true : false,
     ChangeDaoPolicy: groupName === "Council" ? true : false,
     TokenTransfer: groupName === "Council" ? true : false,
-    Polls: groupName === "Council" ? true : false,
     AddMemberToDaoProposal: groupName === "Council" ? true : false,
-    AddMemberToGroupProposal: groupName === "Council" ? true : false,
-    BountyDone: groupName === "Council" ? true : false,
+    RemoveMemberToGroupProposal: groupName === "Council" ? true : false,
     BountyClaim: groupName === "Council" ? true : false,
     BountyRaised: groupName === "Council" ? true : false,
+    AddMemberToGroupProposal: groupName === "Council" ? true : false,
     GeneralPurpose: groupName === "Council" ? true : false,
-    RemoveMemberToGroupProposal: groupName === "Council" ? true : false,
-    RemoveMemberToDaoProposal: groupName === "Council" ? true : false,
   });
 
   const permissionList = [
-    "ChangeDAOConfig",
-    "ChangeDAOPolicy",
-    "TokenTransfer",
-    "Polls",
-    "AddMemberToDaoProposal",
-    "AddMemberGroupProposal",
+    "RemoveMemberToDaoProposal",
+    "ChangeDaoConfig",
     "BountyDone",
+    "Polls",
+    "ChangeDaoPolicy",
+    "TokenTransfer",
+    "AddMemberToDaoProposal",
+    "RemoveMemberToGroupProposal",
     "BountyClaim",
     "BountyRaised",
+    "AddMemberToGroupProposal",
     "GeneralPurpose",
-    "RemoveMemberToGroupProposal",
-    "RemoveMemberToDaoProposal",
   ];
 
   const initializePermissions = () => {
@@ -133,31 +133,45 @@ const Step4 = ({ data, setData, setActiveStep }) => {
 
   function handleSaveAndNext() {
     const filteredPermissions = filterPermissions(inputData);
-
+  
+    // Function to format each permission as a variant object
+    const formatPermission = (permission) => ({ [permission]: null });
+  
+    // Format dao_groups with array for group_permissions, ensuring proper variant encoding
     const daoGroups = data.step3.groups.map((group) => ({
       group_members: group.members.map((member) =>
         Principal.fromText(member)
       ),
-      quorem: 5,
+      quorem: 5, // Adjust the quorum value as needed
       group_name: group.name,
-      group_permissions: filteredPermissions.proposal[group.name] || [],
+      group_permissions: (filteredPermissions.proposal[group.name] || []).map(formatPermission), // Format each permission as a variant
     }));
-
+  
+    // Collect unique permissions for members
     const membersPermissions = new Set();
-
+  
+    // Collect permissions from proposal step
     Object.values(filteredPermissions.proposal).forEach((permissions) =>
-      permissions.forEach((permission) => membersPermissions.add(permission))
+      permissions.forEach((permission) => membersPermissions.add(formatPermission(permission)))
     );
-
+  
+    // Convert Set to Array
+    const membersPermissionsArray = Array.from(membersPermissions);
+  
+    // Update data with formatted permissions
     setData((prev) => ({
       ...prev,
       step4: filteredPermissions,
-      dao_groups: daoGroups,
-      members_permissions: Array.from(membersPermissions),
+      dao_groups: daoGroups, // Ensure this is an array of group permissions with proper variant encoding
+      members_permissions: membersPermissionsArray, // Ensure this is an array of variants
     }));
-
+  
+    // Proceed to the next step
     setActiveStep(4);
   }
+  
+  
+  
 
   function handleBack() {
     setActiveStep(2);
