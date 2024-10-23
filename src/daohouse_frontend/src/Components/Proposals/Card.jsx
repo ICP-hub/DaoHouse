@@ -367,10 +367,10 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
 
   {
     return (
-      <div className={`bg-white font-mulish ${isProposalDetails ? "rounded-t-xl tablet:mx-16" : "rounded-xl desktop:mx-20"} shadow-md ${isSubmittedProposals ? "flex flex-col  big_phone:flex-row desktop:mx-0" : "flex flex-col md:flex-col"}`}>
+      <div className={`bg-white font-mulish ${isProposalDetails ? "rounded-t-xl tablet:mx-16" : `rounded-xl ${isSubmittedProposals ? "": "desktop:mx-20"}`} shadow-md ${isSubmittedProposals ? "flex flex-col  big_phone:flex-row desktop:mx-0" : "flex flex-col md:flex-col"}`}>
           <>
             {/* Top Section */}
-            <div className={`${isSubmittedProposals ? "big_phone:w-1/3 big_phone:rounded-l-lg big_phone:rounded-r-none rounded-t-lg rounded-b-none flex justify-between big_phone:flex-col big_phone:space-y-8 bg-[#0E3746] px-[20px] lg:px-12 py-6" : "w-full flex justify-between items-center bg-[#0E3746] px-[20px] md:px-12 py-6 rounded-t-lg rounded-b-none"} `}>
+            <div className={`${isSubmittedProposals ? " big_phone:rounded-l-lg big_phone:rounded-r-none rounded-t-lg rounded-b-none flex justify-between big_phone:flex-col big_phone:space-y-8 bg-[#0E3746] px-[20px] lg:px-12 py-6" : "w-full flex justify-between items-center bg-[#0E3746] px-[20px] md:px-12 py-6 rounded-t-lg rounded-b-none"} `}>
               <div className="flex gap-2 lg:gap-[12px] justify-center items-center">
                 {isLoading ? (
                   <div className="w-8 h-8 md:w-16 md:h-16 rounded-full bg-gray-300 animate-pulse"></div>
@@ -397,17 +397,17 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
             </div>
 
             {/* Bottom Section */}
-            <div className={`${isSubmittedProposals ? "big_phone:w-2/3 px-4 desktop:px-12 py-4 md:py-8" : "w-full px-4 lg:px-12 py-4 md:py-8"}`}>
+            <div className={`${isSubmittedProposals ? "w-full px-4 desktop:px-12 py-4 md:py-8" : "w-full px-4 lg:px-12 py-4 md:py-8"}`}>
               <div className={`${isSubmittedProposals ? "flex flex-wrap lg:gap-4 justify-between" : "flex flex-col xl:flex-row justify-between items-start xl:items-center mb-4 gap-4"}`}>
                 <div className="max-w-full lg:max-w-full">
                   <h4 className="text-xl font-bold text-[#0E3746] overflow-hidden break-words whitespace-normal">
-                    {proposal.proposal_title || proposal.propsal_title} | <span className={`md:text-[1rem] text-[1rem] block ${isSubmittedProposals ? " truncate ... w-60": ""}`}> Proposal ID: #{proposal?.proposal_id}</span>
+                    {proposal.proposal_title || proposal.propsal_title} | <span className={`md:text-[1rem] text-[1rem] block ${isSubmittedProposals ? " truncate w-60": ""}`}> Proposal ID: #{proposal?.proposal_id}</span>
                   </h4>
                 </div>
 
                 <div className="flex col-span-4 gap-1  small_phone:gap-4 self-start">
 
-                  <span className="md:py-1 px-1 mini_phone:px-2 big_phone:px-2 big_phone:w-[185px] rounded-full bg-[#4993B0] text-white font-semibold text-sm text-center big_phone:text-base">
+                  <span className=" px-1 mini_phone:px-2 big_phone:px-2 rounded-full bg-[#4993B0] text-white font-semibold text-sm text-center big_phone:text-base">
                     {timeRemaining}
                   </span>
                   {!isSubmittedProposals && (
@@ -422,10 +422,10 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
               </div>
               {isSubmittedProposals && (
                   <div className="flex flex-wrap gap-2 my-2">
-                  <span className={`px-2 py-1 text-xs sm:text-sm rounded-full text-white font-semibold ${status === "Approved" ? "bg-[#4CAF50]" : status === "Rejected" ? "bg-red-500" : "bg-[#4993B0]"
+                  {/* <span className={`px-2 py-1 text-xs sm:text-sm rounded-full text-white font-semibold ${status === "Approved" ? "bg-[#4CAF50]" : status === "Rejected" ? "bg-red-500" : "bg-[#4993B0]"
                     }`}>
                     {status}
-                  </span>
+                  </span> */}
                   <span className="px-2 py-1 text-xs sm:text-sm bg-[#4993B0] text-white rounded-full">
                     {daoName || "DaoName"}
                   </span>
@@ -478,9 +478,9 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                   </div>
                   )}
 
-                  <div className="flex gap-4 big_phone:gap-8 flex-wrap">
+                  <div className="flex gap-4 big_phone:gap-2 xl:gap-8 flex-wrap">
                    <div className="flex flex-wrap justify-start md:justify-start md:mt-0 space-x-2 small_phone:space-x-4 md:space-x-2">
-                   {(showActions || isSubmittedProposals) && (
+                   {(showActions) && (
                       <button className={`flex items-center justify-center gap-1 mobile:gap-1 ${isComment ? 'bg-gray-200 text-black rounded-lg p-2' : 'text-gray-600 bg-none'
                         }`} onClick={handleCommentToggle}>
                         <svg className="mb-1" width="16" height="15" viewBox="0 0 16 15">
@@ -507,8 +507,8 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                     </button>
                    </div>
                     {isSubmittedProposals && (
-                      <div className="bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
-                        <button className="px-6 py-2 self-start font-mulish" onClick={handleViewMore}>View More</button>
+                      <div className="bg-[#CDEFFE] rounded-xl cursor-pointer ">
+                        <button className="px-4 py-1 self-start font-mulish" onClick={handleViewMore}>View More</button>
                       </div>
                     )}
 
