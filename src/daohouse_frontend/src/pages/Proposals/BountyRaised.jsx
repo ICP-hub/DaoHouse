@@ -19,7 +19,7 @@ const BountyRaised = ({ bountyRaised, handleInputBountyRaised, setBountyRaised }
     <>
       <div className="mb-4">
         <label htmlFor="description" className="mb-2 font-semibold text-xl">Description</label>
-        <input
+        <textarea
           id="description"
           type="text"
           name="description"
@@ -27,6 +27,7 @@ const BountyRaised = ({ bountyRaised, handleInputBountyRaised, setBountyRaised }
           onChange={handleInputBountyRaised}
           className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
           placeholder="Enter description"
+          rows={4}
           required
         />
       </div>

@@ -34,8 +34,12 @@ function CreateProposal() {
 
   });
   const [proposalType, setProposalType] = useState('');
+  console.log("propsoal type", proposalType);
+
   const [dao, setDao] = useState(null);
-  const [proposalEntry, setProposalEntry] = useState(''); // New state for proposal_entry
+  const [proposalEntry, setProposalEntry] = useState('');
+  console.log("proposalEntry", proposalEntry);
+
 
   const [tokenTransfer, setTokenTransfer] = useState({
     to: '',
@@ -110,6 +114,7 @@ function CreateProposal() {
   });
 
   const [groupNames, setGroupNames] = useState([]);
+  console.log("groupnames", groupNames);
 
 
   const [loading, setLoading] = useState(false);
@@ -135,6 +140,7 @@ function CreateProposal() {
 
           if (daoActor) {
             const daoDetails = await daoActor.get_dao_detail();
+            console.log("dapdetails", daoDetails);
 
             setDao(daoDetails);
 
@@ -142,6 +148,7 @@ function CreateProposal() {
             const names = await daoDetails.proposal_entry.map(
               (group) => group.place_name
             );
+            console.log("name", names);
 
             setGroupNames(names);
           } else {
@@ -180,8 +187,16 @@ function CreateProposal() {
   const handleProposalTitleChange = (event) => {
     setProposalTitle(event.target.value);
   };
+  const [errorMessage, setErrorMessage] = useState('');
   const handleProposalTypeChange = (event) => {
-    setProposalType(event.target.value);
+    const selectedValue = event.target.value;
+    console.log("selected value", selectedValue);
+
+    setProposalType(selectedValue);
+    if (selectedValue) {
+      setErrorMessage('');
+    }
+
   };
 
   const stripHtmlTags = (html) => {
@@ -327,7 +342,7 @@ function CreateProposal() {
     setLoading(true);
 
     // Basic validation
-    if (!proposalType) {
+    if (proposalType === "") {
       toast.error("Please select a proposal type.");
       setLoading(false);
       return;
@@ -842,6 +857,7 @@ function CreateProposal() {
     }
   };
 
+
   return (
     <div className="bg-zinc-200 w-full">
       <div
@@ -926,7 +942,7 @@ function CreateProposal() {
                       required // Make it a required field
                     >
                       <option value="">Select Proposal Type</option>
-                      <option value="bountyClaim">Bounty Claim</option>
+                      {/* <option value="bountyClaim">Bounty Claim</option> */}
                       <option value="tokenTransfer">Token Transfer</option>
                       <option value="GeneralPurp">General Purpose</option>
                       <option value="DaoConfig">Dao Config</option>
@@ -941,6 +957,9 @@ function CreateProposal() {
                         RemoveMemberToDaoProposal
                       </option>
                     </select>
+                    {errorMessage && (
+                      <p className="mt-2 text-red-500">{errorMessage}</p> // Display error message
+                    )}
                   </div>
 
                   {/* Proposal Entry Select */}
@@ -1050,7 +1069,7 @@ function CreateProposal() {
                     <button
                       className="bg-[#0E3746] hover:bg-[#819499] text-white font-normal text-center rounded-full text-[16px] py-2 px-6 rounded focus:outline-none focus:shadow-outline"
                       type="submit"
-                      disabled={loading || !proposalEntry} // Disable if loading or proposalEntry not selected
+                      disabled={loading} // Disable if loading or proposalEntry not selected
                     >
                       {loading ? (
                         <CircularProgress size={24} />
