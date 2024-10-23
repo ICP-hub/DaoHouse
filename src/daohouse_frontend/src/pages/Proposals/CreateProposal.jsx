@@ -135,8 +135,10 @@ function CreateProposal() {
         if (daoActor) {
           const daoDetails = await daoActor.get_dao_detail();
           setDao(daoDetails);
+          console.log("propsdsdf", daoDetails);
+          
   
-          const names = daoDetails.proposal_entry.map((group) => group.place_name);
+          const names = daoDetails.proposal_entry.filter((group) => group.place_name !== "Council").map((group) => group.place_name );
           setGroupNames(names);
         } else {
           console.error("daoActor is null");
