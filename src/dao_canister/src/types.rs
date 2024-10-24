@@ -113,13 +113,6 @@ pub struct Comment {
     pub created_at: u64,
 }
 
-#[derive(CandidType, Serialize, Deserialize, Clone, Copy)]
-pub struct Test{
-    pub token_to : Principal,
-    pub token_from : Principal,
-    pub tokens : u64,
-}
-
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct ReplayComment {
     pub reply_comment : String,
@@ -361,7 +354,7 @@ pub struct ProposalInstance {
     pub minimum_threadsold : u64,
 }
 
-#[derive(Clone, CandidType, Serialize, Deserialize)]
+#[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct TokenTransferArgs {
     pub tokens: u64,
     pub from: Principal,

@@ -1,11 +1,10 @@
-use crate::functions::icrc_transfer;
 use crate::proposal_route::create_proposal_controller;
 use crate::{
     guards::*, AddMemberArgs, BountyDone, BountyRaised, ChangeDaoConfigArg, ChangeDaoPolicy,
     CreateGeneralPurpose, CreatePoll, DaoGroup, JoinDao, LedgerCanisterId, ProposalCreation,
-    ProposalInput, ProposalState, RemoveDaoMemberArgs, RemoveMemberArgs, Test, TokenTransferPolicy,
+    ProposalInput, ProposalState, RemoveDaoMemberArgs, RemoveMemberArgs, TokenTransferPolicy,
 };
-use crate::{icrc_get_balance, TokenTransferArgs};
+use crate::icrc_get_balance;
 use crate::{with_state, ProposalType};
 use candid::{Nat, Principal};
 use ic_cdk::api;
@@ -563,6 +562,8 @@ async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
     if let Some(proposal) = proposals_data {
         let proposal_type = proposal.proposal_type;
         let proposal_status = proposal.proposal_status;
+        let proposal_owner = proposal.created_by;
+
         if proposal_type != ProposalType::BountyRaised {
             return Err(String::from(
                 "The Proposal you wish to done is not related to the bounty raised",
@@ -572,6 +573,9 @@ async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
             return Err(String::from(
                 "The Proposal you wish to done is not under the Accepted status",
             ));
+        }
+        if proposal_owner != api::caller() {
+            return Err(String::from("bounty is not raised by you with this proposal ID"));
         }
 
         let current_time = ic_cdk::api::time();
@@ -976,30 +980,4 @@ fn get_dao_groups() -> Vec<DaoGroup> {
     });
 
     groups
-}
-
-#[update(guard=prevent_anonymous)]
-async fn transfer_token(proposal: Test) -> Result<String, String> {
-    let token_ledger_id  = with_state(|state|state.dao.token_ledger_id.id);
-    let balance = icrc_get_balance(token_ledger_id, proposal.token_from)
-        .await
-        .map_err(|err| format!("Error while fetching user balance: {}", err))?;
-
-    if balance <= 0 as u8 {
-        return Err(String::from(
-            "User token balance is less than the required transfer tokens",
-        ));
-    }
-
-    let token_transfer_args = TokenTransferArgs {
-        from: proposal.token_from,
-        to: proposal.token_to,
-        tokens: proposal.tokens,
-    };
-
-    icrc_transfer(token_ledger_id.clone(), token_transfer_args)
-        .await
-        .map_err(|err| format!("Error in transfer of tokens: {}", String::from(err)))?;
-
-    Ok("Token transfer SuccessFully".to_string())
 }
