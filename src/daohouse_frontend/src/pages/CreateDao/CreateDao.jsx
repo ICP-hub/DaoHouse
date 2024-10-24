@@ -165,6 +165,7 @@ const CreateDao = () => {
       image_id: "12",
       dao_groups: data.dao_groups,
       proposal_entry: proposalEntry,
+      ask_to_join_dao : data.ask_to_join_dao,
       // [{
       //   group_members: [Principal.fromText("aaaaa-aa")],
       //   quorem: 5,
