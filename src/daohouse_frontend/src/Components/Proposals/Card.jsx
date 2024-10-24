@@ -37,6 +37,8 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
   // console.log(votersList);
+  console.log("proposal", proposal);
+  
 
   // console.log("voters", proposal?.approved_votes_list + proposal?.rejected_votes_list); 
 
@@ -407,13 +409,13 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
 
                 <div className="flex col-span-4 gap-1  small_phone:gap-4 self-start">
 
-                  <span className=" px-1 mini_phone:px-2 big_phone:px-2 rounded-full bg-[#4993B0] text-white font-semibold text-sm text-center big_phone:text-base">
+                  <span className={` px-1 mini_phone:px-2 big_phone:px-2 big_phone:w-[185px] self-center py-1 rounded-full bg-[#4993B0] text-white font-semibold text-sm text-center big_phone:text-base`}>
                     {timeRemaining}
                   </span>
                   {!isSubmittedProposals && (
                     <span
-                    className={`px-1 mini_phone:px-2 md:px-4 md:py-1 rounded-full text-white font-semibold text-sm small_phone:text-base ${status === "Approved" ? "bg-[#4CAF50]" : status === "Rejected" ? "bg-red-500" : "bg-[#4993B0]"
-                      } flex`}
+                    className={`px-1 mini_phone:px-2 md:px-4 py-1 rounded-full text-white font-semibold text-sm big_phone:text-base  ${status === "Approved" ? "bg-[#4CAF50]" : status === "Rejected" ? "bg-red-500" : "bg-[#4993B0]"
+                      } self-center `}
                   >
                     {status}
                   </span>
@@ -436,81 +438,134 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
               )}
 
               <div className="flex flex-wrap gap-4 flex-col md:flex-row md:justify-between items-start md:items-center space-y-4 md:space-y-0 xl:space-x-8">
-                <div className="flex flex-col gap-4 items-start justify-start">
-                  {!isSubmittedProposals && (
-                    <div className="flex mobile:space-x-2 xl:space-x-8">
-                    <div className="flex flex-col items-start">
-                      <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Submitted On </span>
-                      <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{submittedOnDate} <span className="text-[8px] small_phone:text-[8px] md:text-xs font-normal text-gray-400">{submittedOnTime}</span></span>
+                {!isSubmittedProposals && (proposal.proposal_type.ChangeDaoConfig!== undefined) && (
+                  <div className="w-full"> 
+                    <div className="flex flex-wrap">
+                      <span className="font-bold">Dao Name</span>: {proposal.new_dao_name}
+                        <strong>&nbsp; | &nbsp;</strong>
+                      <span className="font-bold">Dao Type</span>: {proposal.new_daotype}
                     </div>
-                    <div className="flex flex-col items-start">
-                      <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Expires On </span>
-                      <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{expiresOnDate} <span className="text-[8px] small_phone:text-[8px] md:text-xs font-normal text-gray-400">{expiresOnTime}</span></span>
+                    <div className="whitespace-normal break-words mt-2">
+                      <span className="font-bold">Dao Purpose</span>: {proposal.new_dao_purpose}
                     </div>
-                    <div className="flex flex-col items-start">
-                      <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Votes Required </span>
-                      <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{requiredVotes}</span>
-                    </div>
-                    {(proposal?.proposal_title === "Bounty raised" || proposal.propsal_title === "Bounty raised") && (
-                      <div className="flex flex-col items-start">
-                        <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">•tokens </span>
-
-                        <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">
-                          {/* {proposal?.tokens || 0 } */}
-                          {proposal?.tokens?.[0]?.toString() || '0'}
-                        </span>
-
-
-                      </div>
-                    )}
-                    {(proposal?.proposal_title === "Token transfer policy" || proposal.propsal_title === "Token transfer policy") && (
-                      <div className="flex flex-col items-start">
-                        <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">•tokens </span>
-
-                        <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">
-                          {/* {proposal?.tokens || 0 } */}
-                          {proposal?.tokens?.[0]?.toString() || '0'}
-                        </span>
-
-
-                      </div>
-                    )}
                   </div>
-                  )}
+               
+                ) }
+                {!isSubmittedProposals && (proposal.proposal_type.ChangeDaoPolicy!== undefined) && (
+                  <div className="w-full"> 
+                    <div className="flex">
+                      <span className="font-bold">Cool Down Period</span>: {proposal.cool_down_period}
+                    </div>
+                    <div className="whitespace-normal break-words mt-2">
+                      <span className="font-bold">Required Votes</span>: {proposal.new_required_votes}
+                    </div>
+                  </div>
+                ) }
+                {!isSubmittedProposals && (proposal.proposal_type.TokenTransfer !== undefined) && (
+                  <div className="w-full"> 
+                  <div className="whitespace-normal break-words mt-2">
+                    <span className="font-bold">{proposal.tokens} Tokens </span>
+                  </div>
+                  <div className="flex flex-wrap">
+                    <span className="font-bold">To</span>: {proposal.token_to}
+                      <strong>&nbsp; | &nbsp;</strong>
+                    <span className="font-bold">Dao Type</span>: {proposal.token_from}
+                  </div>
+                </div>
+                ) }
+                {!isSubmittedProposals && (proposal.proposal_type.AddMemberToGroupProposal !== undefined) && (
+                  <div className="w-full"> 
+                    <div className="flex">
+                      <span className="font-bold">Group Name</span>: {proposal.group_to_join}
+                    </div>
+                    <div className="whitespace-normal break-words mt-2">
+                      <span className="font-bold">Principal ID</span>: {proposal.principal_of_action._arr.toString()}
+                    </div>
+                  </div>
+                ) }
+                {!isSubmittedProposals && (proposal.proposal_type.RemoveMemberToGroupProposal !== undefined) && (
+                  <div className="w-full"> 
+                    <div className="flex">
+                      <span className="font-bold">Group Name</span>: {proposal.group_to_remove}
+                    </div>
+                    <div className="whitespace-normal break-words mt-2">
+                      <span className="font-bold">Principal ID</span>: {proposal.principal_of_action._arr.toString()}
+                    </div>
+                  </div>
+                ) }
+                {!isSubmittedProposals && (proposal.proposal_type.BountyRaised !== undefined) && (
+                  <div className="w-full"> 
+                    <div className="flex">
+                      <span className="font-bold">Bounty Task</span>: {proposal.bounty_task}
+                    </div>
+                    <div className="whitespace-normal break-words mt-2">
+                      <span className="font-bold">Tokens</span>: {proposal.tokens}
+                    </div>
+                  </div>
+                ) }
+                {!isSubmittedProposals && (proposal.proposal_type.RemoveMemberToDaoProposal !== undefined) && (
+                  <div className="w-full"> 
+                    <div className="flex">
+                      <span className="font-bold">Dao Name</span>: {proposal.new_dao_name}
+                    </div>
+                    <div className="whitespace-normal break-words mt-2">
+                      <span className="font-bold">Principal ID</span>: {Principal.fromUint8Array(new Uint8Array(proposal.principal_of_action._arr)).toText()}
+                    </div>
+                  </div>
+                )}
 
+                {!isSubmittedProposals && (proposal.proposal_type.AddMemberToDaoProposal !== undefined) && (
+                  <div className="w-full"> 
+                    <div className="whitespace-normal break-words mt-2">
+                      <span className="font-bold">Principal ID</span>: {proposal.principal_of_action._arr.toString()}
+                    </div>
+                  </div>
+                ) }
+                {!isSubmittedProposals && (proposal.proposal_type.BountyDone !== undefined) && (
+                  <div className="w-full"> 
+                    <div className="flex">
+                      <span className="font-bold">Bounty Task</span>: {proposal.bounty_task}
+                    </div>
+                    <div className="whitespace-normal break-words mt-2">
+                      <span className="font-bold">Proposal ID</span>: {proposal.associated_proposal_id}
+                    </div>
+                  </div>
+                ) }
+                
+
+                <div className="flex flex-col gap-4 items-start justify-start">
                   <div className="flex gap-4 big_phone:gap-2 xl:gap-8 flex-wrap">
-                   <div className="flex flex-wrap justify-start md:justify-start md:mt-0 space-x-2 small_phone:space-x-4 md:space-x-2">
-                   {(showActions) && (
-                      <button className={`flex items-center justify-center gap-1 mobile:gap-1 ${isComment ? 'bg-gray-200 text-black rounded-lg p-2' : 'text-gray-600 bg-none'
-                        }`} onClick={handleCommentToggle}>
-                        <svg className="mb-1" width="16" height="15" viewBox="0 0 16 15">
-                          <path d="M3.11111 9.22293H12.8889V8.34456H3.11111V9.22293ZM3.11111 6.58781H12.8889V5.70943H3.11111V6.58781ZM3.11111 3.95269H12.8889V3.07431H3.11111V3.95269ZM16 15L13.2649 12.2972H1.43556C1.02667 12.2972 0.685333 12.162 0.411556 11.8914C0.137778 11.6209 0.000592593 11.2833 0 10.8787V1.41857C0 1.01452 0.137185 0.677227 0.411556 0.406687C0.685926 0.136148 1.02726 0.000585583 1.43556 0H14.5644C14.9733 0 15.3147 0.135562 15.5884 0.406687C15.8622 0.677812 15.9994 1.01511 16 1.41857V15ZM1.43556 11.4189H13.6444L15.1111 12.8629V1.41857C15.1111 1.28389 15.0542 1.16004 14.9404 1.04702C14.8267 0.934005 14.7013 0.877789 14.5644 0.878374H1.43556C1.29926 0.878374 1.17393 0.93459 1.05956 1.04702C0
-                          .945185 1.15945 0.888296 1.2833 0.888889 1.41857V10.8787C0.888889 11.0134 0.945778 11.1372 1.05956 11.2502C1.17333 11.3632 1.29867 11.4195 1.43556 11.4189Z" fill="black" />
+                    <div className="flex flex-wrap justify-start md:justify-start md:mt-0 space-x-2 small_phone:space-x-4 md:space-x-2">
+                      {(showActions) && (
+                        <button className={`flex items-center justify-center gap-1 mobile:gap-1 ${isComment ? 'bg-gray-200 text-black rounded-lg p-2' : 'text-gray-600 bg-none'
+                          }`} onClick={handleCommentToggle}>
+                          <svg className="mb-1" width="16" height="15" viewBox="0 0 16 15">
+                            <path d="M3.11111 9.22293H12.8889V8.34456H3.11111V9.22293ZM3.11111 6.58781H12.8889V5.70943H3.11111V6.58781ZM3.11111 3.95269H12.8889V3.07431H3.11111V3.95269ZM16 15L13.2649 12.2972H1.43556C1.02667 12.2972 0.685333 12.162 0.411556 11.8914C0.137778 11.6209 0.000592593 11.2833 0 10.8787V1.41857C0 1.01452 0.137185 0.677227 0.411556 0.406687C0.685926 0.136148 1.02726 0.000585583 1.43556 0H14.5644C14.9733 0 15.3147 0.135562 15.5884 0.406687C15.8622 0.677812 15.9994 1.01511 16 1.41857V15ZM1.43556 11.4189H13.6444L15.1111 12.8629V1.41857C15.1111 1.28389 15.0542 1.16004 14.9404 1.04702C14.8267 0.934005 14.7013 0.877789 14.5644 0.878374H1.43556C1.29926 0.878374 1.17393 0.93459 1.05956 1.04702C0
+                            .945185 1.15945 0.888296 1.2833 0.888889 1.41857V10.8787C0.888889 11.0134 0.945778 11.1372 1.05956 11.2502C1.17333 11.3632 1.29867 11.4195 1.43556 11.4189Z" fill="black" />
+                          </svg>
+                          <span className=" text-sm mobile:text-base">{commentCount || 0} Comments</span>
+                        </button>
+                      )}
+
+                      <button className="flex items-center justify-center mobile:gap-1 text-gray-600" onClick={handleVotesClick}>
+                        <svg className="mb-1" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z" />
+                          <path d="M19.07 18.93C17.66 17.52 15.48 16.5 12 16.5s-5.66 1.02-7.07 2.43A2 2 0 0 0 6.34 22h11.32a2 2 0 0 0 1.41-3.07z" />
                         </svg>
-                        <span className=" text-sm mobile:text-base">{commentCount || 0} Comments</span>
+                        <span className=" text-sm mobile:text-base">{voteCount} Voters</span>
                       </button>
-                    )}
+                      <button className="flex items-center justify-center mobile:gap-1 text-gray-600" onClick={toggleShareModal}>
+                        <svg className="mb-1" width="17" height="17" viewBox="0 0 17 17">
+                          <path d="M16 1L1 5.85294L6.73529 8.5L12.9118 4.08824L8.5 10.2647L11.1471 16L16 1Z" stroke="black" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        <span className=" text-sm mobile:text-base">Share</span>
 
-                    <button className="flex items-center justify-center mobile:gap-1 text-gray-600" onClick={handleVotesClick}>
-                      <svg className="mb-1" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z" />
-                        <path d="M19.07 18.93C17.66 17.52 15.48 16.5 12 16.5s-5.66 1.02-7.07 2.43A2 2 0 0 0 6.34 22h11.32a2 2 0 0 0 1.41-3.07z" />
-                      </svg>
-                      <span className=" text-sm mobile:text-base">{voteCount} Voters</span>
-                    </button>
-                    <button className="flex items-center justify-center mobile:gap-1 text-gray-600" onClick={toggleShareModal}>
-                      <svg className="mb-1" width="17" height="17" viewBox="0 0 17 17">
-                        <path d="M16 1L1 5.85294L6.73529 8.5L12.9118 4.08824L8.5 10.2647L11.1471 16L16 1Z" stroke="black" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                      <span className=" text-sm mobile:text-base">Share</span>
+                      </button>
+                    </div>
 
-                    </button>
-                   </div>
-                    {isSubmittedProposals && (
-                      <div className="bg-[#CDEFFE] rounded-xl cursor-pointer ">
+                      <div className="bg-[#CDEFFE] rounded-xl cursor-pointer flex ">
                         <button className="px-4 py-1 self-start font-mulish" onClick={handleViewMore}>View More</button>
                       </div>
-                    )}
 
                   </div>
 
@@ -559,11 +614,11 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
               </div>
               {!showActions && (
                 <div className="flex gap-2">
-                  {!isSubmittedProposals && (
+                  {/* {!isSubmittedProposals && (
                       <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
                         <button className="px-6 py-2 font-mulish" onClick={handleViewMore}>View More</button>
                       </div>
-                    )}
+                    )} */}
                   {(proposal?.proposal_title === "Bounty raised" || proposal.propsal_title === "Bounty raised") && (
                     <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
 
