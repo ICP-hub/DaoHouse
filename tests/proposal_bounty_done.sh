@@ -6,7 +6,7 @@ test12=$(dfx canister call b77ix-eeaaa-aaaaa-qaada-cai proposal_to_bounty_done "
     tokens = 100 : nat64;
     proposal_entry = \"Council\";
     daohouse_canister_id = principal \"$DAOHOUSE_CANISTER_ID\";
-    associated_proposal_id = \"2e9abc6d5bddc81ce99755eb9e4b281097bdddcf7429d482a5e196255ba4e61e\";
+    associated_proposal_id = \"4eae23c7e87e2234b92c7bfc4fa8c2d008689cc796246bb17fb34bec135d9f96\";
   }
 )")
 

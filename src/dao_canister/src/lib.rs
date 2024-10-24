@@ -28,7 +28,7 @@ pub fn with_state<R>(f: impl FnOnce(&mut State) -> R) -> R {
     STATE.with(|cell| f(&mut cell.borrow_mut()))
 }
 
-const EXPIRATION_TIME: u64 = 2 * 60 * 1_000_000_000;
+const EXPIRATION_TIME: u64 = 60 * 1_000_000_000;
 fn start_proposal_checker() {
     set_timer_interval(Duration::from_secs(60), || {
         check_proposals();
@@ -331,11 +331,14 @@ async fn transfer_tokens_to_user(token_ledger_id: Principal, proposal: &Proposal
             return;
         }
     };
+    ic_cdk::println!("from : {}", token_from_user.to_text());
+    ic_cdk::println!("to : {}", token_to_user.to_text());
     let token_transfer_args = TokenTransferArgs {
         from : token_from_user.clone(),
         to : token_to_user.clone(),
         tokens : total_tokens.clone(),
     };
+    
     if let Err(err) = icrc_transfer(token_ledger_id.clone(), token_transfer_args.clone()).await {
         ic_cdk::println!("Error in transfer of tokens: {}", err);
     } else {
