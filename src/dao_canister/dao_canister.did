@@ -199,11 +199,6 @@ type Result_1 = variant { Ok : text; Err : text };
 type Result_2 = variant { Ok : vec principal; Err : text };
 type Result_3 = variant { Ok : vec Proposals; Err : text };
 type Result_4 = variant { Ok : nat; Err : text };
-type TokenTransfer = record {
-  token_to : principal;
-  tokens : nat64;
-  token_from : principal;
-};
 type TokenTransferArgs = record {
   to : principal;
   from : principal;
@@ -248,7 +243,6 @@ service : (DaoInput) -> {
   reply_comment : (ReplyCommentArgs) -> (Result_1);
   search_follower : (text) -> (vec principal) query;
   search_proposal : (text) -> (vec Proposals) query;
-  transfer_token : (TokenTransfer) -> (Result_1);
   unfollow_dao : (principal) -> (Result_1);
   vote : (text, VoteParam) -> (Result_1);
 }
