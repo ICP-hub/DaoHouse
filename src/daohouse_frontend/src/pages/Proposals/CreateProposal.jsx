@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { CircularProgress } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { Principal } from "@dfinity/principal";
-import BountyClaim from "./BountyClaim";
+import BountyDone from "./BountyDone";
 import TokenTransfer from "./TokenTransfer";
 import GeneralPurpose from "./GeneralPurpose";
 import DaoConfig from "./DaoConfig";
@@ -44,7 +44,7 @@ function CreateProposal() {
     // action_member: '',
   });
 
-  const [bountyClaim, setBountyClaim] = useState({
+  const [bountyDone, setBountyDone] = useState({
     associated_proposal_id: '',
     description: '',
     link_of_task: '',
@@ -114,13 +114,12 @@ function CreateProposal() {
 
   const [loading, setLoading] = useState(false);
   const { createDaoActor, stringPrincipal, identity } = useAuth();
+  const { daoCanisterId } = useParams();
 
   const movetodao = () => {
     navigate(`/dao/profile/${daoCanisterId}`);
     console.log("Proposal Submitted");
   };
-
-  const { daoCanisterId } = useParams();
 
   const fetchDaoDetails = async () => {
     if (daoCanisterId && identity) {
@@ -195,9 +194,9 @@ function CreateProposal() {
       [name]: value,
     }));
   };
-  const handleInputBountyClaim = (e) => {
+  const handleInputBountyDone = (e) => {
     const { name, value } = e.target;
-    setBountyClaim((prev) => ({
+    setBountyDone((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -342,16 +341,24 @@ function CreateProposal() {
           setIsModalOpen(true)
           break;
 
-        case "bountyClaim":
-
-
-          await submitBountyClaim({
+        case "BountyRaised": 
+          await submitBountyRaised({
             proposal_entry: proposalEntry,
-            associated_proposal_id: bountyClaim.associated_proposal_id,
-            description: bountyClaim.description,
-            link_of_task: bountyClaim.link_of_task,
-            // action_member: Principal.fromText(bountyClaim.action_member),
-            bounty_task: bountyClaim.bounty_task,
+            task_completion_day: Number(bountyRaised.task_completion_day), // Send difference in days
+            description: bountyRaised.description,
+            tokens: Number(bountyRaised.tokens),
+            // action_member: Principal.fromText(bountyRaised.action_member),
+            bounty_task: bountyRaised.bounty_task,
+          }); 
+
+        case "bountyDone":
+          await submitBountyDone({
+            proposal_entry: proposalEntry,
+            associated_proposal_id: bountyDone.associated_proposal_id,
+            description: bountyDone.description,
+            tokens: bountyDone.tokens,
+            // action_member: Principal.fromText(bountyDone.action_member),
+            daohouse_canister_id: daoCanisterId
           });
           break;
 
@@ -395,10 +402,6 @@ function CreateProposal() {
             description: removeMember.description,
             action_member: Principal.fromText(removeMember.action_member),
           });
-          break;
-
-        case 'BountyRaised':
-          setIsModalOpen(true);
           break;
 
 
@@ -484,19 +487,19 @@ function CreateProposal() {
     }
   };
 
-  const submitBountyClaim = async (bountyClaim) => {
+  const submitBountyDone = async (bountyDone) => {
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
 
 
-      const response = await daoCanister.proposal_to_bounty_claim(bountyClaim);
-      console.log("Response of Bounty Claim:", response);
+      const response = await daoCanister.proposal_to_bounty_done(bountyDone);
+      console.log("Response of Bounty Done:", response);
 
-      toast.success("Bounty Claim proposal created successfully");
+      toast.success("Bounty Done proposal created successfully");
       movetodao();
     } catch (error) {
-      console.error("Error submitting Bounty Claim proposal:", error);
-      toast.error("Failed to create Bounty Claim proposal");
+      console.error("Error submitting Bounty Done proposal:", error);
+      toast.error("Failed to create Bounty Done proposal");
     }
   };
   const submitGeneralPurp = async (generalPurp) => {
@@ -530,25 +533,6 @@ function CreateProposal() {
       if (response.Ok) {
         toast.success("DAO configuration proposal created successfully");
         movetodao();
-        const submitBountyRaised = async (bountyRaised) => {
-          setBountyTokens(bountyRaised.tokens)
-          try {
-            const daoCanister = await createDaoActor(daoCanisterId);
-
-
-            const response = await daoCanister.proposal_to_bounty_raised(
-              bountyRaised
-
-            );
-            console.log("Response of Bounty Raised:", response);
-            setBountyTokens(bountyRaised.tokens)
-            toast.success("Bounty raised proposal created successfully");
-            movetodao();
-          } catch (error) {
-            console.error("Error submitting Bounty Raised proposal:", error);
-            toast.error("Failed to create Bounty Raised proposal");
-          }
-        };
         // setActiveLink("proposals"); // Ensure setActiveLink is defined or remove if unnecessary
       }
       else {
@@ -557,6 +541,26 @@ function CreateProposal() {
     } catch (error) {
       console.error("Error during DAO Config proposal submission:", error);
       toast.error("Failed to create DAO configuration proposal");
+    }
+  };
+
+  const submitBountyRaised = async (bountyRaised) => {
+    setBountyTokens(bountyRaised.tokens)
+    try {
+      const daoCanister = await createDaoActor(daoCanisterId);
+
+
+      const response = await daoCanister.proposal_to_bounty_raised(
+        bountyRaised
+
+      );
+      console.log("Response of Bounty Raised:", response);
+      // setBountyTokens(bountyRaised.tokens)
+      toast.success("Bounty raised proposal created successfully");
+      movetodao();
+    } catch (error) {
+      console.error("Error submitting Bounty Raised proposal:", error);
+      toast.error("Failed to create Bounty Raised proposal");
     }
   };
 
@@ -699,62 +703,33 @@ function CreateProposal() {
     }
   };
 
-  const submitBountyRaised = async (bountyRaised) => {
-    try {
-      const actor = await createTokenActor();
-      const { balance, metadata } = await fetchMetadataAndBalance(
-        actor,
-        Principal.fromText(stringPrincipal)
-      );
-      const parsedBalance = parseInt(balance, 10);
-      const formattedMetadata = await formatTokenMetaData(metadata);
+  // const submitBountyRaised = async (bountyRaised) => {
+  //   try {
+  //     const daoCanister = await createDaoActor(daoCanisterId);
+  //     console.log("bounty raised", bountyRaised);
 
-      // Call transferApprove to process the payment
-      await transferApprove(
-        parsedBalance,
-        actor,
-        formattedMetadata,
-        bountyRaised.tokens
-      );
+  //     const response = await daoCanister.proposal_to_bounty_raised(bountyRaised);
+  //     console.log("response.ok", response.Ok);
 
-      // After payment, create the proposal
-      const daoCanister = await createDaoActor(daoCanisterId);
-      console.log("bounty raised", bountyRaised);
-
-      const response = await daoCanister.proposal_to_bounty_raised(bountyRaised);
-      console.log("response.ok", response.Ok);
-      console.log("response ok tokens", response.tokens);
-
-
-      if (response.Ok) {
-        toast.success("Bounty raised proposal created successfully");
-        console.log("tokens", response.Ok.tokens);
-        setIsModalOpen(false);
-        movetodao();
-      } else {
-        toast.error("Failed to create bounty raised proposal");
-      }
-    } catch (err) {
-      console.error("Error during proposal submission:", err);
-      toast.error("Payment or proposal submission failed");
-    }
-  };
+  //     if (response.Ok) {
+  //       toast.success("Bounty raised proposal created successfully");
+  //       // console.log("tokens", response.Ok.tokens);
+  //       setIsModalOpen(false);
+  //       movetodao();
+  //     } else {
+  //       toast.error("Failed to create bounty raised proposal");
+  //     }
+  //   } catch (err) {
+  //     console.error("Error during proposal submission:", err);
+  //     toast.error("Payment or proposal submission failed");
+  //   }
+  // };
 
   const handleConfirmPayment = async () => {
     // Close the modal
     setLoadingPayment(true); // Show loading indicator during payment and submission
     try {
-      if (proposalType === "BountyRaised") {
-        await submitBountyRaised({
-          proposal_entry: proposalEntry,
-          proposal_expired_at: bountyRaised.proposal_expired_in_days, // Send difference in days
-          description: bountyRaised.description,
-          tokens: Number(bountyRaised.tokens),
-          // action_member: Principal.fromText(bountyRaised.action_member),
-          proposal_created_at: 0,
-          bounty_task: bountyRaised.bounty_task,
-        }); // Trigger payment and proposal submission
-      } else if (proposalType === "tokenTransfer") {
+       if (proposalType === "tokenTransfer") {
         await submitTokenTransferProposal({
           to: Principal.fromText(tokenTransfer.to),
           description: tokenTransfer.description,
@@ -763,9 +738,6 @@ function CreateProposal() {
           // action_member: Principal.fromText(tokenTransfer.action_member),
           // action_member: Principal.fromText(tokenTransfer.action_member),
         });
-      } else {
-        console.log("Wrong Proposal type");
-
       }
 
     } catch (error) {
@@ -898,7 +870,7 @@ function CreateProposal() {
                       required // Make it a required field
                     >
                       <option value="">Select Proposal Type</option>
-                      <option value="bountyClaim">Bounty Claim</option>
+                      <option value="bountyDone">Bounty Done</option>
                       <option value="tokenTransfer">Token Transfer</option>
                       <option value="GeneralPurp">General Purpose</option>
                       <option value="DaoConfig">Dao Config</option>
@@ -942,10 +914,10 @@ function CreateProposal() {
                   </div>
 
                   {/* Conditional Input Fields Based on Proposal Type */}
-                  {proposalType === "bountyClaim" && (
-                    <BountyClaim
-                      bountyClaim={bountyClaim}
-                      handleInputBountyClaim={handleInputBountyClaim}
+                  {proposalType === "bountyDone" && (
+                    <BountyDone
+                      bountyDone={bountyDone}
+                      handleInputBountyDone={handleInputBountyDone}
                     />
                   )}
 

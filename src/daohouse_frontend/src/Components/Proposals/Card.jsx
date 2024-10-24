@@ -37,7 +37,6 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
   // console.log(votersList);
-  console.log("proposal", proposal);
   
 
   // console.log("voters", proposal?.approved_votes_list + proposal?.rejected_votes_list); 
@@ -479,7 +478,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                       <span className="font-bold">Group Name</span>: {proposal.group_to_join}
                     </div>
                     <div className="whitespace-normal break-words mt-2">
-                      <span className="font-bold">Principal ID</span>: {proposal.principal_of_action._arr.toString()}
+                      <span className="font-bold">Principal ID</span>: {Principal.fromUint8Array(new Uint8Array(proposal.principal_of_action._arr)).toText()}
                     </div>
                   </div>
                 ) }
@@ -489,7 +488,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                       <span className="font-bold">Group Name</span>: {proposal.group_to_remove}
                     </div>
                     <div className="whitespace-normal break-words mt-2">
-                      <span className="font-bold">Principal ID</span>: {proposal.principal_of_action._arr.toString()}
+                      <span className="font-bold">Principal ID</span>: {Principal.fromUint8Array(new Uint8Array(proposal.principal_of_action._arr)).toText()}
                     </div>
                   </div>
                 ) }
@@ -499,10 +498,11 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                       <span className="font-bold">Bounty Task</span>: {proposal.bounty_task}
                     </div>
                     <div className="whitespace-normal break-words mt-2">
-                      <span className="font-bold">Tokens</span>: {proposal.tokens}
+                      <span className="font-bold">Tokens</span>: {proposal.tokens.length > 0 ? proposal.tokens[0].toString() : '0'} {/* Handle array case */}
                     </div>
                   </div>
-                ) }
+                )}
+
                 {!isSubmittedProposals && (proposal.proposal_type.RemoveMemberToDaoProposal !== undefined) && (
                   <div className="w-full"> 
                     <div className="flex">
@@ -517,7 +517,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                 {!isSubmittedProposals && (proposal.proposal_type.AddMemberToDaoProposal !== undefined) && (
                   <div className="w-full"> 
                     <div className="whitespace-normal break-words mt-2">
-                      <span className="font-bold">Principal ID</span>: {proposal.principal_of_action._arr.toString()}
+                      <span className="font-bold">Principal ID</span>: {Principal.fromUint8Array(new Uint8Array(proposal.principal_of_action._arr)).toText()}
                     </div>
                   </div>
                 ) }

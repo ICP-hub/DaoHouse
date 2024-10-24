@@ -1,19 +1,6 @@
 import React, { useEffect } from "react";
 
 const BountyRaised = ({ bountyRaised, handleInputBountyRaised, setBountyRaised }) => {
-  // Get today's date in the format YYYY-MM-DD
-  const getTodayDate = () => {
-    const today = new Date();
-    return today.toISOString().split("T")[0]; // Format as YYYY-MM-DD
-  };
-
-  useEffect(() => {
-    // Set today's date for "Created At" field when the component loads
-    setBountyRaised((prevBountyRaised) => ({
-      ...prevBountyRaised,
-      proposal_created_at: getTodayDate(),
-    }));
-  }, [setBountyRaised]);
 
   return (
     <>
@@ -71,29 +58,17 @@ const BountyRaised = ({ bountyRaised, handleInputBountyRaised, setBountyRaised }
         />
       </div>
       <div className="mb-4">
-        <label htmlFor="proposalCreatedAt" className="mb-2 font-semibold text-xl">Created At</label>
+        <label htmlFor="taskCompletionDay" className="mb-2 font-semibold text-xl">Task Completion Day</label>
         <input
-          id="proposalCreatedAt"
-          type="date"
-          name="proposal_created_at"
-          value={bountyRaised.proposal_created_at}
+          id="taskCompletionDay"
+          type="number"
+          name="task_completion_day"
+          value={bountyRaised.task_completion_day}
           onChange={handleInputBountyRaised}
           className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
           required
-          disabled // Disabled so the user can't change the created at date
-        />
-      </div>
-      <div className="mb-4">
-        <label htmlFor="proposalExpiredAt" className="mb-2 font-semibold text-xl">Expired At</label>
-        <input
-          id="proposalExpiredAt"
-          type="date"
-          name="proposal_expired_at"
-          value={bountyRaised.proposal_expired_at}
-          onChange={handleInputBountyRaised}
-          min={getTodayDate()}
-          className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-          required
+          min={1}
+          placeholder="No. of days    eg. 5"
         />
       </div>
     </>
