@@ -61,18 +61,6 @@ const Step4 = ({ data, setData, setActiveStep }) => {
     GeneralPurpose: groupName === "Council" ? true : false,
   });
 
-  // AddMemberToDaoProposal,
-  //   AddMemberToGroupProposal,
-  //   RemoveMemberToDaoProposal,
-  //   RemoveMemberToGroupProposal,
-  //   ChangeDaoConfig,
-  //   ChangeDaoPolicy,
-  //   BountyRaised,
-  //   BountyDone,
-  //   Polls,
-  //   TokenTransfer,
-  //   GeneralPurpose,
-
   const permissionList = [
     "RemoveMemberToDaoProposal",
     "ChangeDaoConfig",
