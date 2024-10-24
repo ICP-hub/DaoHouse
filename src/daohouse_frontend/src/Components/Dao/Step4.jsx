@@ -15,6 +15,10 @@ const Step4 = ({ data, setData, setActiveStep }) => {
     return groupsList;
   });
 
+  const [isPrivate, setIsPrivate] = useState(false); // State for toggle button
+  const [showModal, setShowModal] = useState(false); // State for modal visibility
+  
+ 
   const className = "DAO__Step4";
 
   useEffect(() => {
@@ -164,18 +168,61 @@ const Step4 = ({ data, setData, setActiveStep }) => {
       step4: filteredPermissions,
       dao_groups: daoGroups, // Ensure this is an array of group permissions with proper variant encoding
       members_permissions: membersPermissionsArray, // Ensure this is an array of variants
+      ask_to_join_dao : isPrivate,
     }));
   
     // Proceed to the next step
     setActiveStep(4);
   }
   
-  
-  
+  const handleTogglePrivate = () => {
+    if (!isPrivate) {
+      setShowModal(true); // Show modal when toggled on
+    } else {
+      setIsPrivate(false); // Reset toggle to off
+    }
+  };
+
+  const confirmMakePrivate = () => {
+    setIsPrivate(true); // Set toggle to on
+    setShowModal(false); // Close the modal
+  };
+
+  const cancelMakePrivate = () => {
+    setIsPrivate(false); // Reset toggle to off
+    setShowModal(false); // Close the modal
+  };
 
   function handleBack() {
     setActiveStep(2);
   }
+
+  useEffect(() => {
+    if (showModal) {
+      document.body.classList.add('overflow-hidden'); // Prevent scrolling
+    } else {
+      document.body.classList.remove('overflow-hidden'); // Allow scrolling
+    }
+
+    return () => {
+      document.body.classList.remove('overflow-hidden'); // Cleanup on unmount
+    };
+  }, [showModal]);
+  
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      body.overflow-hidden {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+      }
+    `;
+    document.head.append(style);
+    return () => style.remove();
+  }, []);
+  
 
   useEffect(() => {
     localStorage.setItem("activeStage", JSON.stringify(activeStage));
@@ -193,6 +240,37 @@ const Step4 = ({ data, setData, setActiveStep }) => {
         <div
           className={`${className}__form w-full bg-[#F4F2EC] big_phone:p-10 small_phone:p-4 p-2 big_phone:mx-4 mx-0 rounded-lg flex flex-col gap-4`}
         >
+
+          
+
+          {/* Modal for Confirmation */}
+          {showModal && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+  <div className="w-[90%] sm:w-[400px] md:w-[60%] lg:w-[50%] h-auto bg-white border border-gray-300 p-4 rounded shadow flex flex-col justify-between max-w-lg">
+    <p className="text-center mb-4">
+      This action will make the DAO private. Are you sure you want to make this DAO private?
+    </p>
+    <div className="flex justify-between">
+      <button
+        onClick={cancelMakePrivate}
+        className="bg-gray-300 text-black px-4 py-2 rounded w-[48%] text-sm sm:text-base"
+      >
+        Nah, Cancel
+      </button>
+      <button
+        onClick={confirmMakePrivate}
+        className="bg-[#0E3746] text-white px-4 py-2 rounded w-[48%] text-sm sm:text-base"
+      >
+        Confirm
+      </button>
+    </div>
+  </div>
+</div>
+
+)}
+
+
+
           <ul className={`${className}__steps flex flex-row mobile:gap-8 gap-6 px-4`}>
             <li
               className={`list-disc mobile:text-lg text-sm font-semibold ${
@@ -258,11 +336,34 @@ const Step4 = ({ data, setData, setActiveStep }) => {
             </React.Fragment>
           )}
 
+      <div className="flex justify-between items-center bg-white p-4 rounded-lg shadow-md">
+      <span className="text-gray-800">Make DAO Private</span>
+      <label className="flex items-center cursor-pointer">
+      <input
+      type="checkbox"
+      checked={isPrivate}
+      onChange={handleTogglePrivate}
+      className="hidden toggle-checkbox"
+         />
+      <div
+       className={`w-10 h-5 flex items-center rounded-full p-1 duration-300 ease-in-out ${isPrivate ? 'bg-blue-500' : 'bg-gray-300'}`}
+      >
+        <div
+        className={`bg-white w-4 h-4 rounded-full shadow-md transform duration-300 ease-in-out ${isPrivate ? 'translate-x-5' : ''}`}
+      ></div>
+    </div>
+  </label>
+</div>
+
+
           <div className={`${className}__submitButton w-full flex flex-row items-center mobile:justify-end justify-between`}>
+            
             <button
               onClick={handleBack}
               className="flex mobile:m-4 my-4 flex-row items-center gap-2 border border-[#0E3746] hover:bg-[#0E3746] text-[#0E3746] hover:text-white mobile:text-base text-sm transition px-4 py-2 rounded-[2rem]"
             >
+
+              
               <FaArrowLeftLong /> Back
             </button>
             <button
@@ -274,7 +375,9 @@ const Step4 = ({ data, setData, setActiveStep }) => {
             </button>
           </div>
         </div>
+
       </Container>
+      
     </React.Fragment>
   );
 };

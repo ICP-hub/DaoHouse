@@ -5,3 +5,93 @@
 .table-auto > tbody {
   background-color: #fff;
 }
+
+.toggle-checkbox {
+  display: none; /* Hides the default checkbox */
+}
+
+.w-10 {
+  width: 40px; /* Adjust width of the switch */
+}
+
+.h-5 {
+  height: 20px; /* Adjust height of the switch */
+}
+
+.transform {
+  transition: transform 0.3s ease-in-out;
+}
+
+.translate-x-5 {
+  transform: translateX(20px); /* Move the ball to the right */
+}
+
+/* Background color styles */
+.bg-blue-500 {
+  background-color: #3b82f6; /* Blue color when active */
+}
+
+.bg-gray-300 {
+  background-color: #d1d5db; /* Gray color when inactive */
+}
+
+.fixed {
+  position: fixed;
+}
+
+.inset-0 {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.z-50 {
+  z-index: 50; /* Make sure it appears above other content */
+}
+
+.bg-black {
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+}
+
+.toggle-checkbox {
+  display: none; /* Hide the default checkbox */
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.toggle-label.active {
+  background-color: #0E3746; /* Change to your active color */
+}
+
+.toggle-ball {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.toggle-label.active .toggle-ball {
+  transform: translateX(26px); /* Adjust based on your toggle size */
+}
+
