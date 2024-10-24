@@ -116,47 +116,44 @@ function CreateProposal() {
   const { createDaoActor, stringPrincipal, identity } = useAuth();
 
   const movetodao = () => {
-    // navigate(`/dao/profile/${daoCanisterId}`);
+    navigate(`/dao/profile/${daoCanisterId}`);
     console.log("Proposal Submitted");
   };
 
   const { daoCanisterId } = useParams();
 
-  useEffect(() => {
-    console.log("DAO Canister ID:", daoCanisterId);
-
-    const fetchDaoDetails = async () => {
-      if (daoCanisterId) {
-        console.log("Fetching DAO details...");
-
-        try {
-          const daoActor = await createDaoActor(daoCanisterId);
-          console.log("DAO Actor:", daoActor);
-
-          if (daoActor) {
-            const daoDetails = await daoActor.get_dao_detail();
-
-            setDao(daoDetails);
-
-
-            const names = await daoDetails.proposal_entry.map(
-              (group) => group.place_name
-            );
-
-            setGroupNames(names);
-          } else {
-            console.error("daoActor is null");
-          }
-        } catch (error) {
-          console.error("Error fetching DAO details:", error);
+  const fetchDaoDetails = async () => {
+    if (daoCanisterId && identity) {
+      try {
+        // Use the authenticated identity when creating the actor
+        const daoActor = await createDaoActor(daoCanisterId, {
+          agentOptions: {
+            identity, // Pass the authenticated identity
+          },
+        });
+  
+        if (daoActor) {
+          const daoDetails = await daoActor.get_dao_detail();
+          setDao(daoDetails);
+          console.log("propsdsdf", daoDetails);
+          
+  
+          const names = daoDetails.proposal_entry.filter((group) => group.place_name !== "Council").map((group) => group.place_name );
+          setGroupNames(names);
+        } else {
+          console.error("daoActor is null");
         }
+      } catch (error) {
+        console.error("Error fetching DAO details:", error);
       }
-    };
-    console.log("Dao", dao);
-    console.log("GRP", groupNames);
-
+    } else {
+      console.error("daoCanisterId or identity is not available");
+    }
+  };
+  
+  useEffect(() => {
     fetchDaoDetails();
-  }, [daoCanisterId]);
+  }, [daoCanisterId, identity]);
 
   // useEffect(() => {
   //   const fetchGroupNames = async () => {
@@ -888,41 +885,16 @@ function CreateProposal() {
             <form onSubmit={handleSubmit}> {/* Wrap with form for better semantics */}
               <div className='flex justify-start gap-6 rounded-md p-4'>
                 <div className='flex flex-col w-[800px]'>
-                  {/* <div className="max-w-6xl relative">
-                    <label className="block mb-2 font-semibold text-xl">Proposal Title</label>
-                    <input
-                      type="text"
-                      value={proposalTitle}
-                      onChange={handleProposalTitleChange}
-                      placeholder="Enter proposal title"
-                      className=" w-full max-w-[800px] px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                      required // Optional: Make it a required field
-                    />
-                  </div>
-
-                  <div className='max-w-6xl'>
-                    <h1 className="text-xl font-semibold mb-4">Proposal Description</h1>
-                    <div className="mb-6 max-w-6xl mt-4 relative">
-                      <textarea
-                        value={proposalDescription}
-                        onChange={e => setProposalDescription(e.target.value)}
-                        placeholder='Write here...'
-                        className='w-full max-w-[800px] px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent'
-                        rows="10"
-                        required // Optional: Make it a required field
-                      />
-                    </div>
-                  </div> */}
 
                   {/* Proposal Type Select */}
-                  <div className="mb-6 max-w-6xl relative">
+                  <div className="mb-6 max-w-full relative">
                     <label className="block mb-2 font-semibold text-xl">
                       Proposal Type
                     </label>
                     <select
                       value={proposalType}
                       onChange={handleProposalTypeChange}
-                      className="w-full max-w-[800px] px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+                      className="w-full max-w-full px-4 py-3 mb-4 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent overflow-x-auto"
                       required // Make it a required field
                     >
                       <option value="">Select Proposal Type</option>
@@ -944,7 +916,7 @@ function CreateProposal() {
                   </div>
 
                   {/* Proposal Entry Select */}
-                  <div className="mb-6 max-w-6xl relative">
+                  <div className="mb-6 max-w-full relative">
                     <label className="block mb-2 font-semibold text-xl">
                       Proposal Entry
                     </label>

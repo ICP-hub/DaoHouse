@@ -12,12 +12,13 @@ const DaoConfig = ({ daoConfig, handleInputDaoConfig }) => (
                 onChange={handleInputDaoConfig}
                 className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                 placeholder="Enter DAO Type"
+                required
             />
         </div>
 
         <div className="mb-4">
             <label htmlFor="description" className="mb-2 font-semibold text-xl">Description</label>
-            <input
+            <textarea
                 id="description"
                 type="text"
                 name="description"
@@ -25,6 +26,8 @@ const DaoConfig = ({ daoConfig, handleInputDaoConfig }) => (
                 onChange={handleInputDaoConfig}
                 className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                 placeholder="Enter Description"
+                rows={4}
+                required
             />
         </div>
 
@@ -38,6 +41,7 @@ const DaoConfig = ({ daoConfig, handleInputDaoConfig }) => (
                 onChange={handleInputDaoConfig}
                 className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                 placeholder="Enter DAO Name"
+                required
             />
         </div>
 
@@ -64,6 +68,7 @@ const DaoConfig = ({ daoConfig, handleInputDaoConfig }) => (
                 onChange={handleInputDaoConfig}
                 className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                 placeholder="Enter Purpose"
+                required
             />
         </div>
     </form>

@@ -65,6 +65,7 @@ pub async fn create_proposal_controller(
         bounty_task : proposal.bounty_task,
         associated_proposal_id : proposal.associated_proposal_id.clone(),
         new_required_votes : proposal.new_required_votes,
+        task_completion_day : proposal.task_completion_day,
     };
 
     // to record proposals on Parent canister
@@ -98,8 +99,7 @@ pub async fn create_proposal_controller(
         state.dao = updated_dao;
         state.proposals.insert(proposal_id, new_proposal);
     });
-    ic_cdk::println!("done ok come : ");
-    return String::from(crate::utils::REQUEST_ADD_MEMBER);
+    return String::from(crate::utils::REQUEST_CREATE_PROPOSAL);
     
 }
 

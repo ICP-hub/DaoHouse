@@ -21,13 +21,14 @@ const AddMember = ({ addMember, handleInputAddMember, groupNames }) => (
         </div>
         <div className="mb-4">
             <label className="block mb-2 font-semibold text-xl">Description</label>
-            <input
+            <textarea
                 type="text"
                 name="description"
                 value={addMember.description}
                 onChange={handleInputAddMember}
                 className="w-full px-4 py-3 border border-opacity-30 border-[#aba9a5] rounded-xl bg-transparent"
                 placeholder="Enter description"
+                rows={4}
                 required
             />
         </div>

@@ -48,8 +48,11 @@ const MyPosts = () => {
   };
 
   useEffect(() => {
-    getPosts();
-  }, [currentPage, searchTerm]);
+    if (backendActor) {
+      getPosts();
+    }
+  }, [backendActor, currentPage, searchTerm]);
+  
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
