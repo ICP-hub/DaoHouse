@@ -100,12 +100,26 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
   }
     
   const confirmJoinDao = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      let a = Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND)
-      const response = await daoActor.ask_to_join_dao(a);
+      // Convert the environment variable to a Principal object
+      const canisterIdString = process.env.CANISTER_ID_DAOHOUSE_BACKEND;
+  
+      if (!canisterIdString) {
+        throw new Error("CANISTER_ID_DAOHOUSE_BACKEND is not defined");
+      }
+  
+      const daohouseBackendId = Principal.fromText(canisterIdString);
+      const place_to_join = "Council";
+  
+      const joinDaoPayload = {
+        place_to_join: place_to_join,
+        daohouse_backend_id: daohouseBackendId,
+      };
+  
+      const response = await daoActor.ask_to_join_dao(joinDaoPayload);
       console.log(response);
-      
+  
       if (response.Ok) {
         setJoinStatus("Requested");
         toast.success("Join request sent successfully");
@@ -114,12 +128,11 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
         toast.error(`Failed to send join request: ${response.Err || "Unknown error"}`);
       }
     } catch (error) {
-      setLoading(false)
       console.error('Error sending join request:', error);
       toast.error('Error sending join request');
     } finally {
       setShowConfirmModal(false);
-      setLoading(false)
+      setLoading(false);
     }
   };
 

@@ -63,7 +63,7 @@ const DaoProfile = () => {
   const [followersCount, setFollowersCount] = useState(0);
   const [userProfile, setUserProfile] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
+  const itemsPerPage = 40;
   const totalPages = Math.ceil((dao?.proposals_count || 0) / itemsPerPage);
 
 // Function to handle page change
@@ -172,10 +172,15 @@ const handlePageChange = (newPage) => {
   const confirmJoinDao = async () => {
     setLoading(true)
     try {
-      let a = Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND)
-      console.log(a);
-      
-      const response = await daoActor.ask_to_join_dao(a);
+      const daohouseBackendId = Principal.fromText(canisterIdString);
+      const place_to_join = "Council";
+  
+      const joinDaoPayload = {
+        place_to_join: place_to_join,
+        daohouse_backend_id: daohouseBackendId,
+      };
+  
+      const response = await daoActor.ask_to_join_dao(joinDaoPayload);
       console.log(response);
       
       if (response.Ok) {
