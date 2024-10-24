@@ -48,8 +48,11 @@ const MyPosts = () => {
   };
 
   useEffect(() => {
-    getPosts();
-  }, [currentPage, searchTerm]);
+    if (backendActor) {
+      getPosts();
+    }
+  }, [backendActor, currentPage, searchTerm]);
+  
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -82,8 +85,8 @@ const MyPosts = () => {
           </div>
         ) : (
           <div
-            className="flex flex-col md:mt-4 mt-2 mb-6 bg-[#F4F2EC] p-2 rounded-lg gap-2 h-auto md:h-73 w-full md:w-[880px] overflow-y-auto"
-            style={{ maxHeight: "535px" }}
+            className="flex flex-col md:mt-4 mt-2 mb-6 bg-[#F4F2EC] p-2 rounded-lg gap-2 h-auto md:h-73 w-full  overflow-y-auto"
+            style={{ maxHeight: "700px" }}
           >
             {myProposals.map((proposal, index) => (
               <div key={index} className="proposal relative w-full">
