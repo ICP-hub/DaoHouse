@@ -315,25 +315,26 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
       >
         <p className="mobile:text-base text-sm font-semibold">Set Profile Picture</p>
 
-        <div className="uploadImage flex big_phone:flex-row flex-col items-center justify-start gap-4">
+        <div className="uploadImage  items-center flex flex-col  flex big_phone:flex-row flex-col items-center justify-start gap-4">
           <img
             src={fileURL}
             alt="Image"
             className="rounded-lg w-[350px] h-[200px] object-cover"
           />
 
-         <div>
+        <div className="flex flex-col items-center justify-center">
          <label
             htmlFor="profile"
-            className="flex mobile:text-base text-xs font-semibold cursor-pointer mobile:m-4 m-2 flex-row items-center gap-2 bg-white px-4 py-2 rounded-[2rem] text-black shadow-xl"
-          >
+                  className="flex mobile:text-sm text-[10px] font-semibold cursor-pointer mobile:m-4 m-2 flex-row items-center gap-2 bg-white px-4 py-2 rounded-[2rem] text-black shadow-xl"
+                 >
             <FiUpload /> Upload New Photo
-           
-          </label>
-          <span className="block mt-1 text-xs translate-x-[35px] text-gray-500">
-            Upload JPG, PNG. Max 5 MB
-             </span>
-         </div>
+                </label>
+              <span className="block text-center mt-1 mobile:text-xs text-[9px] text-gray-500">
+                     Upload JPG, PNG. Max 5 MB
+           </span>
+             </div>
+
+
          
           <input
             type="file"
