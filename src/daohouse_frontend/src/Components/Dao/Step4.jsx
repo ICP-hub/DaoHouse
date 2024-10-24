@@ -56,11 +56,22 @@ const Step4 = ({ data, setData, setActiveStep }) => {
     TokenTransfer: groupName === "Council" ? true : false,
     AddMemberToDaoProposal: groupName === "Council" ? true : false,
     RemoveMemberToGroupProposal: groupName === "Council" ? true : false,
-    BountyClaim: groupName === "Council" ? true : false,
     BountyRaised: groupName === "Council" ? true : false,
     AddMemberToGroupProposal: groupName === "Council" ? true : false,
     GeneralPurpose: groupName === "Council" ? true : false,
   });
+
+  // AddMemberToDaoProposal,
+  //   AddMemberToGroupProposal,
+  //   RemoveMemberToDaoProposal,
+  //   RemoveMemberToGroupProposal,
+  //   ChangeDaoConfig,
+  //   ChangeDaoPolicy,
+  //   BountyRaised,
+  //   BountyDone,
+  //   Polls,
+  //   TokenTransfer,
+  //   GeneralPurpose,
 
   const permissionList = [
     "RemoveMemberToDaoProposal",
@@ -71,7 +82,6 @@ const Step4 = ({ data, setData, setActiveStep }) => {
     "TokenTransfer",
     "AddMemberToDaoProposal",
     "RemoveMemberToGroupProposal",
-    "BountyClaim",
     "BountyRaised",
     "AddMemberToGroupProposal",
     "GeneralPurpose",
