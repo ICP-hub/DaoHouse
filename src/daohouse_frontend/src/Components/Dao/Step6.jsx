@@ -315,7 +315,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
       >
         <p className="mobile:text-base text-sm font-semibold">Set Profile Picture</p>
 
-        <div className="uploadImage flex big_phone:flex-row flex-col items-center justify-start gap-4">
+        <div className="uploadImage  items-center flex flex-col  flex big_phone:flex-row flex-col items-center justify-start gap-4">
           <img
             src={fileURL}
             alt="Image"
