@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { usePostContext } from "../../../PostProvider";
 import NoDataComponent from "../../Dao/NoDataComponent";
 import { useAuth } from "../../utils/useAuthClient";
-import MuiSkeleton from "../../SkeletonLoaders/MuiSkeleton";
+import MuiSkeleton from "../../SkeletonLoaders/MyPostsSkeleton";
 import Card from "../../Proposals/Card";
 import SearchProposals from "../../Proposals/SearchProposals";
+import MyPostsSkeleton from "../../SkeletonLoaders/MyPostsSkeleton";
 
 const MyPosts = () => {
   const { backendActor } = useAuth();
@@ -78,7 +79,7 @@ const MyPosts = () => {
         </div>
         </div>
         {loading ? (
-          <MuiSkeleton />
+          <MyPostsSkeleton />
         ) : myProposals.length === 0 ? (
           <div className="mt-4 md:mt-8 w-full">
             <NoDataComponent />
