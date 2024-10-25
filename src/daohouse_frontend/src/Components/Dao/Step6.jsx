@@ -254,7 +254,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
           image_content: new Uint8Array(fileContent),
           image_content_type: file.type,
           image_title: file.name,
-          image_id: '12',
+          image_id: `${Date.now()}`,
         },
       }));
       

@@ -132,7 +132,7 @@ const ProposalsDetails = () => {
   const confirmJoinDao = async () => {
     setLoadingJoinedDAO(true)
     try {
-      const daohouseBackendId = Principal.fromText(canisterIdString);
+      const daohouseBackendId = Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND);
       const place_to_join = "Council";
   
       const joinDaoPayload = {
