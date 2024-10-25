@@ -1,16 +1,19 @@
-import React from "react";
+import React ,{useState} from "react";
 import Tags from "../../../Components/MyProfile/Tags";
 import PersonalLinksAndContactInfo from "../PersonalLinksAndContactInfo";
 import { useUserProfile } from "../../../context/UserProfileContext";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { createActor } from "../../../../../declarations/icp_ledger_canister";
+import { Principal } from "@dfinity/principal";
+import { useAuth } from "../../utils/useAuthClient";
 
 const AboutMe = () => {
   const className = "AboutMe";
   const { userProfile } = useUserProfile() || {};
-  const { stringPrincipal } = useParams();
+  // const { stringPrincipal } = useParams();
   const principalstring = userProfile?.user_id?.toString() || "";
-  
+  const { backendActor, identity, stringPrincipal } = useAuth();
   const copyToClipboard = () => {
     navigator.clipboard.writeText(principalstring).then(() => {
       toast.success('Copied to clipboard!');
@@ -25,6 +28,80 @@ const AboutMe = () => {
     </svg>
   );
 
+  const [tokens, setTokens] = useState(0);
+
+  console.log("tokens from about", tokens);
+  const [loadingPayment, setLoadingPayment] = useState(false);
+
+  const LEDGER_CANISTER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai";
+  const createTokenActor = async (canisterId) => {
+    console.log("canister id", canisterId);
+
+    try {
+      const tokenActorrr = createActor(Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"), { agentOptions: { identity } });
+      console.log("Created token actor successfully:", tokenActorrr);
+      return tokenActorrr;
+    } catch (err) {
+      console.error("Error creating token actor:", err);
+      throw err;
+    }
+  };
+  const fetchMetadataAndBalance = async (tokenActor, ownerPrincipal) => {
+    try {
+      const [metadata, balance] = await Promise.all([
+        tokenActor.icrc1_metadata(),
+        tokenActor.icrc1_balance_of({ owner: ownerPrincipal, subaccount: [] }),
+      ]);
+      console.log("Metadata and balance fetched:", { metadata, balance });
+      setTokens(balance);
+      return { metadata, balance };
+    } catch (err) {
+      console.error("Error fetching metadata and balance:", err);
+      throw err;
+    }
+  };
+
+  createTokenActor();
+  async function paymentTest() {
+    console.log("owner principal is ", stringPrincipal);
+    console.log("printing payment");
+
+    const backendCanisterId = process.env.CANISTER_ID_DAOHOUSE_BACKEND;
+    console.log("backend", backendCanisterId);
+    console.log("ledger", LEDGER_CANISTER_ID);
+    const a = Principal.fromText(LEDGER_CANISTER_ID)
+    console.log("a", a);
+
+    const actor = await createTokenActor(Principal.fromText(LEDGER_CANISTER_ID));
+    console.log("actor", actor);
+
+
+    try {
+
+      const actor = await createTokenActor(Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"));
+
+      console.log("backend canister id: ", backendCanisterId);
+      console.log("actor is ", actor);
+
+      const name = await actor.icrc1_name();
+      console.log("balance is ", name);
+
+      const { metadata, balance } = await fetchMetadataAndBalance(actor, Principal.fromText(stringPrincipal));
+
+      const formattedMetadata = formatTokenMetaData(metadata);
+      const parsedBalance = parseInt(balance, 10);
+      console.log("Balance:", parsedBalance);
+
+      const sendableAmount = parseInt(10000);
+      if (sendableAmount) {
+        afterPaymentApprove(sendableAmount);
+      }
+    } catch (err) {
+      // toast.error("Payment failed. Please try again.");
+      setLoadingPayment(false);
+    }
+  }
+  paymentTest();
   return (
     <div className={className + "w-full md:w-[100%] big_phone:w-full lg:w-[100%] xl:w-full"}>
       <div className=" mt-5">
@@ -32,6 +109,15 @@ const AboutMe = () => {
           About Me
         </h3>
         <div className="md:mt-4 mt-2 mb-6 bg-[#F4F2EC] p-4 rounded-lg ">
+        <div className="flex flex-col items-start space-y-2">
+            <p className="lg:text-[20px] md:text-[16px] text-[14px] font-semibold text-[#05212C] my-4 md:ml-2 md:mb-3">
+              Balance
+            </p>
+            <div className="flex items-center w-full max-w-[1200px] bg-white lg:text-[16px] md:text-[14px] text-[12px] font-normal text-[#646464] p-1 rounded-lg">
+              <span className="flex-grow p-2">{Number(tokens)}</span>
+           
+            </div>
+          </div>
           <div className="flex flex-col items-start space-y-2">
             <p className="lg:text-[20px] md:text-[16px] text-[14px] font-semibold text-[#05212C] md:ml-2 md:mb-3">
               Principal Id
