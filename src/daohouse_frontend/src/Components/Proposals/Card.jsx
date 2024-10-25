@@ -384,6 +384,18 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                   <h4 className="text-white text-sm md:text-xl font-semibold self-center">{userProfile?.username || "Username"}</h4>
                 )}
               </div>
+             
+             <div className="flex flex-row gap-3">
+              <div className="flex flex-col items-start border border-white">
+                      <span className="font-bold text-xs  mobile:text-sm lg:text-lg text-white">• Submitted On </span>
+                      <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3 text-white">{submittedOnDate} <span className="text-[8px] small_phone:text-[8px] md:text-xs font-normal text-gray-400">{submittedOnTime}</span></span>
+                    </div>
+
+                    <div className="flex flex-col items-start border border-white">
+                      <span className="font-bold text-xs mobile:text-sm lg:text-lg text-white">• Expires On </span>
+                      <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-0 md:ml-3 text-white">{expiresOnDate} <span className="text-[8px] small_phone:text-[8px] md:text-xs font-normal text-gray-400">{expiresOnTime}</span></span>
+                    </div>
+                    </div>
 
               <div className={`${isSubmittedProposals ? "flex justify-center gap-4" : "flex gap-4"}`}>
                 <div className={`${isSubmittedProposals ? "flex-col" : "flex flex-col md:flex-row items-center gap-2 md:gap-4"}`}>
@@ -395,6 +407,8 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                   <span className="text-white mt-2 text-center">{rejectedVotes} votes</span>
                 </div>
               </div>
+
+            
             </div>
 
             {/* Bottom Section */}
@@ -438,14 +452,14 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
               <div className="flex flex-col gap-4 items-start mb-4 justify-start">
                   {!isSubmittedProposals && (
                     <div className="flex mobile:space-x-2 xl:space-x-8">
-                    <div className="flex flex-col items-start">
+                    {/* <div className="flex flex-col items-start">
                       <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Submitted On </span>
                       <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{submittedOnDate} <span className="text-[8px] small_phone:text-[8px] md:text-xs font-normal text-gray-400">{submittedOnTime}</span></span>
-                    </div>
-                    <div className="flex flex-col items-start">
+                    </div> */}
+                    {/* <div className="flex flex-col items-start">
                       <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Expires On </span>
                       <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{expiresOnDate} <span className="text-[8px] small_phone:text-[8px] md:text-xs font-normal text-gray-400">{expiresOnTime}</span></span>
-                    </div>
+                    </div> */}
                     <div className="flex flex-col items-start">
                       <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Votes Required </span>
                       <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{requiredVotes}</span>
