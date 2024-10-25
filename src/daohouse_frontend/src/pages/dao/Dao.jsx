@@ -259,10 +259,10 @@ const Dao = () => {
         )
       ) : loadingJoinedDAO ? (
         <DaoCardLoaderSkeleton />
-      ) : joinedDAO.length ? (
+      ) : (searchTerm ? fetchedDAOs : joinedDAO).length ? (
         <div className="bg-gray">
           <Container classes="__cards tablet:px-10 px-4 pb-10 grid grid-cols-1 big_phone:grid-cols-2 tablet:gap-6 gap-4">
-            {joinedDAO.map((daos, index) => (
+            {(searchTerm ? fetchedDAOs : joinedDAO).map((daos, index) => (
               <DaoCard
                 key={index}
                 {...{
