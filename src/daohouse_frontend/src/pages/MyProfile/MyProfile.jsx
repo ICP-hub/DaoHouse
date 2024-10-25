@@ -389,14 +389,14 @@ const MyProfile = ({ childComponent }) => {
 
                         {/* user information */}
                         <div className="md:flex md:gap-1 lg: hidden  mt-3">
-                          <div className="">
+                          {/* <div className="">
                             <span className=" tablet:text-[32px] text-[24px] font-normal text-[#05212C] user-acc-info">
                               {Number(tokens)}
                               <span className="tablet:text-[16px] text-[14px] mx-1">
                                 Balance
                               </span>
                             </span>
-                          </div>
+                          </div> */}
                           <span className=" tablet:text-[32px] text-[24px] font-normal text-[#05212C] user-acc-info">
                             {post}
                             <span className="tablet:text-[16px] text-[14px] mx-1">
@@ -562,12 +562,12 @@ const MyProfile = ({ childComponent }) => {
                 <div className="mr-20  ">
 
                   <div className="md:flex justify- translate-x-[60px] translate-y-[30px] translate top-[204px] left-[20px] mt-3">
-                      <span className="md:mr-5 tablet:text-[32px] text-[18px] font-mulish text-[#05212C] user-acc-info">
+                      {/* <span className="md:mr-5 tablet:text-[32px] text-[18px] font-mulish text-[#05212C] user-acc-info">
                         {Number(tokens)}
                         <span className="tablet:text-[16px] text-[8px] mx-1">
                           Balance
                         </span>
-                      </span>
+                      </span> */}
                     <span className="md:mr-5 tablet:text-[32px] text-[18px] font-mulish text-[#05212C] user-acc-info">
                       {post}
                       <span className="tablet:text-[16px] text-[8px] mx-1">
