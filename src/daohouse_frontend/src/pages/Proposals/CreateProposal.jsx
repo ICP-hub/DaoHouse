@@ -837,6 +837,7 @@ function CreateProposal() {
         paymentDetails={paymentDetails}
         loadingPayment={loadingPayment}
         bountyRaised={bountyRaised}
+        tokenTransfer={tokenTransfer}
 
 
 
@@ -995,7 +996,7 @@ function CreateProposal() {
                     <button
                       className="bg-[#0E3746] hover:bg-[#819499] text-white font-normal text-center rounded-full text-[16px] py-2 px-6 rounded focus:outline-none focus:shadow-outline"
                       type="submit"
-                      disabled={loading || !proposalEntry} // Disable if loading or proposalEntry not selected
+                      disabled={loading } // Disable if loading or proposalEntry not selected
                     >
                       {loading ? (
                         <CircularProgress size={24} />
