@@ -7,7 +7,7 @@ const Step1 = ({ setData, setActiveStep, data }) => {
   const [inputData, setInputData] = useState({
     DAOIdentifier: "",
     Purpose: "",
-    SetUpPeriod: data?.step1?.SetUpPeriod || 3,
+    SetUpPeriod: data?.step1?.SetUpPeriod || 1,
   });
 
   const [errors, setErrors] = useState({});
@@ -24,7 +24,7 @@ const Step1 = ({ setData, setActiveStep, data }) => {
       setInputData({
         DAOIdentifier: data.DAOIdentifier || "",
         Purpose: data.Purpose || "",
-        SetUpPeriod: data?.step1?.SetUpPeriod || 3,
+        SetUpPeriod: data?.step1?.SetUpPeriod || 1,
       });
     }
   }, [data]);
