@@ -173,7 +173,6 @@ const CreateDao = () => {
       //   group_permissions: ["meri marji"]
       // }],
       token_supply: Number(step2.TokenSupply) || 4,
-      ask_to_join_dao : true,
     };
 
     console.log("daoPayload",daoPayload);
