@@ -370,46 +370,88 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
     return (
       <div className={`bg-white font-mulish ${isProposalDetails ? "rounded-t-xl tablet:mx-16" : `rounded-xl ${isSubmittedProposals ? "": "desktop:mx-20"}`} shadow-md ${isSubmittedProposals ? "flex flex-col  big_phone:flex-row desktop:mx-0" : "flex flex-col md:flex-col"}`}>
           <>
-            {/* Top Section */}
-            <div className={`${isSubmittedProposals ? " big_phone:rounded-l-lg big_phone:rounded-r-none rounded-t-lg rounded-b-none flex justify-between big_phone:flex-col big_phone:space-y-8 bg-[#0E3746] px-[20px] lg:px-12 py-6" : "w-full flex justify-between items-center bg-[#0E3746] px-[20px] md:px-12 py-6 rounded-t-lg rounded-b-none"} `}>
-              <div className="flex gap-2 lg:gap-[12px] justify-center items-center">
-                {isLoading ? (
-                  <div className="w-8 h-8 md:w-16 md:h-16 rounded-full bg-gray-300 animate-pulse"></div>
-                ) : (
-                  <img src={profileImg || avatar} alt="user avatar" className="w-8 h-8 md:w-16 md:h-16 rounded-full" />
-                )}
-                {isLoading ? (
-                  <div className="w-24 h-6 md:w-36 md:h-8 bg-gray-400"></div>
-                ) : (
-                  <h4 className="text-white text-sm md:text-xl font-semibold self-center">{userProfile?.username || "Username"}</h4>
-                )}
-              </div>
-             
-             <div className="flex flex-row gap-3">
-              <div className="flex flex-col items-start border border-white">
-                      <span className="font-bold text-xs  mobile:text-sm lg:text-lg text-white">• Submitted On </span>
-                      <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3 text-white">{submittedOnDate} <span className="text-[8px] small_phone:text-[8px] md:text-xs font-normal text-gray-400">{submittedOnTime}</span></span>
-                    </div>
+           {/* Top Section */}
+<div
+  className={`${
+    isSubmittedProposals
+      ? "big_phone:rounded-l-lg big_phone:rounded-r-none rounded-t-lg rounded-b-none flex justify-between big_phone:flex-col big_phone:space-y-8 bg-[#0E3746] px-4 sm:px-6 lg:px-12 py-6"
+      : "w-full flex justify-between items-center bg-[#0E3746] px-4 sm:px-6 lg:px-12 py-6 rounded-t-lg rounded-b-none"
+  }`}
+>
+  {/* User Info Section */}
+  <div className="flex gap-2 lg:gap-4 justify-center items-center">
+    {isLoading ? (
+      <div className="w-8 h-8 md:w-16 md:h-16 rounded-full bg-gray-300 animate-pulse"></div>
+    ) : (
+      <img
+        src={profileImg || avatar}
+        alt="user avatar"
+        className="w-8 h-8 md:w-16 md:h-16 rounded-full"
+      />
+    )}
+    {isLoading ? (
+      <div className="w-24 h-6 md:w-36 md:h-8 bg-gray-400"></div>
+    ) : (
+      <h4 className="text-white text-sm sm:text-base md:text-xl font-semibold">
+        {userProfile?.username || "Username"}
+      </h4>
+    )}
+  </div>
 
-                    <div className="flex flex-col items-start border border-white">
-                      <span className="font-bold text-xs mobile:text-sm lg:text-lg text-white">• Expires On </span>
-                      <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-0 md:ml-3 text-white">{expiresOnDate} <span className="text-[8px] small_phone:text-[8px] md:text-xs font-normal text-gray-400">{expiresOnTime}</span></span>
-                    </div>
-                    </div>
+ {/* Dates Section */}
+<div className="hidden lg:flex flex-row gap-3">
+  <div className="flex flex-col items-start">
+    <span className="font-bold text-xs sm:text-sm lg:text-lg text-white">
+      • Submitted On
+    </span>
+    <span className="text-[10px] small_phone:text-xs sm:text-sm md:text-base text-white ml-2">
+      {submittedOnDate}{" "}
+      <span className="text-[8px] small_phone:text-[8px] md:text-xs text-gray-400">
+        {submittedOnTime}
+      </span>
+    </span>
+  </div>
 
-              <div className={`${isSubmittedProposals ? "flex justify-center gap-4" : "flex gap-4"}`}>
-                <div className={`${isSubmittedProposals ? "flex-col" : "flex flex-col md:flex-row items-center gap-2 md:gap-4"}`}>
-                  <CircularProgressBar percentage={Math.floor(approvedVotes / requiredVotes * 100)} color="#4CAF50" />
-                  <span className="text-white mt-2 text-center">{approvedVotes} votes</span>
-                </div>
-                <div className={`${isSubmittedProposals ? "flex-col" : "flex flex-col md:flex-row items-center gap-2 md:gap-4"}`}>
-                  <CircularProgressBar percentage={Math.floor(rejectedVotes / requiredVotes * 100)} color="red" />
-                  <span className="text-white mt-2 text-center">{rejectedVotes} votes</span>
-                </div>
-              </div>
+  <div className="flex flex-col items-start">
+    <span className="font-bold text-xs sm:text-sm lg:text-lg text-white">
+      • Expires On
+    </span>
+    <span className="text-[10px] small_phone:text-xs sm:text-sm md:text-base text-white ml-2">
+      {expiresOnDate}{" "}
+      <span className="text-[8px] small_phone:text-[8px] md:text-xs text-gray-400">
+        {expiresOnTime}
+      </span>
+    </span>
+  </div>
+</div>
 
-            
-            </div>
+
+  {/* Votes Section */}
+  <div className="flex justify-center gap-4 md:gap-8 mt-4 md:mt-0">
+    {/* Approved Votes */}
+    <div className="flex flex-col items-center">
+      <CircularProgressBar
+        percentage={Math.floor((approvedVotes / requiredVotes) * 100)}
+        color="#4CAF50"
+      />
+      <span className="text-white mt-2 text-center text-xs sm:text-sm md:text-base">
+        {approvedVotes} votes
+      </span>
+    </div>
+
+    {/* Rejected Votes */}
+    <div className="flex flex-col items-center">
+      <CircularProgressBar
+        percentage={Math.floor((rejectedVotes / requiredVotes) * 100)}
+        color="red"
+      />
+      <span className="text-white mt-2 text-center text-xs sm:text-sm md:text-base">
+        {rejectedVotes} votes
+      </span>
+    </div>
+  </div>
+</div>
+
 
             {/* Bottom Section */}
             <div className={`${isSubmittedProposals ? "w-full px-4 desktop:px-12 py-4 md:py-8" : "w-full px-4 lg:px-12 py-4 md:py-8"}`}>
