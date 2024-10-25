@@ -50,6 +50,7 @@ function CreateProposal() {
     link_of_task: '',
     // action_member: '',
     bounty_task: '',
+    daohouse_canister_id: ''
   });
 
   const [generalPurp, setGeneralPurp] = useState({
@@ -356,9 +357,9 @@ function CreateProposal() {
             proposal_entry: proposalEntry,
             associated_proposal_id: bountyDone.associated_proposal_id,
             description: bountyDone.description,
-            tokens: bountyDone.tokens,
+            tokens: Number(bountyDone.tokens),
             // action_member: Principal.fromText(bountyDone.action_member),
-            daohouse_canister_id: daoCanisterId
+            daohouse_canister_id: Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND)
           });
           break;
 
