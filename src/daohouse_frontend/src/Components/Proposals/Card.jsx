@@ -449,7 +449,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
               {!isSubmittedProposals && (
                 <p className="text-gray-900 text-sm mobile:text-xl mb-4 break-words">{proposal?.proposal_description}</p>
               )}
-              <div className="flex flex-col gap-4 items-start mb-4 justify-start">
+              <div className="flex flex-col gap-4 items-start mb-2 justify-start">
                   {!isSubmittedProposals && (
                     <div className="flex mobile:space-x-2 xl:space-x-8">
                     {/* <div className="flex flex-col items-start">
@@ -460,9 +460,9 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                       <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Expires On </span>
                       <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{expiresOnDate} <span className="text-[8px] small_phone:text-[8px] md:text-xs font-normal text-gray-400">{expiresOnTime}</span></span>
                     </div> */}
-                    <div className="flex flex-col items-start">
-                      <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Votes Required </span>
-                      <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{requiredVotes}</span>
+                    <div className="flex  items-start">
+                      <span className="font-bold ">Votes Required :</span>
+                      <span className=" ml-2 md:ml-3">{requiredVotes}</span>
                     </div>
                     </div>
                     )}
@@ -647,12 +647,12 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                         <button className="px-6 py-2 font-mulish" onClick={handleViewMore}>View More</button>
                       </div>
                     )} */}
-                  {(proposal?.proposal_title === "Bounty raised" || proposal.propsal_title === "Bounty raised") && (
+                  {/* {(proposal?.proposal_title === "Bounty raised" || proposal.propsal_title === "Bounty raised") && (
                     <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
 
                       <button className="px-2 py-2 font-mulish" onClick={() => navigate(`/create-proposal/${daoCanisterId}`)}> Bounty Claim</button>
                     </div>
-                  )}
+                  )} */}
                        {(proposal?.proposal_title === "Bounty claim" || proposal.propsal_title === "Bounty claim") && (
                     <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
 
