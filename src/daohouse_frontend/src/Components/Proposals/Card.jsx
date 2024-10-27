@@ -536,16 +536,34 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                 ) }
                 {!isSubmittedProposals && (proposal.proposal_type.TokenTransfer !== undefined) && (
                   <div className="w-full"> 
-                  <div className="whitespace-normal break-words mt-2">
-                    <span className="font-bold">{proposal.tokens} Tokens </span>
+                    <div className="whitespace-normal break-words mt-2">
+                      <span className="font-bold">
+                        Tokens: {proposal.tokens.map((token) => token.toString())}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-col">
+                      <div>
+                        <span className="font-bold">To</span>: 
+                        {proposal.token_to.map((principal, index) => (
+                          <span key={index}>
+                            {principal.toText ? principal.toText() : Array.from(principal._arr).join('')}
+                          </span>
+                        ))}
+                      </div>
+                      {/* <strong>&nbsp; | &nbsp;</strong> */}
+                      <div>
+                      <span className="font-bold">From</span>: 
+                      {proposal.token_from.map((principal, index) => (
+                        <span key={index}>
+                          {principal.toText ? principal.toText() : Array.from(principal._arr).join('')}
+                        </span>
+                      ))}
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex flex-wrap">
-                    <span className="font-bold">To</span>: {proposal.token_to}
-                      <strong>&nbsp; | &nbsp;</strong>
-                    <span className="font-bold">Dao Type</span>: {proposal.token_from}
-                  </div>
-                </div>
-                ) }
+                )}
+
                 {!isSubmittedProposals && (proposal.proposal_type.AddMemberToGroupProposal !== undefined) && (
                   <div className="w-full"> 
                     <div className="flex">
@@ -636,9 +654,11 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                       </button>
                     </div>
 
-                    <div className="bg-[#CDEFFE] rounded-xl cursor-pointer flex">
+                    {!isProposalDetails && (
+                      <div className="bg-[#CDEFFE] rounded-xl cursor-pointer flex">
                       <button className="px-4 py-1 font-mulish" onClick={handleViewMore}>View More</button>
                     </div>
+                    )}
                   </div>
 
                 {/* Cast Vote Section  */}

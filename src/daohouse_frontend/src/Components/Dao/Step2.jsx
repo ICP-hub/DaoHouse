@@ -8,8 +8,8 @@ const Step2 = ({ setData, setActiveStep, data }) => {
   const [inputData, setInputData] = useState({
     TokenName: "",
     TokenSymbol: "",
-    TokenSupply: 1,
-    VotesRequired: 1,
+    TokenSupply: 1000,
+    VotesRequired: 3,
   });
 
   const [errors, setErrors] = useState({});
@@ -26,8 +26,8 @@ const Step2 = ({ setData, setActiveStep, data }) => {
       setInputData({
         TokenName: data.TokenName || "",
         TokenSymbol: data.TokenSymbol || "",
-        TokenSupply: data.TokenSupply || 1,
-        VotesRequired: data.VotesRequired || 1,
+        TokenSupply: data.TokenSupply || 1000,
+        VotesRequired: data.VotesRequired || 3,
       });
     }
   }, [data]);
