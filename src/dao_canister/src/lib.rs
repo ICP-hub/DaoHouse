@@ -369,17 +369,9 @@ async fn return_token_to_user(token_ledger_id: Principal, proposal: &Proposals) 
         }
     };
 
-    let token_to = match proposal.token_from.clone() {
-        Some(token_to) => token_to,
-        None => {
-            ic_cdk::println!("Missing token amount");
-            return;
-        }
-    };
-
     let token_transfer_args = TokenTransferArgs {
         from: canister_wallet_id.clone(),
-        to: token_to.clone(),
+        to: proposal.principal_of_action.clone(),
         tokens,
     };
 

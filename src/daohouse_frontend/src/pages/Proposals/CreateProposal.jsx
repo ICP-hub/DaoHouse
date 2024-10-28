@@ -616,10 +616,7 @@ function CreateProposal() {
     }
   };
   const createTokenActor = async () => {
-    const tokenActorrr = createActor(
-      Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"),
-      { agentOptions: { identity } }
-    );
+    const tokenActorrr = createActor(dao.token_ledger_id.id, { agentOptions: { identity } });
     return tokenActorrr;
   };
   const formatTokenMetaData = async (arr) => {
