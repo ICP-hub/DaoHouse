@@ -618,15 +618,7 @@ function CreateProposal() {
     }
   };
   const createTokenActor = async () => {
-    const daoActor = await createDaoActor(daoCanisterId);
-    const daoDetails = await daoActor.get_dao_detail();
-    console.log("DaoDetails", daoDetails);
-    const ledgerId = Principal.fromUint8Array(daoDetails.token_ledger_id.id._arr)
-    console.log("ledgerId", ledgerId);
-    
-    const tokenActorrr = createActor(ledgerId,
-      { agentOptions: { identity } });
-      console.log("Created token actor successfully:", tokenActorrr);
+    const tokenActorrr = createActor(dao.token_ledger_id.id, { agentOptions: { identity } });
     return tokenActorrr;
   };
   const formatTokenMetaData = async (arr) => {

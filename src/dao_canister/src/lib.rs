@@ -211,7 +211,7 @@ fn check_proposals() {
                 }
                  else if !proposal.has_been_processed_second && time_diff >= EXPIRATION_TIME {
                 //else if !proposal.has_been_processed_second && time_diff >= proposal.proposal_expired_at {
-                    ic_cdk::println!("status : {:?} ", proposal.proposal_status);
+                    ic_cdk::println!("proposal status : {:?} ", proposal.proposal_status);
                     let proposal_clone = proposal.clone();
                     match proposal.proposal_type {
                         ProposalType::TokenTransfer => {
@@ -369,17 +369,9 @@ async fn return_token_to_user(token_ledger_id: Principal, proposal: &Proposals) 
         }
     };
 
-    let token_to = match proposal.token_from.clone() {
-        Some(token_to) => token_to,
-        None => {
-            ic_cdk::println!("Missing token amount");
-            return;
-        }
-    };
-
     let token_transfer_args = TokenTransferArgs {
         from: canister_wallet_id.clone(),
-        to: token_to.clone(),
+        to: proposal.principal_of_action.clone(),
         tokens,
     };
 
