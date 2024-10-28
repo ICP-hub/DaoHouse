@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 import Container from "../Container/Container";
 import { useAuth } from "../utils/useAuthClient";
 import PaymentModal from "./PaymentModal";
+import coinsound from "../../../../daohouse_frontend/public/coinsound.mp3";
 
 const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setLoadingNext }) => {
   const [file, setFile] = useState(null);
@@ -95,6 +96,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
     console.log("after payment ")
     console.log(backendActor)
 
+    const successAudio = new Audio(coinsound)
 
     try {
       //uncomment later
@@ -114,8 +116,10 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
 
       //remove this later
       toast.success("Payment successful!");
+      successAudio.play();
         setIsModalOpen(false); // Close the modal on successful payment
         handleDaoClick(); // Navigate to the next step
+       
     } finally {
       setLoadingPayment(false); // End loading state after payment is processed
     }
