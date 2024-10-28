@@ -18,7 +18,8 @@ import DaoPolicy from "./DaoPolicy";
 import Poll from "./Poll";
 import RemoveDaoMember from "./RemoveDaoMember";
 import { createActor } from "../../../../declarations/icp_ledger_canister";
-import TokenPaymentModal from "./TokenPaymentModal"
+import TokenPaymentModal from "./TokenPaymentModal";
+import coinsound from "../../../../daohouse_frontend/public/coinsound.mp3";
 function CreateProposal() {
   const navigate = useNavigate();
 
@@ -471,10 +472,12 @@ function CreateProposal() {
       // After payment, create the proposal
       const daoCanister = await createDaoActor(daoCanisterId);
       const response = await daoCanister.proposal_to_transfer_token(tokenTransfer);
-
+     const sound = new Audio(coinsound);
 
       if (response.Ok) {
+        sound.play();
         toast.success("Token transfer proposal created successfully");
+        
         setIsModalOpen(false);
         // movetodao();
       } else {

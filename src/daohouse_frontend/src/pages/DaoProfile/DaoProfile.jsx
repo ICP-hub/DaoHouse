@@ -28,6 +28,7 @@ import ProposalLoaderSkeleton from "../../Components/SkeletonLoaders/ProposalLoa
 import DaoProfileLoaderSkeleton from "../../Components/SkeletonLoaders/DaoProfileLoaderSkeleton/DaoProfileLoaderSkeleton";
 import NoDataComponent from "../../Components/Dao/NoDataComponent";
 import { CircularProgress } from "@mui/material";
+import messagesound from "../../../../daohouse_frontend/public/messagesound.mp3";
 
 
 const DaoProfile = () => {
@@ -160,8 +161,10 @@ const handlePageChange = (newPage) => {
   }, [daoCanisterId, backendActor, createDaoActor, currentPage]);
 
   const handleJoinDao = async () => {
+
     if (joinStatus === 'Joined') {
       toast.error(`You are already member of this dao`);
+
       return;
     };
 
@@ -182,10 +185,12 @@ const handlePageChange = (newPage) => {
   
       const response = await daoActor.ask_to_join_dao(joinDaoPayload);
       console.log(response);
-      
+      const sound  = new Audio(messagesound);
+    
       if (response.Ok) {
         setJoinStatus("Requested");
         toast.success("Join request sent successfully");
+        sound.play();
       } else {
         console.error("Failed to send join request:", response.Err || "Unknown error");
         toast.error(`Failed to send join request: ${response.Err || "Unknown error"}`);

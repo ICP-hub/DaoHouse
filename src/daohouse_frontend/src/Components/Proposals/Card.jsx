@@ -18,6 +18,8 @@ import ShareModal from "./ShareModal";
 export default function Card({ proposal, voteApi, showActions, isProposalDetails, isComment, setIsComment, commentCount, isSubmittedProposals, showComments, }) {
 
   // console.log("propsoal api", proposal.link_of_task);
+  console.log("proposals",proposal);
+  
 
   const { backendActor, createDaoActor, stringPrincipal } = useAuth();
   const [voteStatus, setVoteStatus] = useState(""); // Track user vote (Yes/No)
@@ -400,9 +402,9 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
 
  {/* Dates Section */}
 <div className="hidden lg:flex flex-row gap-3">
-  <div className="flex flex-col items-start">
+  <div className="flex flex-col items-start ">
     <span className="font-bold text-xs sm:text-sm lg:text-lg text-white">
-      • Submitted On
+      • Submitted On 
     </span>
     <span className="text-[10px] small_phone:text-xs sm:text-sm md:text-base text-white ml-2">
       {submittedOnDate}{" "}
@@ -493,18 +495,19 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
               )}
               <div className="flex flex-col gap-4 items-start mb-2 justify-start">
                   {!isSubmittedProposals && (
-                    <div className="flex mobile:space-x-2 xl:space-x-8">
-                    {/* <div className="flex flex-col items-start">
+                    <div className="flex">
+                    {/* // <div className="flex "> */}
+                    <div className="lg:hidden flex flex-col items-start">
                       <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Submitted On </span>
                       <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{submittedOnDate} <span className="text-[8px] small_phone:text-[8px] md:text-xs font-normal text-gray-400">{submittedOnTime}</span></span>
-                    </div> */}
-                    {/* <div className="flex flex-col items-start">
+                    </div>
+                    <div className="lg:hidden flex flex-col items-start">
                       <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Expires On </span>
                       <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{expiresOnDate} <span className="text-[8px] small_phone:text-[8px] md:text-xs font-normal text-gray-400">{expiresOnTime}</span></span>
-                    </div> */}
-                    <div className="flex  items-start">
-                      <span className="font-bold ">Votes Required :</span>
-                      <span className=" ml-2 md:ml-3">{requiredVotes}</span>
+                    </div>
+                    <div className="flex lg:flex-row flex-col    items-start">
+                      <span className="font-bold text-[10px] lg:text-lg text-gray-900">Votes Required :</span>
+                      <span className=" lg:ml-3 text-start text-[10px]  mobile:text-sm lg:text-lg">{requiredVotes}</span>
                     </div>
                     </div>
                     )}
@@ -570,7 +573,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                       <span className="font-bold">Group Name</span>: {proposal.group_to_join}
                     </div>
                     <div className="whitespace-normal break-words mt-2">
-                      <span className="font-bold">Principal ID</span>: {Principal.fromUint8Array(new Uint8Array(proposal.principal_of_action._arr)).toText()}
+                      <span className="font-bold">New member</span>: {Principal.fromUint8Array(new Uint8Array(proposal.principal_of_action._arr)).toText()}
                     </div>
                   </div>
                 ) }
@@ -580,7 +583,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                       <span className="font-bold">Group Name</span>: {proposal.group_to_remove}
                     </div>
                     <div className="whitespace-normal break-words mt-2">
-                      <span className="font-bold">Principal ID</span>: {Principal.fromUint8Array(new Uint8Array(proposal.principal_of_action._arr)).toText()}
+                      <span className="font-bold">Remove Member</span>: {Principal.fromUint8Array(new Uint8Array(proposal.principal_of_action._arr)).toText()}
                     </div>
                   </div>
                 ) }
@@ -615,11 +618,28 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                 ) }
                 {!isSubmittedProposals && (proposal.proposal_type.BountyDone !== undefined) && (
                   <div className="w-full"> 
-                    <div className="flex">
+                    {/* <div className="flex">
                       <span className="font-bold">Bounty Task</span>: {proposal.bounty_task}
-                    </div>
+                    </div> */}
                     <div className="whitespace-normal break-words mt-2">
-                      <span className="font-bold">Proposal ID</span>: {proposal.associated_proposal_id}
+                      <span className="font-bold"> Associated Proposal ID</span>: {proposal.associated_proposal_id}
+                    </div>
+                    {/* <div className="whitespace-normal break-words mt-2">
+                      <span className="font-bold">Bounty Task</span>: {proposal.bounty_task}
+                    </div> */}
+                    {/* <div className="whitespace-normal break-words mt-2">
+                      <span className="font-bold">Tokens to</span>: {proposal.associated_proposal_id}
+                    </div> */}
+                    <div className="whitespace-normal break-words mt-2">
+                      {/* <span className="font-bold">Tokens from</span> */}
+                      <div>
+                      <span className="font-bold">From</span>: 
+                      {proposal.token_from.map((principal, index) => (
+                        <span key={index}>
+                          {principal.toText ? principal.toText() : Array.from(principal._arr).join('')}
+                        </span>
+                      ))}
+                      </div>
                     </div>
                   </div>
                 ) }

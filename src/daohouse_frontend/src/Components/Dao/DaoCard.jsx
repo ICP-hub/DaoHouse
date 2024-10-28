@@ -4,6 +4,7 @@ import { Principal } from "@dfinity/principal";
 import { useAuth } from "../utils/useAuthClient";
 import { toast } from 'react-toastify';
 import { CircularProgress } from "@mui/material";
+import messagesound from "../../../../daohouse_frontend/public/messagesound.mp3";
 
 const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, isJoinedDAO }) => {
 
@@ -119,9 +120,10 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
   
       const response = await daoActor.ask_to_join_dao(joinDaoPayload);
       console.log(response);
-  
+      const sound = new Audio(messagesound);
       if (response.Ok) {
         setJoinStatus("Requested");
+        sound.play();
         toast.success("Join request sent successfully");
       } else {
         console.error("Failed to send join request:", response.Err || "Unknown error");

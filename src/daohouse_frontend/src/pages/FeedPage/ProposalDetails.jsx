@@ -14,7 +14,7 @@ import Comments from "../Post/Comments";
 import ProposalDetailsLoaderSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/ProposalDetailsLoaderSkeleton";
 import NoDataComponent from "../../Components/Dao/NoDataComponent";
 import { CircularProgress } from "@mui/material";
-
+import messagesound from "../../../../daohouse_frontend/public/messagesound.mp3";
 const ProposalsDetails = () => {
    const className="DaoProfile"
   const { backendActor, createDaoActor } = useAuth();
@@ -142,10 +142,11 @@ const ProposalsDetails = () => {
       
       const response = await daoActor.ask_to_join_dao(joinDaoPayload);
       console.log(response);
-      
+      const sound = new Audio(messagesound)
       if (response.Ok) {
         setJoinStatus("Requested");
         toast.success("Join request sent successfully");
+        sound.play();
       } else {
         console.error("Failed to send join request:", response.Err || "Unknown error");
         toast.error(`Failed to send join request: ${response.Err || "Unknown error"}`);
