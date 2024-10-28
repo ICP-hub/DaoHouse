@@ -166,7 +166,7 @@ useEffect(() => {
                       />
                       <div>
                         <p className="font-bold text-gray-800">{vote.profileData?.username || vote.vote.user}</p>
-                        <p className="text-sm text-gray-800">{principal || "aaaaa-aa"}</p>
+                        <p className="text-sm text-gray-800">{Principal.fromUint8Array(vote.profileData?.user_id._arr).toText() || "aaaaa-aa"}</p>
                       </div>
                     </div>
                   ))

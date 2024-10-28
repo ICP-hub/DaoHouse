@@ -370,32 +370,88 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
     return (
       <div className={`bg-white font-mulish ${isProposalDetails ? "rounded-t-xl tablet:mx-16" : `rounded-xl ${isSubmittedProposals ? "": "desktop:mx-20"}`} shadow-md ${isSubmittedProposals ? "flex flex-col  big_phone:flex-row desktop:mx-0" : "flex flex-col md:flex-col"}`}>
           <>
-            {/* Top Section */}
-            <div className={`${isSubmittedProposals ? " big_phone:rounded-l-lg big_phone:rounded-r-none rounded-t-lg rounded-b-none flex justify-between big_phone:flex-col big_phone:space-y-8 bg-[#0E3746] px-[20px] lg:px-12 py-6" : "w-full flex justify-between items-center bg-[#0E3746] px-[20px] md:px-12 py-6 rounded-t-lg rounded-b-none"} `}>
-              <div className="flex gap-2 lg:gap-[12px] justify-center items-center">
-                {isLoading ? (
-                  <div className="w-8 h-8 md:w-16 md:h-16 rounded-full bg-gray-300 animate-pulse"></div>
-                ) : (
-                  <img src={profileImg || avatar} alt="user avatar" className="w-8 h-8 md:w-16 md:h-16 rounded-full" />
-                )}
-                {isLoading ? (
-                  <div className="w-24 h-6 md:w-36 md:h-8 bg-gray-400"></div>
-                ) : (
-                  <h4 className="text-white text-sm md:text-xl font-semibold self-center">{userProfile?.username || "Username"}</h4>
-                )}
-              </div>
+           {/* Top Section */}
+<div
+  className={`${
+    isSubmittedProposals
+      ? "big_phone:rounded-l-lg big_phone:rounded-r-none rounded-t-lg rounded-b-none flex justify-between big_phone:flex-col big_phone:space-y-8 bg-[#0E3746] px-4 sm:px-6 lg:px-12 py-6"
+      : "w-full flex justify-between items-center bg-[#0E3746] px-4 sm:px-6 lg:px-12 py-6 rounded-t-lg rounded-b-none"
+  }`}
+>
+  {/* User Info Section */}
+  <div className="flex gap-2 lg:gap-4 justify-center items-center">
+    {isLoading ? (
+      <div className="w-8 h-8 md:w-16 md:h-16 rounded-full bg-gray-300 animate-pulse"></div>
+    ) : (
+      <img
+        src={profileImg || avatar}
+        alt="user avatar"
+        className="w-8 h-8 md:w-16 md:h-16 rounded-full"
+      />
+    )}
+    {isLoading ? (
+      <div className="w-24 h-6 md:w-36 md:h-8 bg-gray-400"></div>
+    ) : (
+      <h4 className="text-white text-sm sm:text-base md:text-xl font-semibold">
+        {userProfile?.username || "Username"}
+      </h4>
+    )}
+  </div>
 
-              <div className={`${isSubmittedProposals ? "flex justify-center gap-4" : "flex gap-4"}`}>
-                <div className={`${isSubmittedProposals ? "flex-col" : "flex flex-col md:flex-row items-center gap-2 md:gap-4"}`}>
-                  <CircularProgressBar percentage={Math.floor(approvedVotes / requiredVotes * 100)} color="#4CAF50" />
-                  <span className="text-white mt-2 text-center">{approvedVotes} votes</span>
-                </div>
-                <div className={`${isSubmittedProposals ? "flex-col" : "flex flex-col md:flex-row items-center gap-2 md:gap-4"}`}>
-                  <CircularProgressBar percentage={Math.floor(rejectedVotes / requiredVotes * 100)} color="red" />
-                  <span className="text-white mt-2 text-center">{rejectedVotes} votes</span>
-                </div>
-              </div>
-            </div>
+ {/* Dates Section */}
+<div className="hidden lg:flex flex-row gap-3">
+  <div className="flex flex-col items-start">
+    <span className="font-bold text-xs sm:text-sm lg:text-lg text-white">
+      • Submitted On
+    </span>
+    <span className="text-[10px] small_phone:text-xs sm:text-sm md:text-base text-white ml-2">
+      {submittedOnDate}{" "}
+      <span className="text-[8px] small_phone:text-[8px] md:text-xs text-gray-400">
+        {submittedOnTime}
+      </span>
+    </span>
+  </div>
+
+  <div className="flex flex-col items-start">
+    <span className="font-bold text-xs sm:text-sm lg:text-lg text-white">
+      • Expires On
+    </span>
+    <span className="text-[10px] small_phone:text-xs sm:text-sm md:text-base text-white ml-2">
+      {expiresOnDate}{" "}
+      <span className="text-[8px] small_phone:text-[8px] md:text-xs text-gray-400">
+        {expiresOnTime}
+      </span>
+    </span>
+  </div>
+</div>
+
+
+  {/* Votes Section */}
+  <div className="flex justify-center gap-4 md:gap-8 mt-4 md:mt-0">
+    {/* Approved Votes */}
+    <div className="flex flex-col items-center">
+      <CircularProgressBar
+        percentage={Math.floor((approvedVotes / requiredVotes) * 100)}
+        color="#4CAF50"
+      />
+      <span className="text-white mt-2 text-center text-xs sm:text-sm md:text-base">
+        {approvedVotes} votes
+      </span>
+    </div>
+
+    {/* Rejected Votes */}
+    <div className="flex flex-col items-center">
+      <CircularProgressBar
+        percentage={Math.floor((rejectedVotes / requiredVotes) * 100)}
+        color="red"
+      />
+      <span className="text-white mt-2 text-center text-xs sm:text-sm md:text-base">
+        {rejectedVotes} votes
+      </span>
+    </div>
+  </div>
+</div>
+
 
             {/* Bottom Section */}
             <div className={`${isSubmittedProposals ? "w-full px-4 desktop:px-12 py-4 md:py-8" : "w-full px-4 lg:px-12 py-4 md:py-8"}`}>
@@ -435,8 +491,26 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
               {!isSubmittedProposals && (
                 <p className="text-gray-900 text-sm mobile:text-xl mb-4 break-words">{proposal?.proposal_description}</p>
               )}
+              <div className="flex flex-col gap-4 items-start mb-2 justify-start">
+                  {!isSubmittedProposals && (
+                    <div className="flex mobile:space-x-2 xl:space-x-8">
+                    {/* <div className="flex flex-col items-start">
+                      <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Submitted On </span>
+                      <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{submittedOnDate} <span className="text-[8px] small_phone:text-[8px] md:text-xs font-normal text-gray-400">{submittedOnTime}</span></span>
+                    </div> */}
+                    {/* <div className="flex flex-col items-start">
+                      <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Expires On </span>
+                      <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{expiresOnDate} <span className="text-[8px] small_phone:text-[8px] md:text-xs font-normal text-gray-400">{expiresOnTime}</span></span>
+                    </div> */}
+                    <div className="flex  items-start">
+                      <span className="font-bold ">Votes Required :</span>
+                      <span className=" ml-2 md:ml-3">{requiredVotes}</span>
+                    </div>
+                    </div>
+                    )}
+                    </div>
 
-              <div className="flex flex-wrap gap-4 flex-col md:flex-row md:justify-between items-start md:items-center space-y-4 md:space-y-0 xl:space-x-8">
+              <div className="flex flex-wrap gap-4 flex-col md:flex-row md:justify-between items-start md:items-center space-y-4 md:space-y-0">
                 {!isSubmittedProposals && (proposal.proposal_type.ChangeDaoConfig!== undefined) && (
                   <div className="w-full"> 
                     <div className="flex flex-wrap">
@@ -462,16 +536,34 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                 ) }
                 {!isSubmittedProposals && (proposal.proposal_type.TokenTransfer !== undefined) && (
                   <div className="w-full"> 
-                  <div className="whitespace-normal break-words mt-2">
-                    <span className="font-bold">{proposal.tokens} Tokens </span>
+                    <div className="whitespace-normal break-words mt-2">
+                      <span className="font-bold">
+                        Tokens: {proposal.tokens.map((token) => token.toString())}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-col">
+                      <div>
+                        <span className="font-bold">To</span>: 
+                        {proposal.token_to.map((principal, index) => (
+                          <span key={index}>
+                            {principal.toText ? principal.toText() : Array.from(principal._arr).join('')}
+                          </span>
+                        ))}
+                      </div>
+                      {/* <strong>&nbsp; | &nbsp;</strong> */}
+                      <div>
+                      <span className="font-bold">From</span>: 
+                      {proposal.token_from.map((principal, index) => (
+                        <span key={index}>
+                          {principal.toText ? principal.toText() : Array.from(principal._arr).join('')}
+                        </span>
+                      ))}
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex flex-wrap">
-                    <span className="font-bold">To</span>: {proposal.token_to}
-                      <strong>&nbsp; | &nbsp;</strong>
-                    <span className="font-bold">Dao Type</span>: {proposal.token_from}
-                  </div>
-                </div>
-                ) }
+                )}
+
                 {!isSubmittedProposals && (proposal.proposal_type.AddMemberToGroupProposal !== undefined) && (
                   <div className="w-full"> 
                     <div className="flex">
@@ -531,10 +623,9 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                     </div>
                   </div>
                 ) }
-                
 
-                <div className="flex flex-col gap-4 items-start justify-start">
-                  <div className="flex gap-4 big_phone:gap-2 xl:gap-8 flex-wrap">
+
+                  <div className="w-full flex justify-between flex-wrap">
                     <div className="flex flex-wrap justify-start md:justify-start md:mt-0 space-x-2 small_phone:space-x-4 md:space-x-2">
                       {(showActions) && (
                         <button className={`flex items-center justify-center gap-1 mobile:gap-1 ${isComment ? 'bg-gray-200 text-black rounded-lg p-2' : 'text-gray-600 bg-none'
@@ -547,7 +638,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                         </button>
                       )}
 
-                      <button className="flex items-center justify-center mobile:gap-1 text-gray-600" onClick={handleVotesClick}>
+                      <button className="flex items-center justify-between mobile:gap-1 text-gray-600" onClick={handleVotesClick}>
                         <svg className="mb-1" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z" />
                           <path d="M19.07 18.93C17.66 17.52 15.48 16.5 12 16.5s-5.66 1.02-7.07 2.43A2 2 0 0 0 6.34 22h11.32a2 2 0 0 0 1.41-3.07z" />
@@ -563,13 +654,12 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                       </button>
                     </div>
 
-                      <div className="bg-[#CDEFFE] rounded-xl cursor-pointer flex ">
-                        <button className="px-4 py-1 self-start font-mulish" onClick={handleViewMore}>View More</button>
-                      </div>
-
+                    {!isProposalDetails && (
+                      <div className="bg-[#CDEFFE] rounded-xl cursor-pointer flex">
+                      <button className="px-4 py-1 font-mulish" onClick={handleViewMore}>View More</button>
+                    </div>
+                    )}
                   </div>
-
-                </div>
 
                 {/* Cast Vote Section  */}
                 {showActions && (
@@ -619,12 +709,12 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                         <button className="px-6 py-2 font-mulish" onClick={handleViewMore}>View More</button>
                       </div>
                     )} */}
-                  {(proposal?.proposal_title === "Bounty raised" || proposal.propsal_title === "Bounty raised") && (
+                  {/* {(proposal?.proposal_title === "Bounty raised" || proposal.propsal_title === "Bounty raised") && (
                     <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
 
                       <button className="px-2 py-2 font-mulish" onClick={() => navigate(`/create-proposal/${daoCanisterId}`)}> Bounty Claim</button>
                     </div>
-                  )}
+                  )} */}
                        {(proposal?.proposal_title === "Bounty claim" || proposal.propsal_title === "Bounty claim") && (
                     <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
 

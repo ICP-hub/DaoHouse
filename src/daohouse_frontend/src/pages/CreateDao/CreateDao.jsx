@@ -162,7 +162,7 @@ const CreateDao = () => {
       Array.from(new Uint8Array()),
       image_title: step6.image_title || "this is just my title",
       image_content_type: step6.image_content_type || "just image content bro",
-      image_id: "12",
+      image_id: step6.image_id || "12",
       dao_groups: data.dao_groups,
       proposal_entry: proposalEntry,
       ask_to_join_dao : data.ask_to_join_dao,

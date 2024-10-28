@@ -50,6 +50,7 @@ function CreateProposal() {
     link_of_task: '',
     // action_member: '',
     bounty_task: '',
+    daohouse_canister_id: ''
   });
 
   const [generalPurp, setGeneralPurp] = useState({
@@ -349,16 +350,17 @@ function CreateProposal() {
             tokens: Number(bountyRaised.tokens),
             // action_member: Principal.fromText(bountyRaised.action_member),
             bounty_task: bountyRaised.bounty_task,
-          }); 
+          });
+          break;
 
         case "bountyDone":
           await submitBountyDone({
             proposal_entry: proposalEntry,
             associated_proposal_id: bountyDone.associated_proposal_id,
             description: bountyDone.description,
-            tokens: bountyDone.tokens,
+            tokens: Number(bountyDone.tokens),
             // action_member: Principal.fromText(bountyDone.action_member),
-            daohouse_canister_id: daoCanisterId
+            daohouse_canister_id: Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND)
           });
           break;
 
@@ -452,17 +454,15 @@ function CreateProposal() {
   };
   const submitTokenTransferProposal = async (tokenTransfer) => {
     try {
-      const actor = await createTokenActor();
-      const { balance, metadata } = await fetchMetadataAndBalance(
-        actor,
-        Principal.fromText(stringPrincipal)
-      );
-      const parsedBalance = parseInt(balance, 10);
+      const actor = await createTokenActor(Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"));
+      const { metadata, balance } = await fetchMetadataAndBalance(actor, Principal.fromText(stringPrincipal));
+      
+      const currentBalance = parseInt(balance, 10);
       const formattedMetadata = await formatTokenMetaData(metadata);
 
       // Call transferApprove to process the payment
       await transferApprove(
-        parsedBalance,
+        currentBalance,
         actor,
         formattedMetadata,
         tokenTransfer.tokens
@@ -471,13 +471,12 @@ function CreateProposal() {
       // After payment, create the proposal
       const daoCanister = await createDaoActor(daoCanisterId);
       const response = await daoCanister.proposal_to_transfer_token(tokenTransfer);
-      console.log(response.Err);
 
 
       if (response.Ok) {
         toast.success("Token transfer proposal created successfully");
         setIsModalOpen(false);
-        movetodao();
+        // movetodao();
       } else {
         toast.error(response.Err);
       }
@@ -494,9 +493,12 @@ function CreateProposal() {
 
       const response = await daoCanister.proposal_to_bounty_done(bountyDone);
       console.log("Response of Bounty Done:", response);
-
-      toast.success("Bounty Done proposal created successfully");
-      movetodao();
+      if(response.Ok){
+        toast.success("Bounty Done proposal created successfully");
+        movetodao();
+      } else {
+        toast.error(response.Err)
+      }
     } catch (error) {
       console.error("Error submitting Bounty Done proposal:", error);
       toast.error("Failed to create Bounty Done proposal");
@@ -555,7 +557,7 @@ function CreateProposal() {
 
       );
       console.log("Response of Bounty Raised:", response);
-      // setBountyTokens(bountyRaised.tokens)
+      setBountyTokens(bountyRaised.tokens)
       toast.success("Bounty raised proposal created successfully");
       movetodao();
     } catch (error) {
@@ -628,15 +630,17 @@ function CreateProposal() {
     });
     return resultObject;
   };
-  const fetchMetadataAndBalance = async (tokenActor, ownerPrincipal) => {
+  const fetchMetadataAndBalance = async (tokenActor, stringPrincipal) => {
     try {
       const [metadata, balance] = await Promise.all([
         tokenActor.icrc1_metadata(),
         tokenActor.icrc1_balance_of({
-          owner: ownerPrincipal,
+          owner: stringPrincipal,
           subaccount: [],
         }),
       ]);
+      console.log("Metadata and balance fetched:", { metadata, balance });
+      
       return { metadata, balance };
     } catch (err) {
       console.error("Error fetching metadata and balance:", err);
@@ -645,6 +649,8 @@ function CreateProposal() {
   };
   const afterPaymentApprove = async (sendableAmount) => {
     try {
+      console.log("sendableAmount", sendableAmount);
+      
       const daoCanister = await createDaoActor(daoCanisterId);
       const res = await daoCanister.make_payment(
         sendableAmount,
@@ -667,12 +673,20 @@ function CreateProposal() {
     tokens
   ) => {
     try {
-      const sendableAmount = BigInt(tokens);
+      console.log("Curr Balance", currentBalance);
+      
+      const sendableAmount = parseInt(
+        tokens
+      );
+      console.log("sss", sendableAmount);
+
+      const backendCanisterId = process.env.CANISTER_ID_DAOHOUSE_BACKEND;
+      
       if (currentBalance >= sendableAmount) {
         let transaction = {
           from_subaccount: [],
           spender: {
-            owner: Principal.fromText(daoCanisterId),
+            owner: Principal.fromText(backendCanisterId),
             subaccount: [],
           },
           amount: Number(sendableAmount) + Number(currentMetaData["icrc1:fee"]),
@@ -683,6 +697,8 @@ function CreateProposal() {
           created_at_time: [],
         };
         const approveRes = await tokenActor.icrc2_approve(transaction);
+        console.log("approveRes", approveRes);
+        
         if (approveRes.Err) {
           const errorMessage = `Insufficient funds. Balance: ${approveRes.Err.InsufficientFunds.balance}`;
           toast.error(errorMessage);
@@ -833,6 +849,7 @@ function CreateProposal() {
         paymentDetails={paymentDetails}
         loadingPayment={loadingPayment}
         bountyRaised={bountyRaised}
+        tokenTransfer={tokenTransfer}
 
 
 
@@ -991,7 +1008,7 @@ function CreateProposal() {
                     <button
                       className="bg-[#0E3746] hover:bg-[#819499] text-white font-normal text-center rounded-full text-[16px] py-2 px-6 rounded focus:outline-none focus:shadow-outline"
                       type="submit"
-                      disabled={loading || !proposalEntry} // Disable if loading or proposalEntry not selected
+                      disabled={loading } // Disable if loading or proposalEntry not selected
                     >
                       {loading ? (
                         <CircularProgress size={24} />
