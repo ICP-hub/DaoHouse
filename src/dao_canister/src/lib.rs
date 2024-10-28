@@ -211,7 +211,7 @@ fn check_proposals() {
                 }
                  else if !proposal.has_been_processed_second && time_diff >= EXPIRATION_TIME {
                 //else if !proposal.has_been_processed_second && time_diff >= proposal.proposal_expired_at {
-                    ic_cdk::println!("status : {:?} ", proposal.proposal_status);
+                    ic_cdk::println!("proposal status : {:?} ", proposal.proposal_status);
                     let proposal_clone = proposal.clone();
                     match proposal.proposal_type {
                         ProposalType::TokenTransfer => {
