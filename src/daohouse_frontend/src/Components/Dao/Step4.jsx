@@ -249,7 +249,7 @@ const Step4 = ({ data, setData, setActiveStep }) => {
           {/* Modal for Confirmation */}
           {showModal && (
   <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-  <div className="w-[90%] sm:w-[400px] md:w-[60%] lg:w-[50%] h-auto bg-white border border-gray-300 p-4 rounded shadow flex flex-col justify-between max-w-lg">
+  <div className="w-[90%] sm:w-[400px] md:w-[60%] lg:w-[50%] h-[30vh] bg-white border border-gray-300 p-4 rounded shadow flex flex-col justify-between max-w-lg">
     <p className="text-center mb-4">
       {modalMessage}
     </p>
