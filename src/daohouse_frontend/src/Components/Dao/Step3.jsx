@@ -24,6 +24,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
   const { backendActor, stringPrincipal } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false)
+  const [openGroups, setOpenGroups] = useState([]);
 
   const [list, setList] = useState([
     { name: "Council", index:0, members: [] },
@@ -38,6 +39,16 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
       setList(JSON.parse(savedData));
     }
   }, []);
+
+  const toggleGroup = (index) => {
+    if (openGroups.includes(index)) {
+      // Close the group if it's currently open
+      setOpenGroups(openGroups.filter(i => i !== index));
+    } else {
+      // Open the group
+      setOpenGroups([...openGroups, index]);
+    }
+  };
 
   const getUniqueMembers = () => {
     const allMembers = new Set();
@@ -93,26 +104,11 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
   function handleBack() {
     setActiveStep(1);
   }
-  
   const handleGroupAdding = () => {
-    let newGroupIndex = count;
-  
-    // Get the current list to check the existing indices
     setList(prevList => {
-      const existingIndices = prevList.map(group => group.index);
-  
-      // Find the first missing index in the range from 1 to the current count
-      for (let i = 1; i <= count; i++) {
-        if (!existingIndices.includes(i)) {
-          newGroupIndex = i;
-          break;
-        }
-      }
-  
-      // If no missing index was found, set the new index to the current count
-      if (!newGroupIndex) {
-        newGroupIndex = count;
-      }
+      // Get the highest index currently in use
+      const maxIndex = prevList.reduce((max, group) => Math.max(max, group.index), 0);
+      const newGroupIndex = maxIndex + 1;
   
       // Return the updated list with the new group
       return [
@@ -125,9 +121,10 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
     setAddMemberIndex(newGroupIndex);
     setShowMemberNameInput(true);
   
-    // Only increment count if no missing index was found
-    setCount(prevCount => (newGroupIndex === count ? prevCount + 1 : prevCount));
+    // Increment count to reflect the next potential group
+    setCount(prevCount => prevCount + 1);
   };
+  
   
   
   const deleteGroup = (index) => {
@@ -151,7 +148,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
         const response = await backendActor.get_profile_by_id(principal);
   
         if (response.Ok) {
-          const username = response.Ok.username; // Get username from the response
+          const username = response.Ok.username;
           const principalId = principal.toText();
   
           setMemberUsernames((prevUsernames) => ({
@@ -174,6 +171,14 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
               return item;
             })
           );
+  
+          // Immediate update to the councilUsernames state
+          if (addMemberIndex === "council") {
+            setCouncilUsernames((prevUsernames) => [
+              ...prevUsernames,
+              `${username} (${principalId})`,
+            ]);
+          }
   
           setMemberName("");
           setShowMemberNameInput(false);
@@ -472,7 +477,9 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
               <div
                 key={index}
                 className={`flex flex-col bg-[#E9EAEA] rounded-lg ${addMemberIndex === item.index ? "" : "cursor-pointer transition"}`}
+                // onLoad={() => openMemberNames(item.index)}
                 onClick={() => openMemberNames(item.index)}
+                
               >
                 <section className={`w-full py-2 mobile:px-8 p-2 pl-4 flex flex-row items-center justify-between border-b-2 border-[#b4b4b4] ${addMemberIndex === item.index ? "border-b-2 border-[#b4b4b4]" : "rounded-lg"}`}>
                   {groupNameInputIndex === item.index ? (
