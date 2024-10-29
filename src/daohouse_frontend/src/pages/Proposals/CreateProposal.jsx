@@ -479,7 +479,7 @@ function CreateProposal() {
         toast.success("Token transfer proposal created successfully");
         
         setIsModalOpen(false);
-        // movetodao();
+        movetodao();
       } else {
         toast.error(response.Err);
       }
@@ -492,7 +492,7 @@ function CreateProposal() {
   const submitBountyDone = async (bountyDone) => {
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
-
+console.log("fhjfjhfhjfjh",daoCanister);
 
       const response = await daoCanister.proposal_to_bounty_done(bountyDone);
       console.log("Response of Bounty Done:", response);
