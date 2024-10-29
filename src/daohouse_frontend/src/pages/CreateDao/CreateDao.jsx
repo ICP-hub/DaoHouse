@@ -77,7 +77,7 @@ const CreateDao = () => {
       localStorage.removeItem('step2Data');
       localStorage.removeItem('step3Data');
       localStorage.removeItem('inputData');
-      localStorage.removeItem('step5Data');
+      localStorage.removeItem('step5Quorum');
       localStorage.removeItem('step6Data');
 
       setData({
@@ -99,7 +99,7 @@ const CreateDao = () => {
       localStorage.removeItem('step2Data');
       localStorage.removeItem('step3Data');
       localStorage.removeItem('step4Data');
-      localStorage.removeItem('step5Data');
+      localStorage.removeItem('step5Quorum');
       localStorage.removeItem('step6Data');
     };
   

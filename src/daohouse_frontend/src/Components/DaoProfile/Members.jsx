@@ -6,7 +6,7 @@ import { useAuth } from "../utils/useAuthClient";
 import { Principal } from "@dfinity/principal";
 import { MdAddBox } from "react-icons/md";
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
-import userImage from "../../../assets/commentUser.jpg";
+import userImage from "../../../assets/Avatar.png";
 import MemberSkeleton from "../SkeletonLoaders/MemberSkeleton";
 
 const Members = ({ daoGroups, daoMembers }) => {

@@ -5,6 +5,7 @@ import { useAuth } from "../utils/useAuthClient";
 import { toast } from 'react-toastify';
 import { CircularProgress } from "@mui/material";
 import messagesound from "../../Sound/messagesound.mp3";
+import daoImage from "../../../assets/daoImage.png"
 
 const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, isJoinedDAO }) => {
 
@@ -178,7 +179,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
     {/* Image Container */}
     <div className="w-full big_phone:w-40 lg:w-60 mobile:h-[120px] border border-black rounded">
       <img
-        src={imageUrl}
+        src={image_id ? imageUrl : daoImage}
         alt="DAO Image"
         className="w-full h-32 big_phone:h-full object-cover rounded"
       />
@@ -187,7 +188,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
     {/* Centered name and follow button */}
     <div className="flex flex-col items-center justify-center mt-4 big_phone:mt-0">
       {/* Name for all screens */}
-      <h2 className="text-lg font-semibold truncate big_phone:w-36 text-center">{name}</h2>
+      <h2 className="text-lg font-semibold truncate w-24 big_phone:w-36 text-center">{name}</h2>
 
       {/* Follow button centered below the name */}
       <button

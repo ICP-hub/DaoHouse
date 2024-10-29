@@ -14,7 +14,8 @@ import Comments from "../Post/Comments";
 import ProposalDetailsLoaderSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/ProposalDetailsLoaderSkeleton";
 import NoDataComponent from "../../Components/Dao/NoDataComponent";
 import { CircularProgress } from "@mui/material";
-import messagesound from "../../Sound/messagesound.mp3";
+import messagesound from "../../Sound/messagesound.mp3";import daoImage from "../../../assets/daoImage.png"
+
 const ProposalsDetails = () => {
    const className="DaoProfile"
   const { backendActor, createDaoActor } = useAuth();
@@ -229,7 +230,7 @@ const ProposalsDetails = () => {
           >
             <img
               className="w-full h-full object-cover"
-              src={getImageUrl(dao?.image_id)}
+              src={dao?.image_id ? getImageUrl(dao?.image_id) : daoImage}
               alt="profile-pic"
             />
           </div>

@@ -15,7 +15,7 @@ const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
   const [followerProfiles, setFollowerProfiles] = useState([]);
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
-  const [imageSrc, setImageSrc] = useState(null);
+  const [imageSrc, setImageSrc] = useState(Avatar);
 
   const minWidth = useMediaQuery("(min-width: 800px)");
   const listTemplateColumns = `repeat(auto-fill, minmax(${minWidth ? 300 : 220}px, 1fr))`;

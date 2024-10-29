@@ -29,6 +29,7 @@ import DaoProfileLoaderSkeleton from "../../Components/SkeletonLoaders/DaoProfil
 import NoDataComponent from "../../Components/Dao/NoDataComponent";
 import { CircularProgress } from "@mui/material";
 import messagesound from "../../Sound/messagesound.mp3";
+import daoImage from "../../../assets/daoImage.png"
 
 
 const DaoProfile = () => {
@@ -373,7 +374,7 @@ const handlePageChange = (newPage) => {
             >
               <img
                 className="w-full h-full object-cover"
-                src={getImageUrl(dao?.image_id)}
+                src={dao?.image_id ? getImageUrl(dao?.image_id) : daoImage}
                 alt="profile-pic"
               />
             </div>
