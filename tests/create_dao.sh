@@ -29,7 +29,7 @@ for ((i = 1; i <= COUNT; i++)); do
       linksandsocials = vec{
         "https://twitter.com/sampledao";
       };
-    required_votes = 3;
+    required_votes = 1;
       image_id = "1";
       image_content = vec {10};
       image_title = "sample.jpg";

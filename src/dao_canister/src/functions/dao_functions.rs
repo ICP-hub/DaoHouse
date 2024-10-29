@@ -484,10 +484,9 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
     let balance: Nat = icrc_get_balance(token_ledger_id, principal_id).await
     .map_err(|err| format!("Error while fetching user balance: {}", err))?;
 
-    if balance < args.tokens as u8 {
-        return Err(String::from("DAO doesn't have enough tokens."));
+    if balance < args.tokens as u64 {
+        return Err(format!("DAO doesn't have enough tokens."))
     }
-
 
     let mut required_thredshold = 0;
     let _ = with_state(|state| {
@@ -502,10 +501,7 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
                 Ok(())
             }
             None => {
-                return Err(format!(
-                    "No place Found with the name of {:?}",
-                    args.proposal_entry
-                ));
+                return Err(format!("No place Found with the name of {:?}",args.proposal_entry));
             }
         }
     });
@@ -555,6 +551,15 @@ async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
     };
     guard_check_proposal_creation(proposal_data)?;    
     let proposals_data = with_state(|state| state.proposals.get(&args.associated_proposal_id));
+
+    let principal_id: Principal = api::id();
+    let token_ledger_id: Principal = with_state(|state| state.dao.token_ledger_id.id);
+    let balance: Nat = icrc_get_balance(token_ledger_id, principal_id).await
+    .map_err(|err| format!("Error while fetching user balance: {}", err))?;
+
+      if balance < args.tokens as u64 {
+        return Err(format!("DAO doesn't have enough tokens."))
+    }
 
     let mut bounty_task = None;
     let mut token_to : Option<Principal> = None;
