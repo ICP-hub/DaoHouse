@@ -16,15 +16,23 @@ const Step5 = ({ setData, setActiveStep, data }) => {
   const { council, groups } = data.step3;
   const users = useMemo(() => data.step3, [data.step3]);
 
-  const [quorum, setQuorum] = useState(() => [
-    { name: "Council", memberCount: council.length, vote: 51, members: council },
-    ...groups.map((group) => ({
-      name: group.name,
-      memberCount: group.members.length,
-      vote: 51,
-      members: group.members,
-    })),
-  ]);
+  const initialQuorum = useMemo(() => {
+    const savedQuorum = JSON.parse(localStorage.getItem("step5Quorum"));
+    if (savedQuorum) {
+      return savedQuorum;
+    }
+    return [
+      { name: "Council", memberCount: council.length, vote: 51, members: council },
+      ...groups.map((group) => ({
+        name: group.name,
+        memberCount: group.members.length,
+        vote: 51,
+        members: group.members,
+      })),
+    ];
+  }, [council, groups]);
+
+  const [quorum, setQuorum] = useState(initialQuorum);
 
   const className = "DAO_Step5";
 

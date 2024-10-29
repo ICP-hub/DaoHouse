@@ -28,6 +28,7 @@ import ProposalLoaderSkeleton from "../../Components/SkeletonLoaders/ProposalLoa
 import DaoProfileLoaderSkeleton from "../../Components/SkeletonLoaders/DaoProfileLoaderSkeleton/DaoProfileLoaderSkeleton";
 import NoDataComponent from "../../Components/Dao/NoDataComponent";
 import { CircularProgress } from "@mui/material";
+import daoImage from "../../../assets/daoImage.png"
 
 
 const DaoProfile = () => {
@@ -368,7 +369,7 @@ const handlePageChange = (newPage) => {
             >
               <img
                 className="w-full h-full object-cover"
-                src={getImageUrl(dao?.image_id)}
+                src={dao?.image_id ? getImageUrl(dao?.image_id) : daoImage}
                 alt="profile-pic"
               />
             </div>

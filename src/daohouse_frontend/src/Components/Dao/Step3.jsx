@@ -477,7 +477,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
               <div
                 key={index}
                 className={`flex flex-col bg-[#E9EAEA] rounded-lg ${addMemberIndex === item.index ? "" : "cursor-pointer transition"}`}
-                // onLoad={() => openMemberNames(item.index)}
+                onLoad={() => openMemberNames(item.index)}
                 onClick={() => openMemberNames(item.index)}
                 
               >
