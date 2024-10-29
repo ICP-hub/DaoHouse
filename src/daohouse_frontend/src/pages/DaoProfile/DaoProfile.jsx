@@ -28,7 +28,7 @@ import ProposalLoaderSkeleton from "../../Components/SkeletonLoaders/ProposalLoa
 import DaoProfileLoaderSkeleton from "../../Components/SkeletonLoaders/DaoProfileLoaderSkeleton/DaoProfileLoaderSkeleton";
 import NoDataComponent from "../../Components/Dao/NoDataComponent";
 import { CircularProgress } from "@mui/material";
-import messagesound from "../../../../daohouse_frontend/public/messagesound.mp3";
+import messagesound from "../../Sound/messagesound.mp3";
 
 
 const DaoProfile = () => {
