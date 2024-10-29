@@ -383,18 +383,8 @@ async fn proposal_to_transfer_token(args: TokenTransferPolicy) -> Result<String,
     let principal_id: Principal = api::caller();
 
     if principal_id == args.to {
-        return Err(String::from("transfer token with self not possible"));
+        return Err(String::from("transfer token with the self isn't possible"));
     };
-    let token_ledger_id = with_state(|state| state.dao.token_ledger_id.id);
-    let balance = icrc_get_balance(token_ledger_id, principal_id)
-        .await
-        .map_err(|err| format!("Error while fetching user balance: {}", err))?;
-
-    if balance <= args.tokens as u8 {
-        return Err(String::from(
-            "User token balance is less than the required transfer tokens",
-        ));
-    }
     let mut required_thredshold = 0;
 
     let _ = with_state(|state| {
@@ -426,7 +416,7 @@ async fn proposal_to_transfer_token(args: TokenTransferPolicy) -> Result<String,
         group_to_join: None,
         dao_purpose: None,
         tokens: Some(args.tokens),
-        token_from: Some(principal_id),
+        token_from: Some(api::id()),
         token_to: Some(args.to),
         proposal_created_at: None,
         proposal_expired_at: None,
@@ -489,6 +479,16 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
         proposal_type: ProposalType::BountyRaised,
     };
     guard_check_proposal_creation(proposal_data)?;
+    let principal_id: Principal = api::id();
+    let token_ledger_id: Principal = with_state(|state| state.dao.token_ledger_id.id);
+    let balance: Nat = icrc_get_balance(token_ledger_id, principal_id).await
+    .map_err(|err| format!("Error while fetching user balance: {}", err))?;
+
+    if balance < args.tokens as u8 {
+        return Err(String::from("DAO doesn't have enough tokens."));
+    }
+
+
     let mut required_thredshold = 0;
     let _ = with_state(|state| {
         match state
@@ -553,7 +553,7 @@ async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
         entry: args.proposal_entry.clone(),
         proposal_type: ProposalType::BountyRaised,
     };
-    guard_check_proposal_creation(proposal_data)?;
+    guard_check_proposal_creation(proposal_data)?;    
     let proposals_data = with_state(|state| state.proposals.get(&args.associated_proposal_id));
 
     let mut bounty_task = None;

@@ -8,8 +8,8 @@ const Step2 = ({ setData, setActiveStep, data }) => {
   const [inputData, setInputData] = useState({
     TokenName: "",
     TokenSymbol: "",
-    TokenSupply: 1000,
-    VotesRequired: 3,
+    TokenSupply: 1,
+    VotesRequired: 1,
   });
 
   const [errors, setErrors] = useState({});
@@ -26,8 +26,8 @@ const Step2 = ({ setData, setActiveStep, data }) => {
       setInputData({
         TokenName: data.TokenName || "",
         TokenSymbol: data.TokenSymbol || "",
-        TokenSupply: data.TokenSupply || 1000,
-        VotesRequired: data.VotesRequired || 3,
+        TokenSupply: data.TokenSupply || 1,
+        VotesRequired: data.VotesRequired || 1,
       });
     }
   }, [data]);
@@ -65,14 +65,14 @@ const Step2 = ({ setData, setActiveStep, data }) => {
     // Token Supply Validation
     if (inputData.TokenSupply === "" || inputData.TokenSupply === null) {
       newErrors.TokenSupply = "Token Supply is required.";
-    } else if (!Number.isInteger(Number(inputData.TokenSupply)) || Number(inputData.TokenSupply) <= 1) {
+    } else if (Number(inputData.TokenSupply) < 1) {
       newErrors.TokenSupply = "Token Supply must be a positive integer.";
     }
 
     // Votes Required Validation
     if (inputData.VotesRequired === "" || inputData.VotesRequired === null) {
       newErrors.VotesRequired = "Votes Required is required.";
-    } else if (!Number.isInteger(Number(inputData.VotesRequired)) || Number(inputData.VotesRequired) < 3) {
+    } else if (!Number.isInteger(Number(inputData.VotesRequired)) || Number(inputData.VotesRequired) < 1) {
       newErrors.VotesRequired = "Votes Required must be an integer of at least 3.";
     }
 
@@ -227,7 +227,7 @@ const Step2 = ({ setData, setActiveStep, data }) => {
                 className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm border ${
                   errors.TokenSupply ? "border-red-500" : "border-gray-300"
                 }`}
-                min="1000"
+                min="1"
               />
               {errors.TokenSupply && (
                 <p className="text-red-500 text-xs">{errors.TokenSupply}</p>

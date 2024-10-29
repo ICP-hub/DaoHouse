@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 import Container from "../Container/Container";
 import { useAuth } from "../utils/useAuthClient";
 import PaymentModal from "./PaymentModal";
+import coinsound from "../../../../daohouse_frontend/src/Sound/coinsound.mp3";
 
 const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setLoadingNext }) => {
   const [file, setFile] = useState(null);
@@ -95,6 +96,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
     console.log("after payment ")
     console.log(backendActor)
 
+    const successAudio = new Audio(coinsound)
 
     try {
       //uncomment later
@@ -114,8 +116,10 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
 
       //remove this later
       toast.success("Payment successful!");
+      successAudio.play();
         setIsModalOpen(false); // Close the modal on successful payment
         handleDaoClick(); // Navigate to the next step
+       
     } finally {
       setLoadingPayment(false); // End loading state after payment is processed
     }
@@ -304,6 +308,34 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
   }, [data, shouldCreateDAO, handleDaoClick]);
 
   console.log("data of all steps: ", data)
+
+  
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+    }
+  
+    return () => {
+      document.body.classList.remove('overflow-hidden');
+    };
+  }, [isModalOpen]);
+  
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      body.overflow-hidden {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+      }
+    `;
+    document.head.append(style);
+    return () => style.remove();
+  }, []);
+  
   return (
     <React.Fragment>
     <Container>

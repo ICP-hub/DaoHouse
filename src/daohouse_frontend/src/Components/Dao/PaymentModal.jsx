@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import { CircularProgress } from '@mui/material';
 import defaultImage from "../../../assets/defaultImage.png"; // Import your default image
 
+
 const PaymentModal = ({ open, onClose, onPay, loading, data,fileURL }) => {
   return (
     <Modal

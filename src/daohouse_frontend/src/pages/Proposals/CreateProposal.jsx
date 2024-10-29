@@ -18,7 +18,8 @@ import DaoPolicy from "./DaoPolicy";
 import Poll from "./Poll";
 import RemoveDaoMember from "./RemoveDaoMember";
 import { createActor } from "../../../../declarations/icp_ledger_canister";
-import TokenPaymentModal from "./TokenPaymentModal"
+import TokenPaymentModal from "./TokenPaymentModal";
+import coinsound from "../../../../daohouse_frontend/src/Sound/coinsound.mp3";
 function CreateProposal() {
   const navigate = useNavigate();
 
@@ -471,10 +472,12 @@ function CreateProposal() {
       // After payment, create the proposal
       const daoCanister = await createDaoActor(daoCanisterId);
       const response = await daoCanister.proposal_to_transfer_token(tokenTransfer);
-
+     const sound = new Audio(coinsound);
 
       if (response.Ok) {
+        sound.play();
         toast.success("Token transfer proposal created successfully");
+        
         setIsModalOpen(false);
         // movetodao();
       } else {
@@ -618,15 +621,7 @@ function CreateProposal() {
     }
   };
   const createTokenActor = async () => {
-    const daoActor = await createDaoActor(daoCanisterId);
-    const daoDetails = await daoActor.get_dao_detail();
-    console.log("DaoDetails", daoDetails);
-    const ledgerId = Principal.fromUint8Array(daoDetails.token_ledger_id.id._arr)
-    console.log("ledgerId", ledgerId);
-    
-    const tokenActorrr = createActor(ledgerId,
-      { agentOptions: { identity } });
-      console.log("Created token actor successfully:", tokenActorrr);
+    const tokenActorrr = createActor(dao.token_ledger_id.id, { agentOptions: { identity } });
     return tokenActorrr;
   };
   const formatTokenMetaData = async (arr) => {
