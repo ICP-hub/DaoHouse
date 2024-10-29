@@ -4,7 +4,7 @@ import { Principal } from "@dfinity/principal";
 import { useAuth } from "../utils/useAuthClient";
 import { toast } from 'react-toastify';
 import { CircularProgress } from "@mui/material";
-import messagesound from "../../../../daohouse_frontend/public/messagesound.mp3";
+import messagesound from "../../Sound/messagesound.mp3";
 
 const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, isJoinedDAO }) => {
 

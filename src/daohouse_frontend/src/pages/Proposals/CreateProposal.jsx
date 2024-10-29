@@ -19,7 +19,7 @@ import Poll from "./Poll";
 import RemoveDaoMember from "./RemoveDaoMember";
 import { createActor } from "../../../../declarations/icp_ledger_canister";
 import TokenPaymentModal from "./TokenPaymentModal";
-import coinsound from "../../../../daohouse_frontend/public/coinsound.mp3";
+import coinsound from "../../../../daohouse_frontend/src/Sound/coinsound.mp3";
 function CreateProposal() {
   const navigate = useNavigate();
 
