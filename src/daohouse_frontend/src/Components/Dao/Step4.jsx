@@ -14,12 +14,21 @@ const Step4 = ({ data, setData, setActiveStep }) => {
     }
     return groupsList;
   });
+  const [initialLoad, setInitialLoad] = useState(true);
 
-  const [isPrivate, setIsPrivate] = useState(false); // State for toggle button
+  const [isPrivate, setIsPrivate] = useState(() => {
+    const savedToggleState = localStorage.getItem("isPrivate");
+    return savedToggleState !== null ? JSON.parse(savedToggleState) : true;
+  });
   const [showModal, setShowModal] = useState(false); // State for modal visibility
   
  
   const className = "DAO__Step4";
+
+  const modalMessage = isPrivate
+    ? "This action will make the DAO public, allowing anyone to join."
+    : "This action will make the DAO private. A proposal will be created for users to join.";
+
 
   useEffect(() => {
     const updatedGroups = data.step3.groups.map((group) => group.name);
@@ -172,22 +181,14 @@ const Step4 = ({ data, setData, setActiveStep }) => {
     // Proceed to the next step
     setActiveStep(4);
   }
-  
-  const handleTogglePrivate = () => {
-    if (!isPrivate) {
-      setShowModal(true); // Show modal when toggled on
-    } else {
-      setIsPrivate(false); // Reset toggle to off
-    }
-  };
 
   const confirmMakePrivate = () => {
-    setIsPrivate(true); // Set toggle to on
+    setIsPrivate(!isPrivate); // Set toggle to on
     setShowModal(false); // Close the modal
   };
 
   const cancelMakePrivate = () => {
-    setIsPrivate(false); // Reset toggle to off
+    // setIsPrivate(false); // Reset toggle to off
     setShowModal(false); // Close the modal
   };
 
@@ -230,6 +231,10 @@ const Step4 = ({ data, setData, setActiveStep }) => {
     localStorage.setItem("inputData", JSON.stringify(inputData));
   }, [inputData]);
 
+  useEffect(() => {
+    localStorage.setItem("isPrivate", JSON.stringify(isPrivate));
+  }, [isPrivate]);
+
   const truePermissions = getTruePermissions(inputData);
 
   return (
@@ -246,7 +251,7 @@ const Step4 = ({ data, setData, setActiveStep }) => {
   <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
   <div className="w-[90%] sm:w-[400px] md:w-[60%] lg:w-[50%] h-auto bg-white border border-gray-300 p-4 rounded shadow flex flex-col justify-between max-w-lg">
     <p className="text-center mb-4">
-      This action will make the DAO private. Are you sure you want to make this DAO private?
+      {modalMessage}
     </p>
     <div className="flex justify-between">
       <button
@@ -340,7 +345,7 @@ const Step4 = ({ data, setData, setActiveStep }) => {
       <input
       type="checkbox"
       checked={isPrivate}
-      onChange={handleTogglePrivate}
+      onChange={() => {setShowModal(true)}}
       className="hidden toggle-checkbox"
          />
       <div

@@ -28,7 +28,7 @@ const PaymentModal = ({ open, onClose, onPay, loading, data,fileURL }) => {
             />
             <div>
               <p className="font-bold truncate w-96 ...">{data?.step1?.DAOIdentifier || "Product Name"}</p> {/* Show "Product Name" if DAOIdentifier is not available */}
-              <p className='truncate w-96 ...'>{data?.step1?.Purpose || "Purpose not specified"}</p> {/* Default text if Purpose is not available */}
+              <p className='lg:truncate lg:w-96 ... truncate w-48 ... small_phone:truncate small_phone:w-64 ...'>{data?.step1?.Purpose || "Purpose not specified"}</p> {/* Default text if Purpose is not available */}
             </div>
           </div>
           <div className="border-t border-gray-300 mb-4"></div>
