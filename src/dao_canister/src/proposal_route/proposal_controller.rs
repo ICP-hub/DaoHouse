@@ -66,6 +66,8 @@ pub async fn create_proposal_controller(
         associated_proposal_id : proposal.associated_proposal_id.clone(),
         new_required_votes : proposal.new_required_votes,
         task_completion_day : proposal.task_completion_day,
+        poll_query :  proposal.poll_query,
+        poll_options : proposal.poll_options,
     };
 
     // to record proposals on Parent canister

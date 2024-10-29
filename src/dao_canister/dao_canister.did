@@ -49,7 +49,9 @@ type CreatePoll = record {
   proposal_expired_at : nat64;
   poll_title : text;
   description : text;
+  poll_query : text;
   proposal_created_at : nat64;
+  poll_options : vec text;
   proposal_entry : text;
 };
 type Dao = record {
@@ -109,6 +111,12 @@ type DaoInput = record {
 type JoinDao = record { place_to_join : text; daohouse_backend_id : principal };
 type LedgerCanisterId = record { id : principal };
 type Pagination = record { end : nat32; start : nat32 };
+type PollOptions = record {
+  id : text;
+  option : text;
+  approved_users : vec principal;
+  poll_approved_votes : nat64;
+};
 type ProposalPlace = record {
   place_name : text;
   min_required_thredshold : nat64;
@@ -163,6 +171,7 @@ type Proposals = record {
   rejected_votes_list : vec principal;
   proposal_description : text;
   tokens : opt nat64;
+  poll_query : opt text;
   proposal_id : text;
   proposal_status : ProposalState;
   approved_votes_list : vec principal;
@@ -172,6 +181,7 @@ type Proposals = record {
   group_to_join : opt text;
   comments_list : vec Comment;
   token_from : opt principal;
+  poll_options : opt vec PollOptions;
   cool_down_period : opt nat32;
   proposal_type : ProposalType;
   bounty_task : opt text;
@@ -245,4 +255,5 @@ service : (DaoInput) -> {
   search_proposal : (text) -> (vec Proposals) query;
   unfollow_dao : (principal) -> (Result_1);
   vote : (text, VoteParam) -> (Result_1);
+  vote_on_poll_options : (text, text) -> (Result_1);
 }
