@@ -185,11 +185,22 @@ const Step4 = ({ data, setData, setActiveStep }) => {
   const confirmMakePrivate = () => {
     setIsPrivate(!isPrivate); // Set toggle to on
     setShowModal(false); // Close the modal
+
+    // Scroll down to the bottom of the page
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: 'smooth',
+    });
   };
 
   const cancelMakePrivate = () => {
-    // setIsPrivate(false); // Reset toggle to off
     setShowModal(false); // Close the modal
+
+    // Scroll down to the bottom of the page
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: 'smooth',
+    });
   };
 
   function handleBack() {
@@ -237,6 +248,8 @@ const Step4 = ({ data, setData, setActiveStep }) => {
 
   const truePermissions = getTruePermissions(inputData);
 
+  
+
   return (
     <React.Fragment>
       <Container>
@@ -248,30 +261,32 @@ const Step4 = ({ data, setData, setActiveStep }) => {
 
           {/* Modal for Confirmation */}
           {showModal && (
-  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-  <div className="w-[80%] sm:w-[400px] md:w-[55%] lg:w-[45%] h-[30vh] bg-white border border-gray-300 p-4 rounded shadow flex flex-col justify-between max-w-lg">
-    <p className="text-center mb-4">
-      {modalMessage}
-    </p>
-    <div className="flex justify-between">
-    <button
-  onClick={cancelMakePrivate}
-  className="bg-gray-300 text-black w-20 h-12 rounded-full text-sm sm:text-base flex items-center justify-center"
->
-  Cancel
-</button>
-<button
-  onClick={confirmMakePrivate}
-  className="bg-[#0E3746] text-white w-20 h-12 rounded-full text-sm sm:text-base flex items-center justify-center"
->
-  Confirm
-</button>
-
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-4">
+    <div className="w-full max-w-lg bg-white  rounded-lg shadow-lg w-11/12 md:w-1/3 p-6  border border-gray-300 p-4 rounded shadow flex flex-col justify-between h-auto sm:w-[400px] md:w-[45%] lg:w-[30%]">
+    <div> 
+       <h2 className="font-bold text-center  font-mulish text-[18px] mb-2">Privacy Confirmation</h2>
+       </div>
+      <p className="text-center mb-4 ">
+        {modalMessage}
+      </p>
+      <div className="flex flex-col sm:flex-row gap-3 mt-4 sm:justify-between">
+        <button
+          onClick={cancelMakePrivate}
+          className="text-black bg-white hover:bg-gray-100 font-medium font-mulish rounded-full text-sm px-4 py-2 sm:px-5 lg:px-8 border border-gray-500 w-full sm:w-auto"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={confirmMakePrivate}
+          className="text-white bg-black hover:bg-gray-900 font-medium font-mulish rounded-full text-sm px-4 py-2 sm:px-5 lg:px-8 border border-gray-500 w-full sm:w-auto"
+        >
+          Confirm
+        </button>
+      </div>
     </div>
   </div>
-</div>
-
 )}
+
 
 
 
