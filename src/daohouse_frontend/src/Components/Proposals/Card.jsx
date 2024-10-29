@@ -13,7 +13,8 @@ import { useAuth } from "../utils/useAuthClient";
 import userImage from "../../../assets/avatar.png";
 import { CircularProgress } from "@mui/material";
 import ShareModal from "./ShareModal";
-
+import coin from "../../../assets/coin.jpg";
+import Avatar from "../../../assets/Avatar.png";
 
 export default function Card({ proposal, voteApi, showActions, isProposalDetails, isComment, setIsComment, commentCount, isSubmittedProposals, showComments, }) {
 
@@ -567,35 +568,36 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                     </div>
                   </div>
                 ) }
-                {!isSubmittedProposals && (proposal.proposal_type.TokenTransfer !== undefined) && (
-                  <div className="w-full"> 
-                    <div className="whitespace-normal break-words mt-2">
-                      <span className="font-bold">
-                        Tokens: {proposal.tokens.map((token) => token.toString())}
-                      </span>
-                    </div>
+            {!isSubmittedProposals && (proposal.proposal_type.TokenTransfer !== undefined) && (
+  <div className="w-full flex  flex-col md:justify-between mt-2 md:flex-row">
+    {/* Left Side: Tokens and Logos */}
+    <div className="flex flex-col">
+      <span className="font-bold">Tokens:</span>
+      <div className="flex items-center mt-1">
+        {/* Map over tokens to display each token with its logo */}
+        {proposal.tokens.map((token, index) => (
+          <div key={index} className="flex items-center">
+            <img src={coin} alt={`${token.name} logo`} className="w-6 h-6 mr-1" />
+            <span className="font-bold">{token.toString()}</span>
+          </div>
+        ))}
+      </div>
+      <hr className="my-2 border-gray-300" />
+    </div>
 
-                    <div className="flex flex-col">
-                      <div>
-                        <span className="font-bold">To</span>: 
-                        {proposal.token_to.map((principal, index) => (
-                          <span key={index}>
-                            {principal.toText ? principal.toText() : Array.from(principal._arr).join('')}
-                          </span>
-                        ))}
-                      </div>
-                      {/* <strong>&nbsp; | &nbsp;</strong> */}
-                      <div>
-                      <span className="font-bold">From</span>: 
-                      {proposal.token_from.map((principal, index) => (
-                        <span key={index}>
-                          {principal.toText ? principal.toText() : Array.from(principal._arr).join('')}
-                        </span>
-                      ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
+    {/* Right Side: To and User Image */}
+    <div className="flex flex-col ">
+      <span className="font-bold">To:</span>
+      {proposal.token_to.map((principal, index) => (
+        <div key={index} className="flex items-center mt-1">
+          <img src={Avatar} alt={`User image`} className="w-6 h-6 mr-1 rounded-full" />
+          <span className="font-bold">{principal.toText ? principal.toText() : Array.from(principal._arr).join('')}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
 
                 {!isSubmittedProposals && (proposal.proposal_type.AddMemberToGroupProposal !== undefined) && (
                   <div className="w-full"> 
@@ -652,7 +654,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                       <span className="font-bold">Bounty Task</span>: {proposal.bounty_task}
                     </div> */}
                     <div className="whitespace-normal break-words mt-2">
-                      <span className="font-bold"> Associated Proposal ID</span>: {proposal.associated_proposal_id}
+                      <span className="font-bold border border-black"> Associated Proposal ID</span>: {proposal.associated_proposal_id}
                     </div>
                     {/* <div className="whitespace-normal break-words mt-2">
                       <span className="font-bold">Bounty Task</span>: {proposal.bounty_task}
@@ -675,7 +677,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                 ) }
 
 
-                  <div className="w-full flex justify-between flex-wrap">
+                  <div className="w-full flex justify-between flex-wrap border-t border-t-sm pt-4">
                     <div className="flex flex-wrap justify-start md:justify-start md:mt-0 gap-2 small_phone:gap-4 md:gap-2">
                       {(showActions) && (
                         <button className={`flex items-center justify-center gap-1 mobile:gap-1'
