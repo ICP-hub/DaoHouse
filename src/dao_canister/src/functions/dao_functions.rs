@@ -730,6 +730,9 @@ async fn vote_on_poll_options(proposal_id: String, option_id: String) -> Result<
                         } else {
                             option.poll_approved_votes += 1;
                             option.approved_users.push(api::caller());
+                            proposal_data.approved_votes_list.push(api::caller());
+                            proposal_data.proposal_approved_votes += 1;
+                            state.proposals.insert(proposal_id, proposal_data.to_owned());
                             Ok("Vote submitted successfully.".to_string())
                         }
                     } else {
