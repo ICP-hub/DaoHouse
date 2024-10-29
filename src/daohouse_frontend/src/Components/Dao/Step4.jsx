@@ -26,7 +26,7 @@ const Step4 = ({ data, setData, setActiveStep }) => {
   const className = "DAO__Step4";
 
   const modalMessage = isPrivate
-    ? "This action will make the DAO public, allowing anyone to join."
+    ? "his action will make the DAO public, allowing anyone to join. Are you sure you want to make it public?"
     : "This action will make the DAO private. A proposal will be created for users to join.";
 
 
@@ -249,23 +249,24 @@ const Step4 = ({ data, setData, setActiveStep }) => {
           {/* Modal for Confirmation */}
           {showModal && (
   <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-  <div className="w-[90%] sm:w-[400px] md:w-[60%] lg:w-[50%] h-[30vh] bg-white border border-gray-300 p-4 rounded shadow flex flex-col justify-between max-w-lg">
+  <div className="w-[80%] sm:w-[400px] md:w-[55%] lg:w-[45%] h-[30vh] bg-white border border-gray-300 p-4 rounded shadow flex flex-col justify-between max-w-lg">
     <p className="text-center mb-4">
       {modalMessage}
     </p>
     <div className="flex justify-between">
-      <button
-        onClick={cancelMakePrivate}
-        className="bg-gray-300 text-black px-4 py-2 rounded w-[48%] text-sm sm:text-base"
-      >
-        Nah, Cancel
-      </button>
-      <button
-        onClick={confirmMakePrivate}
-        className="bg-[#0E3746] text-white px-4 py-2 rounded w-[48%] text-sm sm:text-base"
-      >
-        Confirm
-      </button>
+    <button
+  onClick={cancelMakePrivate}
+  className="bg-gray-300 text-black w-20 h-12 rounded-full text-sm sm:text-base flex items-center justify-center"
+>
+  Cancel
+</button>
+<button
+  onClick={confirmMakePrivate}
+  className="bg-[#0E3746] text-white w-20 h-12 rounded-full text-sm sm:text-base flex items-center justify-center"
+>
+  Confirm
+</button>
+
     </div>
   </div>
 </div>
