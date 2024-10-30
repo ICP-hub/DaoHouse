@@ -101,6 +101,8 @@ pub struct Proposals {
     pub associated_proposal_id : Option<String>,
     pub new_required_votes : Option<u32>,
     pub task_completion_day : Option<u64>,
+    pub poll_query :  Option<String>,
+    pub poll_options: Option<Vec<PollOptions>>,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
@@ -119,7 +121,7 @@ pub struct ReplayComment {
     pub commented_by : Principal,
 }
 
-#[derive(Clone, CandidType, Serialize, Deserialize)]
+#[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct ProposalInput {
     pub proposal_title: String,
     pub proposal_description: String,
@@ -144,6 +146,16 @@ pub struct ProposalInput {
     pub associated_proposal_id :  Option<String>,
     pub new_required_votes : Option<u32>,
     pub task_completion_day : Option<u64>,
+    pub poll_query :  Option<String>,
+    pub poll_options: Option<Vec<PollOptions>>,
+}
+
+#[derive(Clone , Debug, CandidType, Serialize, Deserialize)]
+pub struct PollOptions {
+    pub option : String,
+    pub id: String,
+    pub poll_approved_votes : u64,
+    pub approved_users : Vec<Principal>,
 }
 
 #[derive(CandidType, Serialize, Deserialize)]
@@ -320,9 +332,11 @@ pub struct BountyDone{
 pub struct CreatePoll{
     pub description: String,
     pub poll_title : String,
+    pub poll_options : Vec<String>,
     pub proposal_created_at: u64,
     pub proposal_expired_at: u64,
     pub proposal_entry : String,
+    pub poll_query : String,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]

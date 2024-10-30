@@ -1,18 +1,21 @@
 use crate::proposal_route::create_proposal_controller;
 use crate::{
     guards::*, AddMemberArgs, BountyDone, BountyRaised, ChangeDaoConfigArg, ChangeDaoPolicy,
-    CreateGeneralPurpose, CreatePoll, DaoGroup, JoinDao, LedgerCanisterId, ProposalCreation,
-    ProposalInput, ProposalState, RemoveDaoMemberArgs, RemoveMemberArgs, TokenTransferPolicy,
+    CreateGeneralPurpose, CreatePoll, DaoGroup, JoinDao, LedgerCanisterId, PollOptions,
+    ProposalCreation, ProposalInput, ProposalState, RemoveDaoMemberArgs, RemoveMemberArgs,
+    TokenTransferPolicy,
 };
 use crate::icrc_get_balance;
 use crate::{with_state, ProposalType};
 use candid::{Nat, Principal};
 use ic_cdk::api;
 use ic_cdk::api::call::{CallResult, RejectionCode};
+use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::{query, update};
 use icrc_ledger_types::icrc1::account::Account;
 use icrc_ledger_types::icrc1::transfer::BlockIndex;
 use icrc_ledger_types::icrc2::transfer_from::{TransferFromArgs, TransferFromError};
+use sha2::{Digest, Sha256};
 
 #[query(guard = prevent_anonymous)]
 async fn get_members_of_group(group: String) -> Result<Vec<Principal>, String> {
@@ -93,6 +96,8 @@ async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, 
         associated_proposal_id: None,
         new_required_votes: None,
         task_completion_day: None,
+        poll_query: None,
+        poll_options: None,
     };
 
     with_state(|state| {
@@ -175,6 +180,8 @@ async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<St
         associated_proposal_id: None,
         new_required_votes: None,
         task_completion_day: None,
+        poll_query: None,
+        poll_options: None,
     };
 
     with_state(|state| {
@@ -243,6 +250,8 @@ async fn proposal_to_remove_member_to_dao(args: RemoveDaoMemberArgs) -> Result<S
         associated_proposal_id: None,
         new_required_votes: None,
         task_completion_day: None,
+        poll_query: None,
+        poll_options: None,
     };
 
     with_state(|state| {
@@ -309,6 +318,8 @@ async fn proposal_to_change_dao_config(args: ChangeDaoConfigArg) -> Result<Strin
         associated_proposal_id: None,
         new_required_votes: None,
         task_completion_day: None,
+        poll_query: None,
+        poll_options: None,
     };
 
     create_proposal_controller(with_state(|state| state.dao.daohouse_canister_id), proposal).await;
@@ -368,6 +379,8 @@ async fn proposal_to_change_dao_policy(args: ChangeDaoPolicy) -> Result<String, 
         associated_proposal_id: None,
         new_required_votes: Some(args.required_votes),
         task_completion_day: None,
+        poll_query: None,
+        poll_options: None,
     };
     create_proposal_controller(with_state(|state| state.dao.daohouse_canister_id), proposal).await;
     Ok(String::from(crate::utils::MESSAGE_CHANGE_DAO_POLICY))
@@ -431,6 +444,8 @@ async fn proposal_to_transfer_token(args: TokenTransferPolicy) -> Result<String,
         associated_proposal_id: None,
         new_required_votes: None,
         task_completion_day: None,
+        poll_query: None,
+        poll_options: None,
     };
     create_proposal_controller(with_state(|state| state.dao.daohouse_canister_id), proposal).await;
     Ok(String::from(crate::utils::MESSAGE_TOKEN_TRANSFER_POLICY))
@@ -481,11 +496,12 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
     guard_check_proposal_creation(proposal_data)?;
     let principal_id: Principal = api::id();
     let token_ledger_id: Principal = with_state(|state| state.dao.token_ledger_id.id);
-    let balance: Nat = icrc_get_balance(token_ledger_id, principal_id).await
-    .map_err(|err| format!("Error while fetching user balance: {}", err))?;
+    let balance: Nat = icrc_get_balance(token_ledger_id, principal_id)
+        .await
+        .map_err(|err| format!("Error while fetching user balance: {}", err))?;
 
     if balance < args.tokens as u64 {
-        return Err(format!("DAO doesn't have enough tokens."))
+        return Err(format!("DAO doesn't have enough tokens."));
     }
 
     let mut required_thredshold = 0;
@@ -501,7 +517,10 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
                 Ok(())
             }
             None => {
-                return Err(format!("No place Found with the name of {:?}",args.proposal_entry));
+                return Err(format!(
+                    "No place Found with the name of {:?}",
+                    args.proposal_entry
+                ));
             }
         }
     });
@@ -510,7 +529,6 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
         ic_cdk::api::time() + (args.task_completion_day * 86_400 * 1_000_000_000);
 
     let test_expire_time = 3 * 60 * 1_000_000_000;
-
 
     let proposal = ProposalInput {
         principal_of_action: Some(api::caller()),
@@ -536,6 +554,8 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
         associated_proposal_id: None,
         new_required_votes: None,
         task_completion_day: Some(test_expire_time),
+        poll_query: None,
+        poll_options: None,
     };
 
     create_proposal_controller(with_state(|state| state.dao.daohouse_canister_id), proposal).await;
@@ -549,20 +569,23 @@ async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
         entry: args.proposal_entry.clone(),
         proposal_type: ProposalType::BountyRaised,
     };
-    guard_check_proposal_creation(proposal_data)?;    
+
+    guard_check_proposal_creation(proposal_data)?;
     let proposals_data = with_state(|state| state.proposals.get(&args.associated_proposal_id));
 
     let principal_id: Principal = api::id();
     let token_ledger_id: Principal = with_state(|state| state.dao.token_ledger_id.id);
-    let balance: Nat = icrc_get_balance(token_ledger_id, principal_id).await
-    .map_err(|err| format!("Error while fetching user balance: {}", err))?;
 
-      if balance < args.tokens as u64 {
-        return Err(format!("DAO doesn't have enough tokens."))
+    let balance: Nat = icrc_get_balance(token_ledger_id, principal_id)
+        .await
+        .map_err(|err| format!("Error while fetching user balance: {}", err))?;
+
+    if balance < args.tokens as u64 {
+        return Err(format!("DAO doesn't have enough tokens."));
     }
 
     let mut bounty_task = None;
-    let mut token_to : Option<Principal> = None;
+    let mut token_to: Option<Principal> = None;
 
     if let Some(proposal) = proposals_data {
         let proposal_type = proposal.proposal_type;
@@ -580,7 +603,9 @@ async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
             ));
         }
         if proposal_owner != api::caller() {
-            return Err(String::from("bounty is not raised by you with this proposal ID"));
+            return Err(String::from(
+                "bounty is not raised by you with this proposal ID",
+            ));
         }
 
         let current_time = ic_cdk::api::time();
@@ -596,6 +621,8 @@ async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
         }
         token_to = proposal.token_to;
         bounty_task = proposal.bounty_task;
+    } else {
+        return Err(String::from("No proposal Found with this id"));
     }
 
     let mut required_thredshold = 0;
@@ -632,7 +659,7 @@ async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
         token_to: token_to,
         proposal_created_at: None,
         proposal_expired_at: None,
-        bounty_task: bounty_task,
+        bounty_task,
         poll_title: None,
         required_votes: None,
         cool_down_period: None,
@@ -643,9 +670,83 @@ async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
         associated_proposal_id: Some(args.associated_proposal_id.clone()),
         new_required_votes: None,
         task_completion_day: None,
+        poll_query: None,
+        poll_options: None,
     };
     create_proposal_controller(args.daohouse_canister_id.clone(), proposal_input.clone()).await;
     Ok(String::from(crate::utils::MESSAGE_BOUNTY_DONE))
+}
+
+// #[update(guard = prevent_anonymous)]
+// async fn vote_on_poll_options(proposal_id: String, option_id: String) -> Result<String, String> {
+//     with_state(|state| match &mut state.proposals.get(&proposal_id) {
+//         Some(proposal_data) => {
+//             if proposal_data.proposal_type == ProposalType::Polls {
+//                 if proposal_data.proposal_status == ProposalState::Open {
+//                     let mut option_found = false;
+//                     for options in &mut proposal_data.poll_options {
+//                         if let Some(option) = options.iter_mut().find(|opt| opt.id == option_id) {
+//                             option_found = true;
+//                             if option.approved_users.contains(&api::caller()) {
+//                                 return Err("You have already voted for this option.".to_string());
+//                             } else {
+//                                 option.poll_approved_votes += 1;
+//                                 option.approved_users.push(api::caller());
+//                                 return Ok("Vote submitted successfully.".to_string());
+//                             }
+//                         }
+//                     }
+//                     if !option_found {
+//                         Err("Option ID not found in this poll.".to_string())
+//                     } else {
+//                         Ok("Vote operation completed.".to_string())
+//                     }
+//                 } else {
+//                     Err(format!(
+//                         "Proposal has been {:?} ",
+//                         proposal_data.proposal_status
+//                     ))
+//                 }
+//             } else {
+//                 Err(format!("This is not Poll type proposal"))
+//             }
+//         }
+//         None => Err(String::from("Proposal ID is invalid !")),
+//     })
+// }
+
+#[update(guard = prevent_anonymous)]
+async fn vote_on_poll_options(proposal_id: String, option_id: String) -> Result<String, String> {
+    with_state(|state| match &mut state.proposals.get(&proposal_id) {
+        Some(proposal_data) => {
+            if proposal_data.proposal_type == ProposalType::Polls {
+                if proposal_data.proposal_status == ProposalState::Open {
+                    if let Some(option) = proposal_data.poll_options.iter_mut()
+                        .flat_map(|options| options.iter_mut())
+                        .find(|opt| opt.id == option_id)
+                    {
+                        if option.approved_users.contains(&api::caller()) {
+                            Err("You have already voted for this option.".to_string())
+                        } else {
+                            option.poll_approved_votes += 1;
+                            option.approved_users.push(api::caller());
+                            proposal_data.approved_votes_list.push(api::caller());
+                            proposal_data.proposal_approved_votes += 1;
+                            state.proposals.insert(proposal_id, proposal_data.to_owned());
+                            Ok("Vote submitted successfully.".to_string())
+                        }
+                    } else {
+                        Err("Option ID not found in this poll.".to_string())
+                    }
+                } else {
+                    Err(format!("Proposal has been {:?} ", proposal_data.proposal_status))
+                }
+            } else {
+                Err("This is not a Poll type proposal".to_string())
+            }
+        }
+        None => Err("Proposal ID is invalid!".to_string()),
+    })
 }
 
 #[update(guard = prevent_anonymous)]
@@ -680,6 +781,26 @@ async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
         }
     });
 
+    let uuids = raw_rand().await.unwrap().0;
+    let option_id = format!("{:x}", Sha256::digest(&uuids));
+
+    let mut counter = 0;
+    let poll_options: Vec<PollOptions> = args
+        .poll_options
+        .iter()
+        .map(|option| {
+            let unique_id = format!("{}-{}", option_id, counter);
+            counter += 1;
+            PollOptions {
+                option: option.clone(),
+                id: unique_id,
+                poll_approved_votes: 0,
+                approved_users: Vec::new(),
+            }
+        })
+        .collect();
+    
+
     let proposal = ProposalInput {
         principal_of_action: Some(api::caller()),
         proposal_description: args.description,
@@ -704,6 +825,8 @@ async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
         associated_proposal_id: None,
         new_required_votes: None,
         task_completion_day: None,
+        poll_query: Some(args.poll_query),
+        poll_options: Some(poll_options),
     };
     create_proposal_controller(with_state(|state| state.dao.daohouse_canister_id), proposal).await;
     Ok(String::from(crate::utils::MESSAGE_POLL_CREATE_DONE))
@@ -764,6 +887,8 @@ async fn proposal_to_create_general_purpose(args: CreateGeneralPurpose) -> Resul
         associated_proposal_id: None,
         new_required_votes: None,
         task_completion_day: None,
+        poll_query: None,
+        poll_options: None,
     };
     create_proposal_controller(with_state(|state| state.dao.daohouse_canister_id), proposal).await;
     Ok(String::from(crate::utils::MESSAGE_GENERAL_PURPOSE_CREATED))
@@ -840,6 +965,8 @@ async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
         associated_proposal_id: None,
         new_required_votes: None,
         task_completion_day: None,
+        poll_query: None,
+        poll_options: None,
     };
 
     let response: CallResult<(Result<(), String>,)> = ic_cdk::call(
