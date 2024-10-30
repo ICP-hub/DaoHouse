@@ -13,8 +13,7 @@ import { useAuth } from "../utils/useAuthClient";
 import userImage from "../../../assets/avatar.png";
 import { CircularProgress } from "@mui/material";
 import ShareModal from "./ShareModal";
-import coin from "../../../assets/coin.jpg";
-import Avatar from "../../../assets/Avatar.png";
+
 
 export default function Card({ proposal, voteApi, showActions, isProposalDetails, isComment, setIsComment, commentCount, isSubmittedProposals, showComments, }) {
 
@@ -39,10 +38,30 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const { daoCanisterId } = useParams();
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
+  const maxWords = 150;
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const toggleExpanded = () => setIsExpanded(!isExpanded);
   // console.log(votersList);
   
 
   // console.log("voters", proposal?.approved_votes_list + proposal?.rejected_votes_list); 
+
+  const truncateText = (text, wordLimit) => {
+    const words = text.split('');
+    if (words.length > wordLimit) {
+      return {
+        truncated: words.slice(0, wordLimit).join('') + '...',
+        isTruncated: true,
+      };
+    }
+    return {
+      truncated: text,
+      isTruncated: false,
+    };
+  };
+  
+  const { truncated, isTruncated } = truncateText(proposal?.proposal_description || 'Proposal Description', maxWords);
 
 
   useEffect(() => {
@@ -492,7 +511,17 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                 </div>
                 )}
               {!isSubmittedProposals && (
-                <p className="text-gray-900 text-sm mobile:text-xl mb-4 break-words">{proposal?.proposal_description}</p>
+                <p className="text-gray-900 text-sm mobile:text-xl mb-4 break-words">
+                  {isExpanded ? proposal?.proposal_description : truncated}
+                {isTruncated && (
+                  <button
+                    onClick={toggleExpanded}
+                    className="text-[#0E3746] text-[12px] tablet:text-[16px] underline"
+                  >
+                    {isExpanded ? 'See less' : 'See more'}
+                  </button>
+                )}
+                </p>
               )}
               <div className="flex flex-col gap-4 items-start mb-2 justify-start">
                   {!isSubmittedProposals && (
@@ -508,7 +537,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                     </div>
                     <div className="flex lg:flex-row flex-col    items-start">
                       <span className="font-bold text-[10px] lg:text-lg text-gray-900">Votes Required :</span>
-                      <span className=" lg:ml-3 text-start text-[10px] flex flex-row  mobile:text-sm lg:text-lg">{requiredVotes}</span>
+                      <span className=" lg:ml-3 text-start text-[10px]  mobile:text-sm lg:text-lg">{requiredVotes}</span>
                     </div>
                     </div>
                     )}
@@ -538,36 +567,35 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                     </div>
                   </div>
                 ) }
-            {!isSubmittedProposals && (proposal.proposal_type.TokenTransfer !== undefined) && (
-  <div className="w-full flex  flex-col md:justify-between mt-2 md:flex-row">
-    {/* Left Side: Tokens and Logos */}
-    <div className="flex flex-col">
-      <span className="font-bold">Tokens:</span>
-      <div className="flex items-center mt-1">
-        {/* Map over tokens to display each token with its logo */}
-        {proposal.tokens.map((token, index) => (
-          <div key={index} className="flex items-center">
-            <img src={coin} alt={`${token.name} logo`} className="w-6 h-6 mr-1" />
-            <span className="font-bold">{token.toString()}</span>
-          </div>
-        ))}
-      </div>
-      <hr className="my-2 border-gray-300" />
-    </div>
+                {!isSubmittedProposals && (proposal.proposal_type.TokenTransfer !== undefined) && (
+                  <div className="w-full"> 
+                    <div className="whitespace-normal break-words mt-2">
+                      <span className="font-bold">
+                        Tokens: {proposal.tokens.map((token) => token.toString())}
+                      </span>
+                    </div>
 
-    {/* Right Side: To and User Image */}
-    <div className="flex flex-col ">
-      <span className="font-bold">To:</span>
-      {proposal.token_to.map((principal, index) => (
-        <div key={index} className="flex items-center mt-1">
-          <img src={Avatar} alt={`User image`} className="w-6 h-6 mr-1 rounded-full" />
-          <span className="font-bold">{principal.toText ? principal.toText() : Array.from(principal._arr).join('')}</span>
-        </div>
-      ))}
-    </div>
-  </div>
-)}
-
+                    <div className="flex flex-col">
+                      <div>
+                        <span className="font-bold">To</span>: 
+                        {proposal.token_to.map((principal, index) => (
+                          <span key={index}>
+                            {principal.toText ? principal.toText() : Array.from(principal._arr).join('')}
+                          </span>
+                        ))}
+                      </div>
+                      {/* <strong>&nbsp; | &nbsp;</strong> */}
+                      <div>
+                      <span className="font-bold">From</span>: 
+                      {proposal.token_from.map((principal, index) => (
+                        <span key={index}>
+                          {principal.toText ? principal.toText() : Array.from(principal._arr).join('')}
+                        </span>
+                      ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {!isSubmittedProposals && (proposal.proposal_type.AddMemberToGroupProposal !== undefined) && (
                   <div className="w-full"> 
@@ -624,7 +652,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                       <span className="font-bold">Bounty Task</span>: {proposal.bounty_task}
                     </div> */}
                     <div className="whitespace-normal break-words mt-2">
-                      <span className="font-bold border border-black"> Associated Proposal ID</span>: {proposal.associated_proposal_id}
+                      <span className="font-bold"> Associated Proposal ID</span>: {proposal.associated_proposal_id}
                     </div>
                     {/* <div className="whitespace-normal break-words mt-2">
                       <span className="font-bold">Bounty Task</span>: {proposal.bounty_task}
@@ -646,16 +674,17 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                   </div>
                 ) }
 
-                  <div className="w-full flex justify-between flex-wrap border-t border-t-sm pt-4">
+
+                  <div className="w-full flex justify-between flex-wrap">
                     <div className="flex flex-wrap justify-start md:justify-start md:mt-0 gap-2 small_phone:gap-4 md:gap-2">
                       {(showActions) && (
-                        <button className={`flex items-center justify-center gap-1 mobile:gap-1 ${isComment ? 'bg-gray-200 text-black rounded-lg p-2' : 'text-gray-600 bg-none'
+                        <button className={`flex items-center justify-center gap-1 mobile:gap-1'
                           }`} onClick={handleCommentToggle}>
                           <svg className="mb-1" width="16" height="15" viewBox="0 0 16 15">
                             <path d="M3.11111 9.22293H12.8889V8.34456H3.11111V9.22293ZM3.11111 6.58781H12.8889V5.70943H3.11111V6.58781ZM3.11111 3.95269H12.8889V3.07431H3.11111V3.95269ZM16 15L13.2649 12.2972H1.43556C1.02667 12.2972 0.685333 12.162 0.411556 11.8914C0.137778 11.6209 0.000592593 11.2833 0 10.8787V1.41857C0 1.01452 0.137185 0.677227 0.411556 0.406687C0.685926 0.136148 1.02726 0.000585583 1.43556 0H14.5644C14.9733 0 15.3147 0.135562 15.5884 0.406687C15.8622 0.677812 15.9994 1.01511 16 1.41857V15ZM1.43556 11.4189H13.6444L15.1111 12.8629V1.41857C15.1111 1.28389 15.0542 1.16004 14.9404 1.04702C14.8267 0.934005 14.7013 0.877789 14.5644 0.878374H1.43556C1.29926 0.878374 1.17393 0.93459 1.05956 1.04702C0
                             .945185 1.15945 0.888296 1.2833 0.888889 1.41857V10.8787C0.888889 11.0134 0.945778 11.1372 1.05956 11.2502C1.17333 11.3632 1.29867 11.4195 1.43556 11.4189Z" fill="black" />
                           </svg>
-                          <span className=" text-sm mobile:text-base">{commentCount || 0} Comments</span>
+                          <span className={`text-sm mobile:text-base ${isComment ? 'bg-gray-200 text-black rounded-lg p-2' : 'text-gray-600 bg-none'}`}>{commentCount || 0} Comments</span>
                         </button>
                       )}
 
@@ -680,13 +709,11 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                       <button className="px-4 py-1 font-mulish" onClick={handleViewMore}>View More</button>
                     </div>
                     )}
-                  </div>
-
-                {/* Cast Vote Section  */}
+                    {/* Cast Vote Section  */}
                 {showActions && (
                   <div className="bg-sky-200 w-full md:w-96 p-4 rounded-md mt-6">
                     <h1 className="text-lg font-semibold mb-2">Cast Vote</h1>
-                    <form className="flex flex-col md:flex-row items-start md:items-center" onSubmit={handleVoteSubmit}>
+                    <form className="flex flex-row flex-wrap gap-2 small_phone:gap-4 mobile:gap-6 items-start md:items-center" onSubmit={handleVoteSubmit}>
                       <div className="flex items-center space-x-4 mr-0 md:mr-4 mb-4 md:mb-0">
                         <label className="text-md text-[#0E3746] flex items-center">
                           <input
@@ -722,6 +749,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                     </form>
                   </div>
                 )}
+                </div>
               </div>
               {!showActions && (
                 <div className="flex gap-2">
