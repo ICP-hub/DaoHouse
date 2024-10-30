@@ -22,9 +22,10 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
   const [updatedGroupName, setUpdatedGroupName] = useState("");
   const [memberName, setMemberName] = useState("");
   const { backendActor, stringPrincipal } = useAuth();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isAdding, setIsAdding] = useState(false)
-  const [openGroups, setOpenGroups] = useState([]);
+  const [openGroups, setOpenGroups] = useState([]); 
+
 
   const [list, setList] = useState([
     { name: "Council", index:0, members: [] },
@@ -105,6 +106,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
     setActiveStep(1);
   }
   const handleGroupAdding = () => {
+    setShowMemberNameInput(true);
     setList(prevList => {
       // Get the highest index currently in use
       const maxIndex = prevList.reduce((max, group) => Math.max(max, group.index), 0);
@@ -119,7 +121,6 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
   
     // Automatically open the member input field for the new group
     setAddMemberIndex(newGroupIndex);
-    setShowMemberNameInput(true);
   
     // Increment count to reflect the next potential group
     setCount(prevCount => prevCount + 1);
@@ -140,6 +141,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
     }
     setShowMemberNameInput(true);
   };
+
   const handleAddMember = async () => {
     if (memberName.trim() !== "") {
       setIsAdding(true);
@@ -306,32 +308,44 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
       }
 
 
-  const councilMembers = list.find(group => group.name === "Council")?.members || [];
   useEffect(() => {
     const fetchCouncilUsernames = async () => {
-      const fetchedUsernames = [];
-      for (const member of councilMembers) {
-        const principal = Principal.fromText(member);
-        try {
-          const response = await backendActor.get_profile_by_id(principal);
-          if (response.Ok) {
-            fetchedUsernames.push(`${response.Ok.username} (${principal.toText()})`);
-          } else {
+      const council = list.find((group) => group.name === "Council");
+      
+      // Check if council members are already in local storage
+      const savedCouncilMembers = JSON.parse(localStorage.getItem('councilMembers'));
+      
+      if (savedCouncilMembers) {
+        // If data exists in local storage, use it to set council usernames
+        setCouncilUsernames(savedCouncilMembers);
+      } else if (council && council.members.length > 0) {
+        // If no local storage data, fetch council usernames and save to local storage
+        setIsLoading(true)
+        const fetchedUsernames = [];
+        for (const member of council.members) {
+          const principal = Principal.fromText(member);
+          try {
+            const response = await backendActor.get_profile_by_id(principal);
+            if (response.Ok) {
+              fetchedUsernames.push(`${response.Ok.username} (${principal.toText()})`);
+            } else {
+              fetchedUsernames.push(member);
+            }
+          } catch (error) {
             fetchedUsernames.push(member);
+          } finally {
+            setIsLoading(false)
           }
-        } catch (error) {
-          fetchedUsernames.push(member);
         }
+        setCouncilUsernames(fetchedUsernames);
+        localStorage.setItem('councilMembers', JSON.stringify(fetchedUsernames)); // Save usernames to local storage
       }
-      setCouncilUsernames(fetchedUsernames);
-      setIsLoading(false);
     };
-    
-    // Only fetch if councilMembers are present
-    if (councilMembers.length > 0) {
-      fetchCouncilUsernames();
-    }
-  }, [councilMembers, backendActor]);
+  
+    // Only fetch if councilMembers are not in local storage
+    fetchCouncilUsernames();
+  }, [list, backendActor]);
+  
   
 
   // useEffect(() => {

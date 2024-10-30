@@ -98,6 +98,7 @@ const CreateDao = () => {
       localStorage.removeItem('step1Data');
       localStorage.removeItem('step2Data');
       localStorage.removeItem('step3Data');
+      localStorage.removeItem('councilMembers');
       localStorage.removeItem('step4Data');
       localStorage.removeItem('step5Quorum');
       localStorage.removeItem('step6Data');
@@ -199,6 +200,7 @@ const CreateDao = () => {
     localStorage.removeItem('step1Data');
     localStorage.removeItem('step2Data');
     localStorage.removeItem('step3Data');
+    localStorage.removeItem('councilMembers');
     localStorage.removeItem('inputData');
     localStorage.removeItem('step5Data');
     localStorage.removeItem('step6Data');
