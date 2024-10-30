@@ -104,6 +104,7 @@ function CreateProposal() {
     description: "",
     // action_member: "",
     proposal_created_at: "",
+    poll_options: []
   });
 
   const [removeDaoMember, setRemoveDaoMember] = useState({
@@ -421,12 +422,14 @@ function CreateProposal() {
 
         case "Poll":
           await submitPoll({
+            poll_title: "sdcfsdfs",
             proposal_entry: proposalEntry,
             proposal_expired_at: poll.days_until_expiration, // Pass the days difference to the backend
-            poll_title: poll.poll_title,
+            poll_query: poll.poll_title,
             description: poll.description,
             // action_member: Principal.fromText(poll.action_member),
             proposal_created_at: 0, // Set Created At to 0 as per your requirement
+            poll_options: poll.poll_options.map(option => option.option),
           });
 
           break;
