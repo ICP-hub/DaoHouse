@@ -379,12 +379,12 @@ const handlePageChange = (newPage) => {
               />
             </div>
 
-            <div className="lg:ml-10 ml-4">
-              <h2 className="lg:text-[40px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C] truncate ... w-[30vw] md:w-[50vw]">
+            <div className="lg:ml-10 ml-4 flex flex-col items-start">
+              <h2 className="lg:text-[40px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C] truncate ... w-[200px] mini_phone:w-[215px] iphone_SE:w-[225px] small_phone:w-[250px] md:w-[350px] lg:w-[550px] xl:w-[500px] ">
                   {dao?.dao_name || 'Dao Name'}
               </h2>
-              <div className="relative w-[60vw] md:w-[65vw] lg:w-[50vw]">
-                <p className="text-[12px] tablet:text-[16px] font-normal text-left text-[#646464] break-words">
+              <div className="relative w-[200px] mini_phone:w-[215px] iphone_SE:w-[225px] small_phone:w-[250px] md:w-[350px] lg:w-[550px] xl:w-[500px] desktop:w-[600px] md:text-[24px] lg:text-[32px] font-normal text-[#05212C] user-acc-info]">
+                <p className="text-[12px] tablet:text-[16px] font-normal text-start text-[#646464] break-words">
                 {isExpanded ? dao?.purpose : truncated}
                 {isTruncated && (
                   <button
@@ -397,22 +397,22 @@ const handlePageChange = (newPage) => {
                 </p>
               </div>
 
-              <div className="md:flex justify-start mt-2 hidden">
-                <span className="tablet:mr-5 md:text-[24px] lg:text-[32px] font-normal text-[#05212C] user-acc-info">
+              <div className="flex justify-start mt-2 gap-4 ">
+                <span className=" md:text-[24px] lg:text-[32px] font-normal text-[#05212C] user-acc-info">
 
 
-                {dao?.proposals_count || 0} <span className=" md:text-[16px] mx-1">Proposals</span>
+                {dao?.proposals_count || 0}&nbsp;<span className=" md:text-[16px] mx-1">Proposals</span>
 
                 </span>
-                <span className="md:mx-5 md:text-[24px] lg:text-[32px] font-normal text-[#05212C] user-acc-info">
-                  {followersCount}<span className=" md:text-[16px] mx-1">Followers</span>
+                <span className="md:text-[24px] lg:text-[32px] font-normal text-[#05212C] user-acc-info">
+                  {followersCount}&nbsp;<span className=" md:text-[16px] mx-1">Followers</span>
                 </span>
 
 
               </div>
             </div>
           </div>
-          <div className="flex justify-between mt-[-20px] md:hidden">
+          {/* <div className="flex justify-between mt-[-20px] md:hidden">
             <span className="flex flex-col items-center justify-center font-normal">
               <span className="text-[22px] text-[#05212C]">{dao?.proposals_count || 0}</span>
               <span className=" text-[14px] mx-1">Proposals</span>
@@ -421,8 +421,8 @@ const handlePageChange = (newPage) => {
               <span className="text-[22px] text-[#05212C]">{dao?.followers.length}</span>
               <span className=" text-[14px] mx-1">Followers</span>
             </span>
-          </div>
-          <div className="flex md:justify-end gap-4 md:mt-4 tablet:mr-4">
+          </div> */}
+          <div className="flex md:justify-end gap-4">
             <button
               onClick={toggleFollow}
               className="bg-[#0E3746] text-[16px] text-white shadow-xl lg:py-4 lg:px-3 rounded-[27px] lg:w-[131px] lg:h-[40px] md:w-[112px] md:h-[38px] w-[98px] h-[35px] lg:flex items-center justify-center rounded-2xl"
@@ -478,7 +478,7 @@ const handlePageChange = (newPage) => {
         <div
           className={
             className +
-            "__navs w-full overflow-auto flex flex-row justify-between mt-8 md:w-[90%] lg:w-[70%] xl:w-[60%] gap-12 lg:text-[16px] text-[14px] pb-2"
+            "__navs w-full overflow-auto flex flex-row justify-between mt-8 gap-12 lg:text-[16px] text-[14px] pb-2"
           }
         >
           <button

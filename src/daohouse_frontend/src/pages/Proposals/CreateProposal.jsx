@@ -876,7 +876,7 @@ function CreateProposal() {
                 <div className='flex flex-col w-[800px]'>
 
                   {/* Proposal Type Select */}
-                  <div className="mb-6 max-w-full relative">
+                  <div className="mb-6 max-w-full relative overflow-x-hidden">
                     <label className="block mb-2 font-semibold text-xl">
                       Proposal Type
                     </label>
@@ -905,7 +905,7 @@ function CreateProposal() {
                   </div>
 
                   {/* Proposal Entry Select */}
-                  <div className="mb-6 max-w-full relative">
+                  <div className="mb-6 max-w-full relative overflow-x-hidden">
                     <label className="block mb-2 font-semibold text-xl">
                       Proposal Entry
                     </label>
