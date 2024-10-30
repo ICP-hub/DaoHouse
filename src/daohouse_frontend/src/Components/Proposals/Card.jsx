@@ -42,6 +42,10 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
   const maxWords = 150;
   const [isExpanded, setIsExpanded] = useState(false);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [isPollVoteLoading, setIsPollVoteLoading] = useState(false);
+  const [pollOptions, setPollOptions] = useState(proposal.poll_options[0] || []);
+
 
   const toggleExpanded = () => setIsExpanded(!isExpanded);
   // console.log(votersList);
@@ -319,6 +323,45 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
     }
   };
 
+
+  const handlePollVoteSubmit = async (e) => {
+    e.preventDefault();
+    if (!selectedOption) return;
+  
+    try {
+      setIsPollVoteLoading(true);
+      const result = await voteApi?.vote_on_poll_options(proposal.proposal_id, selectedOption);
+  
+      if (result?.Ok) {
+        toast.success("Vote submitted successfully");
+  
+        // Update vote count and approved users for the selected option
+        setPollOptions((prevOptions) =>
+          prevOptions.map((option) =>
+            option.id === selectedOption
+              ? {
+                  ...option,
+                  poll_approved_votes: option.poll_approved_votes + 1n,
+                  approved_users: [...option.approved_users, stringPrincipal], // Add current user to approved users list
+                }
+              : option
+          )
+        );
+  
+        // Optional: Prevent further voting by disabling selection
+        setSelectedOption(null);
+      } else {
+        console.error("Error voting:", result.Err);
+        toast.error(result.Err);
+      }
+    } catch (error) {
+      console.error("Error submitting vote:", error);
+      toast.error("Error submitting vote:", error);
+    } finally {
+      setIsPollVoteLoading(false);
+    }
+  };
+
   
   useEffect(() => {
     const style = document.createElement('style');
@@ -569,6 +612,46 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                     </div>
                   </div>
                 ) }
+                {!isSubmittedProposals && proposal.proposal_type.Polls !== undefined && (
+  <div className="w-full">
+    {/* Display poll question */}
+    <div className="flex mb-2">
+      <span className="font-bold">{proposal.poll_query[0]}</span>
+    </div>
+
+    {/* Display poll options with radio buttons */}
+    <form onSubmit={handlePollVoteSubmit} className="whitespace-normal break-words mt-2">
+      {pollOptions.map((option, index) => (
+        <div key={option.id} className="mt-1 flex items-center">
+          <label className="text-md flex items-center space-x-2">
+            <input
+              type="radio"
+              name="pollVote"
+              value={option.id}
+              checked={selectedOption === option.id}
+              onChange={() => setSelectedOption(option.id)}
+              className="mr-2"
+            />
+            <span className="font-bold">Option {index + 1}:</span> {option.option}
+          </label>
+          <span className="ml-2 text-gray-500">Votes: {option.poll_approved_votes}</span>
+        </div>
+      ))}
+      <button
+        type="submit"
+        className={`bg-[#0E3746] mt-4 w-[100px] h-[30px] flex justify-center text-center items-center text-white rounded-2xl p-2 transition hover:bg-[#123b50]`}
+        disabled={!selectedOption || isPollVoteLoading}
+      >
+        {isPollVoteLoading ? (
+          <div className="w-4 h-4 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+        ) : (
+          "Submit"
+        )}
+      </button>
+    </form>
+  </div>
+)}
+
                 {!isSubmittedProposals && (proposal.proposal_type.TokenTransfer !== undefined) && (
                   <div className="w-full flex  flex-col md:justify-between mt-2 md:flex-row">
                     {/* Left Side: Tokens and Logos */}
