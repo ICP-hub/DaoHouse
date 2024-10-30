@@ -198,25 +198,26 @@ const Navbar = () => {
                 className="mobile:h-10 small_phone:w-30 w-25 h-8 lg:ml-6"
               />
             </Link>
-            {/* Navigation menu */}
-            <div className="big_phone:flex items-center tablet:space-x-8 space-x-4 hidden lg:w-[33%]">
-              {menuItems.map((item, index) => (
-                <div
-                  key={index}
-                  className="text-lg font-normal font-inter leading-[19.36px] text-[#829095]"
-                >
-                  <Link
-                    to={item.route}
-                    className={`hover:text-[#05212C] hover:font-medium cursor-pointer text-[16px] text-[#829095] ${location.pathname === item.route
-                        ? "font-semibold border-b-2 border-[#05212C] text-black"
-                        : "border-transparent border-b-0.5"
-                      }`}
-                  >
-                    {item.label}
-                  </Link>
-                </div>
-              ))}
-            </div>
+           {/* Navigation menu */}
+           <div className="big_phone:flex items-center tablet:gap-8 gap-4 hidden lg:w-[33%] -ml-24">
+  {menuItems.map((item, index) => (
+    <div
+      key={index}
+      className="text-lg font-normal font-inter leading-[19.36px] text-[#829095]"
+    >
+      <Link
+        to={item.route}
+        className={`hover:text-[#05212C] hover:font-medium cursor-pointer text-[16px] text-[#829095] ${location.pathname === item.route
+            ? "font-semibold border-b-2 border-[#05212C] text-black"
+            : "border-transparent border-b-0.5"
+          }`}
+      >
+        {item.label}
+      </Link>
+    </div>
+  ))}
+</div>
+
 
             {/* User profile or login */}
             <div>
