@@ -180,7 +180,7 @@ const GridView = ({ member }) => {
           <img
             src={profileImgSrc}
             alt="Image"
-            className="rounded-full w-full h-full object-cover" // Ensure circular shape
+            className="rounded-full w-full h-full object-cover shadow-lg" // Ensure circular shape
           />
         </section>
         <section className="details flex flex-col items-start ml-2"> {/* Added margin-left */}
@@ -207,7 +207,7 @@ const ListView = ({ member }) => {
         <img
           src={profileImgSrc}
           alt="Image"
-          className="w-12 h-12 rounded-full object-cover" // Ensure circular shape
+          className="w-12 h-12 rounded-full object-cover shadow-lg" // Ensure circular shape
         />
         <section className="details flex flex-col items-start ml-2"> {/* Added margin-left */}
           <p className="font-semibold text-base">{member.Ok.username}</p>
