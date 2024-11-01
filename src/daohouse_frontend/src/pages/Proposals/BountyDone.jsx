@@ -36,11 +36,12 @@ const BountyDone = ({ bountyDone, handleInputBountyDone }) => (
           id="bountyTokens"
           type="number"
           name="tokens"
-          value={bountyDone.tokens}
+          value={bountyDone.tokens || 1}
           onChange={handleInputBountyDone}
           className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
           placeholder="Enter Tokens"
           required
+          min={1}
         />
       </div>
     {/* <div className="mb-4">

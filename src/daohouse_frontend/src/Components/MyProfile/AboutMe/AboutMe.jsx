@@ -108,17 +108,16 @@ const AboutMe = () => {
         <h3 className="text-[#05212C] lg:text-[24px]  md:text-[18px] text-[16px] md:font-bold font-semibold">
           About Me
         </h3>
-        <div className="md:mt-4 mt-2 mb-6 bg-[#F4F2EC] p-4 rounded-lg ">
-        <div className="flex flex-col items-start space-y-2">
-            <p className="lg:text-[20px] md:text-[16px] text-[14px] font-semibold text-[#05212C] my-4 md:ml-2 md:mb-3">
-              Balance
-            </p>
+        <div className="md:mt-4 mt-2 mb-6 bg-[#F4F2EC] p-4 rounded-lg space-y-2">
+            <div className="flex flex-col items-start">
+              <p className="lg:text-[20px] md:text-[16px] text-[14px] font-semibold text-[#05212C] my-4 md:ml-2 md:mb-3">
+                Balance
+              </p>
             <div className="flex items-center w-full max-w-[1200px] bg-white lg:text-[16px] md:text-[14px] text-[12px] font-normal text-[#646464] p-1 rounded-lg">
               <span className="flex-grow p-2">{Number(tokens)}</span>
-           
             </div>
           </div>
-          <div className="flex flex-col items-start space-y-2">
+          <div className="flex flex-col items-start ">
             <p className="lg:text-[20px] md:text-[16px] text-[14px] font-semibold text-[#05212C] md:ml-2 md:mb-3">
               Principal Id
             </p>

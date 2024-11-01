@@ -50,11 +50,12 @@ const BountyRaised = ({ bountyRaised, handleInputBountyRaised, setBountyRaised }
           id="bountyTokens"
           type="number"
           name="tokens"
-          value={bountyRaised.tokens}
+          value={bountyRaised.tokens || 1}
           onChange={handleInputBountyRaised}
           className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
           placeholder="Enter Tokens"
           required
+          min={1}
         />
       </div>
       <div className="mb-4">
@@ -63,12 +64,12 @@ const BountyRaised = ({ bountyRaised, handleInputBountyRaised, setBountyRaised }
           id="taskCompletionDay"
           type="number"
           name="task_completion_day"
-          value={bountyRaised.task_completion_day}
+          value={bountyRaised.task_completion_day || 1}
           onChange={handleInputBountyRaised}
           className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
           required
           min={1}
-          placeholder="No. of days    eg. 5"
+          placeholder="No. of days"
         />
       </div>
     </>

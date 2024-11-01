@@ -252,7 +252,7 @@ const Step2 = ({ setData, setActiveStep, data }) => {
                 className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm border ${
                   errors.VotesRequired ? "border-red-500" : "border-gray-300"
                 }`}
-                min="3"
+                min="1"
               />
               {errors.VotesRequired && (
                 <p className="text-red-500 text-xs">{errors.VotesRequired}</p>

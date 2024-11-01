@@ -666,7 +666,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                           </div>
                         ))}
                       </div>
-                      <hr className="my-2 border-gray-300" />
+                      <hr className="my-2 border-gray-300 md:hidden" />
                     </div>
                     {/* Right Side: To and User Image */}
                     <div className="flex flex-col ">

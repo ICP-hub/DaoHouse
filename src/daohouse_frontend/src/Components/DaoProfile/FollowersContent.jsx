@@ -165,7 +165,7 @@ const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
                       </div>
                     </section>
                     <section>
-                      {/* <MdAddBox className="mx-1 text-[#97C3D3] big_phone:text-2xl text-lg" /> */}
+                      <MdAddBox className="mx-1 text-[#97C3D3] big_phone:text-2xl text-lg" />
                     </section>
                   </div>
                 );
