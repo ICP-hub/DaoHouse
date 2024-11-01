@@ -187,7 +187,7 @@ const GridView = ({ member }) => {
           <p className="font-semibold text-lg">{member.Ok.username}</p>
           <p className="text-sm">{member.Ok.email_id}</p>
         </section>
-        {/* <MdAddBox className="mx-2 text-[#97C3D3] text-2xl" /> */}
+        <MdAddBox className="mx-2 text-[#97C3D3] text-2xl self-center" />
       </div>
     </div>
   );

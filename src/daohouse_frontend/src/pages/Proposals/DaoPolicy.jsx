@@ -36,11 +36,12 @@ const DaoPolicy = ({ changePolicy, handleInputDaoPolicy }) => (
                 id="coolDownPeriod"
                 type="number"
                 name="cool_down_period"
-                value={changePolicy.cool_down_period}
+                value={changePolicy.cool_down_period || 1}
                 onChange={handleInputDaoPolicy}
                 className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                 placeholder="Enter Cool Down Period"
                 required
+                min={1}
             />
         </div>
 
@@ -50,11 +51,12 @@ const DaoPolicy = ({ changePolicy, handleInputDaoPolicy }) => (
                 id="requiredVotes"
                 type="number"
                 name="required_votes"
-                value={changePolicy.required_votes}
+                value={changePolicy.required_votes || 1}
                 onChange={handleInputDaoPolicy}
                 className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                 placeholder="Enter Required Votes"
                 required
+                min={1}
             />
         </div>
     </form>

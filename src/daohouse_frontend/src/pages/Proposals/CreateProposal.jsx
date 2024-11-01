@@ -138,7 +138,6 @@ function CreateProposal() {
           const daoDetails = await daoActor.get_dao_detail();
           setDao(daoDetails);
           console.log("propsdsdf", daoDetails);
-          
   
           const names = daoDetails.proposal_entry.filter((group) => group.place_name !== "Council").map((group) => group.place_name );
           setGroupNames(names);
@@ -458,49 +457,52 @@ function CreateProposal() {
   };
   const submitTokenTransferProposal = async (tokenTransfer) => {
     try {
-      const actor = await createTokenActor(Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"));
+      const actor = await createTokenActor(dao.token_ledger_id.id);
       const { metadata, balance } = await fetchMetadataAndBalance(actor, Principal.fromText(stringPrincipal));
-      
+
       const currentBalance = parseInt(balance, 10);
       const formattedMetadata = await formatTokenMetaData(metadata);
 
       // Call transferApprove to process the payment
-      await transferApprove(
+      const paymentSuccessful = await transferApprove(
         currentBalance,
         actor,
         formattedMetadata,
         tokenTransfer.tokens
       );
 
-      // After payment, create the proposal
-      const daoCanister = await createDaoActor(daoCanisterId);
-      const response = await daoCanister.proposal_to_transfer_token(tokenTransfer);
-     const sound = new Audio(coinsound);
+      // Only proceed to proposal creation if payment was successful
+      if (paymentSuccessful) {
+        const daoCanister = await createDaoActor(daoCanisterId);
+        const response = await daoCanister.proposal_to_transfer_token(tokenTransfer);
+        const sound = new Audio(coinsound);
 
-      if (response.Ok) {
-        sound.play();
-        toast.success("Token transfer proposal created successfully");
-        
-        setIsModalOpen(false);
-        movetodao();
+        if (response.Ok) {
+          sound.play();
+          toast.success(response.Ok);
+          setIsModalOpen(false);
+          movetodao();
+        } else {
+          toast.error(response.Err);
+        }
       } else {
-        toast.error(response.Err);
+        toast.error("Payment failed. Proposal not created.");
       }
     } catch (err) {
       console.error("Error submitting Token Transfer proposal:", err);
       toast.error("Failed to create Token Transfer proposal");
     }
-  };
+};
 
   const submitBountyDone = async (bountyDone) => {
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
-console.log("fhjfjhfhjfjh",daoCanister);
+      console.log("fhjfjhfhjfjh",daoCanister);
 
       const response = await daoCanister.proposal_to_bounty_done(bountyDone);
       console.log("Response of Bounty Done:", response);
       if(response.Ok){
-        toast.success("Bounty Done proposal created successfully");
+        toast.success(response.Ok);
         movetodao();
       } else {
         toast.error(response.Err)
@@ -521,8 +523,12 @@ console.log("fhjfjhfhjfjh",daoCanister);
       const response = await daoCanister.proposal_to_create_general_purpose(generalPurp);
       console.log("Response of General Purpose:", response);
 
-      toast.success("General Purpose proposal created successfully");
-      movetodao();
+      if(response.Ok) {
+        toast.success(response.Ok);
+        movetodao();
+      } else {
+        toast.error(response.Err)
+      }
     } catch (error) {
       console.error("Error submitting General Purpose proposal:", error);
       toast.error("Failed to create General Purpose proposal");
@@ -539,12 +545,12 @@ console.log("fhjfjhfhjfjh",daoCanister);
       console.log("Response from DAO Config Proposal:", response);
 
       if (response.Ok) {
-        toast.success("DAO configuration proposal created successfully");
+        toast.success(response.Ok);
         movetodao();
         // setActiveLink("proposals"); // Ensure setActiveLink is defined or remove if unnecessary
       }
       else {
-        toast.error("Failed to create DAO configuration proposal");
+        toast.error(response.Err);
       }
     } catch (error) {
       console.error("Error during DAO Config proposal submission:", error);
@@ -563,9 +569,13 @@ console.log("fhjfjhfhjfjh",daoCanister);
 
       );
       console.log("Response of Bounty Raised:", response);
-      setBountyTokens(bountyRaised.tokens)
-      toast.success("Bounty raised proposal created successfully");
-      movetodao();
+      if(response.Ok){
+        setBountyTokens(bountyRaised.tokens)
+        toast.success(response.Ok);
+        movetodao();
+      } else {
+        toast.error(response.Err)
+      }
     } catch (error) {
       console.error("Error submitting Bounty Raised proposal:", error);
       toast.error("Failed to create Bounty Raised proposal");
@@ -581,7 +591,7 @@ console.log("fhjfjhfhjfjh",daoCanister);
       console.log("Response from Add Member Proposal:", response);
 
       if (response.Ok) {
-        toast.success("Add member proposal created successfully");
+        toast.success(response.Ok);
         movetodao();
         // setActiveLink("proposals"); // Ensure setActiveLink is defined or remove if unnecessary
         setAddMember({
@@ -590,7 +600,7 @@ console.log("fhjfjhfhjfjh",daoCanister);
           new_member: "",
         });
       } else {
-        toast.error("Failed to create Add Member proposal");
+        toast.error(response.Err);
       }
     } catch (error) {
       console.error("Error during Add Member proposal submission:", error);
@@ -607,7 +617,7 @@ console.log("fhjfjhfhjfjh",daoCanister);
       console.log("Response from Remove Member Proposal:", response);
 
       if (response.Ok) {
-        toast.success("Remove member proposal created successfully");
+        toast.success(response.Ok);
         movetodao();
         // setActiveLink("proposals"); // Ensure setActiveLink is defined or remove if unnecessary
         setRemoveMember({
@@ -617,7 +627,7 @@ console.log("fhjfjhfhjfjh",daoCanister);
         });
       }
       else {
-        toast.error("Failed to create Remove Member proposal");
+        toast.error(response.Err);
       }
     } catch (error) {
       console.error("Error during proposal submission:", error);
@@ -664,9 +674,9 @@ console.log("fhjfjhfhjfjh",daoCanister);
       );
       console.log("res : ", res);
       if (res.Ok) {
-        toast.success("Payment successful!");
+        toast.success(res.Ok);
       } else {
-        toast.error("Payment failed. Please try again.");
+        toast.error(response.Err);
       }
     } catch (err) {
       console.error("Error in transfer approve", err);
@@ -761,7 +771,7 @@ console.log("fhjfjhfhjfjh",daoCanister);
 
     } catch (error) {
       console.error("Payment submission failed:", error);
-      toast.error("Payment failed. Please try again.");
+      toast.error(error);
       setIsModalOpen(false);
     } finally {
       setLoadingPayment(false);
@@ -784,9 +794,12 @@ console.log("fhjfjhfhjfjh",daoCanister);
       console.log("Response of Change Policy:", response);
       console.log("tokens", response.tokens);
 
-
-      toast.success("Change DAO Policy proposal created successfully");
-      movetodao();
+      if(response.Ok) {
+        toast.success(response.Ok);
+        movetodao();
+      } else {
+        toast.error(response.Err)
+      }
     } catch (error) {
       console.error("Error submitting Change Policy proposal:", error);
       toast.error("Failed to create Change DAO Policy proposal");
@@ -803,8 +816,12 @@ console.log("fhjfjhfhjfjh",daoCanister);
       const response = await daoCanister.proposal_to_create_poll(poll);
       console.log("Response of Poll Proposal:", response);
 
-      toast.success("Poll proposal created successfully");
-      movetodao();
+      if(response.Ok) {
+        toast.success(response.Ok);
+        movetodao();
+      } else {
+        toast.error(response.Err)
+      }
     } catch (error) {
       console.error("Error submitting Poll proposal:", error);
       toast.error("Failed to create Poll proposal");
