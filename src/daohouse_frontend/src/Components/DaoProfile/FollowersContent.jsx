@@ -155,7 +155,7 @@ const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
                       <img
                         src={profile?.profile_img ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${profile.profile_img}` : Avatar}
                         alt="User"
-                        className="big_phone:w-12 w-9 big_phone:h-12 h-9 rounded-full object-cover"
+                        className="big_phone:w-12 w-9 big_phone:h-12 h-9 rounded-full object-cover shadow-lg"
                       />
                       <div className="flex flex-col items-start">
                         <p className="text-start font-semibold big_phone:text-1xl text-sm truncate w-40 lg:w-60">

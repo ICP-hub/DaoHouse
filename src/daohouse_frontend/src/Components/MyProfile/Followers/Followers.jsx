@@ -92,7 +92,12 @@ const Followers = () => {
     if (searchTerm) getSearchDao();
   }, [searchTerm]);
 
-  const displayDAOs = searchTerm ? fetchedDAOs : joinedDAO; // Show search results if searchTerm is not empty
+  const displayDAOs = searchTerm
+  ? joinedDAO.filter((dao) =>
+      dao.dao_name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  : joinedDAO;
+ // Show search results if searchTerm is not empty
 
   return (
     <div className={`${className} w-full`}>
@@ -140,7 +145,7 @@ const Followers = () => {
                     <img
                       src={getImageUrl(dao?.image_id)}
                       alt={dao.dao_name}
-                      className="w-16 h-16 rounded-full border-2 border-black"
+                      className="w-16 h-16 rounded-full border-2 border-black object-cover shadow-lg"
                     />
                     <div className="flex-1 overflow-hidden">
                       <h4 className="text-lg font-mulish truncate">

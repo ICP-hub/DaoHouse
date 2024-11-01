@@ -44,7 +44,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const [isPollVoteLoading, setIsPollVoteLoading] = useState(false);
-  const [pollOptions, setPollOptions] = useState(proposal.poll_options[0] || []);
+  const [pollOptions, setPollOptions] = useState(proposal?.poll_options ? proposal.poll_options[0] : []);
 
 
   const toggleExpanded = () => setIsExpanded(!isExpanded);
@@ -466,7 +466,8 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   </div>
 
  {/* Dates Section */}
-<div className="hidden lg:flex flex-row gap-3">
+{!isSubmittedProposals && (
+  <div className="hidden lg:flex flex-row gap-3">
   <div className="flex flex-col items-start ">
     <span className="font-bold text-xs sm:text-sm lg:text-lg text-white">
       • Submitted On 
@@ -491,6 +492,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
     </span>
   </div>
 </div>
+)}
 
 
   {/* Votes Section */}
