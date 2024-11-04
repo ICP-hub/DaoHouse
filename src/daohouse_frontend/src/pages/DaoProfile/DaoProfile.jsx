@@ -379,7 +379,7 @@ const handlePageChange = (newPage) => {
               <h2 className="lg:text-[40px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C] truncate ... w-[200px] mini_phone:w-[215px] iphone_SE:w-[225px] small_phone:w-[250px] md:w-[350px] lg:w-[550px] xl:w-[500px] ">
                   {dao?.dao_name || 'Dao Name'}
               </h2>
-              <div className="relative w-[200px] mini_phone:w-[215px] iphone_SE:w-[225px] small_phone:w-[250px] md:w-[350px] lg:w-[550px] xl:w-[500px] desktop:w-[600px] md:text-[24px] lg:text-[32px] font-normal text-[#05212C] user-acc-info]">
+              <div className="relative w-[200px] mini_phone:w-[215px] iphone_SE:w-[225px] small_phone:w-[250px] md:w-[550px] lg:w-[550px] xl:w-[500px] desktop:w-[600px] md:text-[24px] lg:text-[32px] font-normal text-[#05212C] user-acc-info]">
                 <p className="text-[12px] tablet:text-[16px] font-normal text-start text-[#646464] break-words">
                 {isExpanded ? dao?.purpose : truncated}
                 {isTruncated && (

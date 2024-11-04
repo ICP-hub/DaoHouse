@@ -236,7 +236,7 @@ const Poll = ({ poll, handleInputPoll, setPoll }) => {
                 <button
                     type="button"
                     onClick={addOption}
-                    className="bg-gray-500 text-white px-4 py-2 rounded-lg"
+                    className="bg-[#0E3746] text-white px-4 py-2 rounded-lg"
                 >
                     ADD
                 </button>
