@@ -1,6 +1,6 @@
 // Proposal routes
 use candid::Principal;
-use crate::{guards::*, ic};
+use crate::guards::*;
 
 use crate::{
     routes::{
