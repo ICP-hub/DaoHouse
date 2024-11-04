@@ -285,44 +285,49 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   };
 
 
-  const handlePollVoteSubmit = async (e) => {
-    e.preventDefault();
+  
+  const handlePollVoteSubmit = async (selectedOption) => {
     if (!selectedOption) return;
 
-    try {
-      setIsPollVoteLoading(true);
-      const result = await voteApi?.vote_on_poll_options(proposal.proposal_id, selectedOption);
-
-      if (result?.Ok) {
-        toast.success("Vote submitted successfully");
-
-
-        setPollOptions((prevOptions) =>
-          prevOptions.map((option) =>
-            option.id === selectedOption
-              ? {
-                ...option,
-                poll_approved_votes: option.poll_approved_votes + 1n,
-                approved_users: [...option.approved_users, stringPrincipal],
-              }
-              : option
-          )
-        );
-
-
-        setSelectedOption(null);
-      } else {
-        console.error("Error voting:", result.Err);
-        toast.error(result.Err);
-      }
-    } catch (error) {
-      console.error("Error submitting vote:", error);
-      toast.error("Error submitting vote:", error);
-    } finally {
-      setIsPollVoteLoading(false);
+    // Check if the proposal is reachable
+    if (proposal.proposal_expired_at <= Date.now() * 1_000_000) {
+        toast.error("This proposal has expired and cannot be voted on.");
+        return;
     }
-  };
 
+    try {
+        setIsPollVoteLoading(true);
+        const result = await voteApi?.vote_on_poll_options(proposal.proposal_id, selectedOption);
+
+        if (result?.Ok) {
+            toast.success("Vote submitted successfully");
+
+            // Update vote count and approved users for the selected option
+            setPollOptions((prevOptions) =>
+                prevOptions.map((option) =>
+                    option.id === selectedOption
+                        ? {
+                            ...option,
+                            poll_approved_votes: option.poll_approved_votes + 1n,
+                            approved_users: [...option.approved_users, stringPrincipal], // Add current user to approved users list
+                        }
+                        : option
+                )
+            );
+
+            // Reset selected option after voting
+            setSelectedOption(null);
+        } else {
+            console.error("Error voting:", result.Err);
+            toast.error(result.Err);
+        }
+    } catch (error) {
+        console.error("Error submitting vote:", error);
+        toast.error("Error submitting vote: " + error.message);
+    } finally {
+        setIsPollVoteLoading(false);
+    }
+};
 
   useEffect(() => {
     const style = document.createElement('style');
@@ -572,44 +577,55 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                 </div>
               )}
               {!isSubmittedProposals && proposal.proposal_type.Polls !== undefined && (
-                <div className="w-full">
-
-                  <div className="flex mb-2">
-                    <span className="font-bold">{proposal.poll_query[0]}</span>
-                  </div>
-
-
-                  <form onSubmit={handlePollVoteSubmit} className="whitespace-normal break-words mt-2">
-                    {pollOptions.map((option, index) => (
-                      <div key={option.id} className="mt-1 flex items-center">
-                        <label className="text-md flex items-center space-x-2">
-                          <input
-                            type="radio"
-                            name="pollVote"
-                            value={option.id}
-                            checked={selectedOption === option.id}
-                            onChange={() => setSelectedOption(option.id)}
-                            className="mr-2"
-                          />
-                          <span className="font-bold">Option {index + 1}:</span> {option.option}
-                        </label>
-                        <span className="ml-2 text-gray-500">Votes: {option.poll_approved_votes}</span>
-                      </div>
-                    ))}
-                    <button
-                      type="submit"
-                      className={`bg-[#0E3746] mt-4 w-[100px] h-[30px] flex justify-center text-center items-center text-white rounded-2xl p-2 transition hover:bg-[#123b50]`}
-                      disabled={!selectedOption || isPollVoteLoading}
-                    >
-                      {isPollVoteLoading ? (
-                        <div className="w-4 h-4 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
-                      ) : (
-                        "Submit"
-                      )}
-                    </button>
-                  </form>
-                </div>
-              )}
+               <div className="w-full">
+               {/* Display poll question */}
+               <div className="flex mb-4">
+                 <span className="font-bold text-lg">{proposal.poll_query[0]}</span>
+               </div>
+             
+               {/* Calculate total votes once, outside the loop */}
+               {(() => {
+                 const totalVotes = pollOptions.reduce((acc, curr) => acc + Number(curr.poll_approved_votes), 0);
+             
+                 return (
+                     <form className="whitespace-normal break-words mt-2">
+                         {pollOptions.map((option) => {
+                             const votePercentage = totalVotes > 0 ? (Number(option.poll_approved_votes) / totalVotes) * 100 : 0;
+             
+                             return (
+                               <div key={option.id} className="relative mt-4 cursor-pointer" onClick={() => handlePollVoteSubmit(option.id)}>
+                               {/* Option container with less rounded corners */}
+                               <div className="relative bg-gray-200 rounded-lg h-10 flex items-center">
+                                   <div
+                                       className="absolute top-0 left-0 h-10 bg-gray-400 rounded-lg transition-all"
+                                       style={{ width: `${votePercentage}%` }}
+                                   ></div>
+                                   {/* Option text */}
+                                   <span className="relative z-10 px-4 text-gray-800 font-semibold">
+                                       {option.option}
+                                   </span>
+                                   {/* Percentage display */}
+                                   <span className="relative z-10 ml-auto pr-4 text-gray-700 font-semibold">
+                                       {votePercentage.toFixed(0)}%
+                                   </span>
+                               </div>
+                           </div>
+                             );
+                         })}
+                     </form>
+                 );
+               })()}
+             
+             
+              
+                         {/* Total votes and time since posted */}
+                         <div className="mt-2 text-sm text-gray-500">
+                           {pollOptions.reduce((acc, curr) => acc + Number(curr.poll_approved_votes), 0)} votes • 5 days ago
+                         </div>
+                       </div>
+                       
+                         
+             )}
 
                 {!isSubmittedProposals && (proposal.proposal_type.TokenTransfer !== undefined) && (
                   <div className="w-full flex  flex-col md:justify-between mt-2 md:flex-row">
