@@ -64,7 +64,6 @@ const DaoProfile = () => {
   const itemsPerPage = 40;
   const totalPages = Math.ceil((dao?.proposals_count || 0) / itemsPerPage);
 
-// Function to handle page change
 const handlePageChange = (newPage) => {
   if (newPage >= 1 && newPage <= totalPages) {
     setCurrentPage(newPage);
@@ -74,7 +73,7 @@ const handlePageChange = (newPage) => {
 
   const truncateText = (text, wordLimit) => {
     const words = text.split('');
-    console.log('Word count:', words.length);
+    
     if (words.length > wordLimit) {
       return {
         truncated: words.slice(0, wordLimit).join('') + '...',
@@ -112,10 +111,10 @@ const handlePageChange = (newPage) => {
           setIsFollowing(daoFollowers.some(follower => follower.toString() === currentUserId.toString()));
           const daoGroups = await daoActor.get_dao_groups();
           setDaoGroups(daoGroups);
-          console.log(daoGroups);
+    
           
           const daoMembers = await daoActor.get_dao_members();
-          console.log(daoMembers);
+     
           
           setDaoMembers(daoMembers)
           const isCurrentUserMember = daoMembers.some(member => member.toString() === currentUserId.toString());
@@ -181,7 +180,7 @@ const handlePageChange = (newPage) => {
       };
   
       const response = await daoActor.ask_to_join_dao(joinDaoPayload);
-      console.log(response);
+      console.log("ask to join dao api response",response);
       const sound  = new Audio(messagesound);
     
       if (response.Ok) {
@@ -408,16 +407,7 @@ const handlePageChange = (newPage) => {
               </div>
             </div>
           </div>
-          {/* <div className="flex justify-between mt-[-20px] md:hidden">
-            <span className="flex flex-col items-center justify-center font-normal">
-              <span className="text-[22px] text-[#05212C]">{dao?.proposals_count || 0}</span>
-              <span className=" text-[14px] mx-1">Proposals</span>
-            </span>
-            <span className="flex flex-col items-center justify-center font-normal ml-8">
-              <span className="text-[22px] text-[#05212C]">{dao?.followers.length}</span>
-              <span className=" text-[14px] mx-1">Followers</span>
-            </span>
-          </div> */}
+       
           <div className="flex md:justify-end gap-4">
             <button
               onClick={toggleFollow}
@@ -516,26 +506,14 @@ const handlePageChange = (newPage) => {
           >
             Followers
           </button>
-          {/* <button
-            onClick={(e) => {
-              e.preventDefault();
-              handleClick("settings");
-            }}
-            className={`cursor-pointer text-nowrap ${
-              activeLink === "settings"
-                ? "underline text-[#0E3746]"
-                : "text-[#0E37464D]"
-            }`}
-          >
-            Settings
-          </button> */}
+       
         </div>
         {activeLink === "proposals" && ( <div>{ loadingProposals ? ( <ProposalLoaderSkeleton />) : (<ProposalsContent proposals={proposals} isMember={isMember} voteApi={voteApi} daoCanisterId={daoCanisterId} />)}</div> ) }
         {activeLink === "feeds" && <FeedsContent  />}
         {activeLink === "member_policy" && <Members daoGroups={daoGroups} daoMembers={daoMembers} />}
         {activeLink === "followers" && <FollowersContent daoFollowers={daoFollowers} daoCanisterId={daoCanisterId}/>}
         {activeLink === "funds" && <FundsContent />}
-        {/* {activeLink === "settings" && <DaoSettings />} */}
+ 
 
         </Container>
       </div>

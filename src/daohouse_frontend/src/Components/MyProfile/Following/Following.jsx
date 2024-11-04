@@ -4,17 +4,17 @@ import MyProfileSkelton from "../../SkeletonLoaders/MyProfileSkelton";
 import NoDataComponent from "../../Dao/NoDataComponent";
 import { Principal } from "@dfinity/principal";
 import Container from "../../Container/Container";
-import SearchProposals from "../../../Components/Proposals/SearchProposals"; // Import search component
-import "./Following.scss"; // Custom scrollbar styling
+import SearchProposals from "../../../Components/Proposals/SearchProposals"; 
+import "./Following.scss"; 
 
 const Following = () => {
   const className = "Following";
   const { backendActor, createDaoActor, stringPrincipal } = useAuth();
   const [joinedDAO, setJoinedDAO] = useState([]);
-  const [fetchedDAOs, setFetchedDAOs] = useState([]); // State for search results
+  const [fetchedDAOs, setFetchedDAOs] = useState([]); 
   const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState(""); // State for search term
-  const [searchLoading, setSearchLoading] = useState(false); // State for search loading
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchLoading, setSearchLoading] = useState(false);
   const canisterId = process.env.CANISTER_ID_IC_ASSET_HANDLER;
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";

@@ -26,7 +26,7 @@ import NoFollowers from "./NoFollowers";
 import NoFollowing from "./NoFollowing";
 import { Principal } from "@dfinity/principal";
 import { createActor } from "../../../../declarations/icp_ledger_canister";
-import { toast } from "react-toastify";
+
 
 
 
@@ -40,9 +40,9 @@ const MyProfile = ({ childComponent }) => {
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
   const [imageSrc, setImageSrc] = useState(MyProfileImage);
-  const location = useLocation(); // Initialize useLocation
+  const location = useLocation();
 
-  // Map paths to tab indices
+ 
   const tabPathMap = {
     "/my-profile": 0,
     "/my-profile/posts": 1,
@@ -63,12 +63,12 @@ const MyProfile = ({ childComponent }) => {
   }, [userProfile]);
 
   const handleImageError = () => {
-    setImageSrc(MyProfileImage); // Fallback to default image if there's an error loading the profile image
+    setImageSrc(MyProfileImage);
   };
 
   const [activeTab, setActiveTab] = useState(0);
   const [showNoFollowers, setShowNoFollowers] = useState(false);
-  const [showNoFollowing, setShowNoFollowing] = useState(false); // New state for NoFollowing component
+  const [showNoFollowing, setShowNoFollowing] = useState(false); 
   const navigate = useNavigate();
   const [loadingPayment, setLoadingPayment] = useState(false);
   const className = "MyProfile";
@@ -148,75 +148,75 @@ const MyProfile = ({ childComponent }) => {
     setActiveTab(tabIndex);
   }, [location.pathname]);
   // Remove this duplicated function
-  const LEDGER_CANISTER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai";
-  const createTokenActor = async (canisterId) => {
-    console.log("canister id", canisterId);
+  // const LEDGER_CANISTER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai";
+  // const createTokenActor = async (canisterId) => {
+  //   console.log("canister id", canisterId);
 
-    try {
-      const tokenActorrr = createActor(Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"), { agentOptions: { identity } });
-      console.log("Created token actor successfully:", tokenActorrr);
-      return tokenActorrr;
-    } catch (err) {
-      console.error("Error creating token actor:", err);
-      throw err;
-    }
-  };
-  const fetchMetadataAndBalance = async (tokenActor, ownerPrincipal) => {
-    try {
-      const [metadata, balance] = await Promise.all([
-        tokenActor.icrc1_metadata(),
-        tokenActor.icrc1_balance_of({ owner: ownerPrincipal, subaccount: [] }),
-      ]);
-      console.log("Metadata and balance fetched:", { metadata, balance });
-      setTokens(balance);
-      return { metadata, balance };
-    } catch (err) {
-      console.error("Error fetching metadata and balance:", err);
-      throw err;
-    }
-  };
+  //   try {
+  //     const tokenActorrr = createActor(Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"), { agentOptions: { identity } });
+  //     console.log("Created token actor successfully:", tokenActorrr);
+  //     return tokenActorrr;
+  //   } catch (err) {
+  //     console.error("Error creating token actor:", err);
+  //     throw err;
+  //   }
+  // };
+  // const fetchMetadataAndBalance = async (tokenActor, ownerPrincipal) => {
+  //   try {
+  //     const [metadata, balance] = await Promise.all([
+  //       tokenActor.icrc1_metadata(),
+  //       tokenActor.icrc1_balance_of({ owner: ownerPrincipal, subaccount: [] }),
+  //     ]);
+  //     console.log("Metadata and balance fetched:", { metadata, balance });
+  //     setTokens(balance);
+  //     return { metadata, balance };
+  //   } catch (err) {
+  //     console.error("Error fetching metadata and balance:", err);
+  //     throw err;
+  //   }
+  // };
 
-  createTokenActor();
-  async function paymentTest() {
-    console.log("owner principal is ", stringPrincipal);
-    console.log("printing payment");
+  // createTokenActor();
+  // async function paymentTest() {
+  //   console.log("owner principal is ", stringPrincipal);
+  //   console.log("printing payment");
 
-    const backendCanisterId = process.env.CANISTER_ID_DAOHOUSE_BACKEND;
-    console.log("backend", backendCanisterId);
-    console.log("ledger", LEDGER_CANISTER_ID);
-    const a = Principal.fromText(LEDGER_CANISTER_ID)
-    console.log("a", a);
+  //   const backendCanisterId = process.env.CANISTER_ID_DAOHOUSE_BACKEND;
+  //   console.log("backend", backendCanisterId);
+  //   console.log("ledger", LEDGER_CANISTER_ID);
+  //   const a = Principal.fromText(LEDGER_CANISTER_ID)
+  //   console.log("a", a);
 
-    const actor = await createTokenActor(Principal.fromText(LEDGER_CANISTER_ID));
-    console.log("actor", actor);
+  //   const actor = await createTokenActor(Principal.fromText(LEDGER_CANISTER_ID));
+  //   console.log("actor", actor);
 
 
-    try {
+  //   try {
 
-      const actor = await createTokenActor(Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"));
+  //     const actor = await createTokenActor(Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"));
 
-      console.log("backend canister id: ", backendCanisterId);
-      console.log("actor is ", actor);
+  //     console.log("backend canister id: ", backendCanisterId);
+  //     console.log("actor is ", actor);
 
-      const name = await actor.icrc1_name();
-      console.log("balance is ", name);
+  //     const name = await actor.icrc1_name();
+  //     console.log("balance is ", name);
 
-      const { metadata, balance } = await fetchMetadataAndBalance(actor, Principal.fromText(stringPrincipal));
+  //     const { metadata, balance } = await fetchMetadataAndBalance(actor, Principal.fromText(stringPrincipal));
 
-      const formattedMetadata = formatTokenMetaData(metadata);
-      const parsedBalance = parseInt(balance, 10);
-      console.log("Balance:", parsedBalance);
+  //     const formattedMetadata = formatTokenMetaData(metadata);
+  //     const parsedBalance = parseInt(balance, 10);
+  //     console.log("Balance:", parsedBalance);
 
-      const sendableAmount = parseInt(10000);
-      if (sendableAmount) {
-        afterPaymentApprove(sendableAmount);
-      }
-    } catch (err) {
-      // toast.error("Payment failed. Please try again.");
-      setLoadingPayment(false);
-    }
-  }
-  paymentTest();
+  //     const sendableAmount = parseInt(10000);
+  //     if (sendableAmount) {
+  //       afterPaymentApprove(sendableAmount);
+  //     }
+  //   } catch (err) {
+  //     // toast.error("Payment failed. Please try again.");
+  //     setLoadingPayment(false);
+  //   }
+  // }
+  // paymentTest();
   return (
     <div className={`${className} bg-zinc-200 w-full relative `}>
 
