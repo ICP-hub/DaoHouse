@@ -401,26 +401,12 @@ function CreateProposal() {
       const { metadata, balance } = await fetchMetadataAndBalance(actor, Principal.fromText(stringPrincipal));
       const currentBalance = parseInt(balance, 10);
       const formattedMetadata = await formatTokenMetaData(metadata);
-      const paymentSuccessful = await transferApprove(
-        currentBalance,
-        actor,
-        formattedMetadata,
-        tokenTransfer.tokens
-      );
-      if (paymentSuccessful) {
-        const daoCanister = await createDaoActor(daoCanisterId);
-        const response = await daoCanister.proposal_to_transfer_token(tokenTransfer);
-        const sound = new Audio(coinsound);
-        if (response.Ok) {
-          sound.play();
-          toast.success(response.Ok);
-          setIsModalOpen(false);
-          movetodao();
-        } else {
-          toast.error(response.Err);
-        }
-      } else {
-        toast.error("Payment failed. Proposal not created.");
+      let response = await transferApprove(currentBalance,actor,formattedMetadata,tokenTransfer.tokens);
+      if (response.Ok) {
+        toast.success(response.Ok);
+        movetodao();
+      }else{
+        toast.error(response.Err);
       }
     } catch (err) {
       console.error("Error submitting Token Transfer proposal:", err);
@@ -593,9 +579,17 @@ function CreateProposal() {
       const daoCanister = await createDaoActor(daoCanisterId);
       const res =
       await daoCanister.make_payment(sendableAmount,Principal.fromText(stringPrincipal));
-      console.log("response hai : ", res);
       if (res.Ok) {
-        toast.success(res.Ok);
+        console.log("response hai : ");
+        let tokenTransferPayload = {
+          to: Principal.fromText(tokenTransfer.to),
+          description: tokenTransfer.description,
+          tokens: Number(tokenTransfer.tokens),
+          proposal_entry: proposalEntry,
+        };
+        const daoCanister = await createDaoActor(daoCanisterId);
+        const response = await daoCanister.proposal_to_transfer_token(tokenTransferPayload);
+        return response;
       } else {
         toast.error(res.Err);
       }
@@ -633,7 +627,7 @@ function CreateProposal() {
           toast.error(errorMessage);
           return;
         } else {
-          await afterPaymentApprove(sendableAmount);
+         return await afterPaymentApprove(sendableAmount);
         }
       } else {
         toast.error(

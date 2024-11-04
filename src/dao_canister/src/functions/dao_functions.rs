@@ -914,10 +914,33 @@ async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
             state.dao.members.push(api::caller());
             state.dao.members_count += 1;
         });
+
+        let response: CallResult<(Result<(), String>,)> = ic_cdk::call(
+            args.daohouse_backend_id,
+            "store_join_dao",
+            (api::id(), api::caller()),
+        ).await;
+
+        match response {
+            Ok((Ok(()),)) => (),
+            Ok((Err(err),)) => return Err(err),
+            Err((code, message)) => {
+                let err_msg = match code {
+                    RejectionCode::NoError => "NoError".to_string(),
+                    RejectionCode::SysFatal => "SysFatal".to_string(),
+                    RejectionCode::SysTransient => "SysTransient".to_string(),
+                    RejectionCode::DestinationInvalid => "DestinationInvalid".to_string(),
+                    RejectionCode::CanisterReject => "CanisterReject".to_string(),
+                    _ => format!("Unknown rejection code: {:?}: {}", code, message),
+                };
+                return Err(err_msg);
+            }
+        };
+
         return Ok(String::from("Dao Joined successfully"));
     };
     let principal_id = api::caller();
-    let dao_id = ic_cdk::api::id();
+    let dao_id = api::id();
     let mut required_thredshold = 0;
 
     let result = with_state(|state| {
@@ -992,7 +1015,9 @@ async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
         }
     };
 
-    Ok(create_proposal_controller(args.daohouse_backend_id, proposal).await)
+    create_proposal_controller(args.daohouse_backend_id, proposal).await;
+
+    Ok(String::from("Join DAO request sent successfully"))
 }
 
 #[query(guard = prevent_anonymous)]
