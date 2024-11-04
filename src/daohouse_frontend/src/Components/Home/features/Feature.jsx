@@ -23,11 +23,9 @@ const Feature = () => {
     }
   ];
 
-  // Calculate the position of the thicker line
+
   const getLinePosition = () => {
-    if (hoveredCardIndex === null) return '-100px'; // Hide off-screen to the left
-    
-    // Calculate the position of the line based on the hovered card
+    if (hoveredCardIndex === null) return '-100px';
     const cardWidthPercentage = 100 / cardData.length;
     return `calc(${hoveredCardIndex * cardWidthPercentage + cardWidthPercentage / 2}% - 25px)`;
   };
@@ -47,7 +45,6 @@ const Feature = () => {
             </p>
           </div>
 
-          {/* Card grid with hover effect */}
           <div className="flex flex-col items-center gap-2 px-4 mt-10">
             {cardData.map((card, index) => (
               <div
@@ -56,11 +53,10 @@ const Feature = () => {
                 onMouseEnter={() => setHoveredCardIndex(index)}
                 onMouseLeave={() => setHoveredCardIndex(null)}
               >
-                {/* Icon and content */}
                 <div className="flex flex-col items-start mb-[8px]">
-                  <img 
-                    src={card.imageSrc} 
-                    alt={card.title} 
+                  <img
+                    src={card.imageSrc}
+                    alt={card.title}
                     className="w-[24px] h-[24px] mb-[8px]"
                   />
                   <h3 className="text-[10px] font-mulish font-semibold text-left">
@@ -88,8 +84,6 @@ const Feature = () => {
               Engaging Management Suite
             </p>
           </div>
-
-          {/* Horizontal line with a thicker rectangular center */}
           <div className="relative w-full flex justify-center mb-10">
             <hr className="border-t-2 border-[#0E3746] w-[82%] relative mb-4" />
             <div
@@ -103,7 +97,6 @@ const Feature = () => {
             />
           </div>
 
-          {/* Card grid with hover effect */}
           <div className="flex flex-wrap justify-center gap-6 px-4 mt-10">
             {cardData.map((card, index) => (
               <div
@@ -112,7 +105,7 @@ const Feature = () => {
                 onMouseEnter={() => setHoveredCardIndex(index)}
                 onMouseLeave={() => setHoveredCardIndex(null)}
               >
-                {/* Icon and content */}
+
                 <div className="flex flex-col items-start mb-4">
                   <img src={card.imageSrc} alt={card.title} className="w-10 h-10 mb-4" />
                   <h3 className="text-lg font-mulish font-semibold text-left">

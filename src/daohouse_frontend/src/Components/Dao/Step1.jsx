@@ -15,7 +15,7 @@ const Step1 = ({ setData, setActiveStep, data }) => {
 
   const className = "DAO__Step1";
 
-  // Load saved data from localStorage or props
+  // Load saved data from localStorage
   useEffect(() => {
     const savedData = localStorage.getItem("step1Data");
     if (savedData) {
@@ -29,24 +29,22 @@ const Step1 = ({ setData, setActiveStep, data }) => {
     }
   }, [data]);
 
-  // Save data to localStorage whenever inputData changes
   useEffect(() => {
     localStorage.setItem("step1Data", JSON.stringify(inputData));
   }, [inputData]);
 
-  // Validation functions
+
   const validate = () => {
     const newErrors = {};
 
-    // DAO Identifier Validation
+
     if (!inputData.DAOIdentifier.trim()) {
       newErrors.DAOIdentifier = "DAO Identifier is required.";
-    }  else if (inputData.DAOIdentifier.length < 3) {
+    } else if (inputData.DAOIdentifier.length < 3) {
       newErrors.DAOIdentifier =
         "DAO Identifier must be at least 3 characters long.";
     }
 
-    // Purpose Validation
     if (!inputData.Purpose.trim()) {
       newErrors.Purpose = "Purpose of DAO is required.";
     } else if (inputData.Purpose.length < 10) {
@@ -54,7 +52,7 @@ const Step1 = ({ setData, setActiveStep, data }) => {
         "Purpose should be at least 10 characters to provide sufficient detail.";
     }
 
-    // Setup Period Validation
+
     if (inputData.SetUpPeriod === "" || inputData.SetUpPeriod === null) {
       newErrors.SetUpPeriod = "Setup Period is required.";
     } else if (
@@ -67,30 +65,30 @@ const Step1 = ({ setData, setActiveStep, data }) => {
 
     setErrors(newErrors);
 
-    // Return true if no errors
+
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle input changes
-const handleChange = (e) => {
-  const { name, value } = e.target;
-  // Update input data
-  setInputData({
-    ...inputData,
-    [name]: value,
-  });
 
-  // Remove error message for the field being edited
-  if (errors[name]) {
-    setErrors({
-      ...errors,
-      [name]: null,
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setInputData({
+      ...inputData,
+      [name]: value,
     });
-  }
-};
 
 
-  // Handle Setup Period separately to ensure it's a number
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: null,
+      });
+    }
+  };
+
+
+
   const changePeriod = (value) => {
     const numberValue = Math.max(parseInt(value, 10) || 1, 1);
     setInputData({
@@ -98,7 +96,7 @@ const handleChange = (e) => {
       SetUpPeriod: numberValue,
     });
 
-    // Remove error if any
+
     if (errors.SetUpPeriod) {
       setErrors({
         ...errors,
@@ -107,7 +105,6 @@ const handleChange = (e) => {
     }
   };
 
-  // Handle form submission
   async function handleSaveAndNext(e) {
     e.preventDefault();
 
@@ -119,10 +116,10 @@ const handleChange = (e) => {
           step1: { ...inputData },
         }));
 
-        // Simulate async operation
+
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        // Clear localStorage upon successful submission
+
         localStorage.removeItem("step1Data");
 
         setActiveStep(1);
@@ -163,11 +160,10 @@ const handleChange = (e) => {
               name="DAOIdentifier"
               value={inputData.DAOIdentifier}
               placeholder="Enter DAO Identifier"
-              className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm ${
-                errors.DAOIdentifier
+              className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm ${errors.DAOIdentifier
                   ? "border border-red-500"
                   : "border border-gray-300"
-              }`}
+                }`}
               onChange={handleChange}
             />
             {errors.DAOIdentifier && (
@@ -190,9 +186,8 @@ const handleChange = (e) => {
               name="Purpose"
               value={inputData.Purpose}
               placeholder="Specify the primary purpose or objectives the DAO aims to achieve, such as governance, funding, community building, etc."
-              className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm h-32 resize-none ${
-                errors.Purpose ? "border border-red-500" : "border border-gray-300"
-              }`}
+              className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm h-32 resize-none ${errors.Purpose ? "border border-red-500" : "border border-gray-300"
+                }`}
               onChange={handleChange}
             />
             {errors.Purpose && (
@@ -214,11 +209,10 @@ const handleChange = (e) => {
               name="SetUpPeriod"
               value={inputData.SetUpPeriod}
               placeholder="Enter setup period in days"
-              className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm ${
-                errors.SetUpPeriod
+              className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm ${errors.SetUpPeriod
                   ? "border border-red-500"
                   : "border border-gray-300"
-              }`}
+                }`}
               onChange={(e) => changePeriod(e.target.value)}
               min="1"
             />

@@ -11,19 +11,15 @@ import BigCircle from "../../../assets/BigCircle.png";
 import MediumCircle from "../../../assets/MediumCircle.png";
 import SmallestCircle from "../../../assets/SmallestCircle.png";
 import MyProfileRectangle from "../../../assets/MyProfileRectangle.png";
-import MyProfileImage from "../../../assets/MyProfile-img.png";
 import ProposalsContent from "../../Components/DaoProfile/ProposalsContent";
 import FeedsContent from "../../Components/DaoProfile/FeedsContent";
 import Members from "../../Components/DaoProfile/Members";
 import FollowersContent from "../../Components/DaoProfile/FollowersContent";
 import FundsContent from "../../Components/DaoProfile/FundsContent";
-import DaoSettings from "../../Components/DaoSettings/DaoSettings";
 import Container from "../../Components/Container/Container";
 import { Principal } from '@dfinity/principal';
 import { useAuth, useAuthClient } from "../../Components/utils/useAuthClient";
-import { useUserProfile } from "../../context/UserProfileContext";
 import { toast } from "react-toastify";
-import MuiSkeleton from "../../Components/SkeletonLoaders/MuiSkeleton";
 import ProposalLoaderSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/ProposalLoaderSkeleton";
 import DaoProfileLoaderSkeleton from "../../Components/SkeletonLoaders/DaoProfileLoaderSkeleton/DaoProfileLoaderSkeleton";
 import NoDataComponent from "../../Components/Dao/NoDataComponent";
@@ -45,7 +41,7 @@ const DaoProfile = () => {
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
   const { daoCanisterId } = useParams();
-  const [joinStatus, setJoinStatus] = useState("Join DAO"); // 'Join DAO', 'Requested', 'Joined'
+  const [joinStatus, setJoinStatus] = useState("Join DAO"); 
   const [isMember, setIsMember] = useState(false);
   const [voteApi, setVoteApi] = useState({})
   const [daoFollowers, setDaoFollowers] = useState([])

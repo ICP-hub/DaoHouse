@@ -12,8 +12,7 @@ const Footer = () => {
     <React.Fragment>
       <footer className="bg-[#ffffff]  h-auto  py-5 text-center  ">
         <Container>
-          {/* Main Content */}
-          {/* <div className="w-full flex flex-col md:flex-row items-center justify-between small_phone:mb-8 lg:gap-[270px] md:gap-[200px] gap-8 border border-red-300"> */}
+
           <div className="w-full flex flex-col md:flex-row md:px-8  px-20px items-center justify-between small_phone:mb-4 lg:gap-[200px] md:gap-[80px] lg:gap-10 md:gap-10 sm:gap-4">
             {/* Logo Section */}
             <Link to="/" onClick={handleLogoClick}>
@@ -27,25 +26,25 @@ const Footer = () => {
 
             {/* Navigation Links */}
             <div className="flex flex-row justify-center md:translate-x-[30px] items-center gap-4 sm:gap-6 md:gap-8 py-4 sm:py-6 px-4">
-  <Link
-    to="/"
-    className="text-[#3D3D3D] text-sm sm:text-base md:text-lg font-inter font-normal hover:underline"
-  >
-    Home
-  </Link>
-  <Link
-    to="/social-feed"
-    className="text-[#3D3D3D] text-sm sm:text-base md:text-lg font-inter font-normal hover:underline"
-  >
-    Social Feed
-  </Link>
-  <Link
-    to="/dao"
-    className="text-[#3D3D3D] text-sm sm:text-base md:text-lg font-inter font-normal hover:underline"
-  >
-    DAOs
-  </Link>
-</div>
+              <Link
+                to="/"
+                className="text-[#3D3D3D] text-sm sm:text-base md:text-lg font-inter font-normal hover:underline"
+              >
+                Home
+              </Link>
+              <Link
+                to="/social-feed"
+                className="text-[#3D3D3D] text-sm sm:text-base md:text-lg font-inter font-normal hover:underline"
+              >
+                Social Feed
+              </Link>
+              <Link
+                to="/dao"
+                className="text-[#3D3D3D] text-sm sm:text-base md:text-lg font-inter font-normal hover:underline"
+              >
+                DAOs
+              </Link>
+            </div>
 
             {/* Social Icons */}
             <div className="flex  items-center   sm:translate-y-[50px] md:translate-y-[12px] gap-6 my-4 lg:mr-12 ">
@@ -63,20 +62,11 @@ const Footer = () => {
               <svg className="small_phone:w-8 w-6 small_phone:h-8 h-6 object-contain" width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M15.0391 10.08L24.2188 0H21.875L13.9844 8.64L7.8125 0H0L9.60938 13.44L0 24H2.34375L10.6641 14.88L17.1875 24H25L15.0391 10.08ZM3.47656 1.6H6.60156L21.4844 22.4H18.3594L3.47656 1.6Z" fill="#3D3D3D" />
               </svg>
-              {/* <img
-              src={likedin}
-              alt="LinkedIn"
-              className="small_phone:w-8 w-6 small_phone:h-8 h-6 object-contain"
-            /> */}
+
               <svg className="small_phone:w-8 w-6 small_phone:h-8 h-6 object-contain" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M22.2277 0H1.77335C0.793875 0 0 0.7696 0 1.71947V22.2797C0 23.2296 0.794142 24 1.77335 24H22.2277C23.2072 24 24 23.2293 24 22.2797V1.71947C24 0.769867 23.2072 0 22.2277 0ZM7.27608 20.0896H3.64991V9.25387H7.27608V20.0896ZM5.46326 7.7736H5.43899C4.22298 7.7736 3.4347 6.94187 3.4347 5.9008C3.4347 4.83867 4.24618 4.0296 5.48619 4.0296C6.72647 4.0296 7.48942 4.8384 7.51342 5.9008C7.51342 6.94213 6.72674 7.7736 5.46326 7.7736ZM20.3477 20.0896H16.7226V14.2923C16.7226 12.8352 16.1972 11.8413 14.8863 11.8413C13.8834 11.8413 13.2881 12.512 13.0268 13.1592C12.9297 13.3907 12.906 13.7139 12.906 14.0371V20.0893H9.28144C9.28144 20.0893 9.3289 10.2699 9.28144 9.2536H12.9063V10.7899C13.3876 10.0517 14.2474 8.99867 16.1727 8.99867C18.5586 8.99867 20.3477 10.5464 20.3477 13.8763V20.0896ZM12.8828 10.8243C12.8892 10.8141 12.8977 10.8016 12.9063 10.7899V10.8243H12.8828Z" fill="#474747" />
               </svg>
-              {/* 
-            <img
-              src={discord1}
-              alt="Discord"
-              className="small_phone:w-8 w-6 small_phone:h-8 h-6 object-contain"
-            /> */}
+
               <svg width="24" height="19" viewBox="0 0 24 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7.77635 0C6.96342 0 4.51256 1.06342 4.07286 1.27594C3.63315 1.48846 3.1451 2.15188 2.59131 3.24681C2.03677 4.34174 1.59178 5.62172 0.868758 7.50452C0.146495 9.38731 -0.0219829 13.0171 0.00219325 14.125C0.0263694 15.2329 0.144984 16.0983 1.20647 16.7537C2.2672 17.4082 3.20554 18.0934 4.19298 18.5055C5.18118 18.9177 5.8551 19.2142 6.31293 18.8021C6.77077 18.39 7.07222 17.6684 7.07222 17.6684C7.07222 17.6684 7.50588 17.0244 6.68691 16.6381C5.86794 16.251 5.45845 15.9803 5.49396 15.5811C5.53023 15.182 5.58991 14.963 5.79465 15.0147C5.9994 15.0664 6.48217 15.9933 8.33693 16.4183C10.1917 16.8433 11.9996 16.7795 11.9996 16.7795C11.9996 16.7795 13.8083 16.8442 15.6631 16.4183C17.5178 15.9933 17.9998 15.0664 18.2046 15.0147C18.4093 14.963 18.469 15.182 18.5053 15.5803C18.5415 15.9803 18.1321 16.251 17.3131 16.6381C16.4941 17.0244 16.9278 17.6684 16.9278 17.6684C16.9278 17.6684 17.2292 18.3892 17.6871 18.8021C18.1441 19.2142 18.8188 18.9177 19.8063 18.5055C20.7937 18.0934 21.7328 17.409 22.7935 16.7537C23.855 16.0983 23.9736 15.2329 23.9978 14.125C24.022 13.018 23.8535 9.38731 23.1305 7.50452C22.4082 5.62172 21.9625 4.34174 21.4079 3.24681C20.8549 2.15188 20.3661 1.48846 19.9271 1.27513C19.4874 1.06342 17.0358 0 16.2229 0C15.41 0 15.1697 0.60605 15.1697 0.60605L14.8864 1.27594C14.8864 1.27594 12.9825 0.888874 12.0125 0.888065C11.0424 0.888065 9.11359 1.27594 9.11359 1.27594L8.83028 0.605242C8.83028 0.605242 8.59003 0 7.77635 0ZM7.86474 8.03865H7.89496C9.08035 8.03865 10.0406 9.14812 10.0406 10.5162C10.0406 11.885 9.08035 12.9937 7.89496 12.9937C6.70957 12.9937 5.74932 11.885 5.74932 10.5162C5.74857 9.16105 6.69144 8.05723 7.86474 8.03865ZM16.105 8.03865H16.1353C17.3086 8.05723 18.2507 9.16186 18.2507 10.5162C18.2507 11.885 17.2904 12.9937 16.105 12.9937C14.9189 12.9937 13.9594 11.885 13.9594 10.5162C13.9594 9.14812 14.9189 8.03865 16.105 8.03865Z" fill="#3D3D3D" />
               </svg>
@@ -85,7 +75,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Footer Bottom */}
           <div className="bg-[#ffffff] py-4 flex justify-center items-center">
             <p className="text-black font-inter font-normal md:text-base">
               All rights reserved. &copy; {new Date().getFullYear()}, DAO House.

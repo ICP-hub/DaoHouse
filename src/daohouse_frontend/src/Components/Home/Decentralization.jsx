@@ -23,7 +23,7 @@ const Decentralization = () => {
   const propsaldata = analtics?.proposals_count ? Number(analtics.proposals_count) : 0;
   const membersdata = analtics?.members_count ? Number(analtics.members_count) : 0;
   const getanaltics = async () => {
-    console.log("sagdksgakjdgaskjdg");
+  
 
     try {
       const response = await backendActor.get_analytics();
@@ -49,8 +49,8 @@ const Decentralization = () => {
         {/* Main Section */}
         <div className="relative w-full max-w-[110%] lg:mx-80 sm:max-w-[90%] md:max-w-[190%] px-4 sm:px-6 md:px-8 lg:px-16 tablet:px-8 mobile:px-4 flex flex-col items-center justify-center gap-8 bg-white rounded-xl shadow-lg h-auto mt-8 p-6 sm:p-8 md:p-10 lg:p-12 overflow-hidden main-section">
 
-          {/* Circles as Background */}
-          {/* Large screen circles (shown only on large screens) */}
+          {/* Circles as Background (Large screen)*/}
+   
           <img
             src={smallcircle}
             alt="small circle"
@@ -101,7 +101,6 @@ const Decentralization = () => {
        {/* Statistics Section */}
 <div className="w-full bg-transparent py-8 z-10 overflow-x-auto translate-y-[10px]">
   <div className="w-full max-w-8xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-4 sm:px-4 md:px-8 py-4 text-center text-white">
-    {/* Members */}
     <div className="stat-card bg-transparent border border-white rounded-lg py-2 flex justify-center relative overflow-hidden">
       <div className="text-center">
         <h1 className="text-lg md:text-2xl font-mulish mb-2">Members</h1>

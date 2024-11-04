@@ -26,7 +26,7 @@ const Navbar = () => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const hasShownToastRef = useRef(false);
-  const { userProfile, fetchUserProfile } = useUserProfile() || {}; // Add fallback to avoid destructuring undefined
+  const { userProfile, fetchUserProfile } = useUserProfile() || {}; 
   const {
     login,
     isAuthenticated,
@@ -38,7 +38,7 @@ const Navbar = () => {
   } = useAuth();
   const location = useLocation();
 
-  // const {createTokenActor, } = useAuthClient()
+
 
   const [username, setUsername] = useState("");
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
@@ -105,16 +105,9 @@ const Navbar = () => {
 
   const handleDetailsSubmit = async (details) => {
     try {
-      // Handle form submission - for now, just logging the details
-      console.log("User details submitted:", details);
-  
-      // After handling the details, close the modal
+    
       setIsDetailsModalOpen(false);
-  
-      // Fetch the updated user profile
       await fetchUserProfile();
-  
-      // Optionally show a success message
       toast.success("User details updated successfully");
     } catch (error) {
       console.error("Error updating user details:", error);
@@ -145,11 +138,6 @@ const Navbar = () => {
       setIsLoading(false);
     }
   };
-
-  // const handleLoginPlug = async () => {
-  //   setIsConnecting(true);
-  //   await signInPlug().then(() => setIsModalOpen(false));
-  // };
 
   const handleLoginModalOpen = () => {
     setIsConnecting(false);
@@ -235,7 +223,7 @@ const Navbar = () => {
                 </div>
               ) : (
                 <div className="relative">
-                  {/* Updated flex container to align profile image and username */}
+                  {/*profile image and username */}
                   <div
                     className="flex items-center space-x-0.9 bg-white border border-[#0F3746] rounded-full px-4 py-2 cursor-pointer shadow-lg"
                     onClick={() => setDropdownVisible(!dropdownVisible)}
@@ -281,7 +269,6 @@ const Navbar = () => {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onLogin={handleLogin}
-          // onLoginPlug={handleLoginPlug}
           onLoginNFID={handleNFIDLogin}
         />
         <UserDetailsModal

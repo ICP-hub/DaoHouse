@@ -1,4 +1,4 @@
-import React ,{useState} from "react";
+import React, { useState } from "react";
 import Tags from "../../../Components/MyProfile/Tags";
 import PersonalLinksAndContactInfo from "../PersonalLinksAndContactInfo";
 import { useUserProfile } from "../../../context/UserProfileContext";
@@ -136,7 +136,7 @@ const AboutMe = () => {
 
 
           <p className="lg:text-[20px] md:text-[16px] text-[14px] font-semibold text-[#05212C] md:ml-2 my-4 md:mb-3 break-words">
-         
+
             Description
           </p>
           <div className="bg-white lg:text-[16px] md:text-[14px] text-[12px] font-normal text-[#646464] p-3 my-2 rounded-lg">
@@ -159,24 +159,29 @@ const AboutMe = () => {
           {userProfile?.contact_number ? (
             <PersonalLinksAndContactInfo
               links={[
-                { icon: "phone-icon", 
-                  name: "Phone", 
+                {
+                  icon: "phone-icon",
+                  name: "Phone",
                   value: userProfile?.contact_number || "No Data"
                 },
-                { icon: "email-icon", 
-                  name: "Email", 
+                {
+                  icon: "email-icon",
+                  name: "Email",
                   value: userProfile?.email_id || "No Data"
                 },
-                { icon: "X-icon", 
-                  name: "X", 
+                {
+                  icon: "X-icon",
+                  name: "X",
                   value: userProfile?.twitter_id || "No Data"
                 },
-                { icon: "telegram-icon", 
-                  name: "Telegram", 
+                {
+                  icon: "telegram-icon",
+                  name: "Telegram",
                   value: userProfile?.telegram || "No Data"
                 },
-                { icon: "web-icon", 
-                  name: "Web", 
+                {
+                  icon: "web-icon",
+                  name: "Web",
                   value: userProfile?.website || "No Data"
                 },
               ]}
