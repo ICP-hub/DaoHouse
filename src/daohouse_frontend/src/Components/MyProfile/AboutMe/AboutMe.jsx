@@ -30,7 +30,6 @@ const AboutMe = () => {
 
   const [tokens, setTokens] = useState(0);
 
-  console.log("tokens from about", tokens);
   const [loadingPayment, setLoadingPayment] = useState(false);
 
   const LEDGER_CANISTER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai";

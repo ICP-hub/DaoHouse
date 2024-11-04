@@ -1,16 +1,8 @@
 import { CircularProgress } from '@mui/material';
 
 
-const TokenPaymentModal = ({tokenTransfer,isOpen, onClose, onConfirm, paymentDetails, loadingPayment }) => {
-  console.log("tokens",tokenTransfer.tokens);
-  
- 
-
-  
-
-  
+const TokenPaymentModal = ({tokenTransfer,isOpen, onClose, onConfirm, loadingPayment }) => {  
     if (!isOpen) return null;
-  
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
         <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-1/3 p-6">
