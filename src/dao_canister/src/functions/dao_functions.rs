@@ -1045,7 +1045,7 @@ pub async fn follow_dao(daohouse_backend_id: Principal) -> Result<String, String
     let response: CallResult<(Result<(), String>,)> = ic_cdk::call(
         daohouse_backend_id,
         "store_follow_dao",
-        (dao_id,),
+        (dao_id,api::caller(),),
     )
     .await;
 
