@@ -156,7 +156,7 @@ service : (InitialArgs) -> {
   make_payment : (nat64, principal) -> (Result_6);
   remove_follow_dao : (principal, principal) -> (Result_1);
   search_dao : (text) -> (vec DaoDetails) query;
-  store_follow_dao : (principal, principal) -> (Result_1);
+  store_follow_dao : (principal) -> (Result_1);
   store_join_dao : (principal, principal) -> (Result_1);
   update_profile : (Profileinput) -> (Result_1);
   upload_image : (ImageData) -> (Result);

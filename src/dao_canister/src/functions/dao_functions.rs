@@ -1032,12 +1032,11 @@ fn get_dao_followers() -> Vec<Principal> {
 
 #[update(guard=prevent_anonymous)]
 pub async fn follow_dao(daohouse_backend_id: Principal) -> Result<String, String> {
-    let principal_id = api::caller();
     let dao_id = ic_cdk::api::id();
 
     let already_following = with_state(|state| {
         let dao = &state.dao;
-        dao.followers.contains(&principal_id)
+        dao.followers.contains(&api::caller())
     });
 
     if already_following {
@@ -1046,7 +1045,7 @@ pub async fn follow_dao(daohouse_backend_id: Principal) -> Result<String, String
     let response: CallResult<(Result<(), String>,)> = ic_cdk::call(
         daohouse_backend_id,
         "store_follow_dao",
-        (dao_id, principal_id),
+        (dao_id,),
     )
     .await;
 
@@ -1068,7 +1067,7 @@ pub async fn follow_dao(daohouse_backend_id: Principal) -> Result<String, String
 
     with_state(|state| {
         let dao = &mut state.dao;
-        dao.followers.push(principal_id);
+        dao.followers.push(api::caller());
         dao.followers_count += 1;
     });
 
