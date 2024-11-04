@@ -3,7 +3,7 @@ import { Principal } from "@dfinity/principal";
 import { createActor } from "../../../../declarations/icp_ledger_canister";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { FiUpload } from "react-icons/fi";
-import defaultImage from "../../../assets/defaultImage.png";
+import daoImage from "../../../assets/daoImage.png"
 import CircularProgress from '@mui/material/CircularProgress';
 import { toast } from 'react-toastify';
 import Container from "../Container/Container";
@@ -14,7 +14,7 @@ import coinsound from "../../../../daohouse_frontend/src/Sound/coinsound.mp3";
 const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setLoadingNext }) => {
   const [file, setFile] = useState(null);
   const { identity, stringPrincipal, backendActor } = useAuth()
-  const [fileURL, setFileURL] = useState(defaultImage);
+  const [fileURL, setFileURL] = useState(daoImage);
   const [shouldCreateDAO, setShouldCreateDAO] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loadingPayment, setLoadingPayment] = useState(false);
