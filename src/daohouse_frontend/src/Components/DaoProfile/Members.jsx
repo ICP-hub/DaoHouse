@@ -180,14 +180,14 @@ const GridView = ({ member }) => {
           <img
             src={profileImgSrc}
             alt="Image"
-            className="rounded-full w-full h-full object-cover" // Ensure circular shape
+            className="rounded-full w-full h-full object-cover shadow-lg" // Ensure circular shape
           />
         </section>
         <section className="details flex flex-col items-start ml-2"> {/* Added margin-left */}
           <p className="font-semibold text-lg">{member.Ok.username}</p>
           <p className="text-sm">{member.Ok.email_id}</p>
         </section>
-        {/* <MdAddBox className="mx-2 text-[#97C3D3] text-2xl" /> */}
+        <MdAddBox className="mx-2 text-[#97C3D3] text-2xl self-center" />
       </div>
     </div>
   );
@@ -207,7 +207,7 @@ const ListView = ({ member }) => {
         <img
           src={profileImgSrc}
           alt="Image"
-          className="w-12 h-12 rounded-full object-cover" // Ensure circular shape
+          className="w-12 h-12 rounded-full object-cover shadow-lg" // Ensure circular shape
         />
         <section className="details flex flex-col items-start ml-2"> {/* Added margin-left */}
           <p className="font-semibold text-base">{member.Ok.username}</p>

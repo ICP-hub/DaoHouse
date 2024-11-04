@@ -34,7 +34,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const [isPollVoteLoading, setIsPollVoteLoading] = useState(false);
-  const [pollOptions, setPollOptions] = useState(proposal.poll_options[0] || []);
+  const [pollOptions, setPollOptions] = useState(proposal?.poll_options ? proposal.poll_options[0] : []);
 
 
   const toggleExpanded = () => setIsExpanded(!isExpanded);
@@ -425,34 +425,34 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
               )}
             </div>
 
-            {/* Dates Section */}
-            {!isSubmittedProposals && (
-              <div className="hidden lg:flex flex-row gap-3">
-                <div className="flex flex-col items-start ">
-                  <span className="font-bold text-xs sm:text-sm lg:text-lg text-white">
-                    • Submitted On
-                  </span>
-                  <span className="text-[10px] small_phone:text-xs sm:text-sm md:text-base text-white ml-2">
-                    {submittedOnDate}{" "}
-                    <span className="text-[8px] small_phone:text-[8px] md:text-xs text-gray-400">
-                      {submittedOnTime}
-                    </span>
-                  </span>
-                </div>
+ {/* Dates Section */}
+{!isSubmittedProposals && (
+  <div className="hidden lg:flex flex-row gap-3">
+  <div className="flex flex-col items-start ">
+    <span className="font-bold text-xs sm:text-sm lg:text-lg text-white">
+      • Submitted On 
+    </span>
+    <span className="text-[10px] small_phone:text-xs sm:text-sm md:text-base text-white ml-2">
+      {submittedOnDate}{" "}
+      <span className="text-[8px] small_phone:text-[8px] md:text-xs text-gray-400">
+        {submittedOnTime}
+      </span>
+    </span>
+  </div>
 
-                <div className="flex flex-col items-start">
-                  <span className="font-bold text-xs sm:text-sm lg:text-lg text-white">
-                    • Expires On
-                  </span>
-                  <span className="text-[10px] small_phone:text-xs sm:text-sm md:text-base text-white ml-2">
-                    {expiresOnDate}{" "}
-                    <span className="text-[8px] small_phone:text-[8px] md:text-xs text-gray-400">
-                      {expiresOnTime}
-                    </span>
-                  </span>
-                </div>
-              </div>
-            )}
+  <div className="flex flex-col items-start">
+    <span className="font-bold text-xs sm:text-sm lg:text-lg text-white">
+      • Expires On
+    </span>
+    <span className="text-[10px] small_phone:text-xs sm:text-sm md:text-base text-white ml-2">
+      {expiresOnDate}{" "}
+      <span className="text-[8px] small_phone:text-[8px] md:text-xs text-gray-400">
+        {expiresOnTime}
+      </span>
+    </span>
+  </div>
+</div>
+)}
 
 
             {/* Votes Section */}
@@ -611,34 +611,34 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                 </div>
               )}
 
-              {!isSubmittedProposals && (proposal.proposal_type.TokenTransfer !== undefined) && (
-                <div className="w-full flex  flex-col md:justify-between mt-2 md:flex-row">
-
-                  <div className="flex flex-col">
-                    <span className="font-bold">Tokens:</span>
-                    <div className="flex items-center mt-1">
-
-                      {proposal.tokens.map((token, index) => (
-                        <div key={index} className="flex items-center">
-                          <img src={coin} alt={`${token.name} logo`} className="w-6 h-6 mr-1" />
-                          <span className="font-bold">{token.toString()}</span>
+                {!isSubmittedProposals && (proposal.proposal_type.TokenTransfer !== undefined) && (
+                  <div className="w-full flex  flex-col md:justify-between mt-2 md:flex-row">
+                    {/* Left Side: Tokens and Logos */}
+                    <div className="flex flex-col">
+                      <span className="font-bold">Tokens:</span>
+                      <div className="flex items-center mt-1">
+                        {/* Map over tokens to display each token with its logo */}
+                        {proposal.tokens.map((token, index) => (
+                          <div key={index} className="flex items-center">
+                            <img src={coin} alt={`${token.name} logo`} className="w-6 h-6 mr-1" />
+                            <span className="font-bold">{token.toString()}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <hr className="my-2 border-gray-300 md:hidden" />
+                    </div>
+                    {/* Right Side: To and User Image */}
+                    <div className="flex flex-col ">
+                      <span className="font-bold">To:</span>
+                      {proposal.token_to.map((principal, index) => (
+                        <div key={index} className="flex items-center mt-1">
+                          <img src={Avatar} alt={`User image`} className="w-6 h-6 mr-1 rounded-full" />
+                          <span className="font-bold">{principal.toText ? principal.toText() : Array.from(principal._arr).join('')}</span>
                         </div>
                       ))}
                     </div>
-                    <hr className="my-2 border-gray-300 md:hidden" />
                   </div>
-
-                  <div className="flex flex-col ">
-                    <span className="font-bold">To:</span>
-                    {proposal.token_to.map((principal, index) => (
-                      <div key={index} className="flex items-center mt-1">
-                        <img src={Avatar} alt={`User image`} className="w-6 h-6 mr-1 rounded-full" />
-                        <span className="font-bold">{principal.toText ? principal.toText() : Array.from(principal._arr).join('')}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+                )}
 
               {!isSubmittedProposals && (proposal.proposal_type.AddMemberToGroupProposal !== undefined) && (
                 <div className="w-full">

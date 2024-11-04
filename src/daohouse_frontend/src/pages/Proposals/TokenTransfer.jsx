@@ -32,11 +32,12 @@ const TokenTransfer = ({ tokenTransfer, handleInputTransferToken }) => (
       <input
         type="number"
         name="tokens"
-        value={tokenTransfer.tokens}
+        value={tokenTransfer.tokens || 1}
         onChange={handleInputTransferToken}
         className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
         placeholder="Enter tokens"
         required
+        min={1}
       />
     </div>
     {/* <div className="mb-4">

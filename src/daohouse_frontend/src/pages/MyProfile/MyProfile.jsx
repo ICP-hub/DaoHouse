@@ -106,7 +106,6 @@ const MyProfile = ({ childComponent }) => {
 
   const [data, setData] = useState({});
   const [tokens, setTokens] = useState(0);
-  console.log("tokens", tokens);
   const followers = data?.followers_count ? Number(data.followers_count) : 0;
   const post = data?.submitted_proposals ? Number(data.submitted_proposals) : 0;
   const following = data?.join_dao ? Number(data.join_dao.length) : 0;
