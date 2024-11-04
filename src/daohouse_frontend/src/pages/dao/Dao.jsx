@@ -2,13 +2,10 @@ import React, { useEffect, useState } from "react";
 import { HiPlus } from "react-icons/hi";
 import { Link, useNavigate } from "react-router-dom";
 import DaoCard from "../../Components/Dao/DaoCard";
-import NoDataComponent from "../../Components/Dao/NoDataComponent";
-// import nodata from "../../../assets/nodata.png";
 import nodata from "../../../assets/gif/nodata.svg";
 import TopComponent from "../../Components/Dao/TopComponent";
 import Container from "../../Components/Container/Container";
 import { useAuth } from "../../Components/utils/useAuthClient";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import LoginModal from "../../Components/Auth/LoginModal";
 import SearchProposals from "../../Components/Proposals/SearchProposals";
 import { Principal } from "@dfinity/principal";
@@ -42,7 +39,7 @@ const Dao = () => {
         try {
           const daoCanister = await createDaoActor(data.dao_canister_id);
           const dao_details = await daoCanister.get_dao_detail();
-          console.log("ddd", dao_details);
+          console.log("dao details", dao_details);
 
           return { ...dao_details, daoCanister, dao_canister_id: data.dao_canister_id };
         } catch (err) {
@@ -119,7 +116,7 @@ const Dao = () => {
         })
       );
 
-      console.log("JD", joinedDaoDetails);
+      console.log("list of joined dao", joinedDaoDetails);
 
       setJoinedDAO(joinedDaoDetails.filter((dao) => dao !== null));
     } catch (error) {

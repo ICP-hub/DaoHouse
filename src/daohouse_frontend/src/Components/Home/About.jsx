@@ -30,8 +30,8 @@ const About = () => {
               </p>
               <p>
                 We believe in the power of collective intelligence and<p>the potential for blockchain technology to democratize</p>
-                <p> decision-making processes. Our platform provides a</p> 
-                 seamless and transparent framework for organizations of all sizes to manage resources, vote on proposals, and drive impactful change.
+                <p> decision-making processes. Our platform provides a</p>
+                seamless and transparent framework for organizations of all sizes to manage resources, vote on proposals, and drive impactful change.
               </p>
             </div>
             <div className="mt-6">
@@ -49,45 +49,42 @@ const About = () => {
       {/* Desktop view  add container with in div */}
       <div className="flex justify-center  items-center  ">
         <Container>
-        <div className="hidden lg:flex justify-center w-[1142px] bg-[#0F3746] rounded-2xl  translate-y-[-50px] shadow-lg p-10">
-          <div className="w-full text-white flex flex-col items-center relative text-center">
-            {/* Title */}
-            <div className="mb-4">
-              <h2 className="font-mulish text-[12px] md:text-[16px] font-normal mb-2">
-                ABOUT PLATFORM
-              </h2>
-              <p className="font-mulish font-bold text-[24px] sm:text-[28px] md:text-[32px] leading-snug">
-                Unlocking Collective Intelligence
-              </p>
-            </div>
+          <div className="hidden lg:flex justify-center w-[1142px] bg-[#0F3746] rounded-2xl  translate-y-[-50px] shadow-lg p-10">
+            <div className="w-full text-white flex flex-col items-center relative text-center">
+              <div className="mb-4">
+                <h2 className="font-mulish text-[12px] md:text-[16px] font-normal mb-2">
+                  ABOUT PLATFORM
+                </h2>
+                <p className="font-mulish font-bold text-[24px] sm:text-[28px] md:text-[32px] leading-snug">
+                  Unlocking Collective Intelligence
+                </p>
+              </div>
+              <div className="flex flex-col gap-4 font-mulish text-[12px] sm:text-[14px] md:text-[16px] leading-relaxed text-left lg:text-center">
+                <span className="block mb-1">
+                  At our platform, decentralized autonomous organization meets cutting-edge
+                  <span className="block">technology to revolutionize the way communities govern themselves.</span>
+                </span>
 
-            {/* Description */}
-            <div className="flex flex-col gap-4 font-mulish text-[12px] sm:text-[14px] md:text-[16px] leading-relaxed text-left lg:text-center">
-              <span className="block mb-1">
-                At our platform, decentralized autonomous organization meets cutting-edge 
-                <span className="block">technology to revolutionize the way communities govern themselves.</span>
-              </span>
-             
-              <span className="block">
-                We believe in the power of collective intelligence and the potential for blockchain
-                <span className="block"> technology to democratize decision-making processes. Our platform provides a</span>
-                <span className='block'>seamless and transparent framework for organizations of all sizes to manage</span> 
-                resources, vote on proposals, and drive impactful change.
-              </span>
-            </div>
+                <span className="block">
+                  We believe in the power of collective intelligence and the potential for blockchain
+                  <span className="block"> technology to democratize decision-making processes. Our platform provides a</span>
+                  <span className='block'>seamless and transparent framework for organizations of all sizes to manage</span>
+                  resources, vote on proposals, and drive impactful change.
+                </span>
+              </div>
 
-            {/* Join DAO Button */}
-            <div className="mt-6">
-              <button
-                onClick={handleJoinDaoClick}
-                className="px-8 py-3 bg-white text-black font-normal rounded-full shadow-md hover:bg-gray-200 hover:text-blue-900 transition-colors duration-300"
-              >
-                Join DAO
-              </button>
+              {/* Join DAO Button */}
+              <div className="mt-6">
+                <button
+                  onClick={handleJoinDaoClick}
+                  className="px-8 py-3 bg-white text-black font-normal rounded-full shadow-md hover:bg-gray-200 hover:text-blue-900 transition-colors duration-300"
+                >
+                  Join DAO
+                </button>
+              </div>
             </div>
           </div>
-       </div>
-      </Container>
+        </Container>
       </div>
     </div>
   );

@@ -1,20 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { HiPlus } from "react-icons/hi";
-
-import PostCard from "../../Components/FeedPage/PostCard";
-
 import bg_image1 from "../../../assets/bg_image1.png";
-
-import CreatePostPopup from "../../Components/FeedPage/CreatePostPopup";
 import { useAuth } from "../../Components/utils/useAuthClient";
 import Container from "../../Components/Container/Container";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import NoPostProfile from "../../Components/Dao/NoPostProfile";
 import nodata from "../../../assets/gif/nodata.svg";
-import MuiSkeleton from "../../Components/SkeletonLoaders/MuiSkeleton";
 import LoginModal from "../../Components/Auth/LoginModal";
 import { useNavigate } from "react-router-dom";
-import Proposals from "../Proposals/Proposals";
 import ProposalsContent from "../../Components/DaoProfile/ProposalsContent";
 import SearchProposals from "../../Components/Proposals/SearchProposals";
 import ProposalLoaderSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/ProposalLoaderSkeleton";
@@ -44,18 +34,18 @@ const FeedPage = () => {
   // Function to set active tabs
   const setAllActive = () => {
     setActive({ all: true, latest: false });
-    setCurrentPage(1); // Reset to first page when switching
+    setCurrentPage(1);
   };
 
-  const setLatestActive = () => {
-    setActive({ all: false, latest: true });
-    setCurrentPage(1); // Reset to first page when switching
-  };
+  // const setLatestActive = () => {
+  //   setActive({ all: false, latest: true });
+  //   setCurrentPage(1);
+  // };
 
-  // Handle Create Post Popup
-  const handleCreatePostClick = () => {
-    setShowPopup(!showPopup);
-  };
+  // // Handle Create Post Popup
+  // const handleCreatePostClick = () => {
+  //   setShowPopup(!showPopup);
+  // };
 
   // Handle Login Functions
   const handleLogin = async () => {
@@ -85,7 +75,7 @@ const FeedPage = () => {
   // Handle Search Input Change with Debounce (Optional)
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1); // Reset to first page on new search
+    setCurrentPage(1);
   };
 
   // Fetch All Proposals Across All DAOs
@@ -93,7 +83,7 @@ const FeedPage = () => {
     setLoading(true);
     const daoPagination = {
       start: 0,
-      end: 1000, // Adjust as needed to cover all DAOs
+      end: 1000,
     };
 
     try {
@@ -104,7 +94,7 @@ const FeedPage = () => {
       for (const dao of allDaos) {
         const proposalPagination = {
           start: 0,
-          end: 1000, // Adjust as needed to cover all proposals in each DAO
+          end: 1000, 
         };
 
         try {
@@ -121,7 +111,6 @@ const FeedPage = () => {
         }
       }
 
-      // If there's a search term, filter proposals
       if (searchTerm.trim() !== "") {
         allProposals = allProposals.filter((proposal) =>
           proposal.proposal_id.toLowerCase().includes(searchTerm.trim().toLowerCase())
@@ -131,7 +120,7 @@ const FeedPage = () => {
       setTotalItems(allProposals.length);
       setFetchedProposals(allProposals);
 
-      // Client-side pagination
+  
       const start = (currentPage - 1) * itemsPerPage;
       const end = start + itemsPerPage;
       const currentProposals = allProposals.slice(start, end);
@@ -146,7 +135,7 @@ const FeedPage = () => {
     }
   };
 
-  // Handle Search and Pagination
+
   useEffect(() => {
     if (!isAuthenticated) {
       setShowLoginModal(true);
@@ -154,10 +143,10 @@ const FeedPage = () => {
     }
     setShowLoginModal(false);
     fetchAllProposals();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [isAuthenticated, backendActor, createDaoActor, currentPage, searchTerm]);
 
-  // Handle Modal Close
+
   const handleModalClose = () => {
     setShowLoginModal(false);
     if (!isAuthenticated) {

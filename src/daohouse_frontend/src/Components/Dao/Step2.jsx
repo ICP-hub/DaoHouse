@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
-import CircularProgress from "@mui/material/CircularProgress";
 import { toast } from "react-toastify";
 import Container from "../Container/Container";
 
@@ -17,7 +16,7 @@ const Step2 = ({ setData, setActiveStep, data }) => {
 
   const className = "DAO__Step2";
 
-  // Load saved data from localStorage or props
+
   useEffect(() => {
     const savedData = localStorage.getItem("step2Data");
     if (savedData) {
@@ -32,16 +31,15 @@ const Step2 = ({ setData, setActiveStep, data }) => {
     }
   }, [data]);
 
-  // Save data to localStorage whenever inputData changes
   useEffect(() => {
     localStorage.setItem("step2Data", JSON.stringify(inputData));
   }, [inputData]);
 
-  // Validation function
+
   const validate = () => {
     const newErrors = {};
 
-    // Token Name Validation
+
     if (!inputData.TokenName.trim()) {
       newErrors.TokenName = "Token Name is required.";
     } else if (!/^[a-zA-Z0-9 ]+$/.test(inputData.TokenName)) {
@@ -51,7 +49,7 @@ const Step2 = ({ setData, setActiveStep, data }) => {
       newErrors.TokenName = "Token Name must be at least 2 characters long.";
     }
 
-    // Token Symbol Validation
+
     if (!inputData.TokenSymbol.trim()) {
       newErrors.TokenSymbol = "Token Symbol is required.";
     } else if (!/^[A-Z0-9\-]+$/.test(inputData.TokenSymbol)) {
@@ -62,14 +60,14 @@ const Step2 = ({ setData, setActiveStep, data }) => {
         "Token Symbol must be between 3 to 5 characters long.";
     }
 
-    // Token Supply Validation
+
     if (inputData.TokenSupply === "" || inputData.TokenSupply === null) {
       newErrors.TokenSupply = "Token Supply is required.";
     } else if (Number(inputData.TokenSupply) < 1) {
       newErrors.TokenSupply = "Token Supply must be a positive integer.";
     }
 
-    // Votes Required Validation
+
     if (inputData.VotesRequired === "" || inputData.VotesRequired === null) {
       newErrors.VotesRequired = "Votes Required is required.";
     } else if (!Number.isInteger(Number(inputData.VotesRequired)) || Number(inputData.VotesRequired) < 1) {
@@ -78,26 +76,25 @@ const Step2 = ({ setData, setActiveStep, data }) => {
 
     setErrors(newErrors);
 
-    // Return true if no errors
+
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Update input data
+
     setInputData((prevData) => ({
       ...prevData,
       [name]:
         name === "TokenSupply" || name === "VotesRequired"
           ? Math.max(0, value)
           : name === "TokenSymbol"
-          ? value.toUpperCase().trim()
-          : value,
+            ? value.toUpperCase().trim()
+            : value,
     }));
 
-    // Remove error message for the field being edited
+
     if (errors[name]) {
       setErrors((prevErrors) => ({
         ...prevErrors,
@@ -106,7 +103,6 @@ const Step2 = ({ setData, setActiveStep, data }) => {
     }
   };
 
-  // Handle form submission
   const handleSaveAndNext = async (e) => {
     e.preventDefault();
 
@@ -118,10 +114,9 @@ const Step2 = ({ setData, setActiveStep, data }) => {
           step2: { ...inputData },
         }));
 
-        // Simulate async operation (e.g., API call)
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        // Clear localStorage upon successful submission
+
         localStorage.removeItem("step2Data");
 
         setActiveStep(2);
@@ -137,7 +132,6 @@ const Step2 = ({ setData, setActiveStep, data }) => {
     }
   };
 
-  // Handle back navigation
   const handleBack = () => {
     setActiveStep(0);
   };
@@ -176,9 +170,8 @@ const Step2 = ({ setData, setActiveStep, data }) => {
                 value={inputData.TokenName}
                 onChange={handleChange}
                 placeholder="Enter Token Name"
-                className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm border ${
-                  errors.TokenName ? "border-red-500" : "border-gray-300"
-                }`}
+                className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm border ${errors.TokenName ? "border-red-500" : "border-gray-300"
+                  }`}
               />
               {errors.TokenName && (
                 <p className="text-red-500 text-xs">{errors.TokenName}</p>
@@ -200,9 +193,8 @@ const Step2 = ({ setData, setActiveStep, data }) => {
                 value={inputData.TokenSymbol}
                 onChange={handleChange}
                 placeholder="Enter Token Symbol"
-                className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm border ${
-                  errors.TokenSymbol ? "border-red-500" : "border-gray-300"
-                }`}
+                className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm border ${errors.TokenSymbol ? "border-red-500" : "border-gray-300"
+                  }`}
               />
               {errors.TokenSymbol && (
                 <p className="text-red-500 text-xs">{errors.TokenSymbol}</p>
@@ -224,9 +216,8 @@ const Step2 = ({ setData, setActiveStep, data }) => {
                 value={inputData.TokenSupply}
                 onChange={handleChange}
                 placeholder="Enter Token Supply"
-                className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm border ${
-                  errors.TokenSupply ? "border-red-500" : "border-gray-300"
-                }`}
+                className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm border ${errors.TokenSupply ? "border-red-500" : "border-gray-300"
+                  }`}
                 min="1"
               />
               {errors.TokenSupply && (

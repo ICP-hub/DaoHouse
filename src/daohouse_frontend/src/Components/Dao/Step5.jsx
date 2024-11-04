@@ -130,7 +130,7 @@ const Step5 = ({ setData, setActiveStep, data }) => {
                 key={i}
                 className="bg-[#EBEBEB] border border-slate-300 p-4 rounded-lg flex flex-col gap-4"
               >
-                {/* Council, Members, and View button with gradient slider */}
+
                 <section className="flex justify-between items-center pt-2">
                   <div className="flex flex-col gap-2">
                     <p className="text-sm text-gray-500">{item.name}</p>

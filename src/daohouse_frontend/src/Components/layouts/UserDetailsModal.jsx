@@ -1,13 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
-import MyProfileImage from "../../../assets/Avatar.png";
 import defaultImage from "../../../assets/Avatar.png";
 import { useAuth } from "../utils/useAuthClient";
-import { useNavigate } from "react-router-dom";
+
 
 const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
-  const navigate = useNavigate();
+
   const [name, setName] = useState("");
-  const [file, setFile] = useState(null);
   const [email, setEmail] = useState("");
   const [profileImage, setProfileImage] = useState(null);
   const [fileURL, setFileURL] = useState(defaultImage);
@@ -16,7 +14,7 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
   const { backendActor } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
-  // Prevent background scrolling when the modal is open
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.position = 'fixed';
@@ -80,7 +78,6 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
           image_title: profileImage.name,
           image_content_type: profileImage.type,
         };
-        console.log(MinimalProfileinput, "MinimalProfileinput");
         const response = await backendActor.create_profile(MinimalProfileinput);
         console.log("response", response);
         onClose();
@@ -126,14 +123,13 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
                   Add Details
                 </h2>
 
-                {/* Name Input */}
+
                 <label htmlFor="name" className="mobile:text-base text-sm mb-1">
                   Name <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   value={name}
-                  // onChange={(e) => setName(e.target.value)}
                   onChange={handleNameChange}
                   placeholder="Enter your Name"
                   className="rounded-lg mobile:p-3 p-2 mobile:text-base text-sm mb-1"

@@ -17,7 +17,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
   const [followersCount, setFollowersCount] = useState(0);
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [joinStatus, setJoinStatus] = useState("Join Dao"); // 'Join DAO', 'Requested', 'Joined'
+  const [joinStatus, setJoinStatus] = useState("Join Dao");
   const [isMember, setIsMember] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false); 
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
@@ -34,13 +34,11 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
           if (profileResponse.Ok) {
             setUserProfile(profileResponse.Ok);
             const currentUserId = Principal.fromText(profileResponse.Ok.user_id.toString());
-            console.log("Curr", currentUserId);
             
             const daoActor = await createDaoActor(daoCanisterId);
             setDaoActor(daoActor)
 
             const daoFollowers = await daoActor.get_dao_followers();
-            console.log("DF", daoFollowers);
             
             
             setFollowersCount(daoFollowers.length);
@@ -66,7 +64,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
 
     fetchDaoDetails();
   }, [daoCanisterId, backendActor]);
-  console.log("IsFollowing", isFollowing);
+
 
   const toggleFollow = async () => {
     
@@ -104,7 +102,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
   const confirmJoinDao = async () => {
     setLoading(true);
     try {
-      // Convert the environment variable to a Principal object
+     
       const canisterIdString = process.env.CANISTER_ID_DAOHOUSE_BACKEND;
   
       if (!canisterIdString) {
@@ -120,7 +118,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
       };
   
       const response = await daoActor.ask_to_join_dao(joinDaoPayload);
-      console.log(response);
+      console.log("response of ask to join dao api",response);
       const sound = new Audio(messagesound);
       if (response.Ok) {
         setJoinStatus("Requested");
@@ -150,20 +148,19 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
 
   useEffect(() => {
     if (showConfirmModal) {
-      // Disable scrolling
+  
       document.body.style.overflow = 'hidden';
       document.body.style.height = '100vh';
       document.addEventListener('wheel', preventScroll, { passive: false });
       document.addEventListener('touchmove', preventScroll, { passive: false });
     } else {
-      // Re-enable scrolling
+  
       document.body.style.overflow = '';
       document.body.style.height = '';
       document.removeEventListener('wheel', preventScroll);
       document.removeEventListener('touchmove', preventScroll);
     }
 
-    // Cleanup function
     return () => {
       document.body.style.overflow = '';
       document.body.style.height = '';
@@ -185,12 +182,12 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
       />
     </div>
        
-    {/* Centered name and follow button */}
+
     <div className="flex flex-col items-center justify-center mt-4 big_phone:mt-0">
-      {/* Name for all screens */}
+
       <h2 className="text-lg font-semibold truncate w-24 big_phone:w-36 text-center">{name}</h2>
 
-      {/* Follow button centered below the name */}
+ 
       <button
         onClick={toggleFollow}
         className="mt-2 text-blue-400 p-1 sm:text-sm md:text-lg text-center"
@@ -199,17 +196,6 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
       </button>
     </div>
       </div>
-
-      {/* Follow button and username for mobile view (hidden on larger screens) */}
-      {/* <div className="block big_phone:hidden mt-2 flex flex-col items-center">
-        <h2 className="text-center mobile:text-2xl text-lg font-semibold truncate w-full">{name}</h2>
-        <button
-          onClick={toggleFollow}
-          className="text-blue-400 p-1 mt-2 text-left sm:text-sm md:text-lg"
-        >
-          {isFollowing ? 'Unfollow' : '+ Follow'}
-        </button>
-      </div> */}
 
       {/* Adjusted flexbox for larger screens */}
       <div className="big_phone:flex hidden justify-between text-center mb-4 bg-white tablet:p-4 pb-4 p-2 rounded-lg gap-0">

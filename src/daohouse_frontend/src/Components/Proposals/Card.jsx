@@ -1,30 +1,21 @@
 import React, { useEffect, useMemo, useState } from "react";
 import avatar from "../../../assets/avatar.png";
 import { CircularProgressBar } from "./CircularProgressBar";
-import Lottie from "react-lottie";
 import ProgressAnimation from "./MyProposals/proposal-cards-animations/progress-animation.json";
-import ApprovedAnimation from "./MyProposals/proposal-cards-animations/approved-animation.json";
-import RejectedAnimation from "./MyProposals/proposal-cards-animations/rejected-animation.json";
 import { Principal } from "@dfinity/principal";
 import ViewModal from "../Dao/ViewModal";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../utils/useAuthClient";
 import userImage from "../../../assets/avatar.png";
-import { CircularProgress } from "@mui/material";
 import ShareModal from "./ShareModal";
 import coin from "../../../assets/coin.jpg";
 import Avatar from "../../../assets/Avatar.png";
 
 
 export default function Card({ proposal, voteApi, showActions, isProposalDetails, isComment, setIsComment, commentCount, isSubmittedProposals, showComments, }) {
-
-  // console.log("propsoal api", proposal.link_of_task);
-  console.log("proposals",proposal);
-  
-
   const { backendActor, createDaoActor, stringPrincipal } = useAuth();
-  const [voteStatus, setVoteStatus] = useState(""); // Track user vote (Yes/No)
+  const [voteStatus, setVoteStatus] = useState("");
   const [approvedVotes, setApprovedVotes] = useState(Number(proposal?.proposal_approved_votes || 0n));
   const [rejectedVotes, setRejectedVotes] = useState(Number(proposal?.proposal_rejected_votes || 0n));
   const [voteCount, setVoteCount] = useState(approvedVotes + rejectedVotes);
@@ -33,9 +24,8 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const [profileImg, setProfileImg] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isVoteLoading, setIsVoteLoading] = useState(false)
-  const [isDisabled, setIsDisabled] = useState(false);
+
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-  const [copySuccess, setCopySuccess] = useState("");
   const [daoName, setDaoName] = useState("");
   const { daoCanisterId } = useParams();
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
@@ -48,10 +38,6 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
 
 
   const toggleExpanded = () => setIsExpanded(!isExpanded);
-  // console.log(votersList);
-  
-
-  // console.log("voters", proposal?.approved_votes_list + proposal?.rejected_votes_list); 
 
   const truncateText = (text, wordLimit) => {
     const words = text.split('');
@@ -66,7 +52,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
       isTruncated: false,
     };
   };
-  
+
   const { truncated, isTruncated } = truncateText(proposal?.proposal_description || 'Proposal Description', maxWords);
 
 
@@ -82,7 +68,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
       } catch (error) {
         console.error("Error fetching profile:", error);
       } finally {
-        setIsLoading(false); // Set loading to false after fetching data
+        setIsLoading(false);
       }
     }
 
@@ -91,14 +77,8 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
 
   const approvedVotersList = useMemo(() => proposal?.approved_votes_list || [], [proposal])
   const rejectedVotersList = useMemo(() => proposal?.rejected_votes_list || [], [proposal])
-
-
-  // console.log(proposal.dao_canister_id);
   const proposalId = proposal.proposal_id
   const daoId = proposal.dao_canister_id || proposal.associated_dao_canister_id || daoCanisterId;
-
-  // console.log(daoCanisterId);
-
 
   useEffect(() => {
     if (isShareModalOpen) {
@@ -106,52 +86,42 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
     } else {
       document.body.classList.remove('overflow-hidden');
     }
-  
+
     return () => {
       document.body.classList.remove('overflow-hidden');
     };
   }, [isShareModalOpen]);
-  
+
 
 
   useEffect(() => {
     const fetchDaoName = async () => {
       if (!daoId || !daoId._arr) {
         console.error("Invalid daoId:", daoId);
-        // toast.error("DAO ID is invalid or missing.");
         return;
       }
 
       try {
-        // Convert Uint8Array to Principal
         const daoPrincipal = Principal.fromUint8Array(new Uint8Array(daoId._arr));
         const daoPrincipalText = daoPrincipal.toText();
 
         console.log("DAO Principal (Text):", daoPrincipalText);
-
-        // Create the DAO actor using the Principal text
         const daoActor = await createDaoActor(daoPrincipalText);
 
         if (!daoActor) {
           throw new Error("Failed to create DAO actor.");
         }
 
-        console.log("DAO Actor:", daoActor);
-
-        // Fetch DAO details
         const daoDetails = await daoActor?.get_dao_detail();
 
         if (!daoDetails || !daoDetails.dao_name) {
           throw new Error("DAO details are missing or incomplete.");
         }
 
-        console.log("DAO Details:", daoDetails);
-
-        // Update the DAO name state
         setDaoName(daoDetails.dao_name);
       } catch (error) {
         console.error("Error fetching DAO details:", error);
-        // toast.error("Failed to fetch DAO details. Please try again.");
+
       }
     };
 
@@ -160,7 +130,6 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   }, [createDaoActor, proposal?.associated_dao_canister_id, daoId])
 
   const copyToClipboard = () => {
-    console.log("daoCaniste", daoCanisterId);
 
     const proposalUrl = `${window.location.origin}/social-feed/proposal/${proposal?.proposal_id}/dao/${daoId}`;
     navigator.clipboard.writeText(proposalUrl).then(
@@ -183,10 +152,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const [isModalOpen, setIsModalOpen] = useState(false)
   const navigate = useNavigate()
 
-  const a = proposal?.proposal_description;
-  const principalOfAction = proposal.principal_of_action?.toText() || proposal?.action_principal?.toText()
-  const approvedProposals = Number(BigInt(proposal?.proposal_approved_votes || 0));
-  const rejectedvoters = Number(BigInt(proposal?.proposal_rejected_votes || 0));
+
   const status = proposal?.proposal_status
     ? Object.keys(proposal?.proposal_status)[0] || "No Status"
     : "No Status";
@@ -197,18 +163,15 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
     setRejectedVotes(proposal?.rejected_votes_list?.length || 0);
     setVoteCount((proposal?.approved_votes_list?.length || 0) + (proposal?.rejected_votes_list?.length || 0));
   }, [proposal]);
-  // console.log(proposal);
 
 
-  // Convert BigInt timestamps to dates
-  const submittedOn = new Date(Number(proposal?.proposal_submitted_at) / 1_000_000); // Convert nanoseconds to milliseconds
+  const submittedOn = new Date(Number(proposal?.proposal_submitted_at) / 1_000_000);
   const expiresOn = new Date(Number(proposal?.proposal_expired_at) / 1_000_000);
 
-  // Format the dates to be human-readable
+
   const formattedSubmittedOn = submittedOn.toLocaleString();
   const formattedExpiresOn = expiresOn.toLocaleString();
 
-  // Function to split date and time
   const splitDateTime = (dateTimeString) => {
     const [date, time] = dateTimeString.split(", ");
     return { date, time };
@@ -217,7 +180,6 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const { date: submittedDate, time: submittedTime } = splitDateTime(formattedSubmittedOn);
   const { date: expiresDate, time: expiresTime } = splitDateTime(formattedExpiresOn);
 
-  // Custom date formatting
   const formatDate = (date) => {
     return new Intl.DateTimeFormat('en-US', {
       year: '2-digit',
@@ -226,7 +188,6 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
     }).format(date);
   };
 
-  // Custom time formatting
   const formatTime = (date) => {
     return new Intl.DateTimeFormat('en-US', {
       hour: '2-digit',
@@ -296,7 +257,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
       if (result?.Ok) {
         toast.success("Vote submitted successfully");
 
-        // Update vote counts based on user's vote
+
         if (voteStatus === "In Favor") {
           setApprovedVotes((prev) => prev + 1);
         } else {
@@ -304,7 +265,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
         }
         setVoteCount((prev) => prev + 1);
 
-        // Fetch the updated voter lists
+
         const updatedProposal = await voteApi?.get_proposal_by_id(proposal?.proposal_id);
         setVotersList({
           approvedVotes: updatedProposal?.approved_votes_list || [],
@@ -327,28 +288,28 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const handlePollVoteSubmit = async (e) => {
     e.preventDefault();
     if (!selectedOption) return;
-  
+
     try {
       setIsPollVoteLoading(true);
       const result = await voteApi?.vote_on_poll_options(proposal.proposal_id, selectedOption);
-  
+
       if (result?.Ok) {
         toast.success("Vote submitted successfully");
-  
-        // Update vote count and approved users for the selected option
+
+
         setPollOptions((prevOptions) =>
           prevOptions.map((option) =>
             option.id === selectedOption
               ? {
-                  ...option,
-                  poll_approved_votes: option.poll_approved_votes + 1n,
-                  approved_users: [...option.approved_users, stringPrincipal], // Add current user to approved users list
-                }
+                ...option,
+                poll_approved_votes: option.poll_approved_votes + 1n,
+                approved_users: [...option.approved_users, stringPrincipal],
+              }
               : option
           )
         );
-  
-        // Optional: Prevent further voting by disabling selection
+
+
         setSelectedOption(null);
       } else {
         console.error("Error voting:", result.Err);
@@ -362,7 +323,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
     }
   };
 
-  
+
   useEffect(() => {
     const style = document.createElement('style');
     style.textContent = `
@@ -376,14 +337,14 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
     document.head.append(style);
     return () => style.remove();
   }, []);
-  
-  
+
+
 
 
 
 
   const handleVotesClick = () => {
-    setIsModalOpen(true); // Open modal
+    setIsModalOpen(true);
     setVotersList({
       approvedVotes: approvedVotersList,
       rejectedVotes: rejectedVotersList,
@@ -412,12 +373,12 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
     } else {
       document.body.classList.remove('overflow-hidden');
     }
-  
+
     return () => {
       document.body.classList.remove('overflow-hidden');
     };
   }, [isShareModalOpen]);
-  
+
   useEffect(() => {
     const style = document.createElement('style');
     style.textContent = `
@@ -431,39 +392,38 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
     document.head.append(style);
     return () => style.remove();
   }, []);
-  
+
 
   {
     return (
-      <div className={`bg-white font-mulish ${isProposalDetails ? "rounded-t-xl tablet:mx-16" : `rounded-xl ${isSubmittedProposals ? "": "desktop:mx-20"}`} shadow-md ${isSubmittedProposals ? "flex flex-col  big_phone:flex-row desktop:mx-0" : "flex flex-col md:flex-col"}`}>
-          <>
-           {/* Top Section */}
-<div
-  className={`${
-    isSubmittedProposals
-      ? "big_phone:rounded-l-lg big_phone:rounded-r-none rounded-t-lg rounded-b-none flex justify-between big_phone:flex-col big_phone:space-y-8 bg-[#0E3746] px-4 sm:px-6 lg:px-12 py-6"
-      : "w-full flex justify-between items-center bg-[#0E3746] px-4 sm:px-6 lg:px-12 py-6 rounded-t-lg rounded-b-none"
-  }`}
->
-  {/* User Info Section */}
-  <div className="flex gap-2 lg:gap-4 justify-center items-center">
-    {isLoading ? (
-      <div className="w-8 h-8 md:w-16 md:h-16 rounded-full bg-gray-300 animate-pulse"></div>
-    ) : (
-      <img
-        src={profileImg || avatar}
-        alt="user avatar"
-        className="w-8 h-8 md:w-16 md:h-16 rounded-full"
-      />
-    )}
-    {isLoading ? (
-      <div className="w-24 h-6 md:w-36 md:h-8 bg-gray-400"></div>
-    ) : (
-      <h4 className="text-white text-sm sm:text-base md:text-xl font-semibold">
-        {userProfile?.username || "Username"}
-      </h4>
-    )}
-  </div>
+      <div className={`bg-white font-mulish ${isProposalDetails ? "rounded-t-xl tablet:mx-16" : `rounded-xl ${isSubmittedProposals ? "" : "desktop:mx-20"}`} shadow-md ${isSubmittedProposals ? "flex flex-col  big_phone:flex-row desktop:mx-0" : "flex flex-col md:flex-col"}`}>
+        <>
+          {/* Top Section */}
+          <div
+            className={`${isSubmittedProposals
+                ? "big_phone:rounded-l-lg big_phone:rounded-r-none rounded-t-lg rounded-b-none flex justify-between big_phone:flex-col big_phone:space-y-8 bg-[#0E3746] px-4 sm:px-6 lg:px-12 py-6"
+                : "w-full flex justify-between items-center bg-[#0E3746] px-4 sm:px-6 lg:px-12 py-6 rounded-t-lg rounded-b-none"
+              }`}
+          >
+            {/* User Info Section */}
+            <div className="flex gap-2 lg:gap-4 justify-center items-center">
+              {isLoading ? (
+                <div className="w-8 h-8 md:w-16 md:h-16 rounded-full bg-gray-300 animate-pulse"></div>
+              ) : (
+                <img
+                  src={profileImg || avatar}
+                  alt="user avatar"
+                  className="w-8 h-8 md:w-16 md:h-16 rounded-full"
+                />
+              )}
+              {isLoading ? (
+                <div className="w-24 h-6 md:w-36 md:h-8 bg-gray-400"></div>
+              ) : (
+                <h4 className="text-white text-sm sm:text-base md:text-xl font-semibold">
+                  {userProfile?.username || "Username"}
+                </h4>
+              )}
+            </div>
 
  {/* Dates Section */}
 {!isSubmittedProposals && (
@@ -495,71 +455,68 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
 )}
 
 
-  {/* Votes Section */}
-  <div className="flex justify-center gap-4 md:gap-8 mt-4 md:mt-0">
-    {/* Approved Votes */}
-    <div className="flex flex-col items-center">
-      <CircularProgressBar
-        percentage={Math.floor((approvedVotes / requiredVotes) * 100)}
-        color="#4CAF50"
-      />
-      <span className="text-white mt-2 text-center text-xs sm:text-sm md:text-base">
-        {approvedVotes} votes
-      </span>
-    </div>
+            {/* Votes Section */}
+            <div className="flex justify-center gap-4 md:gap-8 mt-4 md:mt-0">
 
-    {/* Rejected Votes */}
-    <div className="flex flex-col items-center">
-      <CircularProgressBar
-        percentage={Math.floor((rejectedVotes / requiredVotes) * 100)}
-        color="red"
-      />
-      <span className="text-white mt-2 text-center text-xs sm:text-sm md:text-base">
-        {rejectedVotes} votes
-      </span>
-    </div>
-  </div>
-</div>
+              <div className="flex flex-col items-center">
+                <CircularProgressBar
+                  percentage={Math.floor((approvedVotes / requiredVotes) * 100)}
+                  color="#4CAF50"
+                />
+                <span className="text-white mt-2 text-center text-xs sm:text-sm md:text-base">
+                  {approvedVotes} votes
+                </span>
+              </div>
+
+              {/* Rejected Votes */}
+              <div className="flex flex-col items-center">
+                <CircularProgressBar
+                  percentage={Math.floor((rejectedVotes / requiredVotes) * 100)}
+                  color="red"
+                />
+                <span className="text-white mt-2 text-center text-xs sm:text-sm md:text-base">
+                  {rejectedVotes} votes
+                </span>
+              </div>
+            </div>
+          </div>
 
 
-            {/* Bottom Section */}
-            <div className={`${isSubmittedProposals ? "w-full px-4 desktop:px-12 py-4 md:py-8" : "w-full px-4 lg:px-12 py-4 md:py-8"}`}>
-              <div className={`${isSubmittedProposals ? "flex flex-wrap lg:gap-4 justify-between" : "flex flex-col xl:flex-row justify-between items-start xl:items-center mb-4 gap-4"}`}>
-                <div className="max-w-full lg:max-w-full">
-                  <h4 className="text-xl font-bold text-[#0E3746] overflow-hidden break-words whitespace-normal">
-                    {proposal.proposal_title || proposal.propsal_title} | <span className={`md:text-[1rem] text-[1rem] block ${isSubmittedProposals ? " truncate w-60": ""}`}> Proposal ID: #{proposal?.proposal_id}</span>
-                  </h4>
-                </div>
+          {/* Bottom Section */}
+          <div className={`${isSubmittedProposals ? "w-full px-4 desktop:px-12 py-4 md:py-8" : "w-full px-4 lg:px-12 py-4 md:py-8"}`}>
+            <div className={`${isSubmittedProposals ? "flex flex-wrap lg:gap-4 justify-between" : "flex flex-col xl:flex-row justify-between items-start xl:items-center mb-4 gap-4"}`}>
+              <div className="max-w-full lg:max-w-full">
+                <h4 className="text-xl font-bold text-[#0E3746] overflow-hidden break-words whitespace-normal">
+                  {proposal.proposal_title || proposal.propsal_title} | <span className={`md:text-[1rem] text-[1rem] block ${isSubmittedProposals ? " truncate w-60" : ""}`}> Proposal ID: #{proposal?.proposal_id}</span>
+                </h4>
+              </div>
 
-                <div className="flex col-span-4 gap-1  small_phone:gap-4 self-start">
+              <div className="flex col-span-4 gap-1  small_phone:gap-4 self-start">
 
-                  <span className={` px-1 mini_phone:px-2 big_phone:px-2 big_phone:w-[185px] self-center py-1 rounded-full bg-[#4993B0] text-white font-semibold text-sm text-center big_phone:text-base`}>
-                    {timeRemaining}
-                  </span>
-                  {!isSubmittedProposals && (
-                    <span
+                <span className={` px-1 mini_phone:px-2 big_phone:px-2 big_phone:w-[185px] self-center py-1 rounded-full bg-[#4993B0] text-white font-semibold text-sm text-center big_phone:text-base`}>
+                  {timeRemaining}
+                </span>
+                {!isSubmittedProposals && (
+                  <span
                     className={`px-1 mini_phone:px-2 md:px-4 py-1 rounded-full text-white font-semibold text-sm big_phone:text-base  ${status === "Approved" ? "bg-[#4CAF50]" : status === "Rejected" ? "bg-red-500" : "bg-[#4993B0]"
                       } self-center `}
                   >
                     {status}
                   </span>
-                  )}
-                </div>
-              </div>
-              {isSubmittedProposals && (
-                  <div className="flex flex-wrap gap-2 my-2">
-                  {/* <span className={`px-2 py-1 text-xs sm:text-sm rounded-full text-white font-semibold ${status === "Approved" ? "bg-[#4CAF50]" : status === "Rejected" ? "bg-red-500" : "bg-[#4993B0]"
-                    }`}>
-                    {status}
-                  </span> */}
-                  <span className="px-2 py-1 text-xs sm:text-sm bg-[#4993B0] text-white rounded-full">
-                    {daoName || "DaoName"}
-                  </span>
-                </div>
                 )}
-              {!isSubmittedProposals && (
-                <p className="text-gray-900 text-sm mobile:text-xl mb-4 break-words">
-                  {isExpanded ? proposal?.proposal_description : truncated}
+              </div>
+            </div>
+            {isSubmittedProposals && (
+              <div className="flex flex-wrap gap-2 my-2">
+
+                <span className="px-2 py-1 text-xs sm:text-sm bg-[#4993B0] text-white rounded-full">
+                  {daoName || "DaoName"}
+                </span>
+              </div>
+            )}
+            {!isSubmittedProposals && (
+              <p className="text-gray-900 text-sm mobile:text-xl mb-4 break-words">
+                {isExpanded ? proposal?.proposal_description : truncated}
                 {isTruncated && (
                   <button
                     onClick={toggleExpanded}
@@ -568,91 +525,91 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                     {isExpanded ? 'See less' : 'See more'}
                   </button>
                 )}
-                </p>
+              </p>
+            )}
+            <div className="flex flex-col gap-4 items-start mb-2 justify-start">
+              {!isSubmittedProposals && (
+                <div className="flex">
+                  {/* // <div className="flex "> */}
+                  <div className="lg:hidden flex flex-col items-start">
+                    <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Submitted On </span>
+                    <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{submittedOnDate} <span className="text-[8px] small_phone:text-[8px] md:text-xs font-normal text-gray-400">{submittedOnTime}</span></span>
+                  </div>
+                  <div className="lg:hidden flex flex-col items-start">
+                    <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Expires On </span>
+                    <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{expiresOnDate} <span className="text-[8px] small_phone:text-[8px] md:text-xs font-normal text-gray-400">{expiresOnTime}</span></span>
+                  </div>
+                  <div className="flex lg:flex-row flex-col    items-start">
+                    <span className="font-bold text-[10px] lg:text-lg text-gray-900">Votes Required :</span>
+                    <span className=" lg:ml-3 text-start text-[10px]  mobile:text-sm lg:text-lg">{requiredVotes}</span>
+                  </div>
+                </div>
               )}
-              <div className="flex flex-col gap-4 items-start mb-2 justify-start">
-                  {!isSubmittedProposals && (
-                    <div className="flex">
-                    {/* // <div className="flex "> */}
-                    <div className="lg:hidden flex flex-col items-start">
-                      <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Submitted On </span>
-                      <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{submittedOnDate} <span className="text-[8px] small_phone:text-[8px] md:text-xs font-normal text-gray-400">{submittedOnTime}</span></span>
-                    </div>
-                    <div className="lg:hidden flex flex-col items-start">
-                      <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Expires On </span>
-                      <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{expiresOnDate} <span className="text-[8px] small_phone:text-[8px] md:text-xs font-normal text-gray-400">{expiresOnTime}</span></span>
-                    </div>
-                    <div className="flex lg:flex-row flex-col    items-start">
-                      <span className="font-bold text-[10px] lg:text-lg text-gray-900">Votes Required :</span>
-                      <span className=" lg:ml-3 text-start text-[10px]  mobile:text-sm lg:text-lg">{requiredVotes}</span>
-                    </div>
-                    </div>
-                    )}
-                    </div>
+            </div>
 
-              <div className="flex flex-wrap gap-4 flex-col md:flex-row md:justify-between items-start md:items-center space-y-4 md:space-y-0">
-                {!isSubmittedProposals && (proposal.proposal_type.ChangeDaoConfig!== undefined) && (
-                  <div className="w-full"> 
-                    <div className="flex flex-wrap">
-                      <span className="font-bold">Dao Name</span>: {proposal.new_dao_name}
-                        <strong>&nbsp; | &nbsp;</strong>
-                      <span className="font-bold">Dao Type</span>: {proposal.new_daotype}
-                    </div>
-                    <div className="whitespace-normal break-words mt-2">
-                      <span className="font-bold">Dao Purpose</span>: {proposal.new_dao_purpose}
-                    </div>
+            <div className="flex flex-wrap gap-4 flex-col md:flex-row md:justify-between items-start md:items-center space-y-4 md:space-y-0">
+              {!isSubmittedProposals && (proposal.proposal_type.ChangeDaoConfig !== undefined) && (
+                <div className="w-full">
+                  <div className="flex flex-wrap">
+                    <span className="font-bold">Dao Name</span>: {proposal.new_dao_name}
+                    <strong>&nbsp; | &nbsp;</strong>
+                    <span className="font-bold">Dao Type</span>: {proposal.new_daotype}
                   </div>
-               
-                ) }
-                {!isSubmittedProposals && (proposal.proposal_type.ChangeDaoPolicy!== undefined) && (
-                  <div className="w-full"> 
-                    <div className="flex">
-                      <span className="font-bold">Cool Down Period</span>: {proposal.cool_down_period}
-                    </div>
-                    <div className="whitespace-normal break-words mt-2">
-                      <span className="font-bold">Required Votes</span>: {proposal.new_required_votes}
-                    </div>
+                  <div className="whitespace-normal break-words mt-2">
+                    <span className="font-bold">Dao Purpose</span>: {proposal.new_dao_purpose}
                   </div>
-                ) }
-                {!isSubmittedProposals && proposal.proposal_type.Polls !== undefined && (
-  <div className="w-full">
-    {/* Display poll question */}
-    <div className="flex mb-2">
-      <span className="font-bold">{proposal.poll_query[0]}</span>
-    </div>
+                </div>
 
-    {/* Display poll options with radio buttons */}
-    <form onSubmit={handlePollVoteSubmit} className="whitespace-normal break-words mt-2">
-      {pollOptions.map((option, index) => (
-        <div key={option.id} className="mt-1 flex items-center">
-          <label className="text-md flex items-center space-x-2">
-            <input
-              type="radio"
-              name="pollVote"
-              value={option.id}
-              checked={selectedOption === option.id}
-              onChange={() => setSelectedOption(option.id)}
-              className="mr-2"
-            />
-            <span className="font-bold">Option {index + 1}:</span> {option.option}
-          </label>
-          <span className="ml-2 text-gray-500">Votes: {option.poll_approved_votes}</span>
-        </div>
-      ))}
-      <button
-        type="submit"
-        className={`bg-[#0E3746] mt-4 w-[100px] h-[30px] flex justify-center text-center items-center text-white rounded-2xl p-2 transition hover:bg-[#123b50]`}
-        disabled={!selectedOption || isPollVoteLoading}
-      >
-        {isPollVoteLoading ? (
-          <div className="w-4 h-4 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
-        ) : (
-          "Submit"
-        )}
-      </button>
-    </form>
-  </div>
-)}
+              )}
+              {!isSubmittedProposals && (proposal.proposal_type.ChangeDaoPolicy !== undefined) && (
+                <div className="w-full">
+                  <div className="flex">
+                    <span className="font-bold">Cool Down Period</span>: {proposal.cool_down_period}
+                  </div>
+                  <div className="whitespace-normal break-words mt-2">
+                    <span className="font-bold">Required Votes</span>: {proposal.new_required_votes}
+                  </div>
+                </div>
+              )}
+              {!isSubmittedProposals && proposal.proposal_type.Polls !== undefined && (
+                <div className="w-full">
+
+                  <div className="flex mb-2">
+                    <span className="font-bold">{proposal.poll_query[0]}</span>
+                  </div>
+
+
+                  <form onSubmit={handlePollVoteSubmit} className="whitespace-normal break-words mt-2">
+                    {pollOptions.map((option, index) => (
+                      <div key={option.id} className="mt-1 flex items-center">
+                        <label className="text-md flex items-center space-x-2">
+                          <input
+                            type="radio"
+                            name="pollVote"
+                            value={option.id}
+                            checked={selectedOption === option.id}
+                            onChange={() => setSelectedOption(option.id)}
+                            className="mr-2"
+                          />
+                          <span className="font-bold">Option {index + 1}:</span> {option.option}
+                        </label>
+                        <span className="ml-2 text-gray-500">Votes: {option.poll_approved_votes}</span>
+                      </div>
+                    ))}
+                    <button
+                      type="submit"
+                      className={`bg-[#0E3746] mt-4 w-[100px] h-[30px] flex justify-center text-center items-center text-white rounded-2xl p-2 transition hover:bg-[#123b50]`}
+                      disabled={!selectedOption || isPollVoteLoading}
+                    >
+                      {isPollVoteLoading ? (
+                        <div className="w-4 h-4 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+                      ) : (
+                        "Submit"
+                      )}
+                    </button>
+                  </form>
+                </div>
+              )}
 
                 {!isSubmittedProposals && (proposal.proposal_type.TokenTransfer !== undefined) && (
                   <div className="w-full flex  flex-col md:justify-between mt-2 md:flex-row">
@@ -683,119 +640,112 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                   </div>
                 )}
 
-                {!isSubmittedProposals && (proposal.proposal_type.AddMemberToGroupProposal !== undefined) && (
-                  <div className="w-full"> 
-                    <div className="flex">
-                      <span className="font-bold">Group Name</span>: {proposal.group_to_join}
-                    </div>
-                    <div className="whitespace-normal break-words mt-2">
-                      <span className="font-bold">New member</span>: {Principal.fromUint8Array(new Uint8Array(proposal.principal_of_action._arr)).toText()}
-                    </div>
+              {!isSubmittedProposals && (proposal.proposal_type.AddMemberToGroupProposal !== undefined) && (
+                <div className="w-full">
+                  <div className="flex">
+                    <span className="font-bold">Group Name</span>: {proposal.group_to_join}
                   </div>
-                ) }
-                {!isSubmittedProposals && (proposal.proposal_type.RemoveMemberToGroupProposal !== undefined) && (
-                  <div className="w-full"> 
-                    <div className="flex">
-                      <span className="font-bold">Group Name</span>: {proposal.group_to_remove}
-                    </div>
-                    <div className="whitespace-normal break-words mt-2">
-                      <span className="font-bold">Remove Member</span>: {Principal.fromUint8Array(new Uint8Array(proposal.principal_of_action._arr)).toText()}
-                    </div>
+                  <div className="whitespace-normal break-words mt-2">
+                    <span className="font-bold">New member</span>: {Principal.fromUint8Array(new Uint8Array(proposal.principal_of_action._arr)).toText()}
                   </div>
-                ) }
-                {!isSubmittedProposals && (proposal.proposal_type.BountyRaised !== undefined) && (
-                  <div className="w-full"> 
-                    <div className="flex">
-                      <span className="font-bold">Bounty Task</span>: {proposal.bounty_task}
-                    </div>
-                    <div className="whitespace-normal break-words mt-2">
-                      <span className="font-bold">Tokens</span>: {proposal.tokens.length > 0 ? proposal.tokens[0].toString() : '0'} {/* Handle array case */}
-                    </div>
+                </div>
+              )}
+              {!isSubmittedProposals && (proposal.proposal_type.RemoveMemberToGroupProposal !== undefined) && (
+                <div className="w-full">
+                  <div className="flex">
+                    <span className="font-bold">Group Name</span>: {proposal.group_to_remove}
                   </div>
-                )}
+                  <div className="whitespace-normal break-words mt-2">
+                    <span className="font-bold">Remove Member</span>: {Principal.fromUint8Array(new Uint8Array(proposal.principal_of_action._arr)).toText()}
+                  </div>
+                </div>
+              )}
+              {!isSubmittedProposals && (proposal.proposal_type.BountyRaised !== undefined) && (
+                <div className="w-full">
+                  <div className="flex">
+                    <span className="font-bold">Bounty Task</span>: {proposal.bounty_task}
+                  </div>
+                  <div className="whitespace-normal break-words mt-2">
+                    <span className="font-bold">Tokens</span>: {proposal.tokens.length > 0 ? proposal.tokens[0].toString() : '0'} {/* Handle array case */}
+                  </div>
+                </div>
+              )}
 
-                {!isSubmittedProposals && (proposal.proposal_type.RemoveMemberToDaoProposal !== undefined) && (
-                  <div className="w-full"> 
-                    <div className="flex">
-                      <span className="font-bold">Dao Name</span>: {proposal.new_dao_name}
-                    </div>
-                    <div className="whitespace-normal break-words mt-2">
-                      <span className="font-bold">Principal ID</span>: {Principal.fromUint8Array(new Uint8Array(proposal.principal_of_action._arr)).toText()}
-                    </div>
+              {!isSubmittedProposals && (proposal.proposal_type.RemoveMemberToDaoProposal !== undefined) && (
+                <div className="w-full">
+                  <div className="flex">
+                    <span className="font-bold">Dao Name</span>: {proposal.new_dao_name}
                   </div>
-                )}
+                  <div className="whitespace-normal break-words mt-2">
+                    <span className="font-bold">Principal ID</span>: {Principal.fromUint8Array(new Uint8Array(proposal.principal_of_action._arr)).toText()}
+                  </div>
+                </div>
+              )}
 
-                {!isSubmittedProposals && (proposal.proposal_type.AddMemberToDaoProposal !== undefined) && (
-                  <div className="w-full"> 
-                    <div className="whitespace-normal break-words mt-2">
-                      <span className="font-bold">Principal ID</span>: {Principal.fromUint8Array(new Uint8Array(proposal.principal_of_action._arr)).toText()}
-                    </div>
+              {!isSubmittedProposals && (proposal.proposal_type.AddMemberToDaoProposal !== undefined) && (
+                <div className="w-full">
+                  <div className="whitespace-normal break-words mt-2">
+                    <span className="font-bold">Principal ID</span>: {Principal.fromUint8Array(new Uint8Array(proposal.principal_of_action._arr)).toText()}
                   </div>
-                ) }
-                {!isSubmittedProposals && (proposal.proposal_type.BountyDone !== undefined) && (
-                  <div className="w-full"> 
-                    {/* <div className="flex">
-                      <span className="font-bold">Bounty Task</span>: {proposal.bounty_task}
-                    </div> */}
-                    <div className="whitespace-normal break-words mt-2">
-                      <span className="font-bold border border-black"> Associated Proposal ID</span>: {proposal.associated_proposal_id}
-                    </div>
-                    {/* <div className="whitespace-normal break-words mt-2">
-                      <span className="font-bold">Bounty Task</span>: {proposal.bounty_task}
-                    </div> */}
-                    {/* <div className="whitespace-normal break-words mt-2">
-                      <span className="font-bold">Tokens to</span>: {proposal.associated_proposal_id}
-                    </div> */}
-                    <div className="whitespace-normal break-words mt-2">
-                      {/* <span className="font-bold">Tokens from</span> */}
-                      <div>
-                      <span className="font-bold">From</span>: 
+                </div>
+              )}
+              {!isSubmittedProposals && (proposal.proposal_type.BountyDone !== undefined) && (
+                <div className="w-full">
+
+                  <div className="whitespace-normal break-words mt-2">
+                    <span className="font-bold border border-black"> Associated Proposal ID</span>: {proposal.associated_proposal_id}
+                  </div>
+
+                  <div className="whitespace-normal break-words mt-2">
+
+                    <div>
+                      <span className="font-bold">From</span>:
                       {proposal.token_from.map((principal, index) => (
                         <span key={index}>
                           {principal.toText ? principal.toText() : Array.from(principal._arr).join('')}
                         </span>
                       ))}
-                      </div>
                     </div>
                   </div>
-                ) }
+                </div>
+              )}
 
 
-                  <div className="w-full flex justify-between flex-wrap">
-                    <div className="flex flex-wrap justify-start md:justify-start md:mt-0 gap-2 small_phone:gap-4 md:gap-2">
-                      {(showActions) && (
-                        <button className={`flex items-center justify-center gap-1 mobile:gap-1'
+              <div className="w-full flex justify-between flex-wrap">
+                <div className="flex flex-wrap justify-start md:justify-start md:mt-0 gap-2 small_phone:gap-4 md:gap-2">
+                  {(showActions) && (
+                    <button className={`flex items-center justify-center gap-1 mobile:gap-1'
                           }`} onClick={handleCommentToggle}>
-                          <svg className="mb-1" width="16" height="15" viewBox="0 0 16 15">
-                            <path d="M3.11111 9.22293H12.8889V8.34456H3.11111V9.22293ZM3.11111 6.58781H12.8889V5.70943H3.11111V6.58781ZM3.11111 3.95269H12.8889V3.07431H3.11111V3.95269ZM16 15L13.2649 12.2972H1.43556C1.02667 12.2972 0.685333 12.162 0.411556 11.8914C0.137778 11.6209 0.000592593 11.2833 0 10.8787V1.41857C0 1.01452 0.137185 0.677227 0.411556 0.406687C0.685926 0.136148 1.02726 0.000585583 1.43556 0H14.5644C14.9733 0 15.3147 0.135562 15.5884 0.406687C15.8622 0.677812 15.9994 1.01511 16 1.41857V15ZM1.43556 11.4189H13.6444L15.1111 12.8629V1.41857C15.1111 1.28389 15.0542 1.16004 14.9404 1.04702C14.8267 0.934005 14.7013 0.877789 14.5644 0.878374H1.43556C1.29926 0.878374 1.17393 0.93459 1.05956 1.04702C0
+                      <svg className="mb-1" width="16" height="15" viewBox="0 0 16 15">
+                        <path d="M3.11111 9.22293H12.8889V8.34456H3.11111V9.22293ZM3.11111 6.58781H12.8889V5.70943H3.11111V6.58781ZM3.11111 3.95269H12.8889V3.07431H3.11111V3.95269ZM16 15L13.2649 12.2972H1.43556C1.02667 12.2972 0.685333 12.162 0.411556 11.8914C0.137778 11.6209 0.000592593 11.2833 0 10.8787V1.41857C0 1.01452 0.137185 0.677227 0.411556 0.406687C0.685926 0.136148 1.02726 0.000585583 1.43556 0H14.5644C14.9733 0 15.3147 0.135562 15.5884 0.406687C15.8622 0.677812 15.9994 1.01511 16 1.41857V15ZM1.43556 11.4189H13.6444L15.1111 12.8629V1.41857C15.1111 1.28389 15.0542 1.16004 14.9404 1.04702C14.8267 0.934005 14.7013 0.877789 14.5644 0.878374H1.43556C1.29926 0.878374 1.17393 0.93459 1.05956 1.04702C0
                             .945185 1.15945 0.888296 1.2833 0.888889 1.41857V10.8787C0.888889 11.0134 0.945778 11.1372 1.05956 11.2502C1.17333 11.3632 1.29867 11.4195 1.43556 11.4189Z" fill="black" />
-                          </svg>
-                          <span className={`text-sm mobile:text-base ${isComment ? 'bg-gray-200 text-black rounded-lg p-2' : 'text-gray-600 bg-none'}`}>{commentCount || 0} Comments</span>
-                        </button>
-                      )}
+                      </svg>
+                      <span className={`text-sm mobile:text-base ${isComment ? 'bg-gray-200 text-black rounded-lg p-2' : 'text-gray-600 bg-none'}`}>{commentCount || 0} Comments</span>
+                    </button>
+                  )}
 
-                      <button className="flex items-center justify-between mobile:gap-1 text-gray-600" onClick={handleVotesClick}>
-                        <svg className="mb-1" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z" />
-                          <path d="M19.07 18.93C17.66 17.52 15.48 16.5 12 16.5s-5.66 1.02-7.07 2.43A2 2 0 0 0 6.34 22h11.32a2 2 0 0 0 1.41-3.07z" />
-                        </svg>
-                        <span className=" text-sm mobile:text-base">{voteCount} Voters</span>
-                      </button>
-                      <button className="flex items-center justify-center mobile:gap-1 text-gray-600" onClick={toggleShareModal}>
-                        <svg className="mb-1" width="17" height="17" viewBox="0 0 17 17">
-                          <path d="M16 1L1 5.85294L6.73529 8.5L12.9118 4.08824L8.5 10.2647L11.1471 16L16 1Z" stroke="black" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                        <span className=" text-sm mobile:text-base">Share</span>
+                  <button className="flex items-center justify-between mobile:gap-1 text-gray-600" onClick={handleVotesClick}>
+                    <svg className="mb-1" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z" />
+                      <path d="M19.07 18.93C17.66 17.52 15.48 16.5 12 16.5s-5.66 1.02-7.07 2.43A2 2 0 0 0 6.34 22h11.32a2 2 0 0 0 1.41-3.07z" />
+                    </svg>
+                    <span className=" text-sm mobile:text-base">{voteCount} Voters</span>
+                  </button>
+                  <button className="flex items-center justify-center mobile:gap-1 text-gray-600" onClick={toggleShareModal}>
+                    <svg className="mb-1" width="17" height="17" viewBox="0 0 17 17">
+                      <path d="M16 1L1 5.85294L6.73529 8.5L12.9118 4.08824L8.5 10.2647L11.1471 16L16 1Z" stroke="black" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    <span className=" text-sm mobile:text-base">Share</span>
 
-                      </button>
-                    </div>
+                  </button>
+                </div>
 
-                    {!isProposalDetails && (
-                      <div className="bg-[#CDEFFE] rounded-xl cursor-pointer flex">
-                      <button className="px-4 py-1 font-mulish" onClick={handleViewMore}>View More</button>
-                    </div>
-                    )}
-                    {/* Cast Vote Section  */}
+                {!isProposalDetails && (
+                  <div className="bg-[#CDEFFE] rounded-xl cursor-pointer flex">
+                    <button className="px-4 py-1 font-mulish" onClick={handleViewMore}>View More</button>
+                  </div>
+                )}
+                {/* Cast Vote Section  */}
                 {showActions && (
                   <div className="bg-sky-200 w-full md:w-96 p-4 rounded-md mt-6">
                     <h1 className="text-lg font-semibold mb-2">Cast Vote</h1>
@@ -835,61 +785,50 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                     </form>
                   </div>
                 )}
-                </div>
               </div>
-              {!showActions && (
-                <div className="flex gap-2">
-                  {/* {!isSubmittedProposals && (
-                      <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
-                        <button className="px-6 py-2 font-mulish" onClick={handleViewMore}>View More</button>
-                      </div>
-                    )} */}
-                  {/* {(proposal?.proposal_title === "Bounty raised" || proposal.propsal_title === "Bounty raised") && (
-                    <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
+            </div>
+            {!showActions && (
+              <div className="flex gap-2">
+                {(proposal?.proposal_title === "Bounty claim" || proposal.propsal_title === "Bounty claim") && (
+                  <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
 
-                      <button className="px-2 py-2 font-mulish" onClick={() => navigate(`/create-proposal/${daoCanisterId}`)}> Bounty Claim</button>
-                    </div>
-                  )} */}
-                       {(proposal?.proposal_title === "Bounty claim" || proposal.propsal_title === "Bounty claim") && (
-                    <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
+                    <button className="px-2 py-2 font-mulish" onClick={() => {
 
-                      <button className="px-2 py-2 font-mulish" onClick={() =>
-                       {
-                        // Check if the link_of_task is valid
-                        if (proposal.link_of_task) {
-                          console.log("link aa gyea oye",proposal.link_of_task);
-                          
-                          window.location.href = proposal.link_of_task; // Redirect to the link
-                        } else {
-                          console.error('Invalid task link'); // Log an error if the link is invalid
-                        }
+                      if (proposal.link_of_task) {
+                        console.log("link aa gyea oye", proposal.link_of_task);
+
+                        window.location.href = proposal.link_of_task;
+                      } else {
+                        console.error('Invalid task link');
                       }
-                          
-                         }> Task Link claim</button>
-                    </div>
-                  )}
-                </div>
-              )}
+                    }
+
+                    }> Task Link claim</button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </>
 
-      <ShareModal
-        isOpen={isShareModalOpen}
-        proposalId={proposal?.proposal_id}
-        daoCanisterId={daoId}
-        toggleModal={toggleShareModal}
-        copyToClipboard={copyToClipboard}
-        className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center"
-      />
+        <ShareModal
+          isOpen={isShareModalOpen}
+          proposalId={proposal?.proposal_id}
+          daoCanisterId={daoId}
+          toggleModal={toggleShareModal}
+          copyToClipboard={copyToClipboard}
+          className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center"
+        />
 
-      <ViewModal 
-        open={isModalOpen} 
-        onClose={handleOnClose} 
-        approvedVotesList={votersList?.approvedVotes} 
-        rejectedVotesList={votersList?.rejectedVotes} 
-        showVotes={true} 
-      />
-    </div>
-  );
-}}
+        <ViewModal
+          open={isModalOpen}
+          onClose={handleOnClose}
+          approvedVotesList={votersList?.approvedVotes}
+          rejectedVotesList={votersList?.rejectedVotes}
+          showVotes={true}
+        />
+      </div>
+    );
+  }
+}
 
