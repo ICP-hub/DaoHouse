@@ -682,25 +682,38 @@ function CreateProposal() {
   };
 
   const submitPoll = async (poll) => {
+    // Check if there are at least two options
+    if (!poll.poll_options || poll.poll_options.length < 2) {
+      toast.error("Please add at least two poll options before submitting.");
+      return;
+    }
+  
+    // Check if there are no more than four options
+    if (poll.poll_options.length > 4) {
+      toast.error("You cannot add more than four poll options.");
+      return;
+    }
+  
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
       console.log("DAO Canister ID:", daoCanisterId);
       console.log("Poll Proposal Payload:", poll);
-
+  
       const response = await daoCanister.proposal_to_create_poll(poll);
       console.log("Response of Poll Proposal:", response);
-
-      if(response.Ok) {
+  
+      if (response.Ok) {
         toast.success(response.Ok);
         movetodao();
       } else {
-        toast.error(response.Err)
+        toast.error(response.Err);
       }
     } catch (error) {
       console.error("Error submitting Poll proposal:", error);
       toast.error("Failed to create Poll proposal");
     }
   };
+  
 
   const submitRemoveDaoMember = async (removeDaoMember) => {
     console.log("remove dao member paylaod", removeDaoMember);
