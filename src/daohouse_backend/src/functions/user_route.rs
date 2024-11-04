@@ -27,7 +27,7 @@ use ic_cdk::{query, update};
 
 use super::canister_functions::call_inter_canister;
 use super::ledger_functions::create_ledger_canister;
-use super::reverse_canister_creation;
+use super::{reverse_canister_creation, store_follow_dao};
 // use ic_cdk::trap;
 
 #[update(guard=prevent_anonymous)]
@@ -293,7 +293,7 @@ pub async fn create_dao(dao_detail: DaoInput) -> Result<String, String> {
             .insert(dao_canister_id.clone(), dao_details)
     });
 
-    user_profile_detail.dao_ids.push(dao_canister_id);
+    user_profile_detail.dao_ids.push(dao_canister_id.clone());
 
     // adding ledger canister in newly created DAO canister
     match call_inter_canister::<LedgerCanisterId, ()>(
@@ -329,6 +329,10 @@ pub async fn create_dao(dao_detail: DaoInput) -> Result<String, String> {
         state.analytics_content.insert(0, analytics);
         state.user_profile.insert(principal_id, user_profile_detail)
     });
+
+    store_follow_dao(dao_canister_id.clone(), ic_cdk::api::caller())
+        .await
+        .map_err(|err|  format!("Failed to store DAO follow info: {}", err))?;
 
     Ok(format!(
         "Dao created, canister id: {} ledger id: {}",
