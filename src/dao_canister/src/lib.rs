@@ -401,9 +401,7 @@ async fn init(dao_input: DaoInput) {
         image_canister: dao_input.image_canister,
         link_of_document: dao_input.link_of_document,
         cool_down_period: dao_input.cool_down_period,
-        // tokenissuer: dao_input.tokenissuer,
         linksandsocials: dao_input.linksandsocials,
-        // group_name: vec!["council".to_string()],
         groups_count: dao_input.dao_groups.len() as u64,
         required_votes: dao_input.required_votes,
         members: dao_input.members.clone(),
@@ -416,7 +414,7 @@ async fn init(dao_input: DaoInput) {
         proposal_ids: Vec::new(),
         token_ledger_id: LedgerCanisterId {
             id: Principal::anonymous(),
-        }, // dao_groups: dao_input.dao_groups.clone(), // to be removed (debug impl)
+        },
         tokens_required_to_vote: dao_input.tokens_required_to_vote,
         total_tokens: dao_input.token_supply,
         daohouse_canister_id: dao_input.daohouse_canister_id,
@@ -425,35 +423,12 @@ async fn init(dao_input: DaoInput) {
         ask_to_join_dao : dao_input.ask_to_join_dao,
     };
 
-    // let permission = Votingandpermissions {
-    //     changedao_config: "council".to_string(),
-    //     changedao_policy: "council".to_string(),
-    //     bounty: "council".to_string(),
-    //     bountydone: "council".to_string(),
-    //     transfer: "council".to_string(),
-    //     polls: "council".to_string(),
-    //     removemembers: "council".to_string(),
-    //     addmembers: "council".to_string(),
-    //     setvotetoken: "council".to_string(),
-    //     votingpermision: "council".to_string(),
-    // };
-
-    // let council_list = GroupList {
-    //     users: dao_input.members,
-    // };
-
     with_state(|state| {
         state.dao = new_dao.clone();
-
         for x in dao_input.dao_groups.iter() {
             state.dao_groups.insert(x.group_name.clone(), x.to_owned());
         }
-        // state.dao_groups.insert(dao_input.dao_groups., value)
-        // for x in dao_i
-        // state.permision = permission.clone();
-        // state.groups.insert("council".to_string(), council_list);
     });
-
     start_proposal_checker();
 }
 
