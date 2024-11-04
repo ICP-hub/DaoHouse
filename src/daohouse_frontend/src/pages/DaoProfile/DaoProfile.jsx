@@ -160,7 +160,7 @@ const handlePageChange = (newPage) => {
   const handleJoinDao = async () => {
 
     if (joinStatus === 'Joined') {
-      toast.error(`You are already member of this dao`);
+      toast.error(res.Err);
 
       return;
     };
@@ -186,11 +186,11 @@ const handlePageChange = (newPage) => {
     
       if (response.Ok) {
         setJoinStatus("Requested");
-        toast.success("Join request sent successfully");
+        toast.success(res.Ok);
         sound.play();
       } else {
-        console.error("Failed to send join request:", response.Err || "Unknown error");
-        toast.error(`Failed to send join request: ${response.Err || "Unknown error"}`);
+        console.error(response.Err );
+        toast.error(response.Err );
       }
     } catch (error) {
       setLoading(false)
