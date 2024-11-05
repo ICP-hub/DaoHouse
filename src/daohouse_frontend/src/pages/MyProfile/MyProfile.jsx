@@ -388,14 +388,7 @@ const MyProfile = ({ childComponent }) => {
 
                         {/* user information */}
                         <div className="md:flex md:gap-1 lg: hidden  mt-3">
-                          {/* <div className="">
-                            <span className=" tablet:text-[32px] text-[24px] font-normal text-[#05212C] user-acc-info">
-                              {Number(tokens)}
-                              <span className="tablet:text-[16px] text-[14px] mx-1">
-                                Balance
-                              </span>
-                            </span>
-                          </div> */}
+                        
                           <span className=" tablet:text-[32px] text-[24px] font-normal text-[#05212C] user-acc-info">
                             {post}
                             <span className="tablet:text-[16px] text-[14px] mx-1">
@@ -498,45 +491,7 @@ const MyProfile = ({ childComponent }) => {
         </div>
         <Container classes={`__mainComponent big_phone:py-8 big_phone:pb-20 py-7 md:px-8 flex md:flex-row gap-2 flex-col w-full user-container`}>
           <div className={`${className}__mainComponent__leftSide md:mx-0 mx-5 lg:px-20 flex flex-col tablet:items-start justify-center md:w-[204px] md:h-[600px] lg:w-[252px] translate-y-[50px] lg:h-[600px] md:px-14 rounded-[10px] bg-[#0E3746] text-white text-opacity-50 font-normal md:mt-[-65px] mt-[-45px] z-20`}>
-            {/* <div
-              className="
-        flex md:flex-col flex-row 
-        items-start md:justify-center justify-around 
-        gap-x-4 gap-y-8 
-        w-[204px] 
-        translate-y-[50px]
-        translate-x-[-50px]
-        py-12 md:py-20 
-        text-nowrap 
-        font-mulish font-bold text-[16px] leading-[20px] text-left 
-      "
-            >
-             <Link to="/my-profile" onClick={() => setActiveTab(0)}>
-                    <p className={`${tabButtonsStyle} ${activeTab === 0 ? "text-white" : ""}`}>My Profile{activeTab === 0 ? <FaArrowRightLong className="md:inline hidden" /> : ""}</p> 
-                    </Link> 
-              <Link to="/my-profile/posts" onClick={() => setActiveTab(1)}>
-                <p className={`${tabButtonsStyle} ${activeTab === 1 ? "text-white" : ""}`}>
-                  <img src={post_add} alt="Submitted Proposals" className="inline mr-2 w-4 h-4" />
-                   Proposals
-                  {activeTab === 1 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
-                </p>
-              </Link>
-              <Link to="/my-profile/followers" onClick={() => setActiveTab(2)}>
-                <p className={`${tabButtonsStyle} ${activeTab === 2 ? "text-white" : ""}`}>
-                  <img src={contract} alt="Followed Dao List" className="inline mr-2 w-4 h-4" />
-                  Followed Dao List
-                  {activeTab === 2 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
-                </p>
-              </Link>
-              <Link to="/my-profile/following" onClick={() => setActiveTab(3)}>
-                <p className={`${tabButtonsStyle} ${activeTab === 3 ? "text-white" : ""}`}>
-                  <img src={contract_edit} alt="Dao Joined" className="inline mr-2 w-4 h-4" />
-                  Dao Joined
-                  {activeTab === 3 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
-                </p>
-              </Link>
-            </div>
-             */}
+          
           </div>
           <div className={`${className}__rightSide w-full`}>
             <div className="flex md:justify-between justify-start w-full gap-2 relative">
@@ -561,12 +516,7 @@ const MyProfile = ({ childComponent }) => {
                 <div className="mr-20  ">
 
                   <div className="md:flex justify- translate-x-[60px] translate-y-[30px] translate top-[204px] left-[20px] mt-3">
-                      {/* <span className="md:mr-5 tablet:text-[32px] text-[18px] font-mulish text-[#05212C] user-acc-info">
-                        {Number(tokens)}
-                        <span className="tablet:text-[16px] text-[8px] mx-1">
-                          Balance
-                        </span>
-                      </span> */}
+                     
                     <span className="md:mr-5 tablet:text-[32px] text-[18px] font-mulish text-[#05212C] user-acc-info">
                       {post}
                       <span className="tablet:text-[16px] text-[8px] mx-1">
