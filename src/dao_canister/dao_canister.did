@@ -50,7 +50,6 @@ type CreatePoll = record {
   poll_title : text;
   description : text;
   poll_query : text;
-  proposal_created_at : nat64;
   poll_options : vec text;
   proposal_entry : text;
 };

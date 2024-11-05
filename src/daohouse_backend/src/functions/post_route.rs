@@ -5,7 +5,7 @@ use std::borrow::{Borrow, BorrowMut};
 use crate::routes::upload_image;
 use crate::types::{Comment, PostInfo, PostInput};
 use crate::{
-    with_state, Analytics, DaoDetails, GetAllPostsResponse, Icrc28TrustedOriginsResponse,
+    with_state, Analytics, DaoDetails, GetAllPostsResponse,
     ImageData, Pagination, ReplyCommentData,
 };
 use candid::{Nat, Principal};
@@ -438,59 +438,53 @@ fn get_cycles() -> u64 {
     api::canister_balance()
 }
 
-// // get caller
-#[query]
-fn get_caller() -> Principal {
-    api::caller()
-}
-
 // ledger handlers
-async fn transfer(tokens: u64, user_principal: Principal) -> Result<BlockIndex, String> {
-    // let payment_recipient = with_state(|state| state.borrow_mut().get_payment_recipient());
-    let canister_meta_data = with_state(|state| state.canister_data.get(&0));
+// async fn transfer(tokens: u64, user_principal: Principal) -> Result<BlockIndex, String> {
+//     // let payment_recipient = with_state(|state| state.borrow_mut().get_payment_recipient());
+//     let canister_meta_data = with_state(|state| state.canister_data.get(&0));
 
-    let payment_recipient = match canister_meta_data {
-        Some(val) => val.paymeny_recipient,
-        None => return Err(String::from(crate::utils::CANISTER_DATA_NOT_FOUND)),
-    };
+//     let payment_recipient = match canister_meta_data {
+//         Some(val) => val.paymeny_recipient,
+//         None => return Err(String::from(crate::utils::CANISTER_DATA_NOT_FOUND)),
+//     };
 
-    let transfer_args = TransferFromArgs {
-        amount: tokens.into(),
-        to: Account {
-            owner: payment_recipient,
-            subaccount: None,
-        },
-        fee: None,
-        memo: None,
-        created_at_time: None,
-        spender_subaccount: None,
-        from: Account {
-            owner: user_principal,
-            subaccount: None,
-        },
-    };
+//     let transfer_args = TransferFromArgs {
+//         amount: tokens.into(),
+//         to: Account {
+//             owner: payment_recipient,
+//             subaccount: None,
+//         },
+//         fee: None,
+//         memo: None,
+//         created_at_time: None,
+//         spender_subaccount: None,
+//         from: Account {
+//             owner: user_principal,
+//             subaccount: None,
+//         },
+//     };
 
-    ic_cdk::call::<(TransferFromArgs,), (Result<BlockIndex, TransferFromError>,)>(
-        Principal::from_text("ryjl3-tyaaa-aaaaa-aaaba-cai")
-            .expect("Could not decode the principal if ICP ledger."),
-        "icrc2_transfer_from",
-        (transfer_args,),
-    )
-    .await
-    .map_err(|e| format!("failed to call ledger: {:?}", e))?
-    .0
-    .map_err(|e| format!("ledger transfer error {:?}", e))
-}
+//     ic_cdk::call::<(TransferFromArgs,), (Result<BlockIndex, TransferFromError>,)>(
+//         Principal::from_text("ryjl3-tyaaa-aaaaa-aaaba-cai")
+//             .expect("Could not decode the principal if ICP ledger."),
+//         "icrc2_transfer_from",
+//         (transfer_args,),
+//     )
+//     .await
+//     .map_err(|e| format!("failed to call ledger: {:?}", e))?
+//     .0
+//     .map_err(|e| format!("ledger transfer error {:?}", e))
+// }
 
-// make payment
-#[update(guard = prevent_anonymous)]
-async fn make_payment(tokens: u64, user: Principal) -> Result<Nat, String> {
-    // add check for admin
-    transfer(tokens, user).await
-    // ic_cdk::println!("response is {:?}", response);
-    // // response
-    // format!("response is {:?}", response)
-}
+// // make payment
+// #[update(guard = prevent_anonymous)]
+// async fn make_payment(tokens: u64, user: Principal) -> Result<Nat, String> {
+//     // add check for admin
+//     transfer(tokens, user).await
+//     // ic_cdk::println!("response is {:?}", response);
+//     // // response
+//     // format!("response is {:?}", response)
+// }
 
 // increase proposals count
 // #[update]
@@ -507,13 +501,6 @@ async fn make_payment(tokens: u64, user: Principal) -> Result<Nat, String> {
 //     "success".to_string()
 // }
 
-#[query]
-fn get_wasm() -> Result<Vec<u8>, String> {
-    with_state(|state| match state.wasm_module.get(&0) {
-        Some(v) => Ok(v.wasm),
-        None => Err(String::from("nhi aa rha bro")),
-    })
-}
 
 #[query(guard = prevent_anonymous)]
 fn search_dao(dao_name: String) -> Vec<DaoDetails> {
@@ -530,25 +517,25 @@ fn search_dao(dao_name: String) -> Vec<DaoDetails> {
     })
 }
 
-#[update]
-fn icrc28_trusted_origins() -> Icrc28TrustedOriginsResponse {
-    let trusted_origins = vec![
-        String::from("https://standards.identitykit.xyz"),
-        String::from("https://dev.standards.identitykit.xyz"),
-        String::from("https://demo.identitykit.xyz"),
-        String::from("https://dev.demo.identitykit.xyz"),
-        String::from("http://localhost:3001"),
-        String::from("http://localhost:3002"),
-        String::from("http://localhost:3000"),
-        String::from("https://nfid.one"),
-        String::from("https://dev.nfid.one"),
-        String::from("https://wkgia-lyaaa-aaaag-qkgya-cai.icp0.io"), // frontend canister id
-        String::from("http://bw4dl-smaaa-aaaaa-qaacq-cai.localhost:4943"),
-        String::from("http://127.0.0.1:4943/?canisterId=bw4dl-smaaa-aaaaa-qaacq-cai"),
-    ];
+// #[update]
+// fn icrc28_trusted_origins() -> Icrc28TrustedOriginsResponse {
+//     let trusted_origins = vec![
+//         String::from("https://standards.identitykit.xyz"),
+//         String::from("https://dev.standards.identitykit.xyz"),
+//         String::from("https://demo.identitykit.xyz"),
+//         String::from("https://dev.demo.identitykit.xyz"),
+//         String::from("http://localhost:3001"),
+//         String::from("http://localhost:3002"),
+//         String::from("http://localhost:3000"),
+//         String::from("https://nfid.one"),
+//         String::from("https://dev.nfid.one"),
+//         String::from("https://wkgia-lyaaa-aaaag-qkgya-cai.icp0.io"), // frontend canister id
+//         String::from("http://bw4dl-smaaa-aaaaa-qaacq-cai.localhost:4943"),
+//         String::from("http://127.0.0.1:4943/?canisterId=bw4dl-smaaa-aaaaa-qaacq-cai"),
+//     ];
 
-    return Icrc28TrustedOriginsResponse { trusted_origins };
-}
+//     return Icrc28TrustedOriginsResponse { trusted_origins };
+// }
 
 // #[update]
 // async fn dao_create(canister_id: String, dao_detail: DaoInput) -> Result<String, String> {

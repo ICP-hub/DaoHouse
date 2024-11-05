@@ -677,44 +677,6 @@ async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
     Ok(String::from(crate::utils::MESSAGE_BOUNTY_DONE))
 }
 
-// #[update(guard = prevent_anonymous)]
-// async fn vote_on_poll_options(proposal_id: String, option_id: String) -> Result<String, String> {
-//     with_state(|state| match &mut state.proposals.get(&proposal_id) {
-//         Some(proposal_data) => {
-//             if proposal_data.proposal_type == ProposalType::Polls {
-//                 if proposal_data.proposal_status == ProposalState::Open {
-//                     let mut option_found = false;
-//                     for options in &mut proposal_data.poll_options {
-//                         if let Some(option) = options.iter_mut().find(|opt| opt.id == option_id) {
-//                             option_found = true;
-//                             if option.approved_users.contains(&api::caller()) {
-//                                 return Err("You have already voted for this option.".to_string());
-//                             } else {
-//                                 option.poll_approved_votes += 1;
-//                                 option.approved_users.push(api::caller());
-//                                 return Ok("Vote submitted successfully.".to_string());
-//                             }
-//                         }
-//                     }
-//                     if !option_found {
-//                         Err("Option ID not found in this poll.".to_string())
-//                     } else {
-//                         Ok("Vote operation completed.".to_string())
-//                     }
-//                 } else {
-//                     Err(format!(
-//                         "Proposal has been {:?} ",
-//                         proposal_data.proposal_status
-//                     ))
-//                 }
-//             } else {
-//                 Err(format!("This is not Poll type proposal"))
-//             }
-//         }
-//         None => Err(String::from("Proposal ID is invalid !")),
-//     })
-// }
-
 #[update(guard = prevent_anonymous)]
 async fn vote_on_poll_options(proposal_id: String, option_id: String) -> Result<String, String> {
     with_state(|state| match &mut state.proposals.get(&proposal_id) {
