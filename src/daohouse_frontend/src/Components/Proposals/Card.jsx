@@ -585,6 +585,8 @@ console.log("proposals",proposal);
               )}
               
               {!isSubmittedProposals && proposal.proposal_type.Polls !== undefined && (
+
+                
                <div className="w-full">
                 {/* Display poll question */}
                 <div className="flex mb-4">
@@ -605,7 +607,7 @@ console.log("proposals",proposal);
                                 {/* Option container with less rounded corners */}
                                 <div className={`relative bg-gray-200 rounded-lg h-10 flex items-center ${loadingOptionId === option.id && isPollVoteLoading ? 'sliding-lines' : ''}`}>
                                     <div
-                                        className="absolute top-0 left-0 h-10 bg-gray-400 rounded-lg transition-all"
+                                        className="absolute top-0 left-0 h-10 bg-green-200  rounded-lg transition-all"
                                         style={{ width: `${votePercentage}%` }}
                                     ></div>
                                     {/* Option text */}
