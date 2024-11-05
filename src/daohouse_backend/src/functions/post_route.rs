@@ -1,6 +1,8 @@
 // use std::collections::BTreeMap;
 use crate::{with_state, Analytics, DaoDetails, Pagination};
-use ic_cdk::api;
+use candid::{Nat, Principal};
+use ic_cdk::{api, update};
+use icrc_ledger_types::{icrc1::{account::Account, transfer::BlockIndex}, icrc2::transfer_from::{TransferFromArgs, TransferFromError}};
 
 use crate::guards::*;
 use ic_cdk::query;
@@ -43,6 +45,51 @@ fn get_analytics() -> Result<Analytics, String> {
             None => Err("data not found !!!!!".to_string()),
         }
     })
+}
+
+
+// ledger handlers
+async fn transfer(tokens: u64, user_principal: Principal) -> Result<BlockIndex, String> {
+    // let payment_recipient = with_state(|state| state.borrow_mut().get_payment_recipient());
+    let canister_meta_data = with_state(|state| state.canister_data.get(&0));
+
+    let payment_recipient = match canister_meta_data {
+        Some(val) => val.paymeny_recipient,
+        None => return Err(String::from(crate::utils::CANISTER_DATA_NOT_FOUND)),
+    };
+
+    let transfer_args = TransferFromArgs {
+        amount: tokens.into(),
+        to: Account {
+            owner: payment_recipient,
+            subaccount: None,
+        },
+        fee: None,
+        memo: None,
+        created_at_time: None,
+        spender_subaccount: None,
+        from: Account {
+            owner: user_principal,
+            subaccount: None,
+        },
+    };
+
+    ic_cdk::call::<(TransferFromArgs,), (Result<BlockIndex, TransferFromError>,)>(
+        Principal::from_text("ryjl3-tyaaa-aaaaa-aaaba-cai")
+            .expect("Could not decode the principal if ICP ledger."),
+        "icrc2_transfer_from",
+        (transfer_args,),
+    )
+    .await
+    .map_err(|e| format!("failed to call ledger: {:?}", e))?
+    .0
+    .map_err(|e| format!("ledger transfer error {:?}", e))
+}
+
+// make payment
+#[update(guard = prevent_anonymous)]
+async fn make_payment(tokens: u64, user: Principal) -> Result<Nat, String> {
+    transfer(tokens, user).await
 }
 
 #[query]
