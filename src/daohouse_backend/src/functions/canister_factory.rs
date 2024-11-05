@@ -1,25 +1,14 @@
 // to create canisters
 
-use std::borrow::Borrow;
-use std::fmt::format;
-
 use crate::api::call::{call_with_payment128, CallResult};
 use crate::api::canister_version;
-use crate::routes::{delete_canister, stop_canister, upload_image};
+use crate::routes::{delete_canister, stop_canister};
 use crate::types::{
-    CanisterIdRecord, CanisterInstallMode, CreateCanisterArgument, CreateCanisterArgumentExtended,
+    CanisterIdRecord, CreateCanisterArgument, CreateCanisterArgumentExtended,
     InstallCodeArgument, InstallCodeArgumentExtended,
 };
 
-use crate::types::{DaoInput, Profileinput, UserProfile};
-use crate::{guards::*, CanisterSettings, DaoCanisterInput};
-use crate::{routes, with_state, DaoDetails, DaoResponse, ImageData};
-use candid::{encode_one, Principal};
-use ic_cdk::api;
-// use ic_cdk::api::management_canister::main::CanisterSettings;
-use ic_cdk::println;
-use ic_cdk::{query, update};
-use serde_bytes::ByteBuf;
+use candid::Principal;
 
 pub async fn create_new_canister(
     arg: CreateCanisterArgument, // cycles: u128,

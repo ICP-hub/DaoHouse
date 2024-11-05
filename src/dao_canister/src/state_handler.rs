@@ -7,8 +7,6 @@ use ic_stable_structures::StableBTreeMap;
 pub struct State {
     pub proposals: StableBTreeMap<String, Proposals, Memory>,
     pub dao: Dao,
-    // pub permision: Votingandpermissions,
-    // pub groups: StableBTreeMap<String, GroupList, Memory>, // pub users: HashMap<Principal, User>,
     pub dao_groups: StableBTreeMap<String, DaoGroup, Memory>,
     pub proposal_balances: StableBTreeMap<String, ProposalStakes, Memory>,
 }
@@ -49,23 +47,6 @@ impl State {
                 ask_to_join_dao : true,
             },
 
-            // permision: Votingandpermissions {
-            //     changedao_config: "council".to_string(),
-            //     changedao_policy: "council".to_string(),
-            //     bounty: "council".to_string(),
-            //     bountydone: "council".to_string(),
-            //     transfer: "council".to_string(),
-            //     polls: "council".to_string(),
-            //     removemembers: "council".to_string(),
-            //     addmembers: "council".to_string(),
-            //     functioncall: "council".to_string(),
-            //     upgradeself: "council".to_string(),
-            //     upgraderemote: "council".to_string(),
-            //     setvotetoken: "council".to_string(),
-            //     votingpermision: "council".to_string(),
-            // },
-
-            // groups: init_pool_data(),
             dao_groups: init_group_data(),
             proposal_balances: init_dao_stake_data(),
         }
@@ -81,10 +62,6 @@ impl Default for State {
 fn init_user_data() -> StableBTreeMap<String, Proposals, Memory> {
     StableBTreeMap::init(crate::memory::get_postdata_memory())
 }
-// fn init_pool_data() -> StableBTreeMap<String, GroupList, Memory> {
-//     StableBTreeMap::init(crate::memory::get_pool_data_memory())
-// }
-
 fn init_group_data() -> StableBTreeMap<String, DaoGroup, Memory> {
     StableBTreeMap::init(crate::memory::get_group_memory())
 }

@@ -1,31 +1,11 @@
 use crate::functions::{
     create_ledger, create_new_canister, deposit_cycles_in_canister, install_code_in_canister,
 };
-use crate::{
-    call_inter_canister, guards::*, Account, ArchiveOptions, CanisterSettings, DaoCanisterInput,
-    FeatureFlags, ICRC1LedgerInitArgs, InitArgs, LedgerArg, LedgerCanisterId,
-};
+use crate::CanisterSettings;
 use candid::encode_one;
-use std::borrow::Borrow;
-
-use crate::api::call::{call_with_payment128, CallResult};
-use crate::api::canister_version;
-
-use crate::routes::upload_image;
-use crate::types::{
-    CanisterIdRecord, CanisterInstallMode, CreateCanisterArgument, CreateCanisterArgumentExtended,
-    InstallCodeArgument, InstallCodeArgumentExtended,
-};
-
-use crate::types::{DaoInput, Profileinput, UserProfile};
-
-use crate::{routes, with_state, DaoDetails, DaoResponse, ImageData};
-use candid::{Encode, Nat, Principal};
-use ic_cdk::api;
-use ic_cdk::api::call::RejectionCode;
-// use ic_cdk::api::management_canister::main::CanisterSettings;
-use ic_cdk::println;
-use ic_cdk::{query, update};
+use crate::types::{CanisterInstallMode, CreateCanisterArgument, InstallCodeArgument};
+use crate::with_state;
+use candid::{Nat, Principal};
 
 // to create dao canister
 pub async fn create_dao_canister(dao_detail: crate::DaoInput) -> Result<Principal, String> {
@@ -158,63 +138,7 @@ pub async fn create_dao_canister(dao_detail: crate::DaoInput) -> Result<Principa
         arg: dao_detail_bytes,
     };
 
-    // installing wasm to new canister to replicate DAO canister
     let _installcode = install_code_in_canister(arg1, wasm_module).await.unwrap();
-
-    // creating ledger canister associated with dao
-    // let ledger_canister_id = create_ledger(
-    //     // canister_id_principal.to_string().clone(),
-    //     dao_detail.total_tokens,
-    //     dao_detail.token_name,
-    //     dao_detail.token_symbol,
-    //     dao_detail.members,
-    // )
-    // .await
-    // .map_err(|er| format!("Error while creating ledger canister {}", String::from(er)))?;
-
-    // let dao_details: DaoDetails = DaoDetails {
-    //     dao_canister_id: canister_id_principal.to_string().clone(),
-    //     dao_name: dao_detail.dao_name,
-    //     dao_desc: dao_detail.purpose,
-    //     // image_id: id,
-    //     dao_id: canister_id_principal.clone(),
-    //     dao_associated_ledger: ledger_canister_id.to_string().clone(),
-    // };
-
-    // // storing dao details for DAO listings
-    // with_state(|state| {
-    //     state
-    //         .dao_details
-    //         .insert(canister_id_principal.to_string().clone(), dao_details)
-    // });
-
-    // user_profile_detail
-    //     .dao_ids
-    //     .push(canister_id_principal.to_string());
-
-    // // adding ledger canister in newly created DAO canister
-    // let _ = call_inter_canister::<LedgerCanisterId, String>(
-    //     "add_ledger_canister_id",
-    //     LedgerCanisterId {
-    //         id: ledger_canister_id,
-    //     },
-    //     canister_id_principal,
-    // )
-    // .await
-    // .map_err(|err| format!("Error occurred {}", err.to_string()));
-
-    // // updating analytics
-    // with_state(|state| {
-    //     let mut analytics = state.analytics_content.borrow().get(&0).unwrap();
-    //     analytics.dao_counts += 1;
-    //     state.analytics_content.insert(0, analytics);
-    //     state.user_profile.insert(principal_id, user_profile_detail)
-    // });
-
-    // Ok(format!(
-    //     "Dao created, canister id: {} ledger id: {}",
-    //     canister_id_principal.to_string(), ledger_canister_id.to_string()
-    // ))
 
     Ok(canister_id_principal)
 }

@@ -7,17 +7,11 @@ pub mod routes;
 mod state_handler;
 use state_handler::State;
 mod memory;
-use candid::Nat;
 use candid::Principal;
 pub use functions::*;
 use memory::Memory;
 
 pub mod utils;
-// mod user_route;
-// mod post_route;
-
-// pub mod testing;
-// use crate::api::call::{call, call_with_payment128, CallResult};
 
 use types::*;
 
