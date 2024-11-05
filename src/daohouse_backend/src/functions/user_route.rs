@@ -13,7 +13,7 @@ use ic_cdk::{query, update};
 
 use super::canister_functions::call_inter_canister;
 use super::ledger_functions::create_ledger_canister;
-use super::{reverse_canister_creation, store_follow_dao};
+use super::{reverse_canister_creation, store_follow_dao, store_join_dao};
 
 #[update(guard=prevent_anonymous)]
 async fn create_profile(profile: MinimalProfileinput) -> Result<String, String> {
@@ -263,6 +263,10 @@ pub async fn create_dao(dao_detail: DaoInput) -> Result<String, String> {
     });
 
     store_follow_dao(dao_canister_id.clone(), ic_cdk::api::caller())
+        .await
+        .map_err(|err|  format!("Failed to store DAO follow info: {}", err))?;
+
+    store_join_dao(dao_canister_id.clone(), ic_cdk::api::caller())
         .await
         .map_err(|err|  format!("Failed to store DAO follow info: {}", err))?;
 
