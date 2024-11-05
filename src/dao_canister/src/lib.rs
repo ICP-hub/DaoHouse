@@ -28,7 +28,7 @@ pub fn with_state<R>(f: impl FnOnce(&mut State) -> R) -> R {
     STATE.with(|cell| f(&mut cell.borrow_mut()))
 }
 
-const EXPIRATION_TIME: u64 = 60 * 1_000_000_000;
+const EXPIRATION_TIME: u64 = 3 * 60 * 1_000_000_000;
 fn start_proposal_checker() {
     set_timer_interval(Duration::from_secs(60), || {
         check_proposals();
