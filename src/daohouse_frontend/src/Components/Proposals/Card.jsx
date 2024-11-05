@@ -35,6 +35,8 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const [isPollVoteLoading, setIsPollVoteLoading] = useState(false);
   const [loadingOptionId, setLoadingOptionId] = useState(null);
   const [pollOptions, setPollOptions] = useState(proposal?.poll_options ? proposal.poll_options[0] : []);
+  const [status, setStatus] = useState(null);
+  const [pollingInterval, setPollingInterval] = useState(10000);
 
 // console.log("proposals",proposal);
 
@@ -156,9 +158,35 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const navigate = useNavigate()
 
 
-  const status = proposal?.proposal_status
-    ? Object.keys(proposal?.proposal_status)[0] || "No Status"
-    : "No Status";
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        // Replace with your API call to get proposal status
+        const response = await voteApi?.get_proposal_by_id(proposal?.proposal_id);
+        console.log("resp", response);
+        
+        const newStatus = response?.proposal_status
+        ? Object.keys(response.proposal_status)[0] || "No Status"
+        : "No Status";
+
+
+        setStatus(newStatus);
+
+        // If status has changed to a final state, clear polling
+        if (["Expired", "Accepted", "Rejected"].includes(newStatus)) {
+          clearInterval(intervalId);
+        }
+      } catch (error) {
+        console.error("Error fetching proposal status:", error);
+      }
+    };
+
+    // Fetch initially and then set interval based on pollingInterval
+    fetchStatus();
+    const intervalId = setInterval(fetchStatus, pollingInterval);
+
+    return () => clearInterval(intervalId);
+  }, [proposal?.proposal_id, pollingInterval]);
 
   const requiredVotes = Number(BigInt(proposal?.required_votes || 0))
   useEffect(() => {
