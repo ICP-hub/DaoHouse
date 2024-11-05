@@ -333,7 +333,6 @@ pub struct CreatePoll{
     pub description: String,
     pub poll_title : String,
     pub poll_options : Vec<String>,
-    pub proposal_created_at: u64,
     pub proposal_expired_at: u64,
     pub proposal_entry : String,
     pub poll_query : String,
