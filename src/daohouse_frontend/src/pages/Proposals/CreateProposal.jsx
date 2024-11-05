@@ -364,8 +364,6 @@ function CreateProposal() {
             proposal_expired_at: poll.days_until_expiration, 
             poll_query: poll.poll_title,
             description: poll.description,
-       
-            proposal_created_at: 0, 
             poll_options: poll.poll_options.map(option => option.option),
           });
 
