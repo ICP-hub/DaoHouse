@@ -525,7 +525,10 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
         }
     });
 
-    let test_expire_time = ic_cdk::api::time() + (args.task_completion_day * 86_400 * 1_000_000_000);
+    let proposal_expire_time =
+        ic_cdk::api::time() + (args.task_completion_day * 86_400 * 1_000_000_000);
+
+    let test_expire_time = 10 * 60 * 1_000_000_000;
 
     let proposal = ProposalInput {
         principal_of_action: Some(api::caller()),
