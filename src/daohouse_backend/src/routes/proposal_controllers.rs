@@ -107,10 +107,5 @@ pub fn delete_proposal_controller(
 ) -> Result<String, String> {
     let _res = state.proposal_store.remove(proposal_id);
 
-    // match res {
-    //     Some(_val) => Ok(String::from("Proposal deleted successfully")),
-    //     None => return Err(String::from("Failed to delete proposal")),
-    // }
-
     Ok(String::from("Propsal deleted"))
 }

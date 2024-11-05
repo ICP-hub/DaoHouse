@@ -9,23 +9,6 @@ use ic_cdk::{query, update};
 use sha2::{Digest, Sha256};
 use std::collections::HashSet;
 
-// #[update(guard=check_members)]
-// pub async fn create_proposal(daohouse_backend_id: Principal, proposal: ProposalInput) -> String {
-//     let uuids = raw_rand().await.unwrap().0;
-//     with_state(  move | state| async {
-//         let proposal_id = format!("{:x}", Sha256::digest(&uuids));
-//         proposal_route::create_new_proposal(state, proposal.clone(), proposal_id.clone(), daohouse_backend_id.clone());
-//     }).await;
-//     // let _res: CallResult<(String,)> = ic_cdk::call(
-//     //     daohouse_backend_id,
-//     //     "update_proposal_count",
-//     //     (),
-//     // )
-//     // .await;
-//     String::from("value")
-//     // response
-// }
-
 #[update(guard = prevent_anonymous)]
 fn get_all_proposals(page_data: Pagination) -> Vec<Proposals> {
     with_state(|state| {
