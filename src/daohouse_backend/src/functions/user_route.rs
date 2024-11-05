@@ -386,7 +386,7 @@ pub async fn create_ledger(
 }
 
 // TODO REMOVE THIS
-#[query(guard = prevent_anonymous)]
+#[query]
 fn get_canister_meta_data() -> Result<CanisterData, String> {
     with_state(|state| match state.canister_data.get(&0) {
         Some(val) => Ok(val),
