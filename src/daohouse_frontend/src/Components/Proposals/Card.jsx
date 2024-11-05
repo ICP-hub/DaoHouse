@@ -437,59 +437,66 @@ console.log("proposals",proposal);
               )}
             </div>
 
- {/* Dates Section */}
-{!isSubmittedProposals && (
-  <div className="hidden lg:flex flex-row gap-3">
-  <div className="flex flex-col items-start ">
-    <span className="font-bold text-xs sm:text-sm lg:text-lg text-white">
-      • Submitted On 
-    </span>
-    <span className="text-[10px] small_phone:text-xs sm:text-sm md:text-base text-white ml-2">
-      {submittedOnDate}{" "}
-      <span className="text-[8px] small_phone:text-[8px] md:text-xs text-gray-400">
-        {submittedOnTime}
-      </span>
-    </span>
-  </div>
+            {/* Dates Section */}
+            {!isSubmittedProposals && (
+              <div className="hidden lg:flex flex-row gap-3">
+              <div className="flex flex-col items-start ">
+                <span className="font-bold text-xs sm:text-sm lg:text-lg text-white">
+                  • Submitted On 
+                </span>
+                <span className="text-[10px] small_phone:text-xs sm:text-sm md:text-base text-white ml-2">
+                  {submittedOnDate}{" "}
+                  <span className="text-[8px] small_phone:text-[8px] md:text-xs text-gray-400">
+                    {submittedOnTime}
+                  </span>
+                </span>
+              </div>
 
-  <div className="flex flex-col items-start">
-    <span className="font-bold text-xs sm:text-sm lg:text-lg text-white">
-      • Expires On
-    </span>
-    <span className="text-[10px] small_phone:text-xs sm:text-sm md:text-base text-white ml-2">
-      {expiresOnDate}{" "}
-      <span className="text-[8px] small_phone:text-[8px] md:text-xs text-gray-400">
-        {expiresOnTime}
-      </span>
-    </span>
-  </div>
-</div>
-)}
+              <div className="flex flex-col items-start">
+                <span className="font-bold text-xs sm:text-sm lg:text-lg text-white">
+                  • Expires On
+                </span>
+                <span className="text-[10px] small_phone:text-xs sm:text-sm md:text-base text-white ml-2">
+                  {expiresOnDate}{" "}
+                  <span className="text-[8px] small_phone:text-[8px] md:text-xs text-gray-400">
+                    {expiresOnTime}
+                  </span>
+                </span>
+              </div>
+            </div>
+            )}
 
 
             {/* Votes Section */}
             <div className="flex justify-center gap-4 md:gap-8 mt-4 md:mt-0">
+                {/* Approved Votes */}
+                <div className="flex flex-col items-center">
+                    <CircularProgressBar
+                        percentage={
+                            proposal?.proposal_type.Polls !== undefined
+                                ? Math.floor((pollOptions?.reduce((acc, curr) => acc + Number(curr.poll_approved_votes), 0) / requiredVotes) * 100)
+                                : Math.floor((approvedVotes / requiredVotes) * 100)
+                        }
+                        color="#4CAF50"
+                    />
+                    <span className="text-white mt-2 text-center text-xs sm:text-sm md:text-base">
+                        {proposal?.proposal_type.Polls !== undefined
+                            ? pollOptions?.reduce((acc, curr) => acc + Number(curr.poll_approved_votes), 0)
+                            : approvedVotes}{" "}
+                        votes
+                    </span>
+                </div>
 
-              <div className="flex flex-col items-center">
-                <CircularProgressBar
-                  percentage={Math.floor((approvedVotes / requiredVotes) * 100)}
-                  color="#4CAF50"
-                />
-                <span className="text-white mt-2 text-center text-xs sm:text-sm md:text-base">
-                  {approvedVotes} votes
-                </span>
-              </div>
-
-              {/* Rejected Votes */}
-              <div className="flex flex-col items-center">
-                <CircularProgressBar
-                  percentage={Math.floor((rejectedVotes / requiredVotes) * 100)}
-                  color="red"
-                />
-                <span className="text-white mt-2 text-center text-xs sm:text-sm md:text-base">
-                  {rejectedVotes} votes
-                </span>
-              </div>
+                {/* Rejected Votes */}
+                {proposal.proposal_title !== "poll" && (<div className="flex flex-col items-center">
+                    <CircularProgressBar
+                        percentage={Math.floor((rejectedVotes / requiredVotes) * 100)}
+                        color="red"
+                    />
+                    <span className="text-white mt-2 text-center text-xs sm:text-sm md:text-base">
+                        {rejectedVotes} votes
+                    </span>
+                </div>)}
             </div>
           </div>
 
@@ -595,11 +602,11 @@ console.log("proposals",proposal);
               
                 {/* Calculate total votes once, outside the loop */}
                 {(() => {
-                  const totalVotes = pollOptions.reduce((acc, curr) => acc + Number(curr.poll_approved_votes), 0);
+                  const totalVotes = pollOptions?.reduce((acc, curr) => acc + Number(curr.poll_approved_votes), 0);
               
                   return (
                       <form className="whitespace-normal break-words mt-2">
-                          {pollOptions.map((option) => {
+                          {pollOptions?.map((option) => {
                               const votePercentage = totalVotes > 0 ? (Number(option.poll_approved_votes) / totalVotes) * 100 : 0;
               
                               return (
@@ -627,7 +634,7 @@ console.log("proposals",proposal);
                   })()}
                   {/* Total votes and time since posted */}
                   <div className="mt-2 text-sm text-gray-500">
-                    {pollOptions.reduce((acc, curr) => acc + Number(curr.poll_approved_votes), 0)} votes • {daysAgo} {daysAgo === 1 ? "day ago": "days ago"}
+                    {pollOptions?.reduce((acc, curr) => acc + Number(curr.poll_approved_votes), 0)} votes • {daysAgo} {daysAgo === 1 ? "day ago": "days ago"}
                   </div>
                 </div>             
               )}
