@@ -452,7 +452,7 @@ const Step3 = ({ setData, setActiveStep, }) => {
               skeletonLoader()
             ) : (councilUsernames.map((fullName, index) => {
               const [username, principalId] = fullName.split(" (");
-              const formattedPrincipalId = principalId.slice(0, -1);
+              const formattedPrincipalId = principalId?.slice(0, -1);
 
               return (
                 <section key={index} className="w-full bg-white py-2 p-2 md:px-8 flex flex-col items-center justify-between  mb-4">
