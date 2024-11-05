@@ -265,7 +265,7 @@ const Step2 = ({ setData, setActiveStep, data }) => {
 
             <button
               type="submit"
-              className="flex mobile:m-4 my-4 flex-row items-center gap-2 bg-[#0E3746] px-4 py-2 rounded-[2rem] text-white mobile:text-base text-sm disabled:opacity-50"
+              className="flex mobile:m-4 my-4 w-[130px] h-[38px] flex-row items-center gap-2 bg-[#0E3746] px-4 py-2 rounded-[2rem] text-white mobile:text-base text-sm disabled:opacity-50"
               disabled={isSubmitting}
             >
               {isSubmitting ? (

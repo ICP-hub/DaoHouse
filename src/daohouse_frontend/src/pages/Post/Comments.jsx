@@ -149,7 +149,7 @@ const Comment = ({ comment, proposalId, daoId, commentCount, setCommentCount }) 
               onChange={handleReplyChange}
             />
             <button
-              className="flex mobile:m-4 my-4 flex-row items-center gap-2 bg-[#0E3746] px-6 lg:px-12 py-2 rounded-[2rem] text-white mobile:text-base text-sm whitespace-nowrap"
+              className="flex mobile:m-4 my-4 w-[220px] h-[38px] flex-row justify-center items-center gap-2 bg-[#0E3746] px-6 lg:px-12 py-2 rounded-[2rem] text-white mobile:text-base text-sm whitespace-nowrap"
               onClick={submitReply}
             >
               {isSubmitLoading ? (
@@ -338,9 +338,9 @@ detail();
           value={newComment}
           onChange={handleCommentChange}
         />
-        <div className='flex justify-end'>
+        <div className='flex justify-center md:justify-end'>
           <button 
-            className="flex px-6 mobile:m-4 my-4 flex-row items-center gap-2 bg-[#0E3746] sm:px-6 lg:px-12 py-2 rounded-[2rem] text-white mobile:text-base text-sm whitespace-nowrap" 
+            className="flex px-6 mobile:m-4 my-4 w-[220px] h-[38px]  flex-row justify-center items-center gap-2 bg-[#0E3746] sm:px-6 lg:px-12 py-2 rounded-[2rem] text-white mobile:text-base text-sm whitespace-nowrap" 
             onClick={submitComment}
             type='submit'
           >

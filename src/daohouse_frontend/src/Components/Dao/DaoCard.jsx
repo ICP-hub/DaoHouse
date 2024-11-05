@@ -87,7 +87,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
       }
     } catch (error) {
       console.error('Error following/unfollowing DAO:', error);
-      toast.error("An error occurred");
+      toast.error(error);
     }
   };
 
@@ -130,7 +130,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
       }
     } catch (error) {
       console.error('Error sending join request:', error);
-      toast.error('Error sending join request');
+      toast.error(error);
     } finally {
       setShowConfirmModal(false);
       setLoading(false);
