@@ -303,8 +303,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
         setIsPollVoteLoading(true);
         setLoadingOptionId(selectedOption);
         const result = await voteApi?.vote_on_poll_options(proposal.proposal_id, selectedOption);
-       console.log("vote on poll",result);
-       
+
         if (result?.Ok) {
             toast.success("Vote submitted successfully");
 
