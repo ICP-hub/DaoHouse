@@ -373,7 +373,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
             <button
               type="submit"
               onClick={createDAO}
-              className="w-full md:w-[130px] h-[40px] md:h-[50px] flex items-center justify-center gap-2 bg-[#0E3746] text-white text-sm md:text-base px-4 md:px-6 lg:px-8 py-2 md:py-3 rounded-full whitespace-nowrap"
+              className="w-full md:w-auto flex items-center justify-center gap-2 bg-[#0E3746] text-white text-sm md:text-base px-4 md:px-6 lg:px-8 py-2 md:py-3 rounded-full whitespace-nowrap"
             >
               {loadingNext ? (
                 <CircularProgress size={20} />

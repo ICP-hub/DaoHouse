@@ -288,9 +288,9 @@ function CreateProposal() {
         case "BountyRaised": 
           await submitBountyRaised({
             proposal_entry: proposalEntry,
-            task_completion_day: Number(bountyRaised.task_completion_day), 
+            task_completion_day: Number(bountyRaised.task_completion_day) || 1, 
             description: bountyRaised.description,
-            tokens: Number(bountyRaised.tokens),
+            tokens: Number(bountyRaised.tokens) || 1,
             
             bounty_task: bountyRaised.bounty_task,
           });
@@ -301,7 +301,7 @@ function CreateProposal() {
             proposal_entry: proposalEntry,
             associated_proposal_id: bountyDone.associated_proposal_id,
             description: bountyDone.description,
-            tokens: Number(bountyDone.tokens),
+            tokens: Number(bountyDone.tokens) || 1,
             // action_member: Principal.fromText(bountyDone.action_member),
             daohouse_canister_id: Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND)
           });
@@ -352,8 +352,8 @@ function CreateProposal() {
             proposal_entry: proposalEntry,
             description: changePolicy.description,
    
-            cool_down_period: Number(changePolicy.cool_down_period),
-            required_votes: Number(changePolicy.required_votes),
+            cool_down_period: Number(changePolicy.cool_down_period) || 1,
+            required_votes: Number(changePolicy.required_votes) || 1,
           });
           break;
 
@@ -482,7 +482,7 @@ function CreateProposal() {
       }
     } catch (error) {
       console.error("Error submitting Bounty Raised proposal:", error);
-      toast.error("Failed to create Bounty Raised proposal");
+      toast.error(error.message);
     }
   };
 
