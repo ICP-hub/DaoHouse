@@ -35,8 +35,9 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const [isPollVoteLoading, setIsPollVoteLoading] = useState(false);
   const [loadingOptionId, setLoadingOptionId] = useState(null);
   const [pollOptions, setPollOptions] = useState(proposal?.poll_options ? proposal.poll_options[0] : []);
-  console.log(proposal);
-  
+
+// console.log("proposals",proposal);
+
 
 
   const toggleExpanded = () => setIsExpanded(!isExpanded);
@@ -319,6 +320,13 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                         : option
                 )
             );
+
+            const updatedProposal = await voteApi?.get_proposal_by_id(proposal?.proposal_id);
+            setVoteCount((prev) => prev + 1);
+        setVotersList({
+          approvedVotes: updatedProposal?.approved_votes_list || [],
+          rejectedVotes: updatedProposal?.rejected_votes_list || [],
+        });
 
             // Reset selected option after voting
             setSelectedOption(null);
