@@ -729,7 +729,6 @@ async fn vote_on_poll_options(proposal_id: String, option_id: String) -> Result<
                             Err("You have already voted on this option.".to_string())
                         } 
                         else if proposal_data.approved_votes_list.contains(&api::caller()) {
-                            print!("l");
                             Err("You have already voted on this proposal.".to_string())
                         }
                         else {
