@@ -904,14 +904,17 @@ function CreateProposal() {
                   )}
 
                   {/* Submit Button */}
-                  <div className="flex justify-center my-8">
+                  <div className="flex justify-center my-8  ">
                     <button
-                      className="bg-[#0E3746] w-[100px] h-[40px] hover:bg-[#819499] text-white font-normal text-center rounded-full text-[16px] py-2 px-6 rounded focus:outline-none focus:shadow-outline"
+                      className="relative bg-[#0E3746] w-[100px] h-[40px]  text-white font-normal text-center rounded-full text-[16px] py-2 px-6 rounded focus:outline-none focus:shadow-outline"
                       type="submit"
                       disabled={loading } 
                     >
                       {loading ? (
-                        <CircularProgress size={24} />
+                        // <CircularProgress size={24} />
+                        <div className="absolute inset-0 flex justify-center items-center">
+                        <div className="w-6 h-6 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+                      </div>
                       ) : (
                         "Submit"
                       )}
