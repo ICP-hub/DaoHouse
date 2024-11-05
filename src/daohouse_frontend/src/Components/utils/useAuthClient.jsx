@@ -78,6 +78,11 @@ export const useAuthClient = (options = defaultOptions) => {
       const backendActor = createActor(backendCanisterId, { agentOptions: { identity, verifyQuerySignatures: false } });
       setBackendActor(backendActor);
     }
+    //just to try for use api for annonymus user 
+    else if (principal.isAnonymous() === true){
+      const backendActor = createActor(backendCanisterId, { agentOptions: { identity, verifyQuerySignatures: false } });
+      setBackendActor(backendActor);
+    }
 
     return true;
   };
