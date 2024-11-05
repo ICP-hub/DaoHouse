@@ -32,6 +32,8 @@ const EditProfile = () => {
 
   const [loading, setLoading] = useState(false);
 
+  const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
+  const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
   const [imageSrc, setImageSrc] = useState(MyProfileImage);
   const [errors, setErrors] = useState({}); // To store validation errors
 
@@ -247,7 +249,7 @@ const EditProfile = () => {
       image_content_type: "image/jpg",
     });
     setImageSrc(userProfile?.profile_img
-      ? `http://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.localhost:4943/f/${userProfile.profile_img}`
+      ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${userProfile.profile_img}`
       : MyProfileImage);
   }, [userProfile]);
 
