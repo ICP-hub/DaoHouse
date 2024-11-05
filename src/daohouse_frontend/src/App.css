@@ -2,6 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .sliding-lines {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sliding-lines::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+      135deg,
+      rgba(132, 196, 112, 0.2),
+      rgba(146, 170, 114, 0.2) 10px,
+      transparent 10px,
+      transparent 20px
+    );
+    animation: slide 1s linear infinite;
+    opacity: 0.7;
+    border-radius: 0.5rem; /* Adjust to match Tailwind rounded-lg */
+  }
+
+  @keyframes slide {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+}
+
 body {
   overflow-x: hidden;
   /* background-color: #DADEE4; */

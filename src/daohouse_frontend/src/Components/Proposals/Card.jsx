@@ -24,7 +24,6 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const [profileImg, setProfileImg] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isVoteLoading, setIsVoteLoading] = useState(false)
-
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [daoName, setDaoName] = useState("");
   const { daoCanisterId } = useParams();
@@ -34,7 +33,10 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const [isPollVoteLoading, setIsPollVoteLoading] = useState(false);
+  const [loadingOptionId, setLoadingOptionId] = useState(null);
   const [pollOptions, setPollOptions] = useState(proposal?.poll_options ? proposal.poll_options[0] : []);
+  console.log(proposal);
+  
 
 
   const toggleExpanded = () => setIsExpanded(!isExpanded);
@@ -168,6 +170,8 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const submittedOn = new Date(Number(proposal?.proposal_submitted_at) / 1_000_000);
   const expiresOn = new Date(Number(proposal?.proposal_expired_at) / 1_000_000);
 
+  const now = new Date();
+  const daysAgo = Math.floor((now - submittedOn) / (1000 * 60 * 60 * 24));
 
   const formattedSubmittedOn = submittedOn.toLocaleString();
   const formattedExpiresOn = expiresOn.toLocaleString();
@@ -290,8 +294,9 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
     if (!selectedOption) return;
 
     try {
-      setIsPollVoteLoading(true);
-      const result = await voteApi?.vote_on_poll_options(proposal.proposal_id, selectedOption);
+        setIsPollVoteLoading(true);
+        setLoadingOptionId(selectedOption);
+        const result = await voteApi?.vote_on_poll_options(proposal.proposal_id, selectedOption);
 
       if (result?.Ok) {
         toast.success("Vote submitted successfully");
@@ -319,7 +324,8 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
       console.error("Error submitting vote:", error);
       toast.error("Error submitting vote:", error);
     } finally {
-      setIsPollVoteLoading(false);
+        setIsPollVoteLoading(false);
+        setLoadingOptionId(null);
     }
   };
 
@@ -571,74 +577,82 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                   </div>
                 </div>
               )}
+              
               {!isSubmittedProposals && proposal.proposal_type.Polls !== undefined && (
-                <div className="w-full">
-
-                  <div className="flex mb-2">
-                    <span className="font-bold">{proposal.poll_query[0]}</span>
-                  </div>
-
-
-                  <form onSubmit={handlePollVoteSubmit} className="whitespace-normal break-words mt-2">
-                    {pollOptions.map((option, index) => (
-                      <div key={option.id} className="mt-1 flex items-center">
-                        <label className="text-md flex items-center space-x-2">
-                          <input
-                            type="radio"
-                            name="pollVote"
-                            value={option.id}
-                            checked={selectedOption === option.id}
-                            onChange={() => setSelectedOption(option.id)}
-                            className="mr-2"
-                          />
-                          <span className="font-bold">Option {index + 1}:</span> {option.option}
-                        </label>
-                        <span className="ml-2 text-gray-500">Votes: {option.poll_approved_votes}</span>
-                      </div>
-                    ))}
-                    <button
-                      type="submit"
-                      className={`bg-[#0E3746] mt-4 w-[100px] h-[30px] flex justify-center text-center items-center text-white rounded-2xl p-2 transition hover:bg-[#123b50]`}
-                      disabled={!selectedOption || isPollVoteLoading}
-                    >
-                      {isPollVoteLoading ? (
-                        <div className="w-4 h-4 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
-                      ) : (
-                        "Submit"
-                      )}
-                    </button>
-                  </form>
+               <div className="w-full">
+                {/* Display poll question */}
+                <div className="flex mb-4">
+                  <span className="font-bold text-lg">{proposal.poll_query[0]}</span>
                 </div>
+              
+                {/* Calculate total votes once, outside the loop */}
+                {(() => {
+                  const totalVotes = pollOptions.reduce((acc, curr) => acc + Number(curr.poll_approved_votes), 0);
+              
+                  return (
+                      <form className="whitespace-normal break-words mt-2">
+                          {pollOptions.map((option) => {
+                              const votePercentage = totalVotes > 0 ? (Number(option.poll_approved_votes) / totalVotes) * 100 : 0;
+              
+                              return (
+                                <div key={option.id} className="relative mt-4 cursor-pointer" onClick={() => handlePollVoteSubmit(option.id)}>
+                                {/* Option container with less rounded corners */}
+                                <div className={`relative bg-gray-200 rounded-lg h-10 flex items-center ${loadingOptionId === option.id && isPollVoteLoading ? 'sliding-lines' : ''}`}>
+                                    <div
+                                        className="absolute top-0 left-0 h-10 bg-gray-400 rounded-lg transition-all"
+                                        style={{ width: `${votePercentage}%` }}
+                                    ></div>
+                                    {/* Option text */}
+                                    <span className="relative z-10 px-4 text-gray-800 font-semibold">
+                                        {option.option}
+                                    </span>
+                                    {/* Percentage display */}
+                                    <span className="relative z-10 ml-auto pr-4 text-gray-700 font-semibold">
+                                        {votePercentage.toFixed(0)}%
+                                    </span>
+                                </div>
+                            </div>
+                              );
+                          })}
+                      </form>
+                  );
+                  })()}
+                  {/* Total votes and time since posted */}
+                  <div className="mt-2 text-sm text-gray-500">
+                    {pollOptions.reduce((acc, curr) => acc + Number(curr.poll_approved_votes), 0)} votes • {daysAgo} {daysAgo === 1 ? "day ago": "days ago"}
+                  </div>
+                </div>             
               )}
 
-                {!isSubmittedProposals && (proposal.proposal_type.TokenTransfer !== undefined) && (
-                  <div className="w-full flex  flex-col md:justify-between mt-2 md:flex-row">
-                    {/* Left Side: Tokens and Logos */}
-                    <div className="flex flex-col">
-                      <span className="font-bold">Tokens:</span>
-                      <div className="flex items-center mt-1">
-                        {/* Map over tokens to display each token with its logo */}
-                        {proposal.tokens.map((token, index) => (
-                          <div key={index} className="flex items-center">
-                            <img src={coin} alt={`${token.name} logo`} className="w-6 h-6 mr-1" />
-                            <span className="font-bold">{token.toString()}</span>
-                          </div>
-                        ))}
-                      </div>
-                      <hr className="my-2 border-gray-300 md:hidden" />
-                    </div>
-                    {/* Right Side: To and User Image */}
-                    <div className="flex flex-col ">
-                      <span className="font-bold">To:</span>
-                      {proposal.token_to.map((principal, index) => (
-                        <div key={index} className="flex items-center mt-1">
-                          <img src={Avatar} alt={`User image`} className="w-6 h-6 mr-1 rounded-full" />
-                          <span className="font-bold">{principal.toText ? principal.toText() : Array.from(principal._arr).join('')}</span>
+
+              {!isSubmittedProposals && (proposal.proposal_type.TokenTransfer !== undefined) && (
+                <div className="w-full flex  flex-col md:justify-between mt-2 md:flex-row">
+                  {/* Left Side: Tokens and Logos */}
+                  <div className="flex flex-col">
+                    <span className="font-bold">Tokens:</span>
+                    <div className="flex items-center mt-1">
+                      {/* Map over tokens to display each token with its logo */}
+                      {proposal.tokens.map((token, index) => (
+                        <div key={index} className="flex items-center">
+                          <img src={coin} alt={`${token.name} logo`} className="w-6 h-6 mr-1" />
+                          <span className="font-bold">{token.toString()}</span>
                         </div>
                       ))}
                     </div>
+                    <hr className="my-2 border-gray-300 md:hidden" />
                   </div>
-                )}
+                  {/* Right Side: To and User Image */}
+                  <div className="flex flex-col ">
+                    <span className="font-bold">To:</span>
+                    {proposal.token_to.map((principal, index) => (
+                      <div key={index} className="flex items-center mt-1">
+                        <img src={Avatar} alt={`User image`} className="w-6 h-6 mr-1 rounded-full" />
+                        <span className="font-bold">{principal.toText ? principal.toText() : Array.from(principal._arr).join('')}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {!isSubmittedProposals && (proposal.proposal_type.AddMemberToGroupProposal !== undefined) && (
                 <div className="w-full">
@@ -746,7 +760,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                   </div>
                 )}
                 {/* Cast Vote Section  */}
-                {showActions && (
+                {showActions && (proposal?.proposal_title !== "poll") && (
                   <div className="bg-sky-200 w-full md:w-96 p-4 rounded-md mt-6">
                     <h1 className="text-lg font-semibold mb-2">Cast Vote</h1>
                     <form className="flex flex-row flex-wrap gap-2 small_phone:gap-4 mobile:gap-6 items-start md:items-center" onSubmit={handleVoteSubmit}>
