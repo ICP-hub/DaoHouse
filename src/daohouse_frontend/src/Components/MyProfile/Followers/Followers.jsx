@@ -10,10 +10,10 @@ const Followers = () => {
   const className = "Followers";
   const { backendActor, createDaoActor, stringPrincipal } = useAuth();
   const [joinedDAO, setJoinedDAO] = useState([]);
-  const [fetchedDAOs, setFetchedDAOs] = useState([]); // State for search results
+  const [fetchedDAOs, setFetchedDAOs] = useState([]); 
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchLoading, setSearchLoading] = useState(false); // State for search loading
+  const [searchLoading, setSearchLoading] = useState(false); 
   const canisterId = process.env.CANISTER_ID_IC_ASSET_HANDLER;
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
@@ -70,17 +70,17 @@ const Followers = () => {
   };
 
   const getSearchDao = async () => {
-    if (!searchTerm.trim()) return setFetchedDAOs([]); // Clear the search results if input is empty
+    if (!searchTerm.trim()) return setFetchedDAOs([]); 
 
-    setSearchLoading(true); // Set searchLoading to true when search starts
+    setSearchLoading(true);
     try {
-      const response = await backendActor.search_dao(searchTerm); // Fetch the searched DAOs
+      const response = await backendActor.search_dao(searchTerm); 
       const combinedSearchDaoDetails = await fetchDaoDetails(response);
-      setFetchedDAOs(combinedSearchDaoDetails); // Update state with search results
+      setFetchedDAOs(combinedSearchDaoDetails); 
     } catch (error) {
       console.error("Error searching DAOs:", error);
     } finally {
-      setSearchLoading(false); // Set searchLoading to false when search is complete
+      setSearchLoading(false); 
     }
   };
 
@@ -97,7 +97,7 @@ const Followers = () => {
       dao.dao_name.toLowerCase().includes(searchTerm.toLowerCase())
     )
   : joinedDAO;
- // Show search results if searchTerm is not empty
+
 
   return (
     <div className={`${className} w-full`}>
@@ -117,7 +117,7 @@ const Followers = () => {
           </div>
         </div>
 
-        {searchTerm && searchLoading ? ( // Show skeleton loading when search is in progress
+        {searchTerm && searchLoading ? (
           <div className="md:mt-8">
           <MyProfileSkelton />
         </div>

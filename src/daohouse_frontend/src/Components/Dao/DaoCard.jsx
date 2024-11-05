@@ -123,10 +123,10 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
       if (response.Ok) {
         setJoinStatus("Requested");
         sound.play();
-        toast.success("Join request sent successfully");
+        toast.success(res.Ok);
       } else {
-        console.error("Failed to send join request:", response.Err || "Unknown error");
-        toast.error(`Failed to send join request: ${response.Err || "Unknown error"}`);
+        console.error(response.Err );
+        toast.error(response.Err);
       }
     } catch (error) {
       console.error('Error sending join request:', error);

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { usePostContext } from "../../../PostProvider";
 import NoDataComponent from "../../Dao/NoDataComponent";
 import { useAuth } from "../../utils/useAuthClient";
-import MuiSkeleton from "../../SkeletonLoaders/MyPostsSkeleton";
 import Card from "../../Proposals/Card";
 import SearchProposals from "../../Proposals/SearchProposals";
 import MyPostsSkeleton from "../../SkeletonLoaders/MyPostsSkeleton";
@@ -14,8 +13,8 @@ const MyPosts = () => {
   const [totalItems, setTotalItems] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState(""); // Added state for search term
-  const [proposals, setProposals] = useState([]); // Added state for proposals
+  const [searchTerm, setSearchTerm] = useState(""); 
+  const [proposals, setProposals] = useState([]); 
   const className = "MyPosts";
 
   const itemsPerPage = 4;

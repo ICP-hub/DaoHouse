@@ -726,8 +726,12 @@ async fn vote_on_poll_options(proposal_id: String, option_id: String) -> Result<
                         .find(|opt| opt.id == option_id)
                     {
                         if option.approved_users.contains(&api::caller()) {
-                            Err("You have already voted for this option.".to_string())
-                        } else {
+                            Err("You have already voted on this option.".to_string())
+                        } 
+                        else if proposal_data.approved_votes_list.contains(&api::caller()) {
+                            Err("You have already voted on this proposal.".to_string())
+                        }
+                        else {
                             option.poll_approved_votes += 1;
                             option.approved_users.push(api::caller());
                             proposal_data.approved_votes_list.push(api::caller());
@@ -1045,7 +1049,7 @@ pub async fn follow_dao(daohouse_backend_id: Principal) -> Result<String, String
     let response: CallResult<(Result<(), String>,)> = ic_cdk::call(
         daohouse_backend_id,
         "store_follow_dao",
-        (dao_id,),
+        (dao_id,api::caller(),),
     )
     .await;
 

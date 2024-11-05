@@ -15,8 +15,8 @@ const Members = ({ daoGroups, daoMembers }) => {
   const [councilMembers, setCouncilMembers] = useState([]);
   const [groupMembers, setGroupMembers] = useState({});
   const [openedGroupIndex, setOpenedGroupIndex] = useState(null);
-  const [isCouncilOpen, setIsCouncilOpen] = useState(false); // State for council toggle
-  const [loading, setLoading] = useState(true); // Loading state
+  const [isCouncilOpen, setIsCouncilOpen] = useState(false); 
+  const [loading, setLoading] = useState(true); 
   const navigate = useNavigate();
   const minWidth = useMediaQuery("(min-width: 800px)");
   const gridTemplateColumns = `repeat(auto-fill, minmax(${minWidth ? 370 : 165}px, 1fr))`;
@@ -24,7 +24,7 @@ const Members = ({ daoGroups, daoMembers }) => {
   const gridContainerStyle = { display: "grid", gridTemplateColumns: gridTemplateColumns };
   const listContainerStyle = { display: "grid", gridTemplateColumns: listTemplateColumns };
 
-  // Fetch council members when the component mounts
+
   useEffect(() => {
     async function fetchCouncilProfiles() {
       if (daoMembers) {
@@ -35,14 +35,14 @@ const Members = ({ daoGroups, daoMembers }) => {
           )
         );
         setCouncilMembers(profiles);
-        setLoading(false); // Stop loading after fetching
+        setLoading(false); 
       }
     }
 
     fetchCouncilProfiles();
   }, [daoMembers, backendActor]);
 
-  // Fetch group members when the component mounts
+
   useEffect(() => {
     async function fetchAllGroupMembers() {
       const groupProfiles = {};
@@ -104,7 +104,7 @@ const Members = ({ daoGroups, daoMembers }) => {
 
             {isCouncilOpen && (
               <div className="bg-white rounded-lg p-8">
-                {loading ? ( // Show skeleton loader while loading
+                {loading ? ( 
                   <MemberSkeleton gridView={gridView} />
                 ) : (
                   <div style={gridView ? gridContainerStyle : listContainerStyle}>
@@ -143,7 +143,7 @@ const Members = ({ daoGroups, daoMembers }) => {
               {openedGroupIndex === index && (
                 <div className="bg-white rounded-lg p-8">
                   {loading ? (
-                    <MemberSkeleton gridView={gridView} /> // Show skeleton loader for group members
+                    <MemberSkeleton gridView={gridView} /> 
                   ) : (
                     <div style={gridView ? gridContainerStyle : listContainerStyle}>
                       {groupMembers[group.group_name]?.map((member, memberIndex) => (
@@ -180,10 +180,10 @@ const GridView = ({ member }) => {
           <img
             src={profileImgSrc}
             alt="Image"
-            className="rounded-full w-full h-full object-cover shadow-lg" // Ensure circular shape
+            className="rounded-full w-full h-full object-cover shadow-lg" 
           />
         </section>
-        <section className="details flex flex-col items-start ml-2"> {/* Added margin-left */}
+        <section className="details flex flex-col items-start ml-2"> 
           <p className="font-semibold text-lg">{member.Ok.username}</p>
           <p className="text-sm">{member.Ok.email_id}</p>
         </section>
@@ -193,7 +193,7 @@ const GridView = ({ member }) => {
   );
 };
 
-// ListView Component for both council and group members
+
 const ListView = ({ member }) => {
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
@@ -207,13 +207,13 @@ const ListView = ({ member }) => {
         <img
           src={profileImgSrc}
           alt="Image"
-          className="w-12 h-12 rounded-full object-cover shadow-lg" // Ensure circular shape
+          className="w-12 h-12 rounded-full object-cover shadow-lg" 
         />
-        <section className="details flex flex-col items-start ml-2"> {/* Added margin-left */}
+        <section className="details flex flex-col items-start ml-2">
           <p className="font-semibold text-base">{member.Ok.username}</p>
           <p className="text-sm">{member.Ok.email_id}</p>
         </section>
-        {/* <MdAddBox className="mx-1 text-[#97C3D3] text-2xl" /> */}
+     
       </section>
     </div>
   );

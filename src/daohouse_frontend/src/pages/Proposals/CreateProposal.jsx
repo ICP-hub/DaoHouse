@@ -19,7 +19,6 @@ import Poll from "./Poll";
 import RemoveDaoMember from "./RemoveDaoMember";
 import { createActor } from "../../../../declarations/icp_ledger_canister";
 import TokenPaymentModal from "./TokenPaymentModal";
-import coinsound from "../../../../daohouse_frontend/src/Sound/coinsound.mp3";
 function CreateProposal() {
 
   const navigate = useNavigate();
@@ -100,7 +99,7 @@ function CreateProposal() {
 
   const movetodao = () => {
     navigate(`/dao/profile/${daoCanisterId}`);
-    console.log("Proposal Submitted");
+   
   };
 
   const fetchDaoDetails = async () => {
@@ -151,19 +150,19 @@ function CreateProposal() {
     const { name, value } = e.target;
 
     if (name === "proposalExpiredAt") {
-      const createdAtDate = new Date(generalPurp.proposalCreatedAt); // Created At date
-      const selectedExpiredDate = new Date(value); // User's selected expiration date
+      const createdAtDate = new Date(generalPurp.proposalCreatedAt); 
+      const selectedExpiredDate = new Date(value); 
 
-      // Calculate the difference in days between the created at date and the selected expired at date
+     
       const differenceInDays = Math.floor(
         (selectedExpiredDate - createdAtDate) / (1000 * 60 * 60 * 24)
       );
 
-      // Store both the selected date for frontend display and the difference in days for backend
+      
       setGeneralPurp({
         ...generalPurp,
-        proposalExpiredAt: value, // Store the selected expiration date for frontend display
-        days_until_expiration: differenceInDays, // Store the difference for backend submission
+        proposalExpiredAt: value, 
+        days_until_expiration: differenceInDays,
       });
     } else {
       setGeneralPurp({
@@ -198,18 +197,18 @@ function CreateProposal() {
     const { name, value } = e.target;
 
     if (name === "proposal_expired_at") {
-      const today = new Date().getTime(); // Current date in milliseconds
-      const selectedDate = new Date(value).getTime(); // Selected date in milliseconds
+      const today = new Date().getTime(); 
+      const selectedDate = new Date(value).getTime();
 
-      // Calculate the difference in days between the selected date and today's date
+ 
       const differenceInDays = Math.ceil(
         (selectedDate - today) / (1000 * 60 * 60 * 24)
       );
 
       setBountyRaised({
         ...bountyRaised,
-        proposal_expired_at: value, // Set the actual selected date for display in the input field
-        proposal_expired_in_days: differenceInDays, // Store the difference in days for backend submission
+        proposal_expired_at: value,
+        proposal_expired_in_days: differenceInDays,  
       });
 
     } else {
@@ -232,8 +231,8 @@ function CreateProposal() {
     const { name, value } = e.target;
 
     if (name === "proposal_expired_at") {
-      const createdAtDate = new Date(poll.proposal_created_at); // Created At date
-      const selectedExpiredDate = new Date(value); // User's selected expiration date
+      const createdAtDate = new Date(poll.proposal_created_at); 
+      const selectedExpiredDate = new Date(value);
 
       // Calculate the difference in days between the created at date and the selected expired at date
       const differenceInDays = Math.floor(
@@ -243,8 +242,8 @@ function CreateProposal() {
       // Store both the selected date (for frontend display) and the difference in days for the backend
       setPoll({
         ...poll,
-        proposal_expired_at: value, // Store the selected date for frontend display
-        days_until_expiration: differenceInDays, // Store the difference for backend submission
+        proposal_expired_at: value, 
+        days_until_expiration: differenceInDays, 
       });
 
     } else {
@@ -289,10 +288,10 @@ function CreateProposal() {
         case "BountyRaised": 
           await submitBountyRaised({
             proposal_entry: proposalEntry,
-            task_completion_day: Number(bountyRaised.task_completion_day), // Send difference in days
+            task_completion_day: Number(bountyRaised.task_completion_day), 
             description: bountyRaised.description,
             tokens: Number(bountyRaised.tokens),
-            // action_member: Principal.fromText(bountyRaised.action_member),
+            
             bounty_task: bountyRaised.bounty_task,
           });
           break;
@@ -311,11 +310,11 @@ function CreateProposal() {
         case 'GeneralPurp':
           await submitGeneralPurp({
             proposal_entry: proposalEntry,
-            // proposal_expired_at: generalPurp.days_until_expiration, // Send the days difference to the backend
+       
             description: generalPurp.description,
-            // action_member: Principal.fromText(generalPurp.actionMember),
+      
             proposal_title: generalPurp.proposalTitle,
-            // proposal_created_at: 0, // Set Created At to 0 as per your requirement
+           
           });
           break;
 
@@ -325,8 +324,7 @@ function CreateProposal() {
             daotype: daoConfig.daotype,
             description: daoConfig.description,
             new_dao_name: daoConfig.new_dao_name,
-            // action_member: Principal.fromText(daoConfig.action_member),
-            // action_member: Principal.fromText(daoConfig.action_member),
+      
             purpose: daoConfig.purpose,
           });
           break;
@@ -353,8 +351,7 @@ function CreateProposal() {
           await submitChangePolicy({
             proposal_entry: proposalEntry,
             description: changePolicy.description,
-            // action_member: Principal.fromText(changePolicy.action_member),
-            // action_member: Principal.fromText(changePolicy.action_member),
+   
             cool_down_period: Number(changePolicy.cool_down_period),
             required_votes: Number(changePolicy.required_votes),
           });
@@ -364,11 +361,11 @@ function CreateProposal() {
           await submitPoll({
             poll_title: "sdcfsdfs",
             proposal_entry: proposalEntry,
-            proposal_expired_at: poll.days_until_expiration, // Pass the days difference to the backend
+            proposal_expired_at: poll.days_until_expiration, 
             poll_query: poll.poll_title,
             description: poll.description,
-            // action_member: Principal.fromText(poll.action_member),
-            proposal_created_at: 0, // Set Created At to 0 as per your requirement
+       
+            proposal_created_at: 0, 
             poll_options: poll.poll_options.map(option => option.option),
           });
 
@@ -417,7 +414,7 @@ function CreateProposal() {
   const submitBountyDone = async (bountyDone) => {
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
-      console.log("fhjfjhfhjfjh",daoCanister);
+   
 
       const response = await daoCanister.proposal_to_bounty_done(bountyDone);
       console.log("Response of Bounty Done:", response);
@@ -500,7 +497,7 @@ function CreateProposal() {
       if (response.Ok) {
         toast.success(response.Ok);
         movetodao();
-        // setActiveLink("proposals"); // Ensure setActiveLink is defined or remove if unnecessary
+     
         setAddMember({
           group_name: "",
           description: "",
@@ -526,7 +523,7 @@ function CreateProposal() {
       if (response.Ok) {
         toast.success(response.Ok);
         movetodao();
-        // setActiveLink("proposals"); // Ensure setActiveLink is defined or remove if unnecessary
+
         setRemoveMember({
           group_name: "",
           description: "",
@@ -662,7 +659,7 @@ function CreateProposal() {
   };
 
   const handleCancelPayment = () => {
-    setIsModalOpen(false); // Close the modal when cancel is clicked
+    setIsModalOpen(false);
   };
 
   const submitChangePolicy = async (changePolicy) => {
@@ -682,13 +679,13 @@ function CreateProposal() {
   };
 
   const submitPoll = async (poll) => {
-    // Check if there are at least two options
+
     if (!poll.poll_options || poll.poll_options.length < 2) {
       toast.error("Please add at least two poll options before submitting.");
       return;
     }
   
-    // Check if there are no more than four options
+
     if (poll.poll_options.length > 4) {
       toast.error("You cannot add more than four poll options.");
       return;
@@ -696,8 +693,7 @@ function CreateProposal() {
   
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
-      console.log("DAO Canister ID:", daoCanisterId);
-      console.log("Poll Proposal Payload:", poll);
+     
   
       const response = await daoCanister.proposal_to_create_poll(poll);
       console.log("Response of Poll Proposal:", response);
@@ -716,9 +712,7 @@ function CreateProposal() {
   
 
   const submitRemoveDaoMember = async (removeDaoMember) => {
-    console.log("remove dao member paylaod", removeDaoMember);
-
-    console.log("remove dao member paylaod", removeDaoMember);
+   
 
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
@@ -914,7 +908,7 @@ function CreateProposal() {
                     <button
                       className="bg-[#0E3746] w-[100px] h-[40px] hover:bg-[#819499] text-white font-normal text-center rounded-full text-[16px] py-2 px-6 rounded focus:outline-none focus:shadow-outline"
                       type="submit"
-                      disabled={loading } // Disable if loading or proposalEntry not selected
+                      disabled={loading } 
                     >
                       {loading ? (
                         <CircularProgress size={24} />

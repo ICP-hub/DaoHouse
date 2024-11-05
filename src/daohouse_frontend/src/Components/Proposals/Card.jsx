@@ -289,46 +289,51 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   };
 
 
-  const handlePollVoteSubmit = async (e) => {
-    e.preventDefault();
+  
+  const handlePollVoteSubmit = async (selectedOption) => {
     if (!selectedOption) return;
+
+    // Check if the proposal is reachable
+    if (proposal.proposal_expired_at <= Date.now() * 1_000_000) {
+        toast.error("This proposal has expired and cannot be voted on.");
+        return;
+    }
 
     try {
         setIsPollVoteLoading(true);
         setLoadingOptionId(selectedOption);
         const result = await voteApi?.vote_on_poll_options(proposal.proposal_id, selectedOption);
 
-      if (result?.Ok) {
-        toast.success("Vote submitted successfully");
+        if (result?.Ok) {
+            toast.success("Vote submitted successfully");
 
+            // Update vote count and approved users for the selected option
+            setPollOptions((prevOptions) =>
+                prevOptions.map((option) =>
+                    option.id === selectedOption
+                        ? {
+                            ...option,
+                            poll_approved_votes: option.poll_approved_votes + 1n,
+                            approved_users: [...option.approved_users, stringPrincipal], // Add current user to approved users list
+                        }
+                        : option
+                )
+            );
 
-        setPollOptions((prevOptions) =>
-          prevOptions.map((option) =>
-            option.id === selectedOption
-              ? {
-                ...option,
-                poll_approved_votes: option.poll_approved_votes + 1n,
-                approved_users: [...option.approved_users, stringPrincipal],
-              }
-              : option
-          )
-        );
-
-
-        setSelectedOption(null);
-      } else {
-        console.error("Error voting:", result.Err);
-        toast.error(result.Err);
-      }
+            // Reset selected option after voting
+            setSelectedOption(null);
+        } else {
+            console.error("Error voting:", result.Err);
+            toast.error(result.Err);
+        }
     } catch (error) {
-      console.error("Error submitting vote:", error);
-      toast.error("Error submitting vote:", error);
+        console.error("Error submitting vote:", error);
+        toast.error("Error submitting vote: " + error.message);
     } finally {
         setIsPollVoteLoading(false);
         setLoadingOptionId(null);
     }
-  };
-
+};
 
   useEffect(() => {
     const style = document.createElement('style');
