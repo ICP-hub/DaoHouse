@@ -254,7 +254,6 @@ pub async fn create_dao(dao_detail: DaoInput) -> Result<String, String> {
         }
     }
 
-    // updating analytics
     with_state(|state| {
         let mut analytics = state.analytics_content.borrow().get(&0).unwrap();
         analytics.dao_counts += 1;
