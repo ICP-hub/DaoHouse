@@ -11,7 +11,7 @@ const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, da
   const [searchTerm, setSearchTerm] = useState("");
   const [fetchedProposals, setFetchedProposals] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const proposalsPerPage = 4; 
+  const proposalsPerPage = 40; 
 
   const allProposals = proposals && Array.isArray(proposals) ? proposals : [];
 
