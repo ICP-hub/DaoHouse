@@ -78,6 +78,7 @@ const CreateDao = () => {
       localStorage.removeItem('step3Data');
       localStorage.removeItem('inputData');
       localStorage.removeItem('step5Quorum');
+      localStorage.removeItem('isPrivate');
       localStorage.removeItem('step6Data');
 
       setData({
@@ -101,6 +102,7 @@ const CreateDao = () => {
       localStorage.removeItem('councilMembers');
       localStorage.removeItem('step4Data');
       localStorage.removeItem('step5Quorum');
+      localStorage.removeItem('isPrivate');
       localStorage.removeItem('step6Data');
     };
   

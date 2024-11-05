@@ -159,7 +159,7 @@ const handlePageChange = (newPage) => {
   const handleJoinDao = async () => {
 
     if (joinStatus === 'Joined') {
-      toast.error(res.Err);
+      toast.error(`You are already member of this dao`);
 
       return;
     };
@@ -194,7 +194,7 @@ const handlePageChange = (newPage) => {
     } catch (error) {
       setLoading(false)
       console.error('Error sending join request:', error);
-      toast.error('Error sending join request');
+      toast.error(error);
     } finally {
       setShowConfirmModal(false);
       setLoading(false)
@@ -229,7 +229,7 @@ const handlePageChange = (newPage) => {
       // Revert the state if there's an error
       setIsFollowing(!newIsFollowing);
       setFollowersCount(prevCount => newIsFollowing ? prevCount - 1 : prevCount + 1);
-      toast.error("An error occurred");
+      toast.error(error);
     }
   };
 
