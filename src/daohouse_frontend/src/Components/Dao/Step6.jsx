@@ -43,13 +43,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
 
   const LEDGER_CANISTER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai";
   const createTokenActor = async (canisterId) => {
-
-
-
-    const tokenActorrr = createActor(Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"), { agentOptions: { identity } });
-
-
-
+    const tokenActorrr = createActor(LEDGER_CANISTER_ID, { agentOptions: { identity } });
     return tokenActorrr
 
   };
@@ -74,27 +68,29 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
 
   // aafter payment
   const afterPaymentApprove = async (sendableAmount) => {
-    console.log("total amout ", sendableAmount)
-    console.log("after payment ")
-    console.log(backendActor)
+
 
     const successAudio = new Audio(coinsound)
 
     try {
-
-      //remove this later
-      toast.success("Payment successful!");
-      successAudio.play();
-      setIsModalOpen(false); // Close the modal on successful payment
-      handleDaoClick(); // Navigate to the next step
-
+      //uncomment later
+      const res = await backendActor.make_payment(sendableAmount, Principal.fromText(stringPrincipal));
+      console.log(res)
+      if (res.Ok) {
+        toast.success("Payment successful!");
+        setIsModalOpen(false);
+        handleDaoClick();
+        successAudio.play();
+      } else {
+        console.log(res);
+        toast.error(res.Err);
+      }
+    }catch (error) {
+      console.log("error : ", error)
     } finally {
       setLoadingPayment(false); // End loading state after payment is processed
     }
   }
-
-
-  // for payment
 
   const formatTokenMetaData = (arr) => {
     const resultObject = {};
@@ -168,7 +164,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
     const backendCanisterId = process.env.CANISTER_ID_DAOHOUSE_BACKEND;
     try {
       setLoadingPayment(true);
-      const actor = await createTokenActor(Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"));
+      const actor = await createTokenActor(LEDGER_CANISTER_ID);
 
       console.log("backend canister id: ", backendCanisterId);
       console.log("actor is ", actor);
@@ -181,14 +177,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
       const formattedMetadata = formatTokenMetaData(metadata);
       const parsedBalance = parseInt(balance, 10);
       console.log("Balance:", parsedBalance);
-
-
-      const sendableAmount = parseInt(
-        10000
-      );
-      if (sendableAmount) {
-        afterPaymentApprove(sendableAmount);
-      }
+      await transferApprove(parsedBalance, formattedMetadata, actor);
     } catch (err) {
       toast.error("Payment failed. Please try again.");
       setLoadingPayment(false);

@@ -107,6 +107,7 @@ type Result_1 = variant { Ok; Err : text };
 type Result_2 = variant { Ok : Analytics; Err : text };
 type Result_3 = variant { Ok : CanisterData; Err : text };
 type Result_4 = variant { Ok : UserProfile; Err : text };
+type Result_5 = variant { Ok : nat; Err : text };
 type UserProfile = record {
   image_canister : principal;
   post_id : vec text;
@@ -147,6 +148,7 @@ service : (InitialArgs) -> {
   get_profile_by_id : (principal) -> (Result_4);
   get_proposals : (Pagination) -> (vec ProposalValueStore) query;
   get_user_profile : () -> (Result_4) query;
+  make_payment : (nat64, principal) -> (Result_5);
   remove_follow_dao : (principal, principal) -> (Result_1);
   remove_joined_dao : (principal, principal) -> (Result_1);
   search_dao : (text) -> (vec DaoDetails) query;
