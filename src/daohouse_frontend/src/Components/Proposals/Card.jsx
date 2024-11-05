@@ -35,8 +35,8 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const [isPollVoteLoading, setIsPollVoteLoading] = useState(false);
   const [loadingOptionId, setLoadingOptionId] = useState(null);
   const [pollOptions, setPollOptions] = useState(proposal?.poll_options ? proposal.poll_options[0] : []);
-console.log("proposals",proposal);
-
+  console.log(proposal);
+  
 
 
   const toggleExpanded = () => setIsExpanded(!isExpanded);
@@ -303,8 +303,7 @@ console.log("proposals",proposal);
         setIsPollVoteLoading(true);
         setLoadingOptionId(selectedOption);
         const result = await voteApi?.vote_on_poll_options(proposal.proposal_id, selectedOption);
-       console.log("vote on poll",result);
-       
+
         if (result?.Ok) {
             toast.success("Vote submitted successfully");
 
