@@ -28,7 +28,7 @@ pub fn with_state<R>(f: impl FnOnce(&mut State) -> R) -> R {
     STATE.with(|cell| f(&mut cell.borrow_mut()))
 }
 
-const EXPIRATION_TIME: u64 = 3 * 60 * 1_000_000_000;
+// const EXPIRATION_TIME: u64 = 3 * 60 * 1_000_000_000;
 fn start_proposal_checker() {
     set_timer_interval(Duration::from_secs(60), || {
         check_proposals();
@@ -45,9 +45,9 @@ fn check_proposals() {
             .filter_map(|(id, proposal)| {
                 let time_diff = timestamp.saturating_sub(proposal.proposal_submitted_at);
 
-                let should_process = time_diff >= EXPIRATION_TIME && !proposal.has_been_processed;
+                // let should_process = time_diff >= EXPIRATION_TIME && !proposal.has_been_processed;
 
-                // let should_process = time_diff >= proposal.proposal_expired_at && !proposal.has_been_processed;
+                let should_process = time_diff >= proposal.proposal_expired_at && !proposal.has_been_processed;
 
                 if should_process {
                     Some(id.clone())
@@ -209,8 +209,8 @@ fn check_proposals() {
                         _ => {}
                     }
                 }
-                 else if !proposal.has_been_processed_second && time_diff >= EXPIRATION_TIME {
-                //else if !proposal.has_been_processed_second && time_diff >= proposal.proposal_expired_at {
+                //  else if !proposal.has_been_processed_second && time_diff >= EXPIRATION_TIME {
+                else if !proposal.has_been_processed_second && time_diff >= proposal.proposal_expired_at {
                     ic_cdk::println!("proposal status : {:?} ", proposal.proposal_status);
                     let proposal_clone = proposal.clone();
                     match proposal.proposal_type {
