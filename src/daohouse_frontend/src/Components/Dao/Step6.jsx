@@ -66,14 +66,12 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
     }
   };
 
-  // aafter payment
   const afterPaymentApprove = async (sendableAmount) => {
 
 
     const successAudio = new Audio(coinsound)
 
     try {
-      //uncomment later
       const res = await backendActor.make_payment(sendableAmount, Principal.fromText(stringPrincipal));
       console.log(res)
       if (res.Ok) {
@@ -88,7 +86,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
     }catch (error) {
       console.log("error : ", error)
     } finally {
-      setLoadingPayment(false); // End loading state after payment is processed
+      setLoadingPayment(false); 
     }
   }
 
@@ -108,25 +106,18 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
     tokenActor
   ) => {
     try {
-      const decimals = parseInt(currentMetaData["icrc1:decimals"], 10);
-
-      const sendableAmount = parseInt(
-        10000
-      );
-      console.log("sendable amount console ", sendableAmount);
-      console.log("current balance console ", currentBalance);
+      const sendableAmount = parseInt(0.1 * Math.pow(10,8));
+      console.log("sendable amount ",sendableAmount);
+      console.log("current balance ", currentBalance);
 
       const backendCanisterId = process.env.CANISTER_ID_DAOHOUSE_BACKEND;
-
-      if (currentBalance > sendableAmount) {
-
         let transaction = {
           from_subaccount: [],
           spender: {
             owner: Principal.fromText(backendCanisterId),
             subaccount: [],
           },
-          amount: Number(sendableAmount) + Number(currentMetaData["icrc1:fee"]),
+          amount: sendableAmount + parseInt(currentMetaData["icrc1:fee"]),
           expected_allowance: [],
           expires_at: [],
           fee: [currentMetaData["icrc1:fee"]],
@@ -139,22 +130,17 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
         console.log("Payment Approve Response ", approveRes);
         if (approveRes.Err) {
           const errorMessage = `Insufficient funds. Balance: ${approveRes.Err.InsufficientFunds.balance}`;
+          console.log("Err", approveRes)
           toast.error(errorMessage);
           return;
         } else {
           afterPaymentApprove(sendableAmount)
-
         }
-      } else {
-        console.log("Insufficient Balance to purchase");
-        toast.error(
-          `Insufficient balance. Balance : ${currentBalance / 10 ** 8}`
-        );
-        setLoadingPayment(false)
-      }
     } catch (err) {
       console.error("Error in transfer approve", err);
+      toast.error(err);
     } finally {
+      setLoadingPayment(false)
     }
   };
   async function paymentTest() {
@@ -294,7 +280,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
         >
           <p className="mobile:text-base text-sm font-semibold">Set Profile Picture</p>
 
-          <div className="uploadImage  items-center flex flex-col  flex big_phone:flex-row flex-col items-center justify-start gap-4">
+          <div className="uploadImage flex big_phone:flex-row flex-col items-center justify-start gap-4">
             <img
               src={fileURL}
               alt="Image"

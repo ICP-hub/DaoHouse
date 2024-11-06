@@ -248,9 +248,9 @@ const EditProfile = () => {
       image_title: "na",
       image_content_type: "image/jpg",
     });
-    setImageSrc(userProfile?.profile_img
-      ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${userProfile.profile_img}`
-      : MyProfileImage);
+    
+    setImageSrc(userProfile?.profile_img ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${userProfile.profile_img}` : MyProfileImage);
+    
   }, [userProfile]);
 
   // ADDED LOGIC FOR STOP SCROLLING 

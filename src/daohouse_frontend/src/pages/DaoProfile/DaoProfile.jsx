@@ -91,10 +91,11 @@ const handlePageChange = (newPage) => {
   useEffect(() => {
     const fetchDaoDetails = async () => {
       setLoadingProfile(true);
-      
+      if(daoCanisterId){
         try {
           // setVoteApi(daoActor);
-
+          const daoActor= await createDaoActor(daoCanisterId);
+          setDaoActor(daoActor)
           const daoDetails = await daoActor.get_dao_detail();
           setDao(daoDetails);
 
@@ -128,36 +129,29 @@ const handlePageChange = (newPage) => {
         } catch (error) {
           console.error('Error fetching DAO details:', error);
         } 
+      }
     };
 
     const fetchProposals = async () => {
       setLoadingProposals(true);
-        try {
-          const start = (currentPage - 1) * itemsPerPage;
-          const end = start + itemsPerPage;
-    
-          const proposals = await daoActor.get_all_proposals({ start, end });
-          setProposals(proposals);
-        } catch (error) {
-          console.error("Error fetching proposals:", error);
-        } finally {
-          setLoadingProposals(false);
+        if(daoCanisterId){
+          try {
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const daoActor= await createDaoActor(daoCanisterId);
+            const proposals = await daoActor.get_all_proposals({ start, end });
+            setProposals(proposals);
+          } catch (error) {
+            console.error("Error fetching proposals:", error);
+          } finally {
+            setLoadingProposals(false);
+          }
         }
       
     };
-    
-
     fetchDaoDetails();
     fetchProposals();
-  }, [ backendActor, createDaoActor, currentPage]);
-
-  useEffect(() => {
-  if (daoCanisterId) {
-    const actor = createDaoActor(daoCanisterId);
-    setDaoActor(actor);
-    // setVoteApi(actor);
-  }
-}, [daoCanisterId]);
+  }, [ backendActor, createDaoActor, currentPage, daoCanisterId]);
 
 
   const handleJoinDao = async () => {
