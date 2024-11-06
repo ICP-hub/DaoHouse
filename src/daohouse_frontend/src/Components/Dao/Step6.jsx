@@ -108,13 +108,9 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
     tokenActor
   ) => {
     try {
-      const decimals = parseInt(currentMetaData["icrc1:decimals"], 10);
-
-      const sendableAmount = parseInt(
-        10000
-      );
-      console.log("sendable amount console ", sendableAmount);
-      console.log("current balance console ", currentBalance);
+      const sendableAmount = parseInt(0.1 * Math.pow(10,8));
+      console.log("sendable amount ",sendableAmount);
+      console.log("current balance ", currentBalance);
 
       const backendCanisterId = process.env.CANISTER_ID_DAOHOUSE_BACKEND;
 
@@ -126,7 +122,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
             owner: Principal.fromText(backendCanisterId),
             subaccount: [],
           },
-          amount: Number(sendableAmount) + Number(currentMetaData["icrc1:fee"]),
+          amount: sendableAmount + parseInt(currentMetaData["icrc1:fee"]),
           expected_allowance: [],
           expires_at: [],
           fee: [currentMetaData["icrc1:fee"]],
@@ -294,7 +290,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
         >
           <p className="mobile:text-base text-sm font-semibold">Set Profile Picture</p>
 
-          <div className="uploadImage  items-center flex flex-col  flex big_phone:flex-row flex-col items-center justify-start gap-4">
+          <div className="uploadImage flex big_phone:flex-row flex-col items-center justify-start gap-4">
             <img
               src={fileURL}
               alt="Image"
