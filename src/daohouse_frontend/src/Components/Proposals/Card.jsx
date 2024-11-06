@@ -38,7 +38,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const [status, setStatus] = useState(null);
   const [pollingInterval, setPollingInterval] = useState(10000);
 
-// console.log("proposals",proposal);
+console.log("proposals",proposal);
 
 
 
@@ -59,7 +59,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   };
 
   const { truncated, isTruncated } = truncateText(proposal?.proposal_description || 'Proposal Description', maxWords);
-
+  
 
   useEffect(() => {
     async function fetchUserProfile() {
@@ -193,6 +193,11 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
     setApprovedVotes(proposal?.approved_votes_list?.length || 0);
     setRejectedVotes(proposal?.rejected_votes_list?.length || 0);
     setVoteCount((proposal?.approved_votes_list?.length || 0) + (proposal?.rejected_votes_list?.length || 0));
+
+    if (proposal && proposal.poll_options) {
+      const options = proposal.poll_options[0] || [];
+      setPollOptions(options);
+  }
   }, [proposal]);
 
 
@@ -270,13 +275,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const handleViewMore = () => {
     navigate(`/social-feed/proposal/${proposalId}/dao/${daoId}`)
   }
-
-  useEffect(() => {
-    const hasVoted = localStorage.getItem(`voted_${proposal?.proposal_id}`);
-    if (hasVoted) {
-      // setIsDisabled(true);
-    }
-  }, [proposal?.proposal_id]);
+ 
 
   const handleVoteSubmit = async (e) => {
     e.preventDefault();
