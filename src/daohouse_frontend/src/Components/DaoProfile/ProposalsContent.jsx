@@ -74,18 +74,18 @@ const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, da
             Proposals
           </h1>
           <Link
-            to={`/create-proposal/${daoCanisterId}`}
-            className="flex justify-center items-center text-[16px] relative lg:w-[220px] lg:h-[50px] md:w-[185px] md:h-[46px] w-[30px] h-[30px] bg-white rounded-full"
-            style={{
-              boxShadow:
-                "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
-            }}
-          >
-            <span className="md:absolute md:text-[35px] text-[28px] font-thin lg:left-5 lg:bottom-[1px] md:left-4 md:bottom-[0.1%] md:mb-0 mb-[20%] ">
-              +
-            </span>
-            <span className="ml-6 hidden md:block">Create Proposals</span>
-          </Link>
+  to={`/create-proposal/${daoCanisterId}`}
+  className="flex justify-center items-center text-[16px] relative lg:w-[220px] lg:h-[50px] md:w-[185px] md:h-[46px] w-[150px] h-[50px] bg-white rounded-full"
+  style={{
+    boxShadow:
+      "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
+  }}
+>
+  <span className="text-[28px] font-thin mr-2">+</span>
+  <span className="text-[14px] sm:text-[16px]">Create Proposal</span>
+</Link>
+
+
         </div>
       )}
       <div className={`${showActions ? "bg-[#F4F2EC] pt-3 pb-8 mt-4 mb-8 rounded-[10px] " : ""} `}>
