@@ -17,16 +17,16 @@ dfx identity new Anish --storage-mode=plaintext || true
 
 # to generate wasm
 # cargo build --target wasm32-unknown-unknown -p dao_canister
-dfx canister create dao_canister
-dfx canister create ic_asset_handler
-dfx canister create daohouse_backend
+dfx canister create dao_canister --ic
+dfx canister create ic_asset_handler --ic
+dfx canister create daohouse_backend --ic
 
-dfx canister create icrc1_ledger_canister
-dfx build icrc1_ledger_canister
+dfx canister create icrc1_ledger_canister --ic
+dfx build icrc1_ledger_canister --ic
 
-dfx build dao_canister
-dfx build ic_asset_handler
-dfx build daohouse_backend
+dfx build dao_canister --ic
+dfx build ic_asset_handler --ic
+dfx build daohouse_backend --ic
 
 
 # FOR ICP LEDGER
@@ -61,56 +61,9 @@ echo $RECIEVER
 
 # dfx canister create --all
 
-# NOT FOR MAINNET
-dfx deploy --specified-id ryjl3-tyaaa-aaaaa-aaaba-cai icp_ledger_canister --argument "
-  (variant {
-    Init = record {
-      minting_account = \"$MINTER_ACCOUNT_ID\";
-      initial_values = vec {
-        record {
-          \"$DEFAULT_ACCOUNT_ID\";
-          record {
-            e8s = 10_000_000_000 : nat64;
-          };
-        };
-      };
-      send_whitelist = vec {};
-      transfer_fee = opt record {
-        e8s = 0 : nat64;
-      };
-      token_symbol = opt \"LICP\";
-      token_name = opt \"Local ICP\";
-    }
-  })
-"
+DAOHOUSE_BACKEND_ID=$(dfx canister id daohouse_backend --ic)
 
-
-dfx deploy icrc1_ledger_canister --argument "(variant {Init = 
-record {
-    token_symbol = \"${TOKEN_SYMBOL}\";
-    token_name = \"${TOKEN_NAME}\";
-    minting_account = record { owner = principal \"${MINTER}\" };
-    transfer_fee = ${TRANSFER_FEE};
-    metadata = vec {}; 
-    initial_balances = vec {
-        record { record { owner = principal \"${Anish}\" }; ${PRE_MINTED_TOKENS} };
-        record { record { owner = principal \"${PRO}\" }; ${PRE_MINTED_TOKENS} };
-        record { record { owner = principal \"${RECIEVER}\" }; ${DIFFERENT} }
-    };
-    archive_options = record {
-        num_blocks_to_archive = 100;
-        trigger_threshold = 100;
-        controller_id = principal \"${DEFAULT}\";
-    };
-    feature_flags = opt record { icrc2 = true; };
-}
-})"
-
-DAOHOUSE_BACKEND_ID=$(dfx canister id daohouse_backend)
-
-
-
-dfx deploy dao_canister --argument "(record {
+dfx deploy dao_canister  --argument "(record {
     daohouse_canister_id = principal \"${DAOHOUSE_BACKEND_ID}\";
     dao_name = \"Sample DAO\";
     token_symbol = \"BUNNU\";
@@ -164,26 +117,26 @@ dfx deploy dao_canister --argument "(record {
         };
     };
     ask_to_join_dao = true;
-})"
+})" --ic
 
 
 
-dfx deploy daohouse_backend --argument "(record { payment_recipient = principal \"${RECIEVER}\"; ic_asset_canister_id = principal \"${ASSET_CANISTER_ID}\"; dao_canister_id = principal \"${DAO_CANISTER_ID}\"; })"
-dfx deploy ic_asset_handler
-# to upload first image
-chmod 777 ./assets_upload.sh
-./assets_upload.sh
+# dfx deploy daohouse_backend --argument "(record { payment_recipient = principal \"${RECIEVER}\"; ic_asset_canister_id = principal \"${ASSET_CANISTER_ID}\"; dao_canister_id = principal \"${DAO_CANISTER_ID}\"; })"
+# dfx deploy ic_asset_handler
+# # to upload first image
+# chmod 777 ./assets_upload.sh
+# ./assets_upload.sh
 
 
-# dfx deploy proposal_canister
+# # dfx deploy proposal_canister
 
 
 
- dfx deploy internet_identity
-#  dfx deploy daohouse_frontend
+#  dfx deploy internet_identity
+# #  dfx deploy daohouse_frontend
 
-# dfx deploy
+# # dfx deploy
 
 
-# dfx generate
+# # dfx generate
 

@@ -10,7 +10,7 @@ mod memory;
 use candid::Principal;
 pub use functions::*;
 use memory::Memory;
-
+use candid::Nat;
 pub mod utils;
 
 use types::*;

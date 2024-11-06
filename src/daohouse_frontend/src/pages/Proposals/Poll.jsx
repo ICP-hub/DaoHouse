@@ -124,7 +124,7 @@ const Poll = ({ poll, handleInputPoll, setPoll }) => {
                 </div>
             )}
 
-            <div className="mb-4">
+            {/* <div className="mb-4">
                 <label htmlFor="proposalCreatedAt" className="mb-2 font-semibold text-xl">Created At</label>
                 <input
                     id="proposalCreatedAt"
@@ -136,7 +136,7 @@ const Poll = ({ poll, handleInputPoll, setPoll }) => {
                     disabled
                     required
                 />
-            </div>
+            </div> */}
 
             <div className="mb-4">
                 <label htmlFor="proposalExpiredAt" className="mb-2 font-semibold text-xl">Expires At</label>

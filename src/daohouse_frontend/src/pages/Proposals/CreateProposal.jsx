@@ -397,6 +397,8 @@ function CreateProposal() {
       const currentBalance = parseInt(balance, 10);
       const formattedMetadata = await formatTokenMetaData(metadata);
       let response = await transferApprove(currentBalance,actor,formattedMetadata,tokenTransfer.tokens);
+      console.log("res", response);
+      
       if (response.Ok) {
         toast.success(response.Ok);
         movetodao();
@@ -405,7 +407,7 @@ function CreateProposal() {
       }
     } catch (err) {
       console.error("Error submitting Token Transfer proposal:", err);
-      toast.error("Failed to create Token Transfer proposal");
+      toast.error(err.message);
     }
   };
 
