@@ -32,12 +32,12 @@ const EditProfile = () => {
 
   const [loading, setLoading] = useState(false);
 
+  const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
+  const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
   const [imageSrc, setImageSrc] = useState(MyProfileImage);
   const [errors, setErrors] = useState({}); // To store validation errors
 
   const navigate = useNavigate();
-  const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
-  const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
   
   const handleDiscardClick = () => {
     navigate("/my-profile");

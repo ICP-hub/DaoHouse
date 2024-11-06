@@ -43,7 +43,7 @@ const DaoProfile = () => {
   const { daoCanisterId } = useParams();
   const [joinStatus, setJoinStatus] = useState("Join DAO"); 
   const [isMember, setIsMember] = useState(false);
-  const [voteApi, setVoteApi] = useState({})
+  // const [voteApi, setVoteApi] = useState({})
   const [daoFollowers, setDaoFollowers] = useState([])
   const [daoMembers, setDaoMembers] = useState([])
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -91,11 +91,9 @@ const handlePageChange = (newPage) => {
   useEffect(() => {
     const fetchDaoDetails = async () => {
       setLoadingProfile(true);
-      if (daoCanisterId) {
+      
         try {
-          const daoActor = createDaoActor(daoCanisterId);
-          setDaoActor(daoActor)
-          setVoteApi(daoActor);
+          // setVoteApi(daoActor);
 
           const daoDetails = await daoActor.get_dao_detail();
           setDao(daoDetails);
@@ -130,14 +128,11 @@ const handlePageChange = (newPage) => {
         } catch (error) {
           console.error('Error fetching DAO details:', error);
         } 
-      }
     };
 
     const fetchProposals = async () => {
       setLoadingProposals(true);
-      if (daoCanisterId) {
         try {
-          const daoActor = createDaoActor(daoCanisterId);
           const start = (currentPage - 1) * itemsPerPage;
           const end = start + itemsPerPage;
     
@@ -148,13 +143,22 @@ const handlePageChange = (newPage) => {
         } finally {
           setLoadingProposals(false);
         }
-      }
+      
     };
     
 
     fetchDaoDetails();
     fetchProposals();
-  }, [daoCanisterId, backendActor, createDaoActor, currentPage]);
+  }, [ backendActor, createDaoActor, currentPage]);
+
+  useEffect(() => {
+  if (daoCanisterId) {
+    const actor = createDaoActor(daoCanisterId);
+    setDaoActor(actor);
+    // setVoteApi(actor);
+  }
+}, [daoCanisterId]);
+
 
   const handleJoinDao = async () => {
 
@@ -508,7 +512,7 @@ const handlePageChange = (newPage) => {
           </button>
        
         </div>
-        {activeLink === "proposals" && ( <div>{ loadingProposals ? ( <ProposalLoaderSkeleton />) : (<ProposalsContent proposals={proposals} isMember={isMember} voteApi={voteApi} daoCanisterId={daoCanisterId} />)}</div> ) }
+        {activeLink === "proposals" && ( <div>{ loadingProposals ? ( <ProposalLoaderSkeleton />) : (<ProposalsContent proposals={proposals} isMember={isMember} voteApi={daoActor} daoCanisterId={daoCanisterId} />)}</div> ) }
         {activeLink === "feeds" && <FeedsContent  />}
         {activeLink === "member_policy" && <Members daoGroups={daoGroups} daoMembers={daoMembers} />}
         {activeLink === "followers" && <FollowersContent daoFollowers={daoFollowers} daoCanisterId={daoCanisterId}/>}

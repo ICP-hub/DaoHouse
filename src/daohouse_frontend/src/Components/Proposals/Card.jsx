@@ -35,8 +35,11 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const [isPollVoteLoading, setIsPollVoteLoading] = useState(false);
   const [loadingOptionId, setLoadingOptionId] = useState(null);
   const [pollOptions, setPollOptions] = useState(proposal?.poll_options ? proposal.poll_options[0] : []);
-  console.log(proposal);
-  
+  const [status, setStatus] = useState(null);
+  const [pollingInterval, setPollingInterval] = useState(10000);
+
+console.log("proposals",proposal);
+
 
 
   const toggleExpanded = () => setIsExpanded(!isExpanded);
@@ -56,7 +59,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   };
 
   const { truncated, isTruncated } = truncateText(proposal?.proposal_description || 'Proposal Description', maxWords);
-
+  
 
   useEffect(() => {
     async function fetchUserProfile() {
@@ -155,15 +158,46 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const navigate = useNavigate()
 
 
-  const status = proposal?.proposal_status
-    ? Object.keys(proposal?.proposal_status)[0] || "No Status"
-    : "No Status";
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        // Replace with your API call to get proposal status
+        const response = await voteApi?.get_proposal_by_id(proposal?.proposal_id);
+        console.log("resp", response);
+        
+        const newStatus = response?.proposal_status
+        ? Object.keys(response.proposal_status)[0] || "No Status"
+        : "No Status";
+
+
+        setStatus(newStatus);
+
+        // If status has changed to a final state, clear polling
+        if (["Expired", "Accepted", "Rejected"].includes(newStatus)) {
+          clearInterval(intervalId);
+        }
+      } catch (error) {
+        console.error("Error fetching proposal status:", error);
+      }
+    };
+
+    // Fetch initially and then set interval based on pollingInterval
+    fetchStatus();
+    const intervalId = setInterval(fetchStatus, pollingInterval);
+
+    return () => clearInterval(intervalId);
+  }, [proposal?.proposal_id, pollingInterval]);
 
   const requiredVotes = Number(BigInt(proposal?.required_votes || 0))
   useEffect(() => {
     setApprovedVotes(proposal?.approved_votes_list?.length || 0);
     setRejectedVotes(proposal?.rejected_votes_list?.length || 0);
     setVoteCount((proposal?.approved_votes_list?.length || 0) + (proposal?.rejected_votes_list?.length || 0));
+
+    if (proposal && proposal.poll_options) {
+      const options = proposal.poll_options[0] || [];
+      setPollOptions(options);
+  }
   }, [proposal]);
 
 
@@ -241,13 +275,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const handleViewMore = () => {
     navigate(`/social-feed/proposal/${proposalId}/dao/${daoId}`)
   }
-
-  useEffect(() => {
-    const hasVoted = localStorage.getItem(`voted_${proposal?.proposal_id}`);
-    if (hasVoted) {
-      // setIsDisabled(true);
-    }
-  }, [proposal?.proposal_id]);
+ 
 
   const handleVoteSubmit = async (e) => {
     e.preventDefault();
@@ -319,6 +347,13 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                         : option
                 )
             );
+
+            const updatedProposal = await voteApi?.get_proposal_by_id(proposal?.proposal_id);
+            setVoteCount((prev) => prev + 1);
+        setVotersList({
+          approvedVotes: updatedProposal?.approved_votes_list || [],
+          rejectedVotes: updatedProposal?.rejected_votes_list || [],
+        });
 
             // Reset selected option after voting
             setSelectedOption(null);
