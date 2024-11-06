@@ -29,6 +29,7 @@
     "@mui/material": "^5.16.7",
     "@mui/styled-engine-sc": "^6.0.0-alpha.18",
     "@nfid/embed": "^0.10.3",
+    "@nfid/identitykit": "^1.0.1",
     "agent": "^0.2.1",
     "cargo": "^0.8.0",
     "i18next-browser-languagedetector": "^7.2.1",

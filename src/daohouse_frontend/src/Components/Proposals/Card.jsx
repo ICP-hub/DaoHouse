@@ -35,7 +35,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const [isPollVoteLoading, setIsPollVoteLoading] = useState(false);
   const [loadingOptionId, setLoadingOptionId] = useState(null);
   const [pollOptions, setPollOptions] = useState(proposal?.poll_options ? proposal.poll_options[0] : []);
-  console.log(proposal);
+  // console.log(proposal);
   
 
 

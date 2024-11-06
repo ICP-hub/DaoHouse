@@ -210,7 +210,7 @@ const FeedPage = () => {
           <div className="flex justify-center items-center h-full mb-10 mt-10 ">
           <Container className="w-full flex flex-col items-center justify-center   ">
             <img src={nodata} alt="No Data" className="mb-1  ml-[42px]  " />
-            <p className="text-center  ml-[42px] mt-4  text-gray-700 text-base">
+            <p className="text-center   mt-4  text-gray-700 text-base">
               You have not created any DAO
             </p>
 
