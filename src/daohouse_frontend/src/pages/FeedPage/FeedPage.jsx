@@ -12,8 +12,6 @@ import Pagination from "../../Components/pagination/Pagination";
 
 
 const FeedPage = () => {
-  const [active, setActive] = useState({ all: false, latest: true });
-  const [showPopup, setShowPopup] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { isAuthenticated, login, signInNFID, backendActor, createDaoActor } = useAuth();
   const navigate = useNavigate();
@@ -21,21 +19,12 @@ const FeedPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [hasMore, setHasMore] = useState(true);
   const [proposals, setProposals] = useState([]);
-  const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [fetchedProposals, setFetchedProposals] = useState([]);
-
   const itemsPerPage = 4;
 
   const className = "FeedPage";
-
-  // Function to set active tabs
-  const setAllActive = () => {
-    setActive({ all: true, latest: false });
-    setCurrentPage(1);
-  };
 
   // const setLatestActive = () => {
   //   setActive({ all: false, latest: true });
@@ -116,10 +105,6 @@ const FeedPage = () => {
           proposal.proposal_id.toLowerCase().includes(searchTerm.trim().toLowerCase())
         );
       }
-
-      setTotalItems(allProposals.length);
-      setFetchedProposals(allProposals);
-
   
       const start = (currentPage - 1) * itemsPerPage;
       const end = start + itemsPerPage;
@@ -156,9 +141,6 @@ const FeedPage = () => {
 
   return (
     <div className={`${className} w-full`}>
-      {showPopup && (
-        <div className="fixed inset-0 bg-black opacity-40 z-40"></div>
-      )}
       {/* Header Section with Background Image */}
       <div
         style={{
@@ -209,8 +191,8 @@ const FeedPage = () => {
         ) :proposals.length === 0 ? (
           <div className="flex justify-center items-center h-full mb-10 mt-10 ">
           <Container className="w-full flex flex-col items-center justify-center   ">
-            <img src={nodata} alt="No Data" className="mb-1  ml-[42px]  " />
-            <p className="text-center  ml-[42px] mt-4  text-gray-700 text-base">
+            <img src={nodata} alt="No Data" className="mb-1  ml-[42px]" />
+            <p className="text-center mt-4  text-gray-700 text-base">
               You have not created any DAO
             </p>
 
