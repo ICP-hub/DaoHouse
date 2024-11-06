@@ -193,6 +193,11 @@ console.log("proposals",proposal);
     setApprovedVotes(proposal?.approved_votes_list?.length || 0);
     setRejectedVotes(proposal?.rejected_votes_list?.length || 0);
     setVoteCount((proposal?.approved_votes_list?.length || 0) + (proposal?.rejected_votes_list?.length || 0));
+
+    if (proposal && proposal.poll_options) {
+      const options = proposal.poll_options[0] || [];
+      setPollOptions(options);
+  }
   }, [proposal]);
 
 
@@ -270,22 +275,6 @@ console.log("proposals",proposal);
   const handleViewMore = () => {
     navigate(`/social-feed/proposal/${proposalId}/dao/${daoId}`)
   }
-
-  useEffect(() => {
-    const hasVoted = localStorage.getItem(`voted_${proposal?.proposal_id}`);
-    if (hasVoted) {
-      // setIsDisabled(true);
-    }
-    
-  }, [proposal?.proposal_id]);
-
-  useEffect(() => {
-    if (proposal && proposal.poll_options) {
-        const options = proposal.poll_options[0] || [];
-        setPollOptions(options);
-        console.log("Setting poll options:", options); // Debugging log
-    }
-}, [proposal]);
  
 
   const handleVoteSubmit = async (e) => {
