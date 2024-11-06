@@ -38,7 +38,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const [status, setStatus] = useState(null);
   const [pollingInterval, setPollingInterval] = useState(10000);
 
-// console.log("proposals",proposal);
+console.log("proposals",proposal);
 
 
 
@@ -59,7 +59,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   };
 
   const { truncated, isTruncated } = truncateText(proposal?.proposal_description || 'Proposal Description', maxWords);
-
+  
 
   useEffect(() => {
     async function fetchUserProfile() {
@@ -276,7 +276,17 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
     if (hasVoted) {
       // setIsDisabled(true);
     }
+    
   }, [proposal?.proposal_id]);
+
+  useEffect(() => {
+    if (proposal && proposal.poll_options) {
+        const options = proposal.poll_options[0] || [];
+        setPollOptions(options);
+        console.log("Setting poll options:", options); // Debugging log
+    }
+}, [proposal]);
+ 
 
   const handleVoteSubmit = async (e) => {
     e.preventDefault();

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { proposalsArray } from "../../Components/Proposals/proposalsData";
 import Card from "../Proposals/Card";
 import { Link } from "react-router-dom";
@@ -11,7 +11,7 @@ const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, da
   const [searchTerm, setSearchTerm] = useState("");
   const [fetchedProposals, setFetchedProposals] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const proposalsPerPage = 40; 
+  const proposalsPerPage = 4;
 
   const allProposals = proposals && Array.isArray(proposals) ? proposals : [];
 
