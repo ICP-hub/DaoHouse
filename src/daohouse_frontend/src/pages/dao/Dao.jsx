@@ -11,6 +11,7 @@ import SearchProposals from "../../Components/Proposals/SearchProposals";
 import { Principal } from "@dfinity/principal";
 import DaoCardLoaderSkeleton from "../../Components/SkeletonLoaders/DaoCardLoaderSkeleton/DaoCardLoaderSkeleton";
 import Pagination from "../../Components/pagination/Pagination";
+import { useAuthClient } from "../../connect/useClient";
 
 const Dao = () => {
   const [showAll, setShowAll] = useState(true);
@@ -25,7 +26,23 @@ const Dao = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
 
-  const { isAuthenticated, backendActor, createDaoActor, login, signInNFID, stringPrincipal } = useAuth();
+  const { isAuthenticated, backendActor, createDaoActor, login,principal, signInNFID, stringPrincipal,identity } = useAuthClient();
+  // console.log("createDaoActor",createDaoActor);
+  // console.log("string Principal",stringPrincipal);
+  // console.log("login",login);
+  // console.log("principal",principal);
+  // console.log("backendActor",backendActor);
+  // console.log("is authebb",isAuthenticated);
+  // console.log("idej",identity);
+  
+  
+  
+  
+  
+  
+  // console.log("isAuthhe",isAuthenticated);
+  
+  
   const navigate = useNavigate();
 
 
@@ -52,7 +69,7 @@ const Dao = () => {
   };
 
   const getDaos = async (pagination = {}) => {
-    setLoading(true);
+    // setLoading(true);
     try {
       const response = await backendActor.get_all_dao({
         start: pagination.start,
@@ -69,7 +86,7 @@ const Dao = () => {
     } catch (error) {
       console.error("Error fetching DAOs:", error);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -77,7 +94,7 @@ const Dao = () => {
   const getSearchDao = async () => {
     if (!searchTerm.trim()) return setFetchedDAOs([]);
 
-    setLoading(true);
+    // setLoading(true);
     try {
       const response = await backendActor.search_dao(searchTerm);
   
@@ -91,7 +108,7 @@ const Dao = () => {
     } catch (error) {
       console.error("Error searching DAOs:", error);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -99,7 +116,7 @@ const Dao = () => {
   const getJoinedDaos = async () => {
     try {
       setLoaadingJoinedDao(true);
-      const profile = await backendActor.get_profile_by_id(Principal.fromText(stringPrincipal));
+      const profile = await backendActor.get_profile_by_id(Principal.fromText(principal));
       const joinedDaoPrincipals = profile?.Ok?.join_dao || [];
 
       const joinedDaoDetails = await Promise.all(
@@ -127,10 +144,10 @@ const Dao = () => {
   };
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      setShowLoginModal(true);
-      return;
-    }
+    // if (!isAuthenticated) {
+    //   setShowLoginModal(true);
+    //   return;
+    // }
     setShowLoginModal(false);
     getDaos({ start: (currentPage - 1) * itemsPerPage, end: currentPage * itemsPerPage });
   }, [isAuthenticated, backendActor, currentPage]);
@@ -144,7 +161,7 @@ const Dao = () => {
   }, [showAll]);
 
   const handleLogin = async () => {
-    setLoading(true);
+    // setLoading(true);
     try {
       await login("Icp");
       window.location.reload();

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, Navigate, useLocation } from "react-router-dom";
-import { useAuth, useAuthClient } from "../utils/useAuthClient";
+// import { useAuth, useAuthClient } from "../utils/useAuthClient";
 import { LuChevronDown } from "react-icons/lu";
 import LoginModal from "../Auth/LoginModal";
 import { FaUser, FaSignOutAlt, FaSitemap, FaComments } from "react-icons/fa";
@@ -15,7 +15,19 @@ import { idlFactory as ledgerIDL } from "./ledger.did";
 import { createActor } from "../../../../declarations/icp_ledger_canister";
 import UserDetailsModal from "./UserDetailsModal";
 import { useNavigate } from "react-router-dom";
+import { useAuth, useAuthClient } from "../../connect/useClient";
+import { ConnectWallet } from "@nfid/identitykit/react";
 
+
+export const ConnectBtn = ({ onClick }) => (
+  <button
+    onClick={onClick}
+    className="mobile:px-8 px-4 py-2 rounded-[27.5px] bg-[#0E3746] shadow-md text-white big_phone:text-base small_phone:text-sm text-xs"
+  >
+    Connect Wallet
+  </button>
+
+);
 
 
 const Navbar = () => {
@@ -26,16 +38,21 @@ const Navbar = () => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const hasShownToastRef = useRef(false);
-  const { userProfile, fetchUserProfile } = useUserProfile() || {}; 
+  const { userProfile, fetchUserProfile } = useUserProfile() || {};
   const {
     login,
-    isAuthenticated,
-    signInNFID,
     logout,
     backendActor,
-    stringPrincipal,
-    identity
-  } = useAuth();
+    principal,
+    identity,
+    isConnected,
+    isAuthenticated
+
+    
+  } = useAuthClient();
+  // const { isConnected, disconnect, principal, actor } = useAuth();
+
+  
   const location = useLocation();
 
 
@@ -96,16 +113,16 @@ const Navbar = () => {
       } else {
         setImageSrc(MyProfileImage);
       }
-      
+
       setUsername(userProfile.username || "");
     }
   }, [userProfile]);
-  
+
 
 
   const handleDetailsSubmit = async (details) => {
     try {
-    
+
       setIsDetailsModalOpen(false);
       await fetchUserProfile();
       toast.success("User details updated successfully");
@@ -114,9 +131,11 @@ const Navbar = () => {
       toast.error("An error occurred while updating user details");
     }
   };
-  
+
 
   const handleLogin = async () => {
+    console.log("hi");
+    
     setIsConnecting(true);
     await login("Icp").then(() => window.location.reload());
     navigate("/")
@@ -126,7 +145,17 @@ const Navbar = () => {
     setIsConnecting(true);
     await signInNFID();
   };
-
+  const Logout = ({ onLogout, isAuthenticated }) => {
+    return (
+      <button
+        onClick={handleLogout}
+        disabled={!isAuthenticated}
+        className="bg-transparent border border-gray-500 py-2 px-4 w-[200px] rounded-2xl cursor-pointer"
+      >
+        LOGOUT
+      </button>
+    );
+  };
   const handleLogout = async () => {
     setIsLoading(true);
     try {
@@ -158,10 +187,13 @@ const Navbar = () => {
     },
     {
       label: "Logout",
-      onClick: handleLogout,
+      onClick: logout,
       icon: <FaSignOutAlt className="mr-2" />,
+    
     },
   ];
+
+
 
   const filteredDropdownItems =
     window.innerWidth < 769
@@ -186,40 +218,44 @@ const Navbar = () => {
                 className="mobile:h-10 small_phone:w-30 w-25 h-8 lg:ml-6"
               />
             </Link>
-           {/* Navigation menu */}
-           <div className="big_phone:flex items-center tablet:gap-8 gap-4 hidden lg:w-[33%] -ml-24">
-  {menuItems.map((item, index) => (
-    <div
-      key={index}
-      className="text-lg font-normal font-inter leading-[19.36px] text-[#829095]"
-    >
-      <Link
-        to={item.route}
-        className={`hover:text-[#05212C] hover:font-medium cursor-pointer text-[16px] text-[#829095] ${location.pathname === item.route
-            ? "font-semibold border-b-2 border-[#05212C] text-black"
-            : "border-transparent border-b-0.5"
-          }`}
-      >
-        {item.label}
-      </Link>
-    </div>
-  ))}
-</div>
+            {/* Navigation menu */}
+            <div className="big_phone:flex items-center tablet:gap-8 gap-4 hidden lg:w-[33%] -ml-24">
+              {menuItems.map((item, index) => (
+                <div
+                  key={index}
+                  className="text-lg font-normal font-inter leading-[19.36px] text-[#829095]"
+                >
+                  <Link
+                    to={item.route}
+                    className={`hover:text-[#05212C] hover:font-medium cursor-pointer text-[16px] text-[#829095] ${location.pathname === item.route
+                      ? "font-semibold border-b-2 border-[#05212C] text-black"
+                      : "border-transparent border-b-0.5"
+                      }`}
+                  >
+                    {item.label}
+                  </Link>
+                </div>
+              ))}
+            </div>
 
 
             {/* User profile or login */}
             <div>
-              {!isAuthenticated ? (
+              {!isConnected ? (
 
                 <div className="flex items-center tablet:space-x-4 space-x-2">
 
-                  <button
+                  {/* <button
                     onClick={handleLoginModalOpen}
                     className="mobile:px-8 px-4 py-2 rounded-[27.5px] bg-[#0E3746] shadow-md text-white big_phone:text-base small_phone:text-sm text-xs"
                   >
                     {isModalOpen && isLoading ? "Connecting" : "Connect Wallet"}
-                  </button>
-
+                  </button> */}
+                   <ConnectWallet
+        connectButtonComponent={ConnectBtn}
+        className="rounded-full bg-black"
+     
+      />
                 </div>
               ) : (
                 <div className="relative">
@@ -235,12 +271,12 @@ const Navbar = () => {
                         src={imageSrc}
                         alt="User Avatar"
                         className="w-8 h-8 object-cover rounded-full"
-                        onError={() => setImageSrc(MyProfileImage)} 
+                        onError={() => setImageSrc(MyProfileImage)}
                       />
                     </div>
-                    {(username || stringPrincipal) && (
+                    {(username || principal) && (
                       <p className="text-black font-medium truncate w-20">
-                        {username || stringPrincipal}
+                        {username || principal?.toString()}
                       </p>
                     )}
                     <LuChevronDown />
@@ -258,19 +294,22 @@ const Navbar = () => {
                           </Link>
                         ))}
                       </div>
+
                     )}
+    
                   </div>
                 </div>
               )}
             </div>
           </div>
         </Container>
-        <LoginModal
+        {/* <LoginModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onLogin={handleLogin}
           onLoginNFID={handleNFIDLogin}
-        />
+        /> */}
+      
         <UserDetailsModal
           isOpen={isDetailsModalOpen}
           onClose={() => setIsDetailsModalOpen(false)}

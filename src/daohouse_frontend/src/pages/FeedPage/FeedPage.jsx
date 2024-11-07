@@ -9,13 +9,22 @@ import ProposalsContent from "../../Components/DaoProfile/ProposalsContent";
 import SearchProposals from "../../Components/Proposals/SearchProposals";
 import ProposalLoaderSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/ProposalLoaderSkeleton";
 import Pagination from "../../Components/pagination/Pagination";
+import { useAuthClient } from "../../connect/useClient";
+
+
 
 
 const FeedPage = () => {
   const [active, setActive] = useState({ all: false, latest: true });
   const [showPopup, setShowPopup] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const { isAuthenticated, login, signInNFID, backendActor, createDaoActor } = useAuth();
+  const { isAuthenticated, login, signInNFID, backendActor, createDaoActor } = useAuthClient();
+  console.log("isauthe",isAuthenticated);
+console.log("createDaoActor",createDaoActor);
+console.log("backendactr",backendActor);
+
+
+  
   const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -49,7 +58,7 @@ const FeedPage = () => {
 
   // Handle Login Functions
   const handleLogin = async () => {
-    setLoading(true);
+    // setLoading(true);
     try {
       await login("Icp");
       window.location.reload();
@@ -80,7 +89,7 @@ const FeedPage = () => {
 
   // Fetch All Proposals Across All DAOs
   const fetchAllProposals = async () => {
-    setLoading(true);
+    // setLoading(true);
     const daoPagination = {
       start: 0,
       end: 1000,
@@ -240,7 +249,10 @@ const FeedPage = () => {
           onLogin={handleLogin}
           onNFIDLogin={handleNFIDLogin}
         />
+      
       )}
+
+
 
       {/* Pagination Controls */}
       {!loading && proposals.length > 0 && (

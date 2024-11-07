@@ -5,9 +5,10 @@ import { useAuth } from "../../utils/useAuthClient";
 import Card from "../../Proposals/Card";
 import SearchProposals from "../../Proposals/SearchProposals";
 import MyPostsSkeleton from "../../SkeletonLoaders/MyPostsSkeleton";
+import { useAuthClient } from "../../../connect/useClient";
 
 const MyPosts = () => {
-  const { backendActor } = useAuth();
+  const { backendActor } = useAuthClient();
   const { setSelectedPost } = usePostContext();
   const [myProposals, setMyProposals] = useState([]);
   const [totalItems, setTotalItems] = useState(0);

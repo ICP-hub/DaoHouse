@@ -7,12 +7,13 @@ import smallcircle from "../../../assets/smallcircle.png";
 import mediumcircle from "../../../assets/mediumcircle.png";
 import mobileviewCircleBig from "../../../assets/mobileviewCircleBig.png";
 import mobilecircleSmall from "../../../assets/mobilecircleSmall.png";
-import { useAuth, useAuthClient } from "../../Components/utils/useAuthClient";
+import { useAuthClient } from "../../connect/useClient";
+// import { useAuth, useAuthClient } from "../../Components/utils/useAuthClient";
 
 
 const Decentralization = () => {
   const className = "Decentralization";
-  const { backendActor } = useAuth();
+  const { backendActor } = useAuthClient();
   const [analtics, setGetAnaltics] = useState({});
   const navigate = useNavigate();
 
@@ -27,7 +28,7 @@ const Decentralization = () => {
 
     try {
       const response = await backendActor.get_analytics();
-      console.log("anltyics_API_response", response);
+      // console.log("anltyics_API_response", response);
       setGetAnaltics(response.Ok || {});
     } catch (error) {
       console.error("Error fetching analytics:", error);

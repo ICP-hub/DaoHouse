@@ -6,10 +6,11 @@ import { Principal } from "@dfinity/principal";
 import Container from "../../Container/Container";
 import SearchProposals from "../../../Components/Proposals/SearchProposals"; 
 import "./Following.scss"; 
+import { useAuthClient } from "../../../connect/useClient";
 
 const Following = () => {
   const className = "Following";
-  const { backendActor, createDaoActor, stringPrincipal } = useAuth();
+  const { backendActor, createDaoActor, stringPrincipal } = useAuthClient();
   const [joinedDAO, setJoinedDAO] = useState([]);
   const [fetchedDAOs, setFetchedDAOs] = useState([]); 
   const [loading, setLoading] = useState(false);

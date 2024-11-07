@@ -6,11 +6,12 @@ import { toast } from 'react-toastify';
 import { CircularProgress } from "@mui/material";
 import messagesound from "../../Sound/messagesound.mp3";
 import daoImage from "../../../assets/daoImage.png"
+import { useAuthClient } from "../../connect/useClient";
 
 const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, isJoinedDAO }) => {
 
   const navigate = useNavigate();
-  const { backendActor, stringPrincipal, createDaoActor } = useAuth();
+  const { backendActor, stringPrincipal, createDaoActor } = useAuthClient();
   const canisterId = process.env.CANISTER_ID_IC_ASSET_HANDLER;
   const [isFollowing, setIsFollowing] = useState(false);
   const [daoActor, setDaoActor] = useState({})

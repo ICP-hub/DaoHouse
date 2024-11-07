@@ -26,12 +26,13 @@ import NoFollowers from "./NoFollowers";
 import NoFollowing from "./NoFollowing";
 import { Principal } from "@dfinity/principal";
 import { createActor } from "../../../../declarations/icp_ledger_canister";
+import { useAuthClient } from "../../connect/useClient";
 
 
 
 
 const MyProfile = ({ childComponent }) => {
-  const { backendActor, identity, stringPrincipal } = useAuth();
+  const { backendActor, identity, stringPrincipal } = useAuthClient();
 
   console.log("sandlkansdlknasld", stringPrincipal);
 

@@ -14,11 +14,12 @@ import { toast } from "react-toastify";
 import Container from "../../Components/Container/Container";
 import LoginModal from "../../Components/Auth/LoginModal";
 import { useNavigate } from "react-router-dom";
+import { useAuthClient } from "../../connect/useClient";
 
 const CreateDao = () => {
   const className = "CreateDAO";
   const [activeStep, setActiveStep] = useState(0);
-  const { backendActor, isAuthenticated, login, signInNFID } = useAuth();
+  const { backendActor, isAuthenticated, login, signInNFID } = useAuthClient();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingNext, setLoadingNext] = useState(false)
@@ -115,6 +116,8 @@ const CreateDao = () => {
 
 
   const handleDaoClick = async () => {
+    console.log("handle");
+    
     setLoadingNext(true);
     const { step1, step2, step3, step4, step5, step6 } = data;
     console.log("Data", data);

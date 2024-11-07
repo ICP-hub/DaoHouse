@@ -3,7 +3,7 @@ import "../DaoProfile/DaoProfile.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import Container from "../../Components/Container/Container";
 import { Principal } from '@dfinity/principal';
-import { useAuth } from "../../Components/utils/useAuthClient";
+
 import { useUserProfile } from "../../context/UserProfileContext";
 import { toast } from "react-toastify";
 import MuiSkeleton from "../../Components/SkeletonLoaders/MuiSkeleton";
@@ -15,10 +15,11 @@ import ProposalDetailsLoaderSkeleton from "../../Components/SkeletonLoaders/Prop
 import NoDataComponent from "../../Components/Dao/NoDataComponent";
 import { CircularProgress } from "@mui/material";
 import messagesound from "../../Sound/messagesound.mp3";import daoImage from "../../../assets/daoImage.png"
+import { useAuthClient } from "../../connect/useClient";
 
 const ProposalsDetails = () => {
    const className="DaoProfile"
-  const { backendActor, createDaoActor } = useAuth();
+  const { backendActor, createDaoActor } = useAuthClient();
   const [dao, setDao] = useState(null);
   const { proposalId, daoCanisterId } = useParams();
   const [voteApi, setVoteApi] = useState({});
@@ -71,20 +72,20 @@ const ProposalsDetails = () => {
 
   useEffect(() => {
     const fetchDaoDetails = async () => {
-      setLoading(true);
+      // setLoading(true);
       if (daoCanisterId) {
         try {
           setVoteApi(daoActor);
           const proposalDetails = await daoActor.get_proposal_by_id(proposalId);
           setProposal(proposalDetails);
-          console.log("propos",proposalDetails);
+          // console.log("propos",proposalDetails);
           
 
           setCommentCount(Number(BigInt(proposalDetails?.comments || 0)))
 
           const daoDetails = await daoActor.get_dao_detail();
           setDao(daoDetails);
-          console.log("daoDetails", daoDetails);
+          // console.log("daoDetails", daoDetails);
           
 
           // Fetch user profile
@@ -98,7 +99,7 @@ const ProposalsDetails = () => {
             setIsFollowing(daoFollowers.some(follower => follower.toString() === currentUserId.toString()));
           
           const daoMembers = await daoActor.get_dao_members();
-          console.log(daoMembers);
+          // console.log(daoMembers);
           
           setDaoMembers(daoMembers)
           const isCurrentUserMember = daoMembers.some(member => member.toString() === currentUserId.toString());
@@ -131,7 +132,7 @@ const ProposalsDetails = () => {
   };
 
   const confirmJoinDao = async () => {
-    setLoadingJoinedDAO(true)
+    // setLoadingJoinedDAO(true)
     try {
       const daohouseBackendId = Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND);
       const place_to_join = "Council";

@@ -18,7 +18,7 @@ import FollowersContent from "../../Components/DaoProfile/FollowersContent";
 import FundsContent from "../../Components/DaoProfile/FundsContent";
 import Container from "../../Components/Container/Container";
 import { Principal } from '@dfinity/principal';
-import { useAuth, useAuthClient } from "../../Components/utils/useAuthClient";
+
 import { toast } from "react-toastify";
 import ProposalLoaderSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/ProposalLoaderSkeleton";
 import DaoProfileLoaderSkeleton from "../../Components/SkeletonLoaders/DaoProfileLoaderSkeleton/DaoProfileLoaderSkeleton";
@@ -26,17 +26,18 @@ import NoDataComponent from "../../Components/Dao/NoDataComponent";
 import { CircularProgress } from "@mui/material";
 import messagesound from "../../Sound/messagesound.mp3";
 import daoImage from "../../../assets/daoImage.png"
+import { useAuthClient } from "../../connect/useClient";
 
 
 const DaoProfile = () => {
 
   const className = "DaoProfile";
   const [activeLink, setActiveLink] = useState("proposals");
-  const { backendActor, createDaoActor } = useAuth();
+  const { backendActor, createDaoActor } = useAuthClient();
   const [dao, setDao] = useState(null);
   const [proposals, setProposals] = useState([]);
-  const [loadingProfile, setLoadingProfile] = useState(true);
-  const [loadingProposals, setLoadingProposals] = useState(true);
+  const [loadingProfile, setLoadingProfile] = useState(false);
+  const [loadingProposals, setLoadingProposals] = useState(false);
   const canisterId = process.env.CANISTER_ID_IC_ASSET_HANDLER;
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
@@ -90,7 +91,7 @@ const handlePageChange = (newPage) => {
  
   useEffect(() => {
     const fetchDaoDetails = async () => {
-      setLoadingProfile(true);
+      // setLoadingProfile(true);
       if (daoCanisterId) {
         try {
           const daoActor = createDaoActor(daoCanisterId);
@@ -126,7 +127,7 @@ const handlePageChange = (newPage) => {
               setJoinStatus('Join DAO');
             }
           }
-          setLoadingProfile(false)
+          // setLoadingProfile(false)
         } catch (error) {
           console.error('Error fetching DAO details:', error);
         } 
@@ -134,7 +135,7 @@ const handlePageChange = (newPage) => {
     };
 
     const fetchProposals = async () => {
-      setLoadingProposals(true);
+      // setLoadingProposals(true);
       if (daoCanisterId) {
         try {
           const daoActor = createDaoActor(daoCanisterId);
@@ -169,7 +170,7 @@ const handlePageChange = (newPage) => {
   };
 
   const confirmJoinDao = async () => {
-    setLoading(true)
+    // setLoading(true)
     try {
       const daohouseBackendId = Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND);
       const place_to_join = "Council";

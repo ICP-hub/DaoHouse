@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import proposals from "../../../assets/proposals.png";
 import createProposalNew from "../../../assets/gif/createProposalNew.svg";
 import Container from "../../Components/Container/Container";
-import { useAuth } from "../../Components/utils/useAuthClient";
+
 import { toast } from "react-toastify";
 import { CircularProgress } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
@@ -19,6 +19,7 @@ import Poll from "./Poll";
 import RemoveDaoMember from "./RemoveDaoMember";
 import { createActor } from "../../../../declarations/icp_ledger_canister";
 import TokenPaymentModal from "./TokenPaymentModal";
+import { useAuthClient } from "../../connect/useClient";
 function CreateProposal() {
 
   const navigate = useNavigate();
@@ -94,7 +95,7 @@ function CreateProposal() {
 
   const [groupNames, setGroupNames] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { createDaoActor, stringPrincipal, identity } = useAuth();
+  const { createDaoActor, stringPrincipal, identity ,principals} = useAuthClient();
   const { daoCanisterId } = useParams();
 
   const movetodao = () => {
@@ -393,7 +394,7 @@ function CreateProposal() {
   const submitTokenTransferProposal = async (tokenTransfer) => {
     try {
       const actor = await createTokenActor(dao.token_ledger_id.id);
-      const { metadata, balance } = await fetchMetadataAndBalance(actor, Principal.fromText(stringPrincipal));
+      const { metadata, balance } = await fetchMetadataAndBalance(actor, Principal.fromText(stringPrincipal ? stringPrincipal : principals.toString()));
       const currentBalance = parseInt(balance, 10);
       const formattedMetadata = await formatTokenMetaData(metadata);
       let response = await transferApprove(currentBalance,actor,formattedMetadata,tokenTransfer.tokens);
@@ -575,7 +576,7 @@ function CreateProposal() {
     try {      
       const daoCanister = await createDaoActor(daoCanisterId);
       const res =
-      await daoCanister.make_payment(sendableAmount,Principal.fromText(stringPrincipal));
+      await daoCanister.make_payment(sendableAmount,Principal.fromText(stringPrincipal ? stringPrincipal : principals.toString()));
       if (res.Ok) {
         console.log("response hai : ");
         let tokenTransferPayload = {

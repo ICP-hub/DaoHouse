@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../Components/utils/useAuthClient';
+
 
 
 import userImage from "../../../assets/commentUser.jpg";
@@ -8,10 +8,11 @@ import CommentsSkeletonLoader from '../../Components/SkeletonLoaders/CommentsSke
 import CommentSkeletonLoader from '../../Components/SkeletonLoaders/CommentsSkeletonLoader/CommentSkeletonLoader';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Principal } from '@dfinity/principal';
+import { useAuthClient } from '../../connect/useClient';
 
 // Comment component
 const Comment = ({ comment, proposalId, daoId, commentCount, setCommentCount }) => {
-  const { createDaoActor, backendActor } = useAuth();
+  const { createDaoActor, backendActor } = useAuthClient();
   const [showReplies, setShowReplies] = useState(false);
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [replyText, setReplyText] = useState("");
@@ -56,7 +57,7 @@ const Comment = ({ comment, proposalId, daoId, commentCount, setCommentCount }) 
   
     if (!replyText.trim()) return;
     try {
-      setIsSubmitLoading(true);
+      // setIsSubmitLoading(true);
       
       // Create replyArgs with the commented_by principal
       const replyArgs = {
@@ -172,7 +173,7 @@ const Comment = ({ comment, proposalId, daoId, commentCount, setCommentCount }) 
 const Reply = ({ reply }) => {
   const [authorName, setAuthorName] = useState("");
   const [profileImg, setProfileImg] = useState("");
-  const { backendActor } = useAuth(); // Use the useAuth hook to access backendActor
+  const { backendActor } = useAuthClient(); // Use the useAuth hook to access backendActor
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
 
@@ -224,7 +225,7 @@ const Comments = ({ daoId, proposalId, commentCount, setCommentCount }) => {
   const [showMore, setShowMore] = useState(false);
   const [newComment, setNewComment] = useState("");
   const [daoActor, setDaoActor] = useState({});
-  const {createDaoActor} = useAuth()
+  const {createDaoActor} = useAuthClient()
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
   

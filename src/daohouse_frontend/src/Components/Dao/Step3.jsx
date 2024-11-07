@@ -8,6 +8,8 @@ import { useAuth } from "../../Components/utils/useAuthClient";
 import Container from "../Container/Container";
 import EditPen from "../../../assets/edit_pen.png";
 import { RiGroupFill } from "react-icons/ri";
+import { useAuthClient } from "../../connect/useClient";
+
 
 
 const Step3 = ({ setData, setActiveStep, }) => {
@@ -20,7 +22,13 @@ const Step3 = ({ setData, setActiveStep, }) => {
   const [memberUsernames, setMemberUsernames] = useState({});
   const [updatedGroupName, setUpdatedGroupName] = useState("");
   const [memberName, setMemberName] = useState("");
-  const { backendActor, stringPrincipal } = useAuth();
+  const { backendActor, stringPrincipal ,principals } = useAuthClient();
+  // console.log("principal",principals.toString());
+  // console.log("steokrwe",stringPrincipal);
+  // console.log("backendActor",backendActor);
+  
+  
+  
   const [isLoading, setIsLoading] = useState(false);
   const [isAdding, setIsAdding] = useState(false)
   const [openGroups, setOpenGroups] = useState([]);
@@ -144,9 +152,16 @@ const Step3 = ({ setData, setActiveStep, }) => {
     if (memberName.trim() !== "") {
       setIsAdding(true);
       try {
+        console.log("fnsdf",memberName);
+        
         const principal = Principal.fromText(memberName.trim());
+        console.log("get ",principal);
+     
+        
         const response = await backendActor.get_profile_by_id(principal);
-
+        console.log("resdasda",response);
+        
+         
         if (response.Ok) {
           const username = response.Ok.username;
           const principalId = principal.toText();
@@ -195,6 +210,8 @@ const Step3 = ({ setData, setActiveStep, }) => {
 
   useEffect(() => {
     const fetchGroupUsernames = async () => {
+      console.log("enter");
+      
       const groups = list.filter(group => group.name !== "Council");
       let updated = false;
       const newUsernames = { ...memberUsernames };
@@ -205,7 +222,11 @@ const Step3 = ({ setData, setActiveStep, }) => {
           if (!newUsernames[member]) {
             try {
               const principal = Principal.fromText(member);
+              console.log("pri",principal);
+              
               const response = await backendActor.get_profile_by_id(principal);
+              console.log("resa",response);
+              
               if (response.Ok) {
                 newUsernames[member] = response.Ok.username;
               } else {
@@ -308,9 +329,11 @@ const Step3 = ({ setData, setActiveStep, }) => {
   useEffect(() => {
     const fetchCouncilUsernames = async () => {
       const council = list.find((group) => group.name === "Council");
-
+    //  console.log("council",council);
+     
       const savedCouncilMembers = JSON.parse(localStorage.getItem('councilMembers'));
-
+    //  console.log("saved",savedCouncilMembers);
+     
       if (savedCouncilMembers) {
 
         setCouncilUsernames(savedCouncilMembers);
@@ -320,8 +343,12 @@ const Step3 = ({ setData, setActiveStep, }) => {
         const fetchedUsernames = [];
         for (const member of council.members) {
           const principal = Principal.fromText(member);
+          console.log("memeber princ",principal);
+          
           try {
             const response = await backendActor.get_profile_by_id(principal);
+            console.log("respinsd",response);
+            
             if (response.Ok) {
               fetchedUsernames.push(`${response.Ok.username} (${principal.toText()})`);
             } else {
@@ -350,12 +377,12 @@ const Step3 = ({ setData, setActiveStep, }) => {
     const initialList = savedList ? JSON.parse(savedList) : list;
 
     const council = initialList.find((group) => group.name === "Council");
+   
 
-
-    if (council && !council.members.includes(stringPrincipal)) {
+    if (council && !council.members.includes(stringPrincipal ? stringPrincipal : principals.toString())) {
       const updatedList = initialList.map((group) => {
         if (group.name === "Council") {
-          return { ...group, members: [...group.members, stringPrincipal] };
+          return { ...group, members: [...group.members, stringPrincipal ? stringPrincipal : principals.toString() ] };
         }
         return group;
       });
@@ -370,7 +397,7 @@ const Step3 = ({ setData, setActiveStep, }) => {
     }
 
     
-  }, [stringPrincipal]);
+  }, [stringPrincipal ? stringPrincipal : principals.toString()]);
 
   const handleEditGroup = (index) => {
     setGroupNameInputIndex(index);

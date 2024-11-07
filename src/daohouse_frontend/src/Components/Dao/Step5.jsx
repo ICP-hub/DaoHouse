@@ -22,7 +22,7 @@ const Step5 = ({ setData, setActiveStep, data }) => {
       return savedQuorum;
     }
     return [
-      { name: "Council", memberCount: council.length, vote: 51, members: council },
+      { name: "Council", memberCount: council?.length, vote: 51, members: council },
       ...groups.map((group) => ({
         name: group.name,
         memberCount: group.members.length,

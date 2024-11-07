@@ -14,7 +14,7 @@ import SuccessModal from "../../Components/EditProfile/SuccessModal";
 import BigCircleComponent from "../../Components/Ellipse-Animation/BigCircle/BigCircleComponent";
 import SmallCircleComponent from "../../Components/Ellipse-Animation/SmallCircle/SmallCircleComponent";
 import MediumCircleComponent from "../../Components/Ellipse-Animation/MediumCircle/MediumCircleComponent";
-import { useAuth } from "../../Components/utils/useAuthClient";
+
 import { useUserProfile } from "../../context/UserProfileContext";
 import Lottie from "react-lottie";
 import { AssetManager } from "@dfinity/assets";
@@ -23,11 +23,12 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Container from "../../Components/Container/Container";
 import CircularProgress from '@mui/material/CircularProgress';
+import { useAuthClient } from "../../connect/useClient";
 
 const EditProfile = () => {
   const { userProfile, fetchUserProfile } = useUserProfile();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { backendActor, frontendCanisterId, identity, principal } = useAuth();
+  const { backendActor, frontendCanisterId, identity, principal } = useAuthClient();
   console.log('frontendCanisterId:', frontendCanisterId); // Debugging line
 
   const [loading, setLoading] = useState(false);
@@ -115,7 +116,7 @@ const EditProfile = () => {
     
     if (!validateForm()) return; // Stop if validation fails
 
-    setLoading(true);
+    // setLoading(true);
     const profilePayload = {
       username: profileData.name,
       email_id: profileData.email_id,
@@ -150,7 +151,7 @@ const EditProfile = () => {
       console.error("Error creating profile:", error);
     } finally {
       fetchUserProfile();
-      setLoading(false);
+      // setLoading(false);
     }
   };
 

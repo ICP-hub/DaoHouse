@@ -7,13 +7,16 @@ import daoImage from "../../../assets/daoImage.png"
 import CircularProgress from '@mui/material/CircularProgress';
 import { toast } from 'react-toastify';
 import Container from "../Container/Container";
-import { useAuth } from "../utils/useAuthClient";
+
 import PaymentModal from "./PaymentModal";
 import coinsound from "../../../../daohouse_frontend/src/Sound/coinsound.mp3";
+import { useAuthClient } from "../../connect/useClient";
 
 const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setLoadingNext }) => {
   const [file, setFile] = useState(null);
-  const { identity, stringPrincipal, backendActor } = useAuth()
+  const { identity, stringPrincipal, backendActor,balance ,principals } = useAuthClient();
+  console.log("balsad",principals);
+  
   const [fileURL, setFileURL] = useState(daoImage);
   const [shouldCreateDAO, setShouldCreateDAO] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -74,7 +77,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
 
     try {
       //uncomment later
-      const res = await backendActor.make_payment(sendableAmount, Principal.fromText(stringPrincipal));
+      const res = await backendActor.make_payment(sendableAmount, Principal.fromText(stringPrincipal ? stringPrincipal : principals.toString()));
       console.log(res)
       if (res.Ok) {
         toast.success("Payment successful!");
@@ -115,9 +118,12 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
       );
       console.log("sendable amount console ", sendableAmount);
       console.log("current balance console ", currentBalance);
+      console.log("prjkjekwr",principals.toString());
+      
 
       const backendCanisterId = process.env.CANISTER_ID_DAOHOUSE_BACKEND;
-
+  console.log("dfdsfsd",backendCanisterId);
+  
       if (currentBalance > sendableAmount) {
 
         let transaction = {
@@ -172,14 +178,16 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
       const name = await actor.icrc1_name();
       console.log("balance is ", name);
 
-      const { metadata, balance } = await fetchMetadataAndBalance(actor, Principal.fromText(stringPrincipal));
+      const { metadata, balance } = await fetchMetadataAndBalance(actor, Principal.fromText(stringPrincipal ? stringPrincipal : principals.toString()));
 
       const formattedMetadata = formatTokenMetaData(metadata);
       const parsedBalance = parseInt(balance, 10);
       console.log("Balance:", parsedBalance);
-      await transferApprove(parsedBalance, formattedMetadata, actor);
+      // await transferApprove(parsedBalance, formattedMetadata, actor);
     } catch (err) {
-      toast.error("Payment failed. Please try again.");
+      toast.error(err.message);
+      console.log("err",err);
+      
       setLoadingPayment(false);
     }
   }
@@ -209,7 +217,10 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
         },
       }));
 
-      setIsModalOpen(true);
+      // setIsModalOpen(true);
+      console.log("sadnasjkd");
+      handleDaoClick();
+      
 
     } catch (error) {
       toast.error("Error reading image content.");
@@ -249,6 +260,8 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
 
   useEffect(() => {
     if (shouldCreateDAO) {
+      console.log("should create");
+      
       handleDaoClick();
       setShouldCreateDAO(false);
     }
@@ -374,7 +387,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
 
         </div>
       </Container>
-      <PaymentModal
+      {/* <PaymentModal
         data={data}
         open={isModalOpen}
         onClose={handleCancel}
@@ -384,7 +397,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
         }}
         loading={loadingPayment}
         fileURL={fileURL}
-      />
+      /> */}
     </React.Fragment>
   );
 };

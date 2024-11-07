@@ -7,9 +7,10 @@ import avatar from "../../../assets/avatar.png";
 import { useAuth } from '../utils/useAuthClient';
 import { Principal } from '@dfinity/principal';
 import MemberSkeletonLoader from '../SkeletonLoaders/MemberSkeletonLoader/MemberSkeletonLoader';
+import { useAuthClient } from '../../connect/useClient';
 
 function ViewModal({ open, onClose, users = [], approvedVotesList = [], rejectedVotesList = [], showVotes = false }) {
-  const { backendActor } = useAuth();
+  const { backendActor } = useAuthClient();
   const [profiles, setProfiles] = useState([])
   const [voteProfiles, setVoteProfiles] = useState({ approved: [], rejected: [] });
   const [loading, setLoading] = useState(false);
@@ -27,6 +28,8 @@ function ViewModal({ open, onClose, users = [], approvedVotesList = [], rejected
             try {
                 console.log("I'm in");
                 const userDetail = await backendActor.get_profile_by_id(Principal.fromText(user));
+                console.log("userdetail",userDetail);
+                
                 return {
                     user,
                     profileData: userDetail.Ok,
