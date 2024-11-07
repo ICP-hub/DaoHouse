@@ -72,8 +72,8 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
       if (!userProfile) return;
       setIsFollowing(!isFollowing);
       const response = isFollowing
-        ? await daoActor.unfollow_dao(backendCanisterId)
-        : await daoActor.follow_dao(backendCanisterId);
+        ? await daoActor.unfollow_dao()
+        : await daoActor.follow_dao();
 
       if (response?.Ok) {
         const updatedFollowers = await daoActor.get_dao_followers();
@@ -114,7 +114,6 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
   
       const joinDaoPayload = {
         place_to_join: place_to_join,
-        daohouse_backend_id: daohouseBackendId,
       };
   
       const response = await daoActor.ask_to_join_dao(joinDaoPayload);
@@ -123,7 +122,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
       if (response.Ok) {
         setJoinStatus("Requested");
         sound.play();
-        toast.success(res.Ok);
+        toast.success(response.Ok);
       } else {
         console.error(response.Err );
         toast.error(response.Err);

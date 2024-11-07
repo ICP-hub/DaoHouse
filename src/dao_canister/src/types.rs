@@ -60,7 +60,6 @@ pub struct ProposalStakes {
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct JoinDao {
-    pub daohouse_backend_id: Principal,
     pub place_to_join : String,
 }
 
@@ -324,7 +323,6 @@ pub struct BountyDone{
     pub description: String,
     pub tokens: u64,
     pub proposal_entry : String,
-    pub daohouse_canister_id : Principal,
     pub associated_proposal_id : String,
 }
 

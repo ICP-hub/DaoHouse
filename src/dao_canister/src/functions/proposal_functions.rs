@@ -35,7 +35,6 @@ fn get_all_proposals(page_data: Pagination) -> Vec<Proposals> {
     })
 }
 
-// get user specific user
 #[query(guard=prevent_anonymous)]
 fn get_my_proposal() -> Result<Vec<Proposals>, String> {
     // with_state(|state| state.proposals.)
@@ -57,12 +56,6 @@ async fn get_proposal_by_id(proposal_id: String) -> Proposals {
     with_state(|state| state.proposals.get(&proposal_id).unwrap().clone())
 }
 
-// #[query]
-// async fn get_dao_detail() -> Dao {
-//     with_state(|state| state.dao.clone())
-// }
-
-// get Dao details with unique members always
 #[query(guard=prevent_anonymous)]
 async fn get_dao_detail() -> Dao {
     with_state(|state| {
@@ -151,19 +144,6 @@ async fn reply_comment(args: ReplyCommentArgs) -> Result<String, String> {
     Ok(String::from("Successfully commented on post"))
 }
 
-// #[update(guard=prevent_anonymous)]
-// async fn like_comment(args: CommentLikeArgs) {
-//     with_state(|state| match state.proposals.get(&args.proposal_id) {
-//         Some(val) => {
-//             for comment in val.comments_list.iter() {
-//                if comment == args.comment_id {
-//                 }
-//             }
-//         },
-//         None => Err(String::from("No proposal found with following ID")),
-//     })
-// }
-
 fn refresh_proposals(id: &String) {
     with_state(|state| match &mut state.proposals.get(&id) {
         Some(proposal) => {
@@ -196,91 +176,6 @@ fn proposal_refresh() -> Result<String, String> {
 
     Ok("Refresh completed".to_string())
 }
-
-// #[update(guard = prevent_anonymous)]
-// fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> {
-//     check_voting_right(&proposal_id)?;
-//     let principal_id = api::caller();
-//     with_state(|state| match &mut state.proposals.get(&proposal_id) {
-//         Some(pro) => {
-//             if voting == VoteParam::Yes {
-//                 pro.approved_votes_list.push(principal_id);
-//                 pro.proposal_approved_votes += 1;
-//                 state.proposals.insert(proposal_id, pro.to_owned());
-//                 Ok(String::from("Successfully voted in favour of Proposal."))
-// } else {
-//     pro.rejected_votes_list.push(principal_id);
-//     pro.proposal_rejected_votes += 1;
-//     state.proposals.insert(proposal_id, pro.to_owned());
-//     Ok(String::from("Successfully voted against the proposal."))
-// }
-//         }
-//         None => Err(String::from("Proposal ID is invalid !")),
-//     })
-// }
-
-// #[update]
-// // only members
-// // prevent anonymous
-// // TODO: SAVE THE TRANSFERED TOKES TO PARTICULAR CANISTER AND REVERT IT BACK WHEN COMPLETED
-// async fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> {
-//     // to check if user has already voted
-//     check_voting_right(&proposal_id)?;
-//     let principal_id = api::caller();
-//     // user balance validation
-//     let balance = icrc_get_balance(principal_id)
-//         .await
-//         .map_err(|err| format!("Error while fetching user balance {}", err))?;
-//     let min_vote_req = with_state(|state| state.dao.tokens_required_to_vote);
-//     if balance < min_vote_req {
-//         return Err(String::from(
-//             "User token balance is less then the required threshold",
-//         ));
-//     } else {
-//         // frontend need to approve
-//         // transfer of tokens
-//         let token_transfer_args = TokenTransferArgs {
-//             from: principal_id,
-//             to: ic_cdk::api::id(),
-//             tokens: min_vote_req as u64,
-//         };
-//         icrc_transfer(token_transfer_args)
-//             .await
-//             .map_err(|err| format!("Error in transfer of tokens: {}", String::from(err)))?;
-//         // storing staked tokens
-//         with_state(|state| {
-//             let account_balance = AccountBalance {
-//                 id: principal_id.clone(),
-//                 staked: state.dao.tokens_required_to_vote,
-//             };
-//             let proposal_stake = ProposalStakes {
-//                 proposal_id: proposal_id.clone(),
-//                 balances: vec![account_balance],
-//             };
-//             state
-//                 .proposal_balances
-//                 .insert(proposal_id.clone(), proposal_stake);
-//         });
-//         // perform voting
-//         with_state(|state| match &mut state.proposals.get(&proposal_id) {
-//             Some(pro) => {
-//                 if voting == VoteParam::Yes {
-//                     pro.approved_votes_list.push(principal_id);
-//                     pro.proposal_approved_votes += 1;
-//                     state.proposals.insert(proposal_id, pro.to_owned());
-//                     Ok(String::from("Successfully voted in favour of Proposal."))
-//                 } else {
-//                     pro.rejected_votes_list.push(principal_id);
-//                     pro.proposal_rejected_votes += 1;
-//                     state.proposals.insert(proposal_id, pro.to_owned());
-//                     Ok(String::from("Successfully voted against the proposal."))
-//                 }
-//             }
-//             None => Err(String::from("Proposal ID is invalid !")),
-//         })
-//     }
-//     // Ok("()".to_string())
-// }
 
 #[update(guard=prevent_anonymous)]
 async fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> {
@@ -344,7 +239,6 @@ fn search_follower(dao_follower: String) -> Vec<Principal> {
     daos_follower
 }
 
-// #[query]
 fn execute_add_proposals(id: &String) {
     with_state(|state| match state.proposals.get(&id) {
         Some(val) => {
@@ -389,7 +283,6 @@ fn execute_add_proposals(id: &String) {
     // })
 }
 
-// get all groups
 #[query(guard = prevent_anonymous)]
 fn get_all_groups() -> Vec<DaoGroup> {
     with_state(|state| {
@@ -402,16 +295,7 @@ fn get_all_groups() -> Vec<DaoGroup> {
     })
 }
 
-// TODO debug functions
-
-// to get all stakes
 #[query(guard = prevent_anonymous)]
 fn get_all_balances(proposal_id: String) -> ProposalStakes {
     with_state(|state| state.proposal_balances.get(&proposal_id).unwrap())
 }
-
-// get all groups
-// #[query]
-// fn get_all_members() {
-//   with_state(|state| state.groups)
-// }

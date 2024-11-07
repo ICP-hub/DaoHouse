@@ -302,8 +302,6 @@ function CreateProposal() {
             associated_proposal_id: bountyDone.associated_proposal_id,
             description: bountyDone.description,
             tokens: Number(bountyDone.tokens) || 1,
-            // action_member: Principal.fromText(bountyDone.action_member),
-            daohouse_canister_id: Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND)
           });
           break;
 
@@ -906,7 +904,7 @@ function CreateProposal() {
                   {/* Submit Button */}
                   <div className="flex justify-center my-8  ">
                     <button
-                      className="relative bg-[#0E3746] w-[100px] h-[40px]  text-white font-normal text-center rounded-full text-[16px] py-2 px-6 rounded focus:outline-none focus:shadow-outline"
+                      className="relative bg-[#0E3746] w-[100px] h-[40px]  text-white font-normal text-center rounded-full text-[16px] py-2 px-6 focus:outline-none focus:shadow-outline"
                       type="submit"
                       disabled={loading } 
                     >

@@ -756,7 +756,7 @@ console.log("proposals",proposal);
                 <div className="w-full">
 
                   <div className="whitespace-normal break-words mt-2">
-                    <span className="font-bold border border-black"> Associated Proposal ID</span>: {proposal.associated_proposal_id}
+                    <span className="font-bold"> Associated Proposal ID</span>: {proposal.associated_proposal_id}
                   </div>
 
                   <div className="whitespace-normal break-words mt-2">

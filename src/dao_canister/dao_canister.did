@@ -6,7 +6,6 @@ type AddMemberArgs = record {
   proposal_entry : text;
 };
 type BountyDone = record {
-  daohouse_canister_id : principal;
   associated_proposal_id : text;
   description : text;
   tokens : nat64;
@@ -107,7 +106,7 @@ type DaoInput = record {
   token_supply : nat32;
   required_votes : nat32;
 };
-type JoinDao = record { place_to_join : text; daohouse_backend_id : principal };
+type JoinDao = record { place_to_join : text };
 type LedgerCanisterId = record { id : principal };
 type Pagination = record { end : nat32; start : nat32 };
 type PollOptions = record {
@@ -225,7 +224,7 @@ service : (DaoInput) -> {
   ask_to_join_dao : (JoinDao) -> (Result_1);
   change_proposal_state : (text, ProposalState) -> (Result_1);
   comment_on_proposal : (text, text) -> (Result_1);
-  follow_dao : (principal) -> (Result_1);
+  follow_dao : () -> (Result_1);
   get_all_balances : (text) -> (ProposalStakes) query;
   get_all_groups : () -> (vec DaoGroup) query;
   get_all_proposals : (Pagination) -> (vec Proposals);
@@ -252,7 +251,7 @@ service : (DaoInput) -> {
   reply_comment : (ReplyCommentArgs) -> (Result_1);
   search_follower : (text) -> (vec principal) query;
   search_proposal : (text) -> (vec Proposals) query;
-  unfollow_dao : (principal) -> (Result_1);
+  unfollow_dao : () -> (Result_1);
   vote : (text, VoteParam) -> (Result_1);
   vote_on_poll_options : (text, text) -> (Result_1);
 }

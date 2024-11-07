@@ -73,7 +73,7 @@ for ((i = 1; i <= COUNT; i++)); do
             quorem = 65;
         };
     };
-    ask_to_join_dao = false;
+    ask_to_join_dao = true;
     }
   )')
 
