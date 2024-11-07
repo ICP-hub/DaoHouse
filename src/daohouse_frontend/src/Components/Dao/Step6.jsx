@@ -67,17 +67,36 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
   };
 
   const afterPaymentApprove = async (sendableAmount) => {
-
-
-    const successAudio = new Audio(coinsound)
-
     try {
-      const res = await backendActor.make_payment(sendableAmount, Principal.fromText(stringPrincipal));
+      const successAudio = new Audio(coinsound)
+      const daoPayload = {
+        dao_name: "my dao hai",
+        purpose: "my proposal hai",
+        daotype: "just proposal type bro",
+        link_of_document: "my link.org",
+        cool_down_period: 3,
+        members: [Principal.fromText("aaaaa-aa")],
+        members_permissions: [],
+        token_name: "GOLD Token",
+        token_symbol: "TKN",
+        tokens_required_to_vote: 12,
+        linksandsocials: ["just send f"],
+        required_votes: 3,
+        image_content: new Uint8Array(["XX"]), 
+        image_title: "this is just my title",
+        image_content_type: "just image content bro",
+        image_id: "12", 
+        dao_groups: [],
+        proposal_entry: [],
+        ask_to_join_dao: true,
+        token_supply: 4, 
+      };
+      const res = await backendActor.make_payment_and_create_dao(sendableAmount, Principal.fromText(stringPrincipal),daoPayload);
       console.log(res)
       if (res.Ok) {
         toast.success("Payment successful!");
         setIsModalOpen(false);
-        handleDaoClick();
+        // handleDaoClick();
         successAudio.play();
       } else {
         console.log(res);
@@ -106,7 +125,8 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
     tokenActor
   ) => {
     try {
-      const sendableAmount = parseInt(0.1 * Math.pow(10,8));
+      // const sendableAmount = parseInt(0.1 * Math.pow(10,8));
+      const sendableAmount = 1;
       console.log("sendable amount ",sendableAmount);
       console.log("current balance ", currentBalance);
 
