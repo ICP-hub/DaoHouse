@@ -147,6 +147,8 @@ const MyProfile = ({ childComponent }) => {
     const tabIndex = tabPathMap[currentPath] !== undefined ? tabPathMap[currentPath] : 0;
     setActiveTab(tabIndex);
   }, [location.pathname]);
+
+  
   // Remove this duplicated function
   // const LEDGER_CANISTER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai";
   // const createTokenActor = async (canisterId) => {
@@ -593,38 +595,48 @@ const MyProfile = ({ childComponent }) => {
               {/* Thicker line to overlap and change width */}
               <div className="absolute bottom-1 flex justify-center   w-full h-[2px] bg-black transition-all duration-300 hover:w-[20px]"></div>
 
+                
+               {/* My Profile Tab */}
+               <div className="">
+  <div className="flex items-center gap-4">
+    {/* My Profile Tab */}
+    <Link to="/my-profile" onClick={() => setActiveTab(0)} className="flex-none text-center">
+      <p className={`${tabButtonsStyle} ${activeTab === 0 ? "text-black border-b-2 border-black " : ""}  relative pb-2 z-10 transition-all duration-300`}>
+         Profile
+        {activeTab === 0 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
+        <span className={`${activeTab === 0 ? "absolute w-full h-[2px] bg-black right-0 bottom-0" : "hidden"}`}></span>
+      </p>
+    </Link>
 
-              {/* First tab */}
+    {/* Proposals Tab */}
+    <Link to="/my-profile/posts" onClick={() => setActiveTab(1)} className="flex-none text-center">
+      <p className={`${tabButtonsStyle} ${activeTab === 1 ? "text-black border-b-2 border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
+        Proposals
+        {activeTab === 1 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
+        <span className={`${activeTab === 1 ? "absolute w-full h-[2px] bg-black left-0 bottom-0" : "hidden"}`}></span>
+      </p>
+    </Link>
 
-              <Link to="/my-profile/posts" onClick={() => setActiveTab(1)}>
-                <p className={`${tabButtonsStyle} ${activeTab === 1 ? "text-hex text-[14px] border-b-1 border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
-                  Proposals
-                  {activeTab === 1 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
-                  {/* Tab underlining effect */}
-                  <span className={`${activeTab === 1 ? "absolute w-full h-[4px] bg-black  text-[14px] left-0 bottom-0 -z-10" : "hover:w-full hover:h-[4px] hover:bg-black left-0 bottom-0 -z-10 transition-all duration-300"}`}></span>
-                </p>
-              </Link>
+    {/* Followed Dao Tab */}
+    <Link to="/my-profile/followers" onClick={() => setActiveTab(2)} className="flex-none text-center">
+      <p className={`${tabButtonsStyle} ${activeTab === 2 ? "text-black border-b-2 border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
+        Followed Dao
+        {activeTab === 2 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
+        <span className={`${activeTab === 2 ? "absolute w-full h-[2px] bg-black left-0 bottom-0" : "hidden"}`}></span>
+      </p>
+    </Link>
 
-              {/* Second tab */}
-              <Link to="/my-profile/followers" onClick={() => setActiveTab(2)}>
-                <p className={`${tabButtonsStyle} ${activeTab === 2 ? "text-black border-b-1 text-[14px]  border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
-                  Followed Dao
-                  {activeTab === 2 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
-                  {/* Tab underlining effect */}
-                  <span className={`${activeTab === 2 ? "absolute w-full h-[4px] bg-black left-0 text-[14px]  bottom-0 -z-10" : "hover:w-full hover:h-[4px]  hover:bg-black left-0 bottom-0 -z-10 transition-all duration-300"}`}></span>
-                </p>
-              </Link>
+    {/* Dao Joined Tab */}
+    <Link to="/my-profile/following" onClick={() => setActiveTab(3)} className="flex-none text-center">
+      <p className={`${tabButtonsStyle} ${activeTab === 3 ? "text-black border-b-2 border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
+        Dao Joined
+        {activeTab === 3 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
+        <span className={`${activeTab === 3 ? "absolute w-full h-[2px] bg-black left-0 bottom-0" : "hidden"}`}></span>
+      </p>
+    </Link>
+  </div>
+</div></div>
 
-              {/* Third tab */}
-              <Link to="/my-profile/following" onClick={() => setActiveTab(3)}>
-                <p className={`${tabButtonsStyle} ${activeTab === 3 ? "text-black border-b-1 text-[14px]  border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
-                  Dao Joined
-                  {activeTab === 3 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
-                  {/* Tab underlining effect */}
-                  <span className={`${activeTab === 3 ? "absolute w-full h-[4px] bg-black left-0 bottom-0 -z-10" : "hover:w-full hover:h-[4px] hover:bg-black left-0 bottom-0 -z-10 transition-all duration-300"}`}></span>
-                </p>
-              </Link>
-            </div>
 
             <div className="mx-6">
               {childComponent}

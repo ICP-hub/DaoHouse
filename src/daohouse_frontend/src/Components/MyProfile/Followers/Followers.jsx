@@ -103,10 +103,10 @@ const Followers = () => {
     <div className={`${className} w-full`}>
       <div className=" tablet:mt-12 mt-5 md:px-0">
         <div className="flex flex-col md:flex-row justify-between space-y-4 md:space-y-0">
-          <h3 className="text-[#05212C] tablet:text-[24px] text-[18px] text-start tablet:font-bold  font-mulish">
+          <h3 className="text-[#05212C] tablet:text-[24px] text-[18px] text-start tablet:font-bold  font-mulish hidden md:block">
             {searchTerm ? "Search Results" : "Followed DAO List"}
           </h3>
-          <div className="w-full md:w-auto flex-grow lg:flex justify-end hidden">
+          <div className="w-full md:w-auto flex-grow lg:flex justify-end ">
             <SearchProposals
               width="80%"
               bgColor="transparent"

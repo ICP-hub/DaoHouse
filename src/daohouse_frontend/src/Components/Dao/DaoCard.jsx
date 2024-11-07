@@ -196,36 +196,38 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
       </div>
 
       {/* Adjusted flexbox for larger screens */}
-      <div className="big_phone:flex hidden justify-between text-center mb-4 bg-white tablet:p-4 pb-4 p-2 rounded-lg gap-0">
-        <div className="flex-1 ml-5">
-          <p className="font-bold text-dark-green">{members}</p>
-          <p className="text-sm text-dark-green">Members</p>
-        </div>
-        <div className="flex-1 text-center">
-          <p className="font-bold text-dark-green">{groups || '0'}</p>
-          <p className="text-sm text-dark-green">Groups</p>
-        </div>
-        <div className="flex-1 mr-5">
-          <p className="font-bold text-dark-green">{proposals}</p>
-          <p className="text-sm text-dark-green">Active Proposals</p>
-        </div>
-      </div>
+<div className="big_phone:flex hidden justify-between text-center mb-4 bg-white tablet:p-4 pb-4 p-2 rounded-lg gap-0">
+  <div className="flex-1 ml-5">
+    <p className="font-bold text-dark-green">{members}</p>
+    <p className="text-sm text-dark-green">Members</p>
+  </div>
+  <div className="flex-1 text-center">
+    <p className="font-bold text-dark-green">{groups || '0'}</p>
+    <p className="text-sm text-dark-green">Groups</p>
+  </div>
+  <div className="flex-1 mr-5">
+    <p className="font-bold text-dark-green">{proposals}</p>
+    <p className="text-sm text-dark-green">Active Proposals</p>
+  </div>
+</div>
 
-      {/* Adjusted grid layout for smaller screens */}
-      <div className="big_phone:hidden grid grid-cols-1 text-center my-5 mx-5 gap-1">
-        <div className="bg-white rounded-lg py-4">
-          <p className="font-bold text-dark-green">{members}</p>
-          <p className="text-sm text-dark-green">Members</p>
-        </div>
-        <div className="bg-white rounded-lg py-4">
-          <p className="font-bold text-dark-green">{groups || '0'}</p>
-          <p className="text-sm text-dark-green">Groups</p>
-        </div>
-        <div className="bg-white rounded-lg py-4">
-          <p className="font-bold text-dark-green">{proposals}</p>
-          <p className="text-sm text-dark-green">Active Proposals</p>
-        </div>
-      </div>
+{/* Adjusted grid layout for smaller screens */}
+<div className="big_phone:hidden grid grid-cols-1 text-center my-5 mx-5 gap-1">
+  <div className="bg-white rounded-lg py-4 flex justify-between">
+    <div className="flex-1">
+      <p className="font-bold text-dark-green">{members}</p>
+      <p className="text-sm text-dark-green">Members</p>
+    </div>
+    <div className="flex-1">
+      <p className="font-bold text-dark-green">{groups || '0'}</p>
+      <p className="text-sm text-dark-green">Groups</p>
+    </div>
+  </div>
+  <div className="bg-white rounded-lg py-4">
+    <p className="font-bold text-dark-green">{proposals}</p>
+    <p className="text-sm text-dark-green">Active Proposals</p>
+  </div>
+</div>
 
       <div className="flex justify-between gap-2">
         <button

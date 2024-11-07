@@ -35,11 +35,8 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const [isPollVoteLoading, setIsPollVoteLoading] = useState(false);
   const [loadingOptionId, setLoadingOptionId] = useState(null);
   const [pollOptions, setPollOptions] = useState(proposal?.poll_options ? proposal.poll_options[0] : []);
-  const [status, setStatus] = useState(null);
-  const [pollingInterval, setPollingInterval] = useState(10000);
-
-console.log("proposals",proposal);
-
+  // console.log(proposal);
+  
 
 
   const toggleExpanded = () => setIsExpanded(!isExpanded);
@@ -59,7 +56,7 @@ console.log("proposals",proposal);
   };
 
   const { truncated, isTruncated } = truncateText(proposal?.proposal_description || 'Proposal Description', maxWords);
-  
+
 
   useEffect(() => {
     async function fetchUserProfile() {
@@ -158,46 +155,15 @@ console.log("proposals",proposal);
   const navigate = useNavigate()
 
 
-  useEffect(() => {
-    const fetchStatus = async () => {
-      try {
-        // Replace with your API call to get proposal status
-        const response = await voteApi?.get_proposal_by_id(proposal?.proposal_id);
-        console.log("resp", response);
-        
-        const newStatus = response?.proposal_status
-        ? Object.keys(response.proposal_status)[0] || "No Status"
-        : "No Status";
-
-
-        setStatus(newStatus);
-
-        // If status has changed to a final state, clear polling
-        if (["Expired", "Accepted", "Rejected"].includes(newStatus)) {
-          clearInterval(intervalId);
-        }
-      } catch (error) {
-        console.error("Error fetching proposal status:", error);
-      }
-    };
-
-    // Fetch initially and then set interval based on pollingInterval
-    fetchStatus();
-    const intervalId = setInterval(fetchStatus, pollingInterval);
-
-    return () => clearInterval(intervalId);
-  }, [proposal?.proposal_id, pollingInterval]);
+  const status = proposal?.proposal_status
+    ? Object.keys(proposal?.proposal_status)[0] || "No Status"
+    : "No Status";
 
   const requiredVotes = Number(BigInt(proposal?.required_votes || 0))
   useEffect(() => {
     setApprovedVotes(proposal?.approved_votes_list?.length || 0);
     setRejectedVotes(proposal?.rejected_votes_list?.length || 0);
     setVoteCount((proposal?.approved_votes_list?.length || 0) + (proposal?.rejected_votes_list?.length || 0));
-
-    if (proposal && proposal.poll_options) {
-      const options = proposal.poll_options[0] || [];
-      setPollOptions(options);
-  }
   }, [proposal]);
 
 
@@ -275,7 +241,13 @@ console.log("proposals",proposal);
   const handleViewMore = () => {
     navigate(`/social-feed/proposal/${proposalId}/dao/${daoId}`)
   }
- 
+
+  useEffect(() => {
+    const hasVoted = localStorage.getItem(`voted_${proposal?.proposal_id}`);
+    if (hasVoted) {
+      // setIsDisabled(true);
+    }
+  }, [proposal?.proposal_id]);
 
   const handleVoteSubmit = async (e) => {
     e.preventDefault();
@@ -347,13 +319,6 @@ console.log("proposals",proposal);
                         : option
                 )
             );
-
-            const updatedProposal = await voteApi?.get_proposal_by_id(proposal?.proposal_id);
-            setVoteCount((prev) => prev + 1);
-        setVotersList({
-          approvedVotes: updatedProposal?.approved_votes_list || [],
-          rejectedVotes: updatedProposal?.rejected_votes_list || [],
-        });
 
             // Reset selected option after voting
             setSelectedOption(null);
@@ -471,66 +436,59 @@ console.log("proposals",proposal);
               )}
             </div>
 
-            {/* Dates Section */}
-            {!isSubmittedProposals && (
-              <div className="hidden lg:flex flex-row gap-3">
-              <div className="flex flex-col items-start ">
-                <span className="font-bold text-xs sm:text-sm lg:text-lg text-white">
-                  • Submitted On 
-                </span>
-                <span className="text-[10px] small_phone:text-xs sm:text-sm md:text-base text-white ml-2">
-                  {submittedOnDate}{" "}
-                  <span className="text-[8px] small_phone:text-[8px] md:text-xs text-gray-400">
-                    {submittedOnTime}
-                  </span>
-                </span>
-              </div>
+ {/* Dates Section */}
+{!isSubmittedProposals && (
+  <div className="hidden lg:flex flex-row gap-3">
+  <div className="flex flex-col items-start ">
+    <span className="font-bold text-xs sm:text-sm lg:text-lg text-white">
+      • Submitted On 
+    </span>
+    <span className="text-[10px] small_phone:text-xs sm:text-sm md:text-base text-white ml-2">
+      {submittedOnDate}{" "}
+      <span className="text-[8px] small_phone:text-[8px] md:text-xs text-gray-400">
+        {submittedOnTime}
+      </span>
+    </span>
+  </div>
 
-              <div className="flex flex-col items-start">
-                <span className="font-bold text-xs sm:text-sm lg:text-lg text-white">
-                  • Expires On
-                </span>
-                <span className="text-[10px] small_phone:text-xs sm:text-sm md:text-base text-white ml-2">
-                  {expiresOnDate}{" "}
-                  <span className="text-[8px] small_phone:text-[8px] md:text-xs text-gray-400">
-                    {expiresOnTime}
-                  </span>
-                </span>
-              </div>
-            </div>
-            )}
+  <div className="flex flex-col items-start">
+    <span className="font-bold text-xs sm:text-sm lg:text-lg text-white">
+      • Expires On
+    </span>
+    <span className="text-[10px] small_phone:text-xs sm:text-sm md:text-base text-white ml-2">
+      {expiresOnDate}{" "}
+      <span className="text-[8px] small_phone:text-[8px] md:text-xs text-gray-400">
+        {expiresOnTime}
+      </span>
+    </span>
+  </div>
+</div>
+)}
 
 
             {/* Votes Section */}
             <div className="flex justify-center gap-4 md:gap-8 mt-4 md:mt-0">
-                {/* Approved Votes */}
-                <div className="flex flex-col items-center">
-                    <CircularProgressBar
-                        percentage={
-                            proposal?.proposal_type.Polls !== undefined
-                                ? Math.floor((pollOptions?.reduce((acc, curr) => acc + Number(curr.poll_approved_votes), 0) / requiredVotes) * 100)
-                                : Math.floor((approvedVotes / requiredVotes) * 100)
-                        }
-                        color="#4CAF50"
-                    />
-                    <span className="text-white mt-2 text-center text-xs sm:text-sm md:text-base">
-                        {proposal?.proposal_type.Polls !== undefined
-                            ? pollOptions?.reduce((acc, curr) => acc + Number(curr.poll_approved_votes), 0)
-                            : approvedVotes}{" "}
-                        votes
-                    </span>
-                </div>
 
-                {/* Rejected Votes */}
-                {proposal.proposal_title !== "poll" && (<div className="flex flex-col items-center">
-                    <CircularProgressBar
-                        percentage={Math.floor((rejectedVotes / requiredVotes) * 100)}
-                        color="red"
-                    />
-                    <span className="text-white mt-2 text-center text-xs sm:text-sm md:text-base">
-                        {rejectedVotes} votes
-                    </span>
-                </div>)}
+              <div className="flex flex-col items-center">
+                <CircularProgressBar
+                  percentage={Math.floor((approvedVotes / requiredVotes) * 100)}
+                  color="#4CAF50"
+                />
+                <span className="text-white mt-2 text-center text-xs sm:text-sm md:text-base">
+                  {approvedVotes} votes
+                </span>
+              </div>
+
+              {/* Rejected Votes */}
+              <div className="flex flex-col items-center">
+                <CircularProgressBar
+                  percentage={Math.floor((rejectedVotes / requiredVotes) * 100)}
+                  color="red"
+                />
+                <span className="text-white mt-2 text-center text-xs sm:text-sm md:text-base">
+                  {rejectedVotes} votes
+                </span>
+              </div>
             </div>
           </div>
 
@@ -636,11 +594,11 @@ console.log("proposals",proposal);
               
                 {/* Calculate total votes once, outside the loop */}
                 {(() => {
-                  const totalVotes = pollOptions?.reduce((acc, curr) => acc + Number(curr.poll_approved_votes), 0);
+                  const totalVotes = pollOptions.reduce((acc, curr) => acc + Number(curr.poll_approved_votes), 0);
               
                   return (
                       <form className="whitespace-normal break-words mt-2">
-                          {pollOptions?.map((option) => {
+                          {pollOptions.map((option) => {
                               const votePercentage = totalVotes > 0 ? (Number(option.poll_approved_votes) / totalVotes) * 100 : 0;
               
                               return (
@@ -668,7 +626,7 @@ console.log("proposals",proposal);
                   })()}
                   {/* Total votes and time since posted */}
                   <div className="mt-2 text-sm text-gray-500">
-                    {pollOptions?.reduce((acc, curr) => acc + Number(curr.poll_approved_votes), 0)} votes • {daysAgo} {daysAgo === 1 ? "day ago": "days ago"}
+                    {pollOptions.reduce((acc, curr) => acc + Number(curr.poll_approved_votes), 0)} votes • {daysAgo} {daysAgo === 1 ? "day ago": "days ago"}
                   </div>
                 </div>             
               )}

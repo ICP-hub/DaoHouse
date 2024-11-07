@@ -288,11 +288,11 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
             />
 
             <div className="flex flex-col items-center justify-center">
-              <label
+            <label
                 htmlFor="profile"
-                className="flex mobile:text-sm text-[10px] font-semibold cursor-pointer mobile:m-4 m-2 flex-row items-center gap-2 bg-white px-4 py-2 rounded-[2rem] text-black shadow-xl"
+                className="flex mobile:text-sm text-[10px] font-semibold cursor-pointer mobile:m-4 m-2 flex-row items-center gap-2 bg-white px-6 py-2 rounded-[3rem] text-black shadow-xl"
               >
-                <FiUpload /> Upload New Photo
+               <FiUpload className="text-[12px] mobile:text-[16px]" /> Upload New Photo {/* Adjust icon size */}
               </label>
               <span className="block text-center mt-1 mobile:text-xs text-[9px] text-gray-500">
                 Upload JPG, PNG. Max 5 MB

@@ -107,10 +107,11 @@ const Following = () => {
     <div className={`${className} w-full`}>
       <div className="tablet:mt-12 mt-5 md:px-0 px- 3">
         <div className="flex justify-between items-center">
-          <h3 className="text-[#05212C] tablet:text-[24px] text-[18px] tablet:font-bold font-mulish mb-4">
-            {searchTerm ? "Search Results" : "DAOs Joined"}
-          </h3>
-          <div className="flex-grow lg:flex justify-end hidden">
+        <h3 className="text-[#05212C] text-[18px] font-mulish mb-4 font-semibold hidden md:block tablet:text-[24px] tablet:font-bold">
+  {searchTerm ? "Search Results" : "DAOs Joined"}
+</h3>
+
+          <div className="flex-grow lg:flex justify-end ">
             <SearchProposals
               width="80%"
               bgColor="transparent"
