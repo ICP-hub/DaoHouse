@@ -111,7 +111,7 @@ const Followers = () => {
               width="80%"
               bgColor="transparent"
               placeholder="Search here"
-              className="border-2 border-[#AAC8D6] w-full max-w-lg "
+              className="border-2 border-[#AAC8D6] w-full max-w-lg"
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
@@ -145,7 +145,7 @@ const Followers = () => {
                     <img
                       src={getImageUrl(dao?.image_id)}
                       alt={dao.dao_name}
-                      className="w-14 h-14 rounded-full border-2 border-gray-250 object-cover shadow-lg"
+                      className="w-16 h-16 rounded-full border-2 border-black object-cover shadow-lg"
                     />
                     <div className="flex-1 overflow-hidden">
                       <h4 className="text-lg font-mulish truncate">
@@ -157,7 +157,7 @@ const Followers = () => {
                     </div>
                     <button
                       onClick={() => handleViewProfile(dao?.dao_canister_id)}
-                      className="border-2 border-gray-300 text-[#0E3746] rounded-full px-2 py-1 md:px-4 md:py-2 text-sm md:text-base hover:bg-[#0E3746] hover:text-white transition duration-300 whitespace-nowrap"
+                      className="border-2 border-[#0E3746] text-[#0E3746] rounded-full px-2 py-1 md:px-4 md:py-2 text-sm md:text-base hover:bg-[#0E3746] hover:text-white transition duration-300 whitespace-nowrap"
                     >
                       View
                     </button>
