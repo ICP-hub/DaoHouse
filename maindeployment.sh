@@ -121,7 +121,8 @@ DAOHOUSE_BACKEND_ID=$(dfx canister id daohouse_backend --ic)
 
 
 
-dfx deploy daohouse_backend --argument "(record { payment_recipient = principal \"${RECIEVER}\"; ic_asset_canister_id = principal \"${ASSET_CANISTER_ID}\"; dao_canister_id = principal \"${DAO_CANISTER_ID}\"; })" --ic
+# dfx deploy daohouse_backend --argument "(record { payment_recipient = principal \"${RECIEVER}\"; ic_asset_canister_id = principal \"${ASSET_CANISTER_ID}\"; dao_canister_id = principal \"${DAO_CANISTER_ID}\"; })" --ic
+
 # dfx deploy ic_asset_handler --ic
 # # to upload first image
 # chmod 777 ./assets_upload.sh
