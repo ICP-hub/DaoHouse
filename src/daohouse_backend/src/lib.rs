@@ -10,7 +10,7 @@ mod memory;
 use candid::Principal;
 pub use functions::*;
 use memory::Memory;
-use candid::Nat;
+use icrc_ledger_types::icrc1::transfer::BlockIndex;
 pub mod utils;
 
 use types::*;

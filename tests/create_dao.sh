@@ -50,6 +50,7 @@ for ((i = 1; i <= COUNT; i++)); do
         variant { Polls };
         variant { TokenTransfer };
         variant { GeneralPurpose };
+        variant { MintNewTokens };
     };
     proposal_entry = vec {
         record {
