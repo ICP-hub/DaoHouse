@@ -116,7 +116,6 @@ dfx deploy dao_canister --argument "(record {
     token_symbol = \"BUNNU\";
     token_supply = 12;
     purpose = \"To manage community projects\";
-    daotype = \"Non-profit\";
     link_of_document = \"https://example.com/charter.pdf\";
     cool_down_period = 7;
     members = vec {
@@ -139,7 +138,9 @@ dfx deploy dao_canister --argument "(record {
         variant { Polls };
         variant { TokenTransfer };
     };
-
+    all_dao_user = vec { 
+      principal \"6ydm4-srext-xsaic-y3v2x-cticp-5n6pf-2meh7-j43r6-rghg7-pt5nd-bqe\";
+    };
     proposal_entry = vec {
         record {
             place_name = \"Council\";

@@ -1,20 +1,15 @@
 use crate::functions::call_inter_canister;
 use crate::{with_state, ProposalInstance, ProposalState};
-
 use crate::types::{ProposalInput, Proposals};
 use candid::Principal;
 use ic_cdk::api;
 use ic_cdk::api::management_canister::main::raw_rand;
 use sha2::{Digest, Sha256};
+use super::start_proposal_checker;
 
-// to create new canister
-// #[ic_cdk::update(guard=check_members)]
-// TODO add guards
 pub async fn create_proposal_controller(
-    // state: &mut State,
     daohouse_backend_id: candid::Principal,
     proposal: ProposalInput,
-    // proposal_id: String,
 ) -> String {
     let uuids = raw_rand().await.unwrap().0;
     let proposal_id = format!("{:x}", Sha256::digest(&uuids));
@@ -68,9 +63,9 @@ pub async fn create_proposal_controller(
         task_completion_day : proposal.task_completion_day,
         poll_query :  proposal.poll_query,
         poll_options : proposal.poll_options,
+        ask_to_join_dao : proposal.ask_to_join_dao,
     };
 
-    // to record proposals on Parent canister
     let proposal_copy: ProposalInstance = ProposalInstance {
         principal_action : proposal.principal_of_action.unwrap_or(api::caller()),
         associated_dao_canister_id: ic_cdk::api::id(),
@@ -101,13 +96,11 @@ pub async fn create_proposal_controller(
         state.dao = updated_dao;
         state.proposals.insert(proposal_id, new_proposal);
     });
+    // start_proposal_checker();
+    start_proposal_checker();
     return String::from(crate::utils::REQUEST_CREATE_PROPOSAL);
     
 }
-
-// pub fn get_all_proposals(state:&State)-> HashMap<String, Proposals>{
-//     return state.proposals;
-// }
 
 pub fn check_proposal_state(expire_date: &u64) -> bool {
     expire_date.to_owned() <= ic_cdk::api::time()

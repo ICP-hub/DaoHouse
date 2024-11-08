@@ -174,7 +174,6 @@ const handlePageChange = (newPage) => {
   
       const joinDaoPayload = {
         place_to_join: place_to_join,
-        daohouse_backend_id: daohouseBackendId,
       };
   
       const response = await daoActor.ask_to_join_dao(joinDaoPayload);
@@ -183,7 +182,7 @@ const handlePageChange = (newPage) => {
     
       if (response.Ok) {
         setJoinStatus("Requested");
-        toast.success(res.Ok);
+        toast.success(response.Ok);
         sound.play();
       } else {
         console.error(response.Err );
@@ -210,8 +209,8 @@ const handlePageChange = (newPage) => {
     try {
       const daoActor = createDaoActor(daoCanisterId);
       const response = isFollowing
-        ? await daoActor.unfollow_dao(backendCanisterId)
-        : await daoActor.follow_dao(backendCanisterId);
+        ? await daoActor.unfollow_dao()
+        : await daoActor.follow_dao();
   
         if (response?.Ok) {
           toast.success(newIsFollowing ? "Successfully followed" : "Successfully unfollowed");
@@ -409,7 +408,7 @@ const handlePageChange = (newPage) => {
           <div className="flex md:justify-end gap-4">
             <button
               onClick={toggleFollow}
-              className="bg-[#0E3746] text-[16px] text-white shadow-xl lg:py-4 lg:px-3 rounded-[27px] lg:w-[131px] lg:h-[40px] md:w-[112px] md:h-[38px] w-[98px] h-[35px] lg:flex items-center justify-center rounded-2xl"
+              className="bg-[#0E3746] text-[16px] text-white shadow-xl lg:py-4 lg:px-3 rounded-[27px] lg:w-[131px] lg:h-[40px] md:w-[112px] md:h-[38px] w-[98px] h-[35px] lg:flex items-center justify-center"
               style={{
                 boxShadow:
                   "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
@@ -419,7 +418,7 @@ const handlePageChange = (newPage) => {
             </button>
             <button
               onClick={handleJoinDao}
-              className="bg-white text-[16px] text-[#05212C] shadow-xl lg:py-4 lg:px-3 rounded-[27px] lg:w-[131px] lg:h-[40px] md:w-[112px] md:h-[38px] w-[98px] h-[35px] lg:flex items-center justify-center rounded-2xl"
+              className="bg-white text-[16px] text-[#05212C] shadow-xl lg:py-4 lg:px-3 rounded-[27px] lg:w-[131px] lg:h-[40px] md:w-[112px] md:h-[38px] w-[98px] h-[35px] lg:flex items-center justify-center"
               style={{
                 boxShadow:
                   "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",

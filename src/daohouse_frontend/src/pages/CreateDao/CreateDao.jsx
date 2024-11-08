@@ -101,6 +101,7 @@ const CreateDao = () => {
       localStorage.removeItem('step3Data');
       localStorage.removeItem('councilMembers');
       localStorage.removeItem('step4Data');
+      localStorage.removeItem('inputData');
       localStorage.removeItem('step5Quorum');
       localStorage.removeItem('isPrivate');
       localStorage.removeItem('step6Data');
@@ -151,7 +152,6 @@ const CreateDao = () => {
     const daoPayload = {
       dao_name: step1.DAOIdentifier || "my dao hai",
       purpose:  step1.Purpose || "my proposal hai",
-      daotype: "just proposal type bro",
       link_of_document: "my link.org",
       cool_down_period: step1.SetUpPeriod || 3,
       members: principalMembers || [Principal.fromText("aaaaa-aa")],
@@ -224,7 +224,7 @@ const CreateDao = () => {
       case 4:
         return <Step5 data={data} setData={setData} setActiveStep={setActiveStep} />;
       case 5:
-        return <Step6 data={data} setData={setData} setActiveStep={setActiveStep} handleDaoClick={handleDaoClick} loadingNext={loadingNext} setLoadingNext={setLoadingNext} />;
+        return <Step6 data={data} setData={setData} setActiveStep={setActiveStep} handleDaoClick={handleDaoClick} loadingNext={loadingNext} setLoadingNext={setLoadingNext} clearLocalStorage={clearLocalStorage} />;
       default:
         return null;
     }
