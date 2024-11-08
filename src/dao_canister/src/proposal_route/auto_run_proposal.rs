@@ -1,6 +1,7 @@
 use candid::{Nat, Principal};
 use ic_cdk::api::{self, call::CallResult, time};
 use ic_cdk_timers::set_timer_interval;
+use icrc_ledger_types::icrc1::transfer::BlockIndex;
 use std::time::Duration;
 
 use crate::{
@@ -9,7 +10,7 @@ use crate::{
     with_state, ProposalState, ProposalType, Proposals, TokenTransferArgs,
 };
 
-const EXPIRATION_TIME: u64 = 5 * 60 * 1_000_000_000;
+const EXPIRATION_TIME: u64 = 1 * 60 * 1_000_000_000;
 
 pub fn start_proposal_checker() {
     set_timer_interval(Duration::from_secs(60), || {
@@ -83,6 +84,14 @@ pub fn check_proposals() {
                     ic_cdk::println!("status : {:?} ", proposal.proposal_status);
                     let proposal_clone = proposal.clone();
                     match proposal.proposal_type {
+                        ProposalType::MintNewTokens => {
+                            if !proposal.has_been_processed_second {
+                                ic_cdk::println!(" Mint new tokens ");
+                                mint_new_tokens(state, &proposal);
+                                proposal.has_been_processed_second = true;
+                                state.proposals.insert(proposal_id.clone(), proposal);
+                            }
+                        }
                         ProposalType::AddMemberToDaoProposal => {
                             if !proposal.has_been_processed_second {
                                 ic_cdk::println!(" add_member_to_dao ");
@@ -312,6 +321,9 @@ pub fn change_dao_policy(state: &mut State, proposal: &Proposals) {
     if let Some(new_required_votes) = proposal.new_required_votes {
         state.dao.required_votes = new_required_votes;
     }
+    if let Some(ask_to_join_dao ) = proposal.ask_to_join_dao{
+        state.dao.ask_to_join_dao = ask_to_join_dao;
+    }
 }
 
 async fn transfer_tokens_to_user(token_ledger_id: Principal, proposal: &Proposals) {
@@ -398,4 +410,25 @@ async fn return_token_to_user(token_ledger_id: Principal, proposal: &Proposals) 
     } else {
         ic_cdk::println!("Token transfer completed successfully");
     }
+}
+
+pub fn mint_new_tokens(state: &mut State, proposal: &Proposals){
+    let ledger_canister_id = state.dao.token_ledger_id.id;
+    let daohouse_backend_id = state.dao.daohouse_canister_id;
+    let total_amount = match proposal.tokens.clone() {
+        Some(total_amount) => total_amount,
+        None => {
+            ic_cdk::println!("Missing token amount");
+            return;
+        }
+    };
+
+    ic_cdk::spawn(async move {
+        let _ : CallResult<(Result<BlockIndex, String>,)> = ic_cdk::call(
+            daohouse_backend_id,
+            "proposal_to_mint_new_dao_tokens",
+            (ledger_canister_id,total_amount,),
+        ).await;
+    });
+    
 }

@@ -893,6 +893,7 @@ pub enum ProposalType {
     Polls,
     TokenTransfer,
     GeneralPurpose,
+    MintNewTokens,
 }
 
 // const MAX_VALUE_SIZE: u32 = 800;

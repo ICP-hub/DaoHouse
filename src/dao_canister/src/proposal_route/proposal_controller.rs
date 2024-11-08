@@ -63,6 +63,7 @@ pub async fn create_proposal_controller(
         task_completion_day : proposal.task_completion_day,
         poll_query :  proposal.poll_query,
         poll_options : proposal.poll_options,
+        ask_to_join_dao : proposal.ask_to_join_dao,
     };
 
     let proposal_copy: ProposalInstance = ProposalInstance {
