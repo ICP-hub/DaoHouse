@@ -90,6 +90,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
         proposal_entry: [],
         ask_to_join_dao: true,
         token_supply: 4, 
+        all_dao_user : []
       };
       const res = await backendActor.make_payment_and_create_dao(sendableAmount, Principal.fromText(stringPrincipal),daoPayload);
       console.log(res)

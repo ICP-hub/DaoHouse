@@ -151,7 +151,6 @@ const CreateDao = () => {
     const daoPayload = {
       dao_name: step1.DAOIdentifier || "my dao hai",
       purpose:  step1.Purpose || "my proposal hai",
-      daotype: "just proposal type bro",
       link_of_document: "my link.org",
       cool_down_period: step1.SetUpPeriod || 3,
       members: principalMembers || [Principal.fromText("aaaaa-aa")],

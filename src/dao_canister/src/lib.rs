@@ -40,7 +40,6 @@ async fn init(dao_input: DaoInput) {
         dao_id: ic_cdk::api::id(),
         dao_name: dao_input.dao_name,
         purpose: dao_input.purpose,
-        daotype: dao_input.daotype,
         image_canister: dao_input.image_canister,
         link_of_document: dao_input.link_of_document,
         cool_down_period: dao_input.cool_down_period,
@@ -64,6 +63,7 @@ async fn init(dao_input: DaoInput) {
         token_symbol: dao_input.token_symbol,
         proposal_entry: proposal_entry,
         ask_to_join_dao : dao_input.ask_to_join_dao,
+        all_dao_user : dao_input.all_dao_user,
     };
 
     with_state(|state| {

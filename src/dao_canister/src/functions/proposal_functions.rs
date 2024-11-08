@@ -177,7 +177,7 @@ fn proposal_refresh() -> Result<String, String> {
     Ok("Refresh completed".to_string())
 }
 
-#[update(guard=prevent_anonymous)]
+#[update(guard=vote_allow_dao_user_only)]
 async fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> {
     check_voting_right(&proposal_id)?;
 

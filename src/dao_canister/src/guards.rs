@@ -92,3 +92,15 @@ pub fn guard_daohouse_exclusive_method() -> Result<(), String> {
         return Err(String::from(crate::utils::WARNING_NOT_ALLOWED));
     }
 }
+
+pub fn vote_allow_dao_user_only() -> Result<(), String>{
+    prevent_anonymous()?;
+    with_state(|state| {
+    if state.dao.all_dao_user.contains(&api::caller()) {
+        return Ok(());
+   }
+   else{
+    return Err(String::from(crate::utils::WARNING_DAO_USER_ONLY));
+   }
+   })
+}

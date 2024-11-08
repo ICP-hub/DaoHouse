@@ -631,11 +631,9 @@ pub struct ICRC1LedgerInitArgs {
 pub struct DaoInput {
     pub dao_name: String,
     pub purpose: String,
-    pub daotype: String,
     pub link_of_document: String,
     pub cool_down_period: u32,
     pub members: Vec<Principal>,
-    // pub tokenissuer: String,
     pub linksandsocials: Vec<String>,
     pub required_votes: u32,
     pub dao_groups: Vec<DaoGroup>,
@@ -643,10 +641,6 @@ pub struct DaoInput {
     pub token_symbol: String,
     pub token_supply: u32,
     pub tokens_required_to_vote: u32,
-    // pub followers: Vec<Principal>,
-    // min_treadshold : Vec<u32>,   
-    // image data
-    // pub image_id: Option<String>,
     pub image_id: String,
     pub image_content: ByteBuf,
     pub image_title: String,
@@ -654,13 +648,13 @@ pub struct DaoInput {
     pub members_permissions: Vec<ProposalType>,
     pub proposal_entry : Vec<ProposalPlace>,
     pub ask_to_join_dao : bool,
+    pub all_dao_user : Vec<Principal>,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct DaoCanisterInput {
     pub dao_name: String,
     pub purpose: String,
-    pub daotype: String,
     pub link_of_document: String,
     pub cool_down_period: u32,
     pub members: Vec<Principal>,
@@ -678,7 +672,7 @@ pub struct DaoCanisterInput {
     pub daohouse_canister_id: Principal,
     pub proposal_entry : Vec<ProposalPlace>,
     pub ask_to_join_dao : bool,
-
+    pub all_dao_user : Vec<Principal>,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize)]

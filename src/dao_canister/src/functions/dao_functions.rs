@@ -13,7 +13,7 @@ use ic_cdk::api::call::{CallResult, RejectionCode};
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::{query, update};
 use icrc_ledger_types::icrc1::account::Account;
-use icrc_ledger_types::icrc1::transfer::BlockIndex;
+use icrc_ledger_types::icrc1::transfer::{BlockIndex, TransferArg};
 use icrc_ledger_types::icrc2::transfer_from::{TransferFromArgs, TransferFromError};
 use sha2::{Digest, Sha256};
 
@@ -677,7 +677,7 @@ async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
     Ok(String::from(crate::utils::MESSAGE_BOUNTY_DONE))
 }
 
-#[update(guard = prevent_anonymous)]
+#[update(guard = vote_allow_dao_user_only)]
 async fn vote_on_poll_options(proposal_id: String, option_id: String) -> Result<String, String> {
     with_state(|state| match &mut state.proposals.get(&proposal_id) {
         Some(proposal_data) => {
@@ -877,6 +877,7 @@ async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
     let should_ask = with_state(|state| state.dao.ask_to_join_dao);
     if !should_ask {
         with_state(|state| {
+            state.dao.all_dao_user.push(api::caller());
             state.dao.members.push(api::caller());
             state.dao.members_count += 1;
         });
@@ -1077,4 +1078,34 @@ fn get_dao_groups() -> Vec<DaoGroup> {
     });
 
     groups
+}
+
+
+#[update]
+pub async fn proposal_to_mint_new_dao_tokens(total_amount: u64) -> Result<BlockIndex, String> {
+    let holder: Principal = api::id();
+    ic_cdk::println!("holder");
+    let ledger_canister_id = with_state(|state| state.dao.token_ledger_id.id);
+    let icrc1_transfer_args = TransferArg {
+        from_subaccount: None,    
+        to: Account {
+            owner: holder,  
+            subaccount: None,
+        },
+        amount: total_amount.into(),       
+        fee: None,              
+        memo: None,                   
+        created_at_time: None,      
+    };
+
+    let (result,): (Result<BlockIndex, String>,) = ic_cdk::call(
+        ledger_canister_id,             
+        "icrc1_transfer",        
+        (icrc1_transfer_args,)                   
+    )
+    .await
+    .map_err(|e| format!("failed to call ledger: {:?}", e))?;
+    
+    ic_cdk::println!("result : {:?} ", result);
+    result.map_err(|e| format!("ledger transfer error {:?}", e))
 }

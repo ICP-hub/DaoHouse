@@ -57,11 +57,11 @@ type Dao = record {
   members : vec principal;
   dao_id : principal;
   proposals_count : nat32;
+  all_dao_user : vec principal;
   token_ledger_id : LedgerCanisterId;
   token_symbol : text;
   daohouse_canister_id : principal;
   linksandsocials : vec text;
-  daotype : text;
   tokens_required_to_vote : nat32;
   dao_name : text;
   proposal_ids : vec text;
@@ -88,10 +88,10 @@ type DaoGroup = record {
 type DaoInput = record {
   image_canister : principal;
   members : vec principal;
+  all_dao_user : vec principal;
   token_symbol : text;
   daohouse_canister_id : principal;
   linksandsocials : vec text;
-  daotype : text;
   tokens_required_to_vote : nat32;
   dao_groups : vec DaoGroup;
   dao_name : text;
@@ -245,6 +245,7 @@ service : (DaoInput) -> {
   proposal_to_change_dao_policy : (ChangeDaoPolicy) -> (Result_1);
   proposal_to_create_general_purpose : (CreateGeneralPurpose) -> (Result_1);
   proposal_to_create_poll : (CreatePoll) -> (Result_1);
+  proposal_to_mint_new_dao_tokens : (nat64) -> (Result_4);
   proposal_to_remove_member_to_dao : (RemoveDaoMemberArgs) -> (Result_1);
   proposal_to_remove_member_to_group : (RemoveMemberArgs) -> (Result_1);
   proposal_to_transfer_token : (TokenTransferPolicy) -> (Result_1);

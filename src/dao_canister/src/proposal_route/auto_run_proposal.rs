@@ -219,6 +219,9 @@ pub fn check_proposals() {
 pub fn add_member_to_dao(state: &mut State, proposal: &Proposals) {
     let dao = &mut state.dao;
     dao.members.push(proposal.principal_of_action);
+    if !dao.all_dao_user.contains(&proposal.principal_of_action){
+        dao.all_dao_user.push(proposal.principal_of_action.clone());
+    }
     dao.members_count += 1;
     let dao_id: Principal = api::id();
     let principal_id = proposal.principal_of_action;
@@ -243,6 +246,9 @@ pub fn remove_member_from_dao(state: &mut State, proposal: &Proposals) {
     let dao_id: Principal = api::id();
     let principal_id = proposal.principal_of_action;
     let parent_canister = state.dao.daohouse_canister_id;
+    if state.dao.all_dao_user.contains(&proposal.principal_of_action){
+        state.dao.all_dao_user.retain(|s|s != &proposal.principal_of_action.clone());
+    }
 
     ic_cdk::spawn(async move {
         let response: CallResult<(Result<(), String>,)> = ic_cdk::call(
@@ -264,6 +270,9 @@ pub fn add_member_to_group(state: &mut State, proposal: &Proposals) {
                 .group_members
                 .contains(&proposal.principal_of_action)
             {
+                if !state.dao.all_dao_user.contains(&proposal.principal_of_action){
+                    state.dao.all_dao_user.push(proposal.principal_of_action.clone());
+                }
                 dao_group.group_members.push(proposal.principal_of_action);
                 state
                     .dao_groups
@@ -277,12 +286,11 @@ pub fn remove_member_to_group(state: &mut State, proposal: &Proposals) {
     let dao_groups = &mut state.dao_groups;
     if let Some(group_to_remove) = &proposal.group_to_remove {
         if let Some(mut dao_group) = dao_groups.get(group_to_remove) {
-            dao_group
-                .group_members
-                .retain(|s| s != &proposal.principal_of_action);
-            state
-                .dao_groups
-                .insert(dao_group.group_name.clone(), dao_group);
+            dao_group.group_members.retain(|s| s != &proposal.principal_of_action);
+            if state.dao.all_dao_user.contains(&proposal.principal_of_action){
+                state.dao.all_dao_user.retain(|s|s != &proposal.principal_of_action.clone());
+            }
+            state.dao_groups.insert(dao_group.group_name.clone(), dao_group);
         }
     }
 }
@@ -294,9 +302,6 @@ pub fn change_dao_config(state: &mut State, proposal: &Proposals) {
     }
     if let Some(ref purpose) = proposal.new_dao_purpose {
         dao.purpose = purpose.clone();
-    }
-    if let Some(ref daotype) = proposal.new_daotype {
-        dao.daotype = daotype.clone();
     }
 }
 

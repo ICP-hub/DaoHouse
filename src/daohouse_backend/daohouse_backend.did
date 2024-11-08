@@ -24,9 +24,9 @@ type DaoGroup = record {
 type DaoInput = record {
   members : vec principal;
   image_title : text;
+  all_dao_user : vec principal;
   token_symbol : text;
   linksandsocials : vec text;
-  daotype : text;
   tokens_required_to_vote : nat32;
   image_content : blob;
   dao_groups : vec DaoGroup;
@@ -134,6 +134,7 @@ service : (InitialArgs) -> {
   add_proposal : (ProposalValueStore) -> (Result);
   check_profile_existence : () -> (Result_1) query;
   check_user_existance : () -> (Result) query;
+  create_dao : (DaoInput) -> (Result);
   create_profile : (MinimalProfileinput) -> (Result);
   delete_profile : () -> (Result_1);
   get_all_dao : (Pagination) -> (vec DaoDetails) query;

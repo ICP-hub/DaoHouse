@@ -25,6 +25,7 @@ pub const WARNING_PROPOSAL_EXISTS: &str = "Proposal already exists with same req
 pub const WARNING_NO_PROPOSAL: &str = "No proposal matches your requirements";
 pub const WARNING_ALREADY_VOTED: &str = "You have already voted for the proposal.";
 pub const WARNING_DAO_MEMBER_ONLY: &str = "Only members of DAO can perform this action.";
+pub const WARNING_DAO_USER_ONLY: &str = "Only DAO users can vote.";
 pub const WARNING_ANONYMOUS_CALL: &str = "Anonymous principal not allowed !";
 pub const WARNING_INTER_CANISTER: &str = "Intercanister call failed";
 pub const WARNING_DONT_FOLLOW: &str = "You do not follow this dao";
