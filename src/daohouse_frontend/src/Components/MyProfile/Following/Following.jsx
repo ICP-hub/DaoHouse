@@ -147,22 +147,32 @@ const Following = () => {
                     key={index}
                     className="bg-white shadow-lg rounded-lg flex items-center p-4 space-x-4 transition-transform"
                   >
-                    <img
-                      src={getImageUrl(dao?.image_id)}
-                      alt={dao.dao_name}
-                      className="w-16 h-16 rounded-full border-2 border-black object-cover shadow-lg"
-                    />
-                    <div className="flex-1 overflow-hidden">
-                      <h4 className="text-lg font-mulish truncate">
-                        {dao?.dao_name || "No Name"}
-                      </h4>
-                      <p className="text-gray-500 truncate max-w-[200px] whitespace-nowrap">
-                        {dao?.purpose || "No Purpose"}
-                      </p>
+                    <div className="w-full flex flex-col gap-2 md:items-center md:flex-row">
+                      <div className=" flex justify-between">
+                        <img
+                          src={getImageUrl(dao?.image_id)}
+                          alt={dao.dao_name}
+                          className="w-16 h-16 rounded-full border-2 border-black object-cover shadow-lg"
+                        />
+                        <button
+                          onClick={() => handleViewProfile(dao?.dao_canister_id)}
+                          className="border-2 md:hidden flex border-[#0E3746] text-[#0E3746] rounded-full px-4 py-2 self-center text-sm md:text-base hover:bg-[#0E3746] hover:text-white transition duration-300 whitespace-nowrap"
+                        >
+                          View
+                        </button>
+                      </div>
+                      <div className="flex-1 overflow-hidden">
+                        <h4 className="text-lg font-mulish truncate">
+                          {dao?.dao_name || "No Name"}
+                        </h4>
+                        <p className="text-gray-500 truncate max-w-[200px] whitespace-nowrap">
+                          {dao?.purpose || "No Purpose"}
+                        </p>
+                      </div>
                     </div>
                     <button
                       onClick={() => handleViewProfile(dao?.dao_canister_id)}
-                      className="border-2 border-[#0E3746] text-[#0E3746] rounded-full px-2 py-1 md:px-4 md:py-2 text-sm md:text-base hover:bg-[#0E3746] hover:text-white transition duration-300 whitespace-nowrap"
+                      className="border-2 border-[#0E3746] hidden md:flex text-[#0E3746] rounded-full px-2 py-1 md:px-4 md:py-2 text-sm md:text-base hover:bg-[#0E3746] hover:text-white transition duration-300 whitespace-nowrap"
                     >
                       View
                     </button>
