@@ -173,6 +173,7 @@ async fn delete_profile() -> Result<(), String> {
     with_state(|state| routes::delete_profile(state))
 }
 
+#[update]
 pub async fn create_dao(dao_detail: DaoInput) -> Result<String, String> {
     let principal_id = ic_cdk::api::caller();
     let user_profile_detail = with_state(|state| state.user_profile.get(&principal_id).clone());
@@ -334,7 +335,7 @@ pub async fn create_ledger(
         token_name: token_name,
         token_symbol: token_symbol,
         minting_account: Account {
-            owner: api::caller(),
+            owner: ic_cdk::api::id(),
             subaccount: None,
         },
         transfer_fee: Nat::from(0 as u32),

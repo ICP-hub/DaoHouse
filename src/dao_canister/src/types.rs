@@ -49,6 +49,7 @@ pub enum ProposalType {
     Polls,
     TokenTransfer,
     GeneralPurpose,
+    MintNewTokens,
 }
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
@@ -56,6 +57,14 @@ pub struct AccountBalance {
     pub id: Principal,
     pub staked: u32,
 }
+
+#[derive(Clone, CandidType, Deserialize, Serialize)]
+pub struct MintTokenArgs {
+    pub total_amount: u64,
+    pub description: String,
+    pub proposal_entry : String,
+}
+
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct ProposalStakes {
@@ -107,6 +116,7 @@ pub struct Proposals {
     pub task_completion_day : Option<u64>,
     pub poll_query :  Option<String>,
     pub poll_options: Option<Vec<PollOptions>>,
+    pub ask_to_join_dao : Option<bool>
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
@@ -152,6 +162,7 @@ pub struct ProposalInput {
     pub task_completion_day : Option<u64>,
     pub poll_query :  Option<String>,
     pub poll_options: Option<Vec<PollOptions>>,
+    pub ask_to_join_dao : Option<bool>
 }
 
 #[derive(Clone , Debug, CandidType, Serialize, Deserialize)]
@@ -305,6 +316,7 @@ pub struct ChangeDaoPolicy{
     pub required_votes : u32,
     pub cool_down_period : u32,
     pub proposal_entry : String,
+    pub ask_to_join_dao : bool,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]

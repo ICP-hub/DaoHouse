@@ -27,6 +27,7 @@ type ChangeDaoConfigArg = record {
 };
 type ChangeDaoPolicy = record {
   description : text;
+  ask_to_join_dao : bool;
   cool_down_period : nat32;
   proposal_entry : text;
   required_votes : nat32;
@@ -108,6 +109,11 @@ type DaoInput = record {
 };
 type JoinDao = record { place_to_join : text };
 type LedgerCanisterId = record { id : principal };
+type MintTokenArgs = record {
+  total_amount : nat64;
+  description : text;
+  proposal_entry : text;
+};
 type Pagination = record { end : nat32; start : nat32 };
 type PollOptions = record {
   id : text;
@@ -139,6 +145,7 @@ type ProposalType = variant {
   BountyDone;
   Polls;
   ChangeDaoPolicy;
+  MintNewTokens;
   TokenTransfer;
   AddMemberToDaoProposal;
   RemoveMemberToGroupProposal;
@@ -175,6 +182,7 @@ type Proposals = record {
   approved_votes_list : vec principal;
   comments : nat32;
   new_daotype : opt text;
+  ask_to_join_dao : opt bool;
   task_completion_day : opt nat64;
   group_to_join : opt text;
   comments_list : vec Comment;
@@ -245,7 +253,7 @@ service : (DaoInput) -> {
   proposal_to_change_dao_policy : (ChangeDaoPolicy) -> (Result_1);
   proposal_to_create_general_purpose : (CreateGeneralPurpose) -> (Result_1);
   proposal_to_create_poll : (CreatePoll) -> (Result_1);
-  proposal_to_mint_new_dao_tokens : (nat64) -> (Result_4);
+  proposal_to_mint_new_dao_tokens : (MintTokenArgs) -> (Result_1);
   proposal_to_remove_member_to_dao : (RemoveDaoMemberArgs) -> (Result_1);
   proposal_to_remove_member_to_group : (RemoveMemberArgs) -> (Result_1);
   proposal_to_transfer_token : (TokenTransferPolicy) -> (Result_1);
