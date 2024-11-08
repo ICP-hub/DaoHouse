@@ -21,22 +21,17 @@ pub fn check_for_user_guard(user: &Principal) -> Result<(), String> {
     }
 }
 
-// pub fn guard_parent_canister_only() -> Result<(), String> {
-//     prevent_anonymous()?;
-//     with_state(|state| match state.canister_meta_data.get(&0) {
-//         Some(val) => {
-//             if val.canister_ids[core::constants::ESSENTIAL_POST_PARENT_CANISTER]
-//                 == ic_cdk::api::caller()
-//             {
-//                 return Ok(());
-//             } else {
-//                 return Err(String::from(core::constants::WARNING_ADMIN_ONLY));
-//             };
-//         }
-//         None => {
-//             return Err(String::from(
-//                 core::constants::ERROR_FAILED_CANISTER_DATA,
-//             ))
-//         }
-//     })
-// }
+
+pub fn guard_child_canister_only() -> Result<(), String> {
+    prevent_anonymous()?;
+    with_state(|state| 
+    match state.canister_ids.get(&api::caller()) {
+        Some(_) =>{
+           return Ok(());
+        }
+        None =>{
+            return Err(String::from("Only a sub-canister is permitted to perform this task"))
+        }
+    }
+    )
+}

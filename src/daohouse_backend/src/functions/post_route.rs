@@ -1,11 +1,16 @@
 // use std::collections::BTreeMap;
-use crate::{with_state, Analytics, DaoDetails, Pagination};
+use crate::{with_state, Analytics, DaoDetails, DaoInput, Pagination};
 use candid::{Nat, Principal};
 use ic_cdk::{api, update};
-use icrc_ledger_types::{icrc1::{account::Account, transfer::BlockIndex}, icrc2::transfer_from::{TransferFromArgs, TransferFromError}};
+use icrc_ledger_types::{
+    icrc1::{account::Account, transfer::BlockIndex},
+    icrc2::transfer_from::{TransferFromArgs, TransferFromError},
+};
 
 use crate::guards::*;
 use ic_cdk::query;
+
+use super::create_dao;
 
 #[query(guard = prevent_anonymous)]
 fn get_all_dao(page_data: Pagination) -> Vec<DaoDetails> {
@@ -47,7 +52,6 @@ fn get_analytics() -> Result<Analytics, String> {
     })
 }
 
-
 // ledger handlers
 async fn transfer(tokens: u64, user_principal: Principal) -> Result<BlockIndex, String> {
     // let payment_recipient = with_state(|state| state.borrow_mut().get_payment_recipient());
@@ -88,8 +92,18 @@ async fn transfer(tokens: u64, user_principal: Principal) -> Result<BlockIndex, 
 
 // make payment
 #[update(guard = prevent_anonymous)]
-async fn make_payment(tokens: u64, user: Principal) -> Result<Nat, String> {
-    transfer(tokens, user).await
+async fn make_payment_and_create_dao(tokens:u64,user:Principal,dao_details:DaoInput)->Result<String, String> {
+    let result: Result<Nat, String> = transfer(tokens, user).await;
+    match result {
+        Err(error) => Err(error),
+        Ok(_) => {
+            let dao_response: Result<String, String> = create_dao(dao_details).await;
+            match dao_response {
+                Err(error) => Err(error),
+                Ok(response) => Ok(response),
+            }
+        }
+    }
 }
 
 #[query]
@@ -111,4 +125,3 @@ fn search_dao(dao_name: String) -> Vec<DaoDetails> {
         daos
     })
 }
-

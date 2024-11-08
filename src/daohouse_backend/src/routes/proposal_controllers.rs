@@ -99,13 +99,3 @@ pub fn get_my_proposal_controller(
 
     my_proposals
 }
-
-// to delete proposal
-pub fn delete_proposal_controller(
-    state: &mut State,
-    proposal_id: &String,
-) -> Result<String, String> {
-    let _res = state.proposal_store.remove(proposal_id);
-
-    Ok(String::from("Propsal deleted"))
-}

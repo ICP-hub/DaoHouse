@@ -13,7 +13,7 @@ use ic_cdk::api::call::{CallResult, RejectionCode};
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::{query, update};
 use icrc_ledger_types::icrc1::account::Account;
-use icrc_ledger_types::icrc1::transfer::BlockIndex;
+use icrc_ledger_types::icrc1::transfer::{BlockIndex, TransferArg};
 use icrc_ledger_types::icrc2::transfer_from::{TransferFromArgs, TransferFromError};
 use sha2::{Digest, Sha256};
 
@@ -528,7 +528,7 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
     let proposal_expire_time =
         ic_cdk::api::time() + (args.task_completion_day * 86_400 * 1_000_000_000);
 
-    let test_expire_time = 10 * 60 * 1_000_000_000;
+    let test_expire_time = 8 * 60 * 1_000_000_000;
 
     let proposal = ProposalInput {
         principal_of_action: Some(api::caller()),
@@ -569,7 +569,7 @@ async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
         entry: args.proposal_entry.clone(),
         proposal_type: ProposalType::BountyRaised,
     };
-
+    let daohouse_backend_id = with_state(|state| state.dao.daohouse_canister_id);
     guard_check_proposal_creation(proposal_data)?;
     let proposals_data = with_state(|state| state.proposals.get(&args.associated_proposal_id));
 
@@ -673,11 +673,11 @@ async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
         poll_query: None,
         poll_options: None,
     };
-    create_proposal_controller(args.daohouse_canister_id.clone(), proposal_input.clone()).await;
+    create_proposal_controller(daohouse_backend_id.clone(), proposal_input.clone()).await;
     Ok(String::from(crate::utils::MESSAGE_BOUNTY_DONE))
 }
 
-#[update(guard = prevent_anonymous)]
+#[update(guard = vote_allow_dao_user_only)]
 async fn vote_on_poll_options(proposal_id: String, option_id: String) -> Result<String, String> {
     with_state(|state| match &mut state.proposals.get(&proposal_id) {
         Some(proposal_data) => {
@@ -866,7 +866,7 @@ async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
         api::caller(),
         ProposalType::AddMemberToDaoProposal,
     )?;
-
+    let daohouse_backend_id = with_state(|state| state.dao.daohouse_canister_id);
     with_state(|state| {
         if state.dao.members.contains(&api::caller()) {
             return Err(format!("Member already exist in this dao"));
@@ -877,12 +877,13 @@ async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
     let should_ask = with_state(|state| state.dao.ask_to_join_dao);
     if !should_ask {
         with_state(|state| {
+            state.dao.all_dao_user.push(api::caller());
             state.dao.members.push(api::caller());
             state.dao.members_count += 1;
         });
 
         let response: CallResult<(Result<(), String>,)> = ic_cdk::call(
-            args.daohouse_backend_id,
+            daohouse_backend_id,
             "store_join_dao",
             (api::id(), api::caller()),
         ).await;
@@ -905,8 +906,6 @@ async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
 
         return Ok(String::from("Dao Joined successfully"));
     };
-    let principal_id = api::caller();
-    let dao_id = api::id();
     let mut required_thredshold = 0;
 
     let result = with_state(|state| {
@@ -957,32 +956,7 @@ async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
         poll_query: None,
         poll_options: None,
     };
-
-    let response: CallResult<(Result<(), String>,)> = ic_cdk::call(
-        args.daohouse_backend_id,
-        "store_join_dao",
-        (dao_id, principal_id),
-    )
-    .await;
-
-    match response {
-        Ok((Ok(()),)) => (),
-        Ok((Err(err),)) => return Err(err),
-        Err((code, message)) => {
-            let err_msg = match code {
-                RejectionCode::NoError => "NoError".to_string(),
-                RejectionCode::SysFatal => "SysFatal".to_string(),
-                RejectionCode::SysTransient => "SysTransient".to_string(),
-                RejectionCode::DestinationInvalid => "DestinationInvalid".to_string(),
-                RejectionCode::CanisterReject => "CanisterReject".to_string(),
-                _ => format!("Unknown rejection code: {:?}: {}", code, message),
-            };
-            return Err(err_msg);
-        }
-    };
-
-    create_proposal_controller(args.daohouse_backend_id, proposal).await;
-
+    create_proposal_controller(daohouse_backend_id, proposal).await;
     Ok(String::from("Join DAO request sent successfully"))
 }
 
@@ -997,9 +971,9 @@ fn get_dao_followers() -> Vec<Principal> {
 }
 
 #[update(guard=prevent_anonymous)]
-pub async fn follow_dao(daohouse_backend_id: Principal) -> Result<String, String> {
+pub async fn follow_dao() -> Result<String, String> {
     let dao_id = ic_cdk::api::id();
-
+    let daohouse_backend_id = with_state(|state| state.dao.daohouse_canister_id);
     let already_following = with_state(|state| {
         let dao = &state.dao;
         dao.followers.contains(&api::caller())
@@ -1041,7 +1015,9 @@ pub async fn follow_dao(daohouse_backend_id: Principal) -> Result<String, String
 }
 
 #[update(guard=prevent_anonymous)]
-pub async fn unfollow_dao(daohouse_backend_id: Principal) -> Result<String, String> {
+pub async fn unfollow_dao() -> Result<String, String> {
+    let daohouse_backend_id = with_state(|state| state.dao.daohouse_canister_id);
+
     let principal_id = api::caller();
     let dao_id = ic_cdk::api::id();
 
@@ -1102,4 +1078,34 @@ fn get_dao_groups() -> Vec<DaoGroup> {
     });
 
     groups
+}
+
+
+#[update]
+pub async fn proposal_to_mint_new_dao_tokens(total_amount: u64) -> Result<BlockIndex, String> {
+    let holder: Principal = api::id();
+    ic_cdk::println!("holder");
+    let ledger_canister_id = with_state(|state| state.dao.token_ledger_id.id);
+    let icrc1_transfer_args = TransferArg {
+        from_subaccount: None,    
+        to: Account {
+            owner: holder,  
+            subaccount: None,
+        },
+        amount: total_amount.into(),       
+        fee: None,              
+        memo: None,                   
+        created_at_time: None,      
+    };
+
+    let (result,): (Result<BlockIndex, String>,) = ic_cdk::call(
+        ledger_canister_id,             
+        "icrc1_transfer",        
+        (icrc1_transfer_args,)                   
+    )
+    .await
+    .map_err(|e| format!("failed to call ledger: {:?}", e))?;
+    
+    ic_cdk::println!("result : {:?} ", result);
+    result.map_err(|e| format!("ledger transfer error {:?}", e))
 }

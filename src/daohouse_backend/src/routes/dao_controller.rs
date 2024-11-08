@@ -64,10 +64,10 @@ pub async fn create_dao_canister(dao_detail: crate::DaoInput) -> Result<Principa
         }
     }).collect();
 
+
     let update_dao_detail = crate::DaoCanisterInput {
         dao_name: dao_detail.dao_name.clone(),
         purpose: dao_detail.purpose.clone(),
-        daotype: dao_detail.daotype,
         link_of_document: dao_detail.link_of_document,
         cool_down_period: dao_detail.cool_down_period,
         members: updated_members,
@@ -85,6 +85,7 @@ pub async fn create_dao_canister(dao_detail: crate::DaoInput) -> Result<Principa
         daohouse_canister_id: ic_cdk::api::id(),
         proposal_entry : proposal_entry,
         ask_to_join_dao: dao_detail.ask_to_join_dao,
+        all_dao_user : dao_detail.all_dao_user,
     };
 
     // encoding params that is to be passed to new canister
