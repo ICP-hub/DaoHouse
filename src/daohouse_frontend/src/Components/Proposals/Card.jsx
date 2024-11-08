@@ -281,8 +281,10 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
         toast.error(result.Err);
       }
     } catch (error) {
+      const rejectTextMatch = error.message.match(/Reject text: (.+)/);
+      const rejectText = rejectTextMatch ? rejectTextMatch[1] : "An error occurred"
       console.error("Error submitting vote:", error);
-      toast.error("Error submitting vote:", error);
+      toast.error(rejectText);
     } finally {
       setIsVoteLoading(false);
     }
@@ -565,8 +567,8 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                     <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900">• Expires On </span>
                     <span className="text-[10px] small_phone:text-xs md:text-sm lg:text-lg ml-2 md:ml-3">{expiresOnDate} <span className="text-[8px] small_phone:text-[8px] md:text-xs font-normal text-gray-400">{expiresOnTime}</span></span>
                   </div>
-                  <div className="flex lg:flex-row flex-col    items-start">
-                    <span className="font-bold text-[10px] lg:text-lg text-gray-900">Votes Required :</span>
+                  <div className="flex lg:flex-row flex-col    items-start iphone_SE:ml-2 lg:ml-0">
+                    <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900 flex">Votes Required <span className="hidden lg:flex">:</span></span>
                     <span className=" lg:ml-3 text-start text-[10px]  mobile:text-sm lg:text-lg">{requiredVotes}</span>
                   </div>
                 </div>

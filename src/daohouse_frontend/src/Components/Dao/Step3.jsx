@@ -88,6 +88,8 @@ const Step3 = ({ setData, setActiveStep, }) => {
 
 
     const uniqueMembers = getUniqueMembers();
+    console.log("unique members", uniqueMembers);
+    
     // console.log("Council--", council.members);
 
     setData(prev => ({
@@ -95,7 +97,7 @@ const Step3 = ({ setData, setActiveStep, }) => {
       step3: {
         groups: list.slice(1) || [],
         council: council.members || [],
-        members: getUniqueMembers || []
+        members: uniqueMembers || []
       },
     }));
     setActiveStep(3);

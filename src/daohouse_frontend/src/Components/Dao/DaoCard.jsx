@@ -172,11 +172,11 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
     <div className="bg-[#F4F2EC] shadow-lg tablet:p-6 big_phone:p-3 small_phone:p-5 p-3 rounded-lg md:mx-8 tablet:mx-16">
   <div className="flex flex-col items-center big_phone:flex-row small_phone:flex-col justify-center mb-4 gap-2">
     {/* Image Container */}
-    <div className="w-full big_phone:w-40 lg:w-60 mobile:h-full border border-black rounded">
+    <div className="w-full big_phone:w-40 lg:w-60 mobile:h-40 border border-black rounded">
       <img
         src={image_id ? imageUrl : daoImage}
         alt="DAO Image"
-        className="w-full h-32 big_phone:h-full object-cover rounded"
+        className="w-full h-40 object-cover rounded"
       />
     </div>
        
