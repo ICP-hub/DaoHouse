@@ -11,10 +11,11 @@ import { useAuth } from "../utils/useAuthClient";
 import PaymentModal from "./PaymentModal";
 import coinsound from "../../../../daohouse_frontend/src/Sound/coinsound.mp3";
 
-const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setLoadingNext }) => {
+const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, clearLocalStorage, setLoadingNext }) => {
   const [file, setFile] = useState(null);
   const { identity, stringPrincipal, backendActor } = useAuth()
-  const [fileURL, setFileURL] = useState(daoImage);
+  const [fileURL, setFileURL] = useState(null);
+  const [fileName, setFileName] = useState(null);
   const [shouldCreateDAO, setShouldCreateDAO] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loadingPayment, setLoadingPayment] = useState(false);
@@ -33,9 +34,10 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
       setFile(selectedFile);
       const url = URL.createObjectURL(selectedFile);
       setFileURL(url);
+      setFileName(selectedFile.name); // Set only the file name
     } else {
       setFile(null);
-      setFileURL(defaultImage);
+      setFileName(null); // Reset if no file is selected
     }
   };
 
@@ -67,44 +69,91 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
   };
 
   const afterPaymentApprove = async (sendableAmount) => {
+
+    const { step1, step2, step3, step4, step5, step6 } = data;
+    
     try {
+      setLoadingPayment(true)
+
+      const council = step4.voting?.Council;
+    const councilArray = Object.entries(council)
+      .filter(([permission, hasPermission]) => hasPermission)
+      .map(([permission]) => permission);
+  
+    console.log("councilArray", councilArray);
+    console.log("council", council);
+  
+    const allMembers = new Set(); // Using a Set to avoid duplicates
+  
+    // Add council members
+    const councilMembers = step3.council || [];
+    councilMembers.forEach(member => allMembers.add(Principal.fromText(member).toText()));
+  
+    // Add members from each group
+  
+    const principalMembers = Array.from(allMembers).map(member => Principal.fromText(member));
+
+    console.log(step2);
+    console.log(data.dao_groups);
+    
+    const proposalEntry = step5.map(q => ({
+      place_name: q.name,
+      min_required_thredshold: BigInt(q.vote), // Ensure it's a nat64
+    }));
+
+    const membersArray = Array.from(data.members_permissions) || [];
       const successAudio = new Audio(coinsound)
+      const allDaoUsers = step3.members.map(member => Principal.fromText(member));
       const daoPayload = {
-        dao_name: "my dao hai",
-        purpose: "my proposal hai",
-        daotype: "just proposal type bro",
-        link_of_document: "my link.org",
-        cool_down_period: 3,
-        members: [Principal.fromText("aaaaa-aa")],
-        members_permissions: [],
-        token_name: "GOLD Token",
-        token_symbol: "TKN",
-        tokens_required_to_vote: 12,
-        linksandsocials: ["just send f"],
-        required_votes: 3,
-        image_content: new Uint8Array(["XX"]), 
-        image_title: "this is just my title",
-        image_content_type: "just image content bro",
-        image_id: "12", 
-        dao_groups: [],
-        proposal_entry: [],
-        ask_to_join_dao: true,
-        token_supply: 4, 
-        all_dao_user : []
+      dao_name: step1.DAOIdentifier || "my dao hai",
+      purpose:  step1.Purpose || "my proposal hai",
+      link_of_document: "my link.org",
+      cool_down_period: step1.SetUpPeriod || 3,
+      members: principalMembers || [Principal.fromText("aaaaa-aa")],
+      members_permissions: membersArray || ["just", "pesmi"],
+      token_name: step2.TokenName ||"GOLD Token",
+      token_symbol: step2.TokenSymbol || "TKN",
+      tokens_required_to_vote: 12,
+      linksandsocials: ["just send f"],
+      required_votes: parseInt(step2.VotesRequired, 10) || 3,
+      image_content: step6.image_content ? Array.from(new Uint8Array(step6.image_content)) : 
+      Array.from(new Uint8Array()),
+      image_title: step6.image_title || "this is just my title",
+      image_content_type: step6.image_content_type || "just image content bro",
+      image_id: step6.image_id || "12",
+      dao_groups: data.dao_groups,
+      proposal_entry: proposalEntry,
+      ask_to_join_dao : data.ask_to_join_dao,
+      token_supply: Number(step2.TokenSupply) || 4,
+      all_dao_user : allDaoUsers
       };
       const res = await backendActor.make_payment_and_create_dao(sendableAmount, Principal.fromText(stringPrincipal),daoPayload);
-      console.log(res)
+      console.log("resghfgg", res)
       if (res.Ok) {
+        console.log("success");
+        
         toast.success("Payment successful!");
+        setLoadingPayment(false)
         setIsModalOpen(false);
-        // handleDaoClick();
         successAudio.play();
+        setLoadingNext(false);
+        toast.success("DAO created successfully");
+        clearLocalStorage();
+        setTimeout(() => {
+          window.location.href = '/dao';
+        }, 500);
       } else {
-        console.log(res);
-        toast.error(res.Err);
+          toast.error(`${response.Err}`);
+          toast.error(`Failed to create Dao`);
+          setLoadingNext(false)
+          console.log(res);
+          toast.error(res.Err);
       }
     }catch (error) {
       console.log("error : ", error)
+      const rejectTextMatch = error.message.match(/Reject text: (.+)/);
+      const rejectText = rejectTextMatch ? rejectTextMatch[1] : "An error occurred"
+      toast.error(rejectText);
     } finally {
       setLoadingPayment(false); 
     }
@@ -153,6 +202,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
           const errorMessage = `Insufficient funds. Balance: ${approveRes.Err.InsufficientFunds.balance}`;
           console.log("Err", approveRes)
           toast.error(errorMessage);
+          setLoadingPayment(false)
           return;
         } else {
           afterPaymentApprove(sendableAmount)
@@ -160,8 +210,9 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
     } catch (err) {
       console.error("Error in transfer approve", err);
       toast.error(err);
-    } finally {
       setLoadingPayment(false)
+    } finally {
+      // setLoadingPayment(false)
     }
   };
   async function paymentTest() {
@@ -235,6 +286,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
   useEffect(() => {
     if (loadingPayment) {
       setIsModalOpen(true);
+      setLoadingPayment(true)
     }
   }, [loadingPayment]);
 
@@ -256,10 +308,10 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
 
   useEffect(() => {
     if (shouldCreateDAO) {
-      handleDaoClick();
+      // handleDaoClick();
       setShouldCreateDAO(false);
     }
-  }, [data, shouldCreateDAO, handleDaoClick]);
+  }, [data, shouldCreateDAO]);
 
   console.log("data of all steps: ", data)
 
@@ -303,7 +355,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
 
           <div className="uploadImage flex big_phone:flex-row flex-col items-center justify-start gap-4">
             <img
-              src={fileURL}
+              src={file ? URL.createObjectURL(file) : daoImage}
               alt="Image"
               className="rounded-lg w-[350px] h-[200px] object-cover"
             />
@@ -311,9 +363,11 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
             <div className="flex flex-col items-center justify-center">
             <label
                 htmlFor="profile"
-                className="flex mobile:text-sm text-[10px] font-semibold cursor-pointer mobile:m-4 m-2 flex-row items-center gap-2 bg-white px-6 py-2 rounded-[3rem] text-black shadow-xl"
+                className="flex mobile:text-sm text-[10px] font-semibold cursor-pointer mobile:m-4 m-2 flex-row items-center gap-2 bg-white px-6 py-2 text-center justify-center center rounded-[3rem] text-black shadow-xl"
               >
-               <FiUpload className="text-[12px] mobile:text-[16px]" /> Upload New Photo {/* Adjust icon size */}
+               <FiUpload className="text-[12px] mobile:text-[16px] text-center" />
+               {fileName ? fileName : "Upload New Photo"} 
+     
               </label>
               <span className="block text-center mt-1 mobile:text-xs text-[9px] text-gray-500">
                 Upload JPG, PNG. Max 5 MB
