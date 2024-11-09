@@ -10,7 +10,7 @@ import Step6 from "../../Components/Dao/Step6";
 import TopComponent from "../../Components/Dao/TopComponent";
 import { useAuth } from "../../Components/utils/useAuthClient";
 import { Principal } from "@dfinity/principal";
-import { toast } from "react-toastify";
+import toast from 'react-hot-toast';
 import Container from "../../Components/Container/Container";
 import LoginModal from "../../Components/Auth/LoginModal";
 import { useNavigate } from "react-router-dom";
@@ -37,13 +37,13 @@ const CreateDao = () => {
   useEffect(() => {
     setShowLoginModal(!isAuthenticated);
   }, [isAuthenticated]);
-  
+
 
   const handleLogin = async () => {
     setLoading(true);
     try {
       await login("Icp");
-      window.location.reload(); // Reload after successful login
+      window.location.reload();
     } catch (error) {
       console.error('Login failed:', error);
     } finally {
@@ -55,7 +55,7 @@ const CreateDao = () => {
     setLoading(true);
     try {
       await signInNFID();
-      window.location.reload(); // Reload after successful NFID login
+      window.location.reload();
     } catch (error) {
       console.error('NFID login failed:', error);
     } finally {
@@ -66,7 +66,7 @@ const CreateDao = () => {
   const handleModalClose = () => {
     setShowLoginModal(false);
     if (!isAuthenticated) {
-      navigate("/"); // Redirect to home page if not authenticated
+      navigate("/");
     }
   };
 
@@ -106,9 +106,9 @@ const CreateDao = () => {
       localStorage.removeItem('isPrivate');
       localStorage.removeItem('step6Data');
     };
-  
+
     window.addEventListener('beforeunload', clearDataOnUnload);
-  
+
     return () => {
       window.removeEventListener('beforeunload', clearDataOnUnload);
     };
@@ -119,67 +119,67 @@ const CreateDao = () => {
     setLoadingNext(true);
     const { step1, step2, step3, step4, step5, step6 } = data;
     console.log("Data", data);
-    
+
     const council = step4.voting?.Council;
     const councilArray = Object.entries(council)
       .filter(([permission, hasPermission]) => hasPermission)
       .map(([permission]) => permission);
-  
+
     console.log("councilArray", councilArray);
     console.log("council", council);
-  
-    const allMembers = new Set(); // Using a Set to avoid duplicates
-  
+
+    const allMembers = new Set();
+
     // Add council members
     const councilMembers = step3.council || [];
     councilMembers.forEach(member => allMembers.add(Principal.fromText(member).toText()));
-  
+
     // Add members from each group
-  
+
     const principalMembers = Array.from(allMembers).map(member => Principal.fromText(member));
 
     console.log(step2);
     console.log(data.dao_groups);
-    
+
     const proposalEntry = step5.map(q => ({
       place_name: q.name,
-      min_required_thredshold: BigInt(q.vote), // Ensure it's a nat64
+      min_required_thredshold: BigInt(q.vote),
     }));
 
     const membersArray = Array.from(data.members_permissions) || [];
-    
-  
+
+
     const daoPayload = {
       dao_name: step1.DAOIdentifier || "my dao hai",
-      purpose:  step1.Purpose || "my proposal hai",
+      purpose: step1.Purpose || "my proposal hai",
       link_of_document: "my link.org",
       cool_down_period: step1.SetUpPeriod || 3,
       members: principalMembers || [Principal.fromText("aaaaa-aa")],
       members_permissions: membersArray || ["just", "pesmi"],
-      token_name: step2.TokenName ||"GOLD Token",
+      token_name: step2.TokenName || "GOLD Token",
       token_symbol: step2.TokenSymbol || "TKN",
       tokens_required_to_vote: 12,
       linksandsocials: ["just send f"],
       required_votes: parseInt(step2.VotesRequired, 10) || 3,
-      image_content: step6.image_content ? Array.from(new Uint8Array(step6.image_content)) : 
-      Array.from(new Uint8Array()),
+      image_content: step6.image_content ? Array.from(new Uint8Array(step6.image_content)) :
+        Array.from(new Uint8Array()),
       image_title: step6.image_title || "this is just my title",
       image_content_type: step6.image_content_type || "just image content bro",
       image_id: step6.image_id || "12",
       dao_groups: data.dao_groups,
       proposal_entry: proposalEntry,
-      ask_to_join_dao : data.ask_to_join_dao,
+      ask_to_join_dao: data.ask_to_join_dao,
       token_supply: Number(step2.TokenSupply) || 4,
     };
 
-    console.log("daoPayload",daoPayload);
-    
-  
+    console.log("daoPayload", daoPayload);
+
+
 
     try {
       const response = await backendActor.create_dao(daoPayload);
-      console.log("response",response);
-      
+      console.log("response", response);
+
       if (response.Err) {
         toast.error(`${response.Err}`);
         toast.error(`Failed to create Dao`);
@@ -245,7 +245,7 @@ const CreateDao = () => {
             </div>
           </div>
         </Container>
-        {showLoginModal && <LoginModal isOpen={showLoginModal} onClose={handleModalClose} onLogin={handleLogin} 
+        {showLoginModal && <LoginModal isOpen={showLoginModal} onClose={handleModalClose} onLogin={handleLogin}
           onNFIDLogin={handleNFIDLogin} loading={loading} />}
         <Container>
           <div className={className + "__steps overflow-x-scroll small_phone:px-4 mobile:px-4 mobile:py-4 py-2 big_phone:px-4 tablet:px-12 lg:px-20 desktop:px-24 mobile:gap-20 gap-6 flex flex-row w-full mobile:items-center justify-between"}>
@@ -267,7 +267,7 @@ const CreateDao = () => {
           <div className="form-wrapper w-full small_phone:px-4 mobile:px-4 big_phone:mx-0 big_phone:px-0 tablet:mx-[-2px] tablet:px-16 desktop:px-20  py-4 ">
             {Form()}
           </div>
-    </Container>
+        </Container>
       </div>
     </Fragment>
   );

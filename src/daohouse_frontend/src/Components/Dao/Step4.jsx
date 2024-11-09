@@ -4,7 +4,7 @@ import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import { getTruePermissions } from "./Getpermission";
 import Container from "../Container/Container";
 import { Principal } from "@dfinity/principal";
-import MintNewTokens from "../../pages/Proposals/MintNewTokens";
+
 
 const Step4 = ({ data, setData, setActiveStep }) => {
   const [activeStage, setActiveStage] = useState(0);
@@ -20,7 +20,7 @@ const Step4 = ({ data, setData, setActiveStep }) => {
     const savedToggleState = localStorage.getItem("isPrivate");
     return savedToggleState !== null ? JSON.parse(savedToggleState) : true;
   });
-  const [showModal, setShowModal] = useState(false); // State for modal visibility
+  const [showModal, setShowModal] = useState(false);
 
 
   const className = "DAO__Step4";

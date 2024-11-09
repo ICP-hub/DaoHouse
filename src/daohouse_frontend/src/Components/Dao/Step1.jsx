@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaArrowRightLong } from "react-icons/fa6";
-import { toast } from "react-toastify";
+import toast from 'react-hot-toast';
 import Container from "../Container/Container";
 
 const Step1 = ({ setData, setActiveStep, data }) => {
@@ -161,8 +161,8 @@ const Step1 = ({ setData, setActiveStep, data }) => {
               value={inputData.DAOIdentifier}
               placeholder="Enter DAO Identifier"
               className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm ${errors.DAOIdentifier
-                  ? "border border-red-500"
-                  : "border border-gray-300"
+                ? "border border-red-500"
+                : "border border-gray-300"
                 }`}
               onChange={handleChange}
             />
@@ -210,8 +210,8 @@ const Step1 = ({ setData, setActiveStep, data }) => {
               value={inputData.SetUpPeriod}
               placeholder="Enter setup period in days"
               className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm ${errors.SetUpPeriod
-                  ? "border border-red-500"
-                  : "border border-gray-300"
+                ? "border border-red-500"
+                : "border border-gray-300"
                 }`}
               onChange={(e) => changePeriod(e.target.value)}
               min="1"
