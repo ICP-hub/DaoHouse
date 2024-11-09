@@ -1,6 +1,6 @@
 import React from "react";
 
-const BountyDone = ({ bountyDone, handleInputBountyDone }) => (
+const BountyDone = ({ bountyDone, handleInputBountyDone, dao }) => (
   <>
     <div className="mb-4">
       <label htmlFor="associated_proposal_id" className="block mb-2 font-semibold text-xl">Associated Proposal ID</label>
@@ -36,7 +36,7 @@ const BountyDone = ({ bountyDone, handleInputBountyDone }) => (
           id="bountyTokens"
           type="number"
           name="tokens"
-          value={bountyDone.tokens || 1}
+          value={bountyDone.tokens || dao.total_tokens}
           onChange={handleInputBountyDone}
           className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
           placeholder="Enter Tokens"

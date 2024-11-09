@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-const BountyRaised = ({ bountyRaised, handleInputBountyRaised, setBountyRaised }) => {
+const BountyRaised = ({ bountyRaised, handleInputBountyRaised, setBountyRaised, dao }) => {
 
   return (
     <>
@@ -50,7 +50,7 @@ const BountyRaised = ({ bountyRaised, handleInputBountyRaised, setBountyRaised }
           id="bountyTokens"
           type="number"
           name="tokens"
-          value={bountyRaised.tokens || 1}
+          value={bountyRaised.tokens || dao.total_tokens}
           onChange={handleInputBountyRaised}
           className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
           placeholder="Enter Tokens"
