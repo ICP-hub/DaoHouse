@@ -363,10 +363,12 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, clea
             <div className="flex flex-col items-center justify-center">
             <label
                 htmlFor="profile"
-                className="flex mobile:text-sm text-[10px] font-semibold cursor-pointer mobile:m-4 m-2 flex-row items-center gap-2 bg-white px-6 py-2 text-center justify-center center rounded-[3rem] text-black shadow-xl"
+                className="flex mobile:text-sm text-[10px]  font-semibold cursor-pointer mobile:m-4 m-2 flex-row items-center gap-2 bg-white px-6 py-2 text-center justify-center center rounded-[3rem] text-black shadow-xl"
               >
-               <FiUpload className="text-[12px] mobile:text-[16px] text-center" />
-               {fileName ? fileName : "Upload New Photo"} 
+               <FiUpload className="text-[12px] mobile:text-[16px]  text-center" />
+             <span className="truncate ... w-50 md:w-50">
+             {fileName ? fileName : "Upload New Photo"}
+              </span> 
      
               </label>
               <span className="block text-center mt-1 mobile:text-xs text-[9px] text-gray-500">

@@ -19,6 +19,11 @@ import Poll from "./Poll";
 import RemoveDaoMember from "./RemoveDaoMember";
 import { createActor } from "../../../../declarations/icp_ledger_canister";
 import TokenPaymentModal from "./TokenPaymentModal";
+import MintNewTokens from "./MintNewTokens";
+
+
+
+
 function CreateProposal() {
 
   const navigate = useNavigate();
@@ -91,6 +96,11 @@ function CreateProposal() {
     action_member: '',
   });
 
+  const [mintNewTokens, setMintNewTokens] = useState({
+    total_amount: '',
+    description: '',
+  });
+
   const [groupNames, setGroupNames] = useState([]);
   const [loading, setLoading] = useState(false);
   const { createDaoActor, stringPrincipal, identity } = useAuth();
@@ -143,6 +153,15 @@ function CreateProposal() {
     const { name, value } = e.target;
     setBountyDone((prev) => ({
       ...prev,
+      [name]: value,
+    }));
+  };
+
+  
+  const handleInputMintNewTokens = (e) => {
+    const { name, value } = e.target;
+    setMintNewTokens((prevState) => ({
+      ...prevState,
       [name]: value,
     }));
   };
@@ -373,6 +392,14 @@ function CreateProposal() {
             action_member: Principal.fromText(removeDaoMember.action_member),
           });
           break;
+
+          case "MintNewTokens":
+            await submitMintNewTokens({
+              total_amount: Number(mintNewTokens.total_amount) || 0,
+              description: mintNewTokens.description,
+              proposal_entry: proposalEntry,
+            });
+            break;
 
         default:
           toast.error(
@@ -726,6 +753,23 @@ function CreateProposal() {
     }
   };
 
+  const submitMintNewTokens = async (mintNewTokensData) => {
+    try {
+      const daoCanister = await createDaoActor(daoCanisterId);
+      const response = await daoCanister.proposal_to_mint_new_dao_tokens(mintNewTokensData);
+      console.log("Response of Mint New Tokens:", response);
+      if (response.Ok) {
+        toast.success(response.Ok);
+        movetodao();
+      } else {
+        toast.error(response.Err);
+      }
+    } catch (error) {
+      console.error("Error submitting Mint New Tokens proposal:", error);
+      toast.error("Failed to create Mint New Tokens proposal");
+    }
+  };
+
   return (
     <div className="bg-zinc-200 w-full">
       <div
@@ -794,6 +838,9 @@ function CreateProposal() {
                       <option value="Poll">Polls</option>
                       <option value="RemoveDaoMember">
                         RemoveMemberToDaoProposal
+                      </option>
+                      <option value="MintNewTokens">
+                        Mint New Tokens
                       </option>
                     </select>
                   </div>
@@ -903,6 +950,14 @@ function CreateProposal() {
                       handleInputRemoveDaoMember={handleInputRemoveDaoMember}
                     />
                   )}
+
+{proposalType === "MintNewTokens" && (
+  <MintNewTokens
+    mintTokenData={mintNewTokens}  // Updated prop name
+    handleInputMintToken={handleInputMintNewTokens}
+  />
+)}
+
 
                   {/* Submit Button */}
                   <div className="flex justify-center my-8  ">
