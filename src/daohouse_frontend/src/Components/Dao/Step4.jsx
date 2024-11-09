@@ -4,6 +4,7 @@ import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import { getTruePermissions } from "./Getpermission";
 import Container from "../Container/Container";
 import { Principal } from "@dfinity/principal";
+import MintNewTokens from "../../pages/Proposals/MintNewTokens";
 
 const Step4 = ({ data, setData, setActiveStep }) => {
   const [activeStage, setActiveStage] = useState(0);
@@ -71,6 +72,8 @@ const Step4 = ({ data, setData, setActiveStep }) => {
     BountyRaised: groupName === "Council" ? true : false,
     AddMemberToGroupProposal: groupName === "Council" ? true : false,
     GeneralPurpose: groupName === "Council" ? true : false,
+    MintNewTokens: groupName === "Council" ? true : false,
+
   });
 
   const permissionList = [
@@ -85,6 +88,7 @@ const Step4 = ({ data, setData, setActiveStep }) => {
     "BountyRaised",
     "AddMemberToGroupProposal",
     "GeneralPurpose",
+    "MintNewTokens",
   ];
 
   const initializePermissions = () => {
