@@ -757,10 +757,8 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
               {!isSubmittedProposals && (proposal.proposal_type.MintNewTokens  !== undefined) && (
                 <div className="w-full">
                   <div className="flex flex-wrap">
-                  <span className="font-bold">Amount:</span> {proposal.amount}
-                    <strong>&nbsp; | &nbsp;</strong>
-                    <span className="font-bold">Total Amount:</span> {proposal.total_amount}
-                  </div>
+                  <span className="font-bold">Total Amount:&nbsp;</span> {proposal.tokens.length > 0 ? proposal.tokens[0].toString() : '0'}
+                   </div>
                 </div>
 
               )}
