@@ -48,7 +48,6 @@ pub async fn create_proposal_controller(
         new_dao_name : proposal.new_dao_name,
         new_dao_purpose : proposal.dao_purpose,
         group_to_remove: proposal.group_to_remove,
-        new_daotype : proposal.new_dao_type,
         cool_down_period: proposal.cool_down_period,
         tokens: proposal.tokens,
         token_from: proposal.token_from,

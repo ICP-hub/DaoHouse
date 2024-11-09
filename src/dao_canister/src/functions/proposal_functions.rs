@@ -37,8 +37,6 @@ fn get_all_proposals(page_data: Pagination) -> Vec<Proposals> {
 
 #[query(guard=prevent_anonymous)]
 fn get_my_proposal() -> Result<Vec<Proposals>, String> {
-    // with_state(|state| state.proposals.)
-
     with_state(|state| {
         let mut proposals: Vec<Proposals> = Vec::new();
 
@@ -64,21 +62,6 @@ async fn get_dao_detail() -> Dao {
         dao.members = unique_members.into_iter().collect();
         dao.members_count = dao.members.len() as u32;
         dao
-    })
-}
-
-#[update(guard = guard_check_members)]
-fn change_proposal_state(
-    proposal_id: String,
-    proposal_state: ProposalState,
-) -> Result<String, String> {
-    with_state(|state| match &mut state.proposals.get(&proposal_id) {
-        Some(pro) => {
-            pro.proposal_status = proposal_state;
-            state.proposals.insert(proposal_id, pro.to_owned());
-            Ok(format!("State changed to {:?} ", pro.proposal_status))
-        }
-        None => Err(String::from("Proposal does not exist.")),
     })
 }
 
@@ -184,24 +167,29 @@ async fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> 
     let principal_id = api::caller();
     with_state(|state| match &mut state.proposals.get(&proposal_id) {
         Some(pro) => {
-            if pro.proposal_status == ProposalState::Open {
-                if (pro.proposal_rejected_votes as u32 + pro.proposal_approved_votes as u32) < pro.required_votes {
-                    if voting == VoteParam::Yes {
-                        pro.approved_votes_list.push(principal_id);
-                        pro.proposal_approved_votes += 1;
-                        state.proposals.insert(proposal_id, pro.to_owned());
-                        Ok(String::from("Successfully voted in favour of Proposal."))
-                    } else {
-                        pro.rejected_votes_list.push(principal_id);
-                        pro.proposal_rejected_votes += 1;
-                        state.proposals.insert(proposal_id, pro.to_owned());
-                        Ok(String::from("Successfully voted against the proposal."))
+            if pro.created_by != api::caller() || pro.principal_of_action != api::caller(){
+                if pro.proposal_status == ProposalState::Open {
+                    if (pro.proposal_rejected_votes as u32 + pro.proposal_approved_votes as u32) < pro.required_votes {
+                        if voting == VoteParam::Yes {
+                            pro.approved_votes_list.push(principal_id);
+                            pro.proposal_approved_votes += 1;
+                            state.proposals.insert(proposal_id, pro.to_owned());
+                            Ok(String::from("Successfully voted in favour of Proposal."))
+                        } else {
+                            pro.rejected_votes_list.push(principal_id);
+                            pro.proposal_rejected_votes += 1;
+                            state.proposals.insert(proposal_id, pro.to_owned());
+                            Ok(String::from("Successfully voted against the proposal."))
+                        }
+                    }else{
+                        Err(format!("The proposal received the maximum required votes"))
                     }
-                }else{
-                    Err(format!("The proposal received the maximum required votes"))
+                } else {
+                    Err(format!("Proposal has been {:?} ", pro.proposal_status))
                 }
-            } else {
-                Err(format!("Proposal has been {:?} ", pro.proposal_status))
+            }
+            else{
+                Err(String::from("you can't vote on your proposals"))
             }
         }
         None => Err(String::from("Proposal ID is invalid !")),

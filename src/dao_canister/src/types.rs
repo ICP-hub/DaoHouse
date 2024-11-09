@@ -101,7 +101,6 @@ pub struct Proposals {
     pub new_dao_name : Option<String>,
     pub new_dao_purpose : Option<String>,
     pub group_to_remove: Option<String>,
-    pub new_daotype :  Option<String>,
     pub cool_down_period: Option<u32>,
     pub tokens: Option<u64>,
     pub token_from: Option<Principal>,
@@ -145,7 +144,6 @@ pub struct ProposalInput {
     pub proposal_type: ProposalType,
     pub principal_of_action: Option<Principal>,
     pub new_dao_name : Option<String>,
-    pub new_dao_type : Option<String>,
     pub dao_purpose : Option<String>,
     pub tokens : Option<u64>,
     pub token_to: Option<Principal>,
@@ -230,7 +228,6 @@ pub struct Dao {
 pub struct ChangeDaoConfigArg {
     pub new_dao_name: String,
     pub purpose: String,
-    pub daotype: String,
     pub description: String,
     pub proposal_entry : String,
 }
