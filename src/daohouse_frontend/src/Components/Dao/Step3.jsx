@@ -3,7 +3,7 @@ import { HiPlus } from "react-icons/hi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import { Principal } from "@dfinity/principal";
-import { toast } from "react-toastify";
+import toast, { Toaster } from 'react-hot-toast';
 import { useAuth } from "../../Components/utils/useAuthClient";
 import Container from "../Container/Container";
 import EditPen from "../../../assets/edit_pen.png";
@@ -24,6 +24,7 @@ const Step3 = ({ setData, setActiveStep, }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isAdding, setIsAdding] = useState(false)
   const [openGroups, setOpenGroups] = useState([]);
+  const [newGroupIndex, setNewGroupIndex] = useState(null);
 
 
   const [list, setList] = useState([
@@ -40,15 +41,15 @@ const Step3 = ({ setData, setActiveStep, }) => {
     }
   }, []);
 
-  const toggleGroup = (index) => {
-    if (openGroups.includes(index)) {
+  // const toggleGroup = (index) => {
+  //   if (openGroups.includes(index)) {
 
-      setOpenGroups(openGroups.filter(i => i !== index));
-    } else {
+  //     setOpenGroups(openGroups.filter(i => i !== index));
+  //   } else {
 
-      setOpenGroups([...openGroups, index]);
-    }
-  };
+  //     setOpenGroups([...openGroups, index]);
+  //   }
+  // };
 
   const getUniqueMembers = () => {
     const allMembers = new Set();
@@ -88,8 +89,8 @@ const Step3 = ({ setData, setActiveStep, }) => {
 
 
     const uniqueMembers = getUniqueMembers();
-    console.log("unique members", uniqueMembers);
-    
+    // console.log("unique members", uniqueMembers);
+
     // console.log("Council--", council.members);
 
     setData(prev => ({
@@ -265,19 +266,19 @@ const Step3 = ({ setData, setActiveStep, }) => {
     setGroupNameInputIndex(index);
   };
 
-  const handleGroupNameInput = (groupName, event) => {
+  // const handleGroupNameInput = (groupName, event) => {
 
-    setList(prevList =>
-      prevList.map(item => {
-        if (item.index === groupNameInputIndex) {
-          return { ...item, name: groupName };
-        }
-        return item;
-      })
-    );
-    setGroupNameInputIndex(null);
+  //   setList(prevList =>
+  //     prevList.map(item => {
+  //       if (item.index === groupNameInputIndex) {
+  //         return { ...item, name: groupName };
+  //       }
+  //       return item;
+  //     })
+  //   );
+  //   setGroupNameInputIndex(null);
 
-  };
+  // };
 
   const handleUpdateGroupName = () => {
     setList(prevList =>
@@ -292,19 +293,6 @@ const Step3 = ({ setData, setActiveStep, }) => {
     setUpdatedGroupName("");
   };
 
-  const getUsernameByPrincipalId = async (principalId) => {
-  
-
-    try {
-      const response = await backendActor.get_profile_by_id(Principal.fromText(principalId));
-     
-      setUsername(response.Ok.username)
-
-    } catch {
-      return "Error fetching username";
-    }
-
-  }
 
 
   useEffect(() => {
@@ -371,7 +359,7 @@ const Step3 = ({ setData, setActiveStep, }) => {
       setList(initialList);
     }
 
-    
+
   }, [stringPrincipal]);
 
   const handleEditGroup = (index) => {
@@ -404,7 +392,7 @@ const Step3 = ({ setData, setActiveStep, }) => {
             <section className="w-11/12 flex flex-col gap-y-2">
               <h2 className="font-semibold">Add Members</h2>
               <p className="big_phone:text-base mobile:text-sm text-xs">
-                You can add members and assign them various roles as per your decisions and also add members to<br />
+                You can add members and assign them various roles as per your decisions and also add members to
                 your DAO for providing them specific roles in the future.
               </p>
             </section>

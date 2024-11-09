@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
+import toast from 'react-hot-toast';
 import { useNavigate, useParams } from "react-router-dom";
 import Container from "../Container/Container";
 import { useAuth } from '../../Components/utils/useAuthClient';

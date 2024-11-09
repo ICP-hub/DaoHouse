@@ -3,7 +3,7 @@ import Tags from "../../../Components/MyProfile/Tags";
 import PersonalLinksAndContactInfo from "../PersonalLinksAndContactInfo";
 import { useUserProfile } from "../../../context/UserProfileContext";
 
-import { toast } from "react-toastify";
+import toast from 'react-hot-toast';
 
 
 const AboutMe = () => {
