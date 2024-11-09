@@ -52,7 +52,6 @@ function CreateProposal() {
   });
 
   const [daoConfig, setDaoConfig] = useState({
-    daotype: '',
     description: '',
     new_dao_name: '',
     purpose: '',
@@ -119,6 +118,8 @@ function CreateProposal() {
         if (daoActor) {
           const daoDetails = await daoActor.get_dao_detail();
           setDao(daoDetails);
+          console.log(daoDetails);
+          
           const names = daoDetails.proposal_entry.filter((group) => group.place_name !== "Council").map((group) => group.place_name );
           setGroupNames(names);
         }
@@ -338,10 +339,8 @@ function CreateProposal() {
         case "DaoConfig":
           await submitDaoConfig({
             proposal_entry: proposalEntry,
-            daotype: daoConfig.daotype,
             description: daoConfig.description,
             new_dao_name: daoConfig.new_dao_name,
-      
             purpose: daoConfig.purpose,
           });
           break;
@@ -368,7 +367,7 @@ function CreateProposal() {
           await submitChangePolicy({
             proposal_entry: proposalEntry,
             description: changePolicy.description,
-   
+            
             cool_down_period: Number(changePolicy.cool_down_period) || 1,
             required_votes: Number(changePolicy.required_votes) || 1,
           });
@@ -877,6 +876,7 @@ function CreateProposal() {
                     <BountyDone
                       bountyDone={bountyDone}
                       handleInputBountyDone={handleInputBountyDone}
+                      dao={dao}
                     />
                   )}
 
@@ -884,6 +884,7 @@ function CreateProposal() {
                     <TokenTransfer
                       tokenTransfer={tokenTransfer}
                       handleInputTransferToken={handleInputTransferToken}
+                      dao={dao}
                     />
                   )}
 
@@ -923,6 +924,7 @@ function CreateProposal() {
                       bountyRaised={bountyRaised}
                       handleInputBountyRaised={handleInputBountyRaised}
                       setBountyRaised={setBountyRaised}
+                      dao={dao}
                     />
                   )}
 
@@ -930,6 +932,7 @@ function CreateProposal() {
                     <DaoPolicy
                       changePolicy={changePolicy}
                       handleInputDaoPolicy={handleInputDaoPolicy}
+                      dao={dao}
                     />
                   )}
 

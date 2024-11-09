@@ -1,6 +1,6 @@
 import React from "react";
 
-const DaoPolicy = ({ changePolicy, handleInputDaoPolicy }) => (
+const DaoPolicy = ({ changePolicy, handleInputDaoPolicy, dao }) => (
     <form className="space-y-4">
         <div className="mb-4">
             <label htmlFor="description" className="mb-2 font-semibold text-xl">Description</label>
@@ -36,7 +36,7 @@ const DaoPolicy = ({ changePolicy, handleInputDaoPolicy }) => (
                 id="coolDownPeriod"
                 type="number"
                 name="cool_down_period"
-                value={changePolicy.cool_down_period || 1}
+                value={changePolicy.cool_down_period || dao.cool_down_period}
                 onChange={handleInputDaoPolicy}
                 className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                 placeholder="Enter Cool Down Period"
@@ -51,7 +51,7 @@ const DaoPolicy = ({ changePolicy, handleInputDaoPolicy }) => (
                 id="requiredVotes"
                 type="number"
                 name="required_votes"
-                value={changePolicy.required_votes || 1}
+                value={changePolicy.required_votes || dao.required_votes}
                 onChange={handleInputDaoPolicy}
                 className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                 placeholder="Enter Required Votes"
