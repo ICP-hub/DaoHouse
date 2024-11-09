@@ -85,7 +85,6 @@ function CreateProposal() {
   ? "This action will make the DAO public, allowing anyone to join without creating a proposal. Are you sure you want to make it public?"
   : "This action will make the DAO private. A proposal will be created for users to join.";
   const confirmMakePrivate = () => {
-    console.log("adas",dao.ask_to_join_dao);
     
     setIsPrivate(!isPrivate);
     setShowModal(false);
@@ -990,8 +989,7 @@ function CreateProposal() {
                   )}
 
                   {proposalType === "ChangePolicy" && (
-                    <DaoPolicy
-                      
+                    <DaoPolicy    
                       changePolicy={changePolicy}
                       handleInputDaoPolicy={handleInputDaoPolicy}
                       dao={dao}
