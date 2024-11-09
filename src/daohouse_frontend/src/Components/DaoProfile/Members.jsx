@@ -169,8 +169,8 @@ export default Members;
 const GridView = ({ member }) => {
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
-  const profileImgSrc = member.Ok.profile_img
-    ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${member.Ok.profile_img}`
+  const profileImgSrc = member?.Ok?.profile_img
+    ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${member?.Ok?.profile_img}`
     : userImage;
 
   return (
@@ -184,8 +184,8 @@ const GridView = ({ member }) => {
           />
         </section>
         <section className="details flex flex-col items-start ml-2"> 
-          <p className="font-semibold text-lg">{member.Ok.username}</p>
-          <p className="text-sm">{member.Ok.email_id}</p>
+          <p className="font-semibold text-lg">{member?.Ok?.username}</p>
+          <p className="text-sm">{member?.Ok?.email_id}</p>
         </section>
         <MdAddBox className="mx-2 text-[#97C3D3] text-2xl self-center" />
       </div>
@@ -197,8 +197,8 @@ const GridView = ({ member }) => {
 const ListView = ({ member }) => {
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
-  const profileImgSrc = member.Ok.profile_img
-    ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${member.Ok.profile_img}`
+  const profileImgSrc = member?.Ok?.profile_img
+    ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${member?.Ok?.profile_img}`
     : userImage;
 
   return (
@@ -210,8 +210,8 @@ const ListView = ({ member }) => {
           className="w-12 h-12 rounded-full object-cover shadow-lg" 
         />
         <section className="details flex flex-col items-start ml-2">
-          <p className="font-semibold text-base">{member.Ok.username}</p>
-          <p className="text-sm">{member.Ok.email_id}</p>
+          <p className="font-semibold text-base">{member?.Ok?.username}</p>
+          <p className="text-sm">{member?.Ok?.email_id}</p>
         </section>
      
       </section>
