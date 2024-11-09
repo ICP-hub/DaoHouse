@@ -97,6 +97,7 @@ const handlePageChange = (newPage) => {
           const daoActor= await createDaoActor(daoCanisterId);
           setDaoActor(daoActor)
           const daoDetails = await daoActor.get_dao_detail();
+          console.log("details", daoDetails);
           setDao(daoDetails);
 
           // Fetch user profile
@@ -389,19 +390,21 @@ const handlePageChange = (newPage) => {
                 </p>
               </div>
 
-              <div className="flex justify-start mt-2 gap-4 ">
-                <span className=" md:text-[24px] lg:text-[32px] font-normal text-[#05212C] user-acc-info">
+              <div className="flex flex-wrap justify-start mt-2 gap-4">
+  <span className="text-[18px] sm:text-[20px] md:text-[24px] lg:text-[32px] font-normal text-[#05212C] user-acc-info">
+    {dao?.proposals_count || 0}&nbsp;
+    <span className="text-[12px] sm:text-[14px] md:text-[16px] mx-1">Proposals</span>
+  </span>
+  <span className="text-[18px] sm:text-[20px] md:text-[24px] lg:text-[32px] font-normal text-[#05212C] user-acc-info">
+    {followersCount}&nbsp;
+    <span className="text-[12px] sm:text-[14px] md:text-[16px] mx-1">Followers</span>
+  </span>
+  <span className="text-[18px] sm:text-[20px] md:text-[24px] lg:text-[32px] font-normal text-[#05212C] user-acc-info">
+    {dao?.total_tokens || 0}&nbsp;
+    <span className="text-[12px] sm:text-[14px] md:text-[16px] mx-1">Tokens</span>
+  </span>
+</div>
 
-
-                {dao?.proposals_count || 0}&nbsp;<span className=" md:text-[16px] mx-1">Proposals</span>
-
-                </span>
-                <span className="md:text-[24px] lg:text-[32px] font-normal text-[#05212C] user-acc-info">
-                  {followersCount}&nbsp;<span className=" md:text-[16px] mx-1">Followers</span>
-                </span>
-
-
-              </div>
             </div>
           </div>
        
