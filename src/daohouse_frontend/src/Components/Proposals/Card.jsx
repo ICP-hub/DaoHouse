@@ -35,7 +35,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const [isPollVoteLoading, setIsPollVoteLoading] = useState(false);
   const [loadingOptionId, setLoadingOptionId] = useState(null);
   const [pollOptions, setPollOptions] = useState(proposal?.poll_options ? proposal.poll_options[0] : []);
-// console.log("proposals",proposal);
+ console.log("proposals",proposal);
 
 
 
@@ -534,6 +534,10 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                 )}
               </div>
             </div>
+
+            
+             
+
             {isSubmittedProposals && (
               <div className="flex flex-wrap gap-2 my-2">
 
@@ -746,6 +750,19 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                     </div>
                   </div>
                 </div>
+              )}
+
+                {/* Mint New Tokens Section */}
+
+              {!isSubmittedProposals && (proposal.proposal_type.MintNewTokens  !== undefined) && (
+                <div className="w-full">
+                  <div className="flex flex-wrap">
+                  <span className="font-bold">Amount:</span> {proposal.amount}
+                    <strong>&nbsp; | &nbsp;</strong>
+                    <span className="font-bold">Total Amount:</span> {proposal.total_amount}
+                  </div>
+                </div>
+
               )}
 
 
