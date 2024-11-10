@@ -24,15 +24,16 @@ const About = () => {
               </p>
             </div>
             <div className="flex flex-col gap-[16px] font-mulish text-[10px] font-normal leading-[14px] text-center">
-              <p>
+              <div>
+                
                 At our platform, decentralized autonomous
-                <p> organization meets cutting-edge technology to</p> revolutionize the way communities govern themselves.
-              </p>
-              <p>
+                <p > organization meets cutting-edge technology to</p> revolutionize the way communities govern themselves.
+              </div>
+              <div>
                 We believe in the power of collective intelligence and<p>the potential for blockchain technology to democratize</p>
                 <p> decision-making processes. Our platform provides a</p>
                 seamless and transparent framework for organizations of all sizes to manage resources, vote on proposals, and drive impactful change.
-              </p>
+              </div>
             </div>
             <div className="mt-6">
               <button

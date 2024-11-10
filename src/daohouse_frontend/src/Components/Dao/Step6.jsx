@@ -5,13 +5,13 @@ import { FaArrowLeftLong } from "react-icons/fa6";
 import { FiUpload } from "react-icons/fi";
 import daoImage from "../../../assets/daoImage.png"
 import CircularProgress from '@mui/material/CircularProgress';
-import { toast } from 'react-toastify';
+import toast, { Toaster } from 'react-hot-toast';
 import Container from "../Container/Container";
 import { useAuth } from "../utils/useAuthClient";
 import PaymentModal from "./PaymentModal";
 import coinsound from "../../../../daohouse_frontend/src/Sound/coinsound.mp3";
 
-const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, clearLocalStorage, setLoadingNext }) => {
+const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, setLoadingNext }) => {
   const [file, setFile] = useState(null);
   const { identity, stringPrincipal, backendActor } = useAuth()
   const [fileURL, setFileURL] = useState(null);
@@ -34,10 +34,10 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, clea
       setFile(selectedFile);
       const url = URL.createObjectURL(selectedFile);
       setFileURL(url);
-      setFileName(selectedFile.name); // Set only the file name
+      setFileName(selectedFile.name);
     } else {
       setFile(null);
-      setFileName(null); // Reset if no file is selected
+      setFileName(null);
     }
   };
 
@@ -71,61 +71,61 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, clea
   const afterPaymentApprove = async () => {
 
     const { step1, step2, step3, step4, step5, step6 } = data;
-    
+
     try {
       setLoadingPayment(true)
 
       const council = step4.voting?.Council;
-    const councilArray = Object.entries(council)
-      .filter(([permission, hasPermission]) => hasPermission)
-      .map(([permission]) => permission);
-  
-    console.log("councilArray", councilArray);
-    console.log("council", council);
-  
-    const allMembers = new Set(); // Using a Set to avoid duplicates
-  
-    // Add council members
-    const councilMembers = step3.council || [];
-    councilMembers.forEach(member => allMembers.add(Principal.fromText(member).toText()));
-  
-    // Add members from each group
-  
-    const principalMembers = Array.from(allMembers).map(member => Principal.fromText(member));
+      const councilArray = Object.entries(council)
+        .filter(([permission, hasPermission]) => hasPermission)
+        .map(([permission]) => permission);
 
-    console.log(step2);
-    console.log(data.dao_groups);
-    
-    const proposalEntry = step5.map(q => ({
-      place_name: q.name,
-      min_required_thredshold: BigInt(q.vote), // Ensure it's a nat64
-    }));
+      console.log("councilArray", councilArray);
+      console.log("council", council);
 
-    const membersArray = Array.from(data.members_permissions) || [];
+      const allMembers = new Set();
+
+
+      const councilMembers = step3.council || [];
+      councilMembers.forEach(member => allMembers.add(Principal.fromText(member).toText()));
+
+
+
+      const principalMembers = Array.from(allMembers).map(member => Principal.fromText(member));
+
+      console.log(step2);
+      console.log(data.dao_groups);
+
+      const proposalEntry = step5.map(q => ({
+        place_name: q.name,
+        min_required_thredshold: BigInt(q.vote),
+      }));
+
+      const membersArray = Array.from(data.members_permissions) || [];
       const successAudio = new Audio(coinsound)
       const allDaoUsers = step3.members.map(member => Principal.fromText(member));
       const daoPayload = {
-      dao_name: step1.DAOIdentifier || "my dao hai",
-      purpose:  step1.Purpose || "my proposal hai",
-      link_of_document: "my link.org",
-      cool_down_period: step1.SetUpPeriod || 3,
-      members: principalMembers || [Principal.fromText("aaaaa-aa")],
-      members_permissions: membersArray || ["just", "pesmi"],
-      token_name: step2.TokenName ||"GOLD Token",
-      token_symbol: step2.TokenSymbol || "TKN",
-      tokens_required_to_vote: 12,
-      linksandsocials: ["just send f"],
-      required_votes: parseInt(step2.VotesRequired, 10) || 3,
-      image_content: step6.image_content ? Array.from(new Uint8Array(step6.image_content)) : 
-      Array.from(new Uint8Array()),
-      image_title: step6.image_title || "this is just my title",
-      image_content_type: step6.image_content_type || "just image content bro",
-      image_id: step6.image_id || "12",
-      dao_groups: data.dao_groups,
-      proposal_entry: proposalEntry,
-      ask_to_join_dao : data.ask_to_join_dao,
-      token_supply: Number(step2.TokenSupply) || 4,
-      all_dao_user : allDaoUsers
+        dao_name: step1.DAOIdentifier || "my dao hai",
+        purpose: step1.Purpose || "my proposal hai",
+        link_of_document: "my link.org",
+        cool_down_period: step1.SetUpPeriod || 3,
+        members: principalMembers || [Principal.fromText("aaaaa-aa")],
+        members_permissions: membersArray || ["just", "pesmi"],
+        token_name: step2.TokenName || "GOLD Token",
+        token_symbol: step2.TokenSymbol || "TKN",
+        tokens_required_to_vote: 12,
+        linksandsocials: ["just send f"],
+        required_votes: parseInt(step2.VotesRequired, 10) || 3,
+        image_content: step6.image_content ? Array.from(new Uint8Array(step6.image_content)) :
+          Array.from(new Uint8Array()),
+        image_title: step6.image_title || "this is just my title",
+        image_content_type: step6.image_content_type || "just image content bro",
+        image_id: step6.image_id || "12",
+        dao_groups: data.dao_groups,
+        proposal_entry: proposalEntry,
+        ask_to_join_dao: data.ask_to_join_dao,
+        token_supply: Number(step2.TokenSupply) || 4,
+        all_dao_user: allDaoUsers
       };
       const res = await backendActor.make_payment_and_create_dao(daoPayload);
       console.log("this is backend res : ", res)
@@ -134,12 +134,13 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, clea
         setLoadingPayment(false)
         setIsModalOpen(false);
         successAudio.play();
-        setLoadingNext(false);
+
         toast.success("DAO created successfully");
         clearLocalStorage();
         setTimeout(() => {
           window.location.href = '/dao';
-        }, 500);
+        }, 2000);
+        setLoadingNext(false);
       } else {
           toast.error(`${res.Err}`);
           toast.error(`Failed to create Dao`);
@@ -147,13 +148,13 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, clea
           console.log(res);
           toast.error(res.Err);
       }
-    }catch (error) {
+    } catch (error) {
       console.log("error : ", error)
       const rejectTextMatch = error.message.match(/Reject text: (.+)/);
       const rejectText = rejectTextMatch ? rejectTextMatch[1] : "An error occurred"
       toast.error(rejectText);
     } finally {
-      setLoadingPayment(false); 
+      setLoadingPayment(false);
     }
   }
 
@@ -161,7 +162,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, clea
     const resultObject = {};
     arr.forEach((item) => {
       const key = item[0];
-      const value = item[1][Object.keys(item[1])[0]]; // Extracting the value from the nested object
+      const value = item[1][Object.keys(item[1])[0]];
       resultObject[key] = value;
     });
     return resultObject;
@@ -179,32 +180,32 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, clea
       console.log("current balance ", currentBalance);
 
       const backendCanisterId = process.env.CANISTER_ID_DAOHOUSE_BACKEND;
-        let transaction = {
-          from_subaccount: [],
-          spender: {
-            owner: Principal.fromText(backendCanisterId),
-            subaccount: [],
-          },
-          amount: sendableAmount + parseInt(currentMetaData["icrc1:fee"]),
-          expected_allowance: [],
-          expires_at: [],
-          fee: [currentMetaData["icrc1:fee"]],
-          memo: [],
-          created_at_time: [],
-        };
-        console.log("transaction ", transaction);
-        console.log("Token Actor ICRC2 APPROVE", tokenActor.icrc2_approve);
-        const approveRes = await tokenActor.icrc2_approve(transaction);
-        console.log("Payment Approve Response ", approveRes);
-        if (approveRes.Err) {
-          const errorMessage = `Insufficient funds. Balance: ${approveRes.Err.InsufficientFunds.balance}`;
-          console.log("Err", approveRes)
-          toast.error(errorMessage);
-          setLoadingPayment(false)
-          return;
-        } else {
-          afterPaymentApprove(sendableAmount)
-        }
+      let transaction = {
+        from_subaccount: [],
+        spender: {
+          owner: Principal.fromText(backendCanisterId),
+          subaccount: [],
+        },
+        amount: sendableAmount + parseInt(currentMetaData["icrc1:fee"]),
+        expected_allowance: [],
+        expires_at: [],
+        fee: [currentMetaData["icrc1:fee"]],
+        memo: [],
+        created_at_time: [],
+      };
+     
+ 
+      const approveRes = await tokenActor.icrc2_approve(transaction);
+   
+      if (approveRes.Err) {
+        const errorMessage = `Insufficient funds. Balance: ${approveRes.Err.InsufficientFunds.balance}`;
+        console.log("Err", approveRes)
+        toast.error(errorMessage);
+        setLoadingPayment(false)
+        return;
+      } else {
+        afterPaymentApprove(sendableAmount)
+      }
     } catch (err) {
       console.error("Error in transfer approve", err);
       toast.error(err);
@@ -306,7 +307,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, clea
 
   useEffect(() => {
     if (shouldCreateDAO) {
-      // handleDaoClick();
+
       setShouldCreateDAO(false);
     }
   }, [data, shouldCreateDAO]);
@@ -359,15 +360,15 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, clea
             />
 
             <div className="flex flex-col items-center justify-center">
-            <label
+              <label
                 htmlFor="profile"
                 className="flex mobile:text-sm text-[10px]  font-semibold cursor-pointer mobile:m-4 m-2 flex-row items-center gap-2 bg-white px-6 py-2 text-center justify-center center rounded-[3rem] text-black shadow-xl"
               >
-               <FiUpload className="text-[12px] mobile:text-[16px]  text-center" />
-             <span className="truncate ... w-50 md:w-50">
-             {fileName ? fileName : "Upload New Photo"}
-              </span> 
-     
+                <FiUpload className="text-[12px] mobile:text-[16px]  text-center" />
+                <span className="truncate ... w-50 md:w-50">
+                  {fileName ? fileName : "Upload New Photo"}
+                </span>
+
               </label>
               <span className="block text-center mt-1 mobile:text-xs text-[9px] text-gray-500">
                 Upload JPG, PNG. Max 5 MB
@@ -396,14 +397,14 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, clea
           <div className="w-full md:w-[70%] flex-none">
             <div className="h-auto max-w-full m-4 rounded-lg  border border-black">
               <div className="p-3 md:p-7">
-                <p className="text-base flex items-center space-x-2 font-semibold">
+                <div className="text-base flex items-center space-x-2 font-semibold">
                   <span>Create a new DAO costs 0.1 ICP</span>
                   <div className="pl-10 md:pl-20 lg:pl-40 xl:pl-80">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M10 15C10.2833 15 10.5208 14.9042 10.7125 14.7125C10.9042 14.5208 11 14.2833 11 14C11 13.7167 10.9042 13.4792 10.7125 13.2875C10.5208 13.0958 10.2833 13 10 13C9.71667 13 9.47917 13.0958 9.2875 13.2875C9.09583 13.4792 9 13.7167 9 14C9 14.2833 9.09583 14.5208 9.2875 14.7125C9.47917 14.9042 9.71667 15 10 15ZM9 11H11V5H9V11ZM10 20C8.61667 20 7.31667 19.7375 6.1 19.2125C4.88333 18.6875 3.825 17.975 2.925 17.075C2.025 16.175 1.3125 15.1167 0.7875 13.9C0.2625 12.6833 0 11.3833 0 10C0 8.61667 0.2625 7.31667 0.7875 6.1C1.3125 4.88333 2.025 3.825 2.925 2.925C3.825 2.025 4.88333 1.3125 6.1 0.7875C7.31667 0.2625 8.61667 0 10 0C11.3833 0 12.6833 0.2625 13.9 0.7875C15.1167 1.3125 16.175 2.025 17.075 2.925C17.975 3.825 18.6875 4.88333 19.2125 6.1C19.7375 7.31667 20 8.61667 20 10C20 11.3833 19.7375 12.6833 19.2125 13.9C18.6875 15.1167 17.975 16.175 17.075 17.075C16.175 17.975 15.1167 18.6875 13.9 19.2125C12.6833 19.7375 11.3833 20 10 20Z" fill="#0E3746" />
                     </svg>
                   </div>
-                </p>
+                </div>
                 <p className="mt-3 text-base">
                   The 0.1 ICP will be used to pay for the contract deployment and storage.
                 </p>

@@ -19,7 +19,7 @@ import FundsContent from "../../Components/DaoProfile/FundsContent";
 import Container from "../../Components/Container/Container";
 import { Principal } from "@dfinity/principal";
 import { useAuth, useAuthClient } from "../../Components/utils/useAuthClient";
-import { toast } from "react-toastify";
+import toast from 'react-hot-toast';
 import ProposalLoaderSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/ProposalLoaderSkeleton";
 import DaoProfileLoaderSkeleton from "../../Components/SkeletonLoaders/DaoProfileLoaderSkeleton/DaoProfileLoaderSkeleton";
 import NoDataComponent from "../../Components/Dao/NoDataComponent";

@@ -8,7 +8,7 @@ import { MdOutlineInsertComment } from "react-icons/md";
 import { Principal } from "@dfinity/principal";
 import { useAuth } from "../../Components/utils/useAuthClient";
 import Post1 from "../../../assets/post1.png";
-import { toast } from "react-toastify";
+import toast from 'react-hot-toast';
 
 // Convert timestamp to formatted date string
 const convertTimestampToDateString = (timestamp) => {

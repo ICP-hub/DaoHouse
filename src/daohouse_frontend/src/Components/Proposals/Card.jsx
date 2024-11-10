@@ -5,7 +5,7 @@ import ProgressAnimation from "./MyProposals/proposal-cards-animations/progress-
 import { Principal } from "@dfinity/principal";
 import ViewModal from "../Dao/ViewModal";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import toast from 'react-hot-toast';
 import { useAuth } from "../utils/useAuthClient";
 import userImage from "../../../assets/avatar.png";
 import ShareModal from "./ShareModal";

@@ -3,7 +3,7 @@ import proposals from "../../../assets/proposals.png";
 import createProposalNew from "../../../assets/gif/createProposalNew.svg";
 import Container from "../../Components/Container/Container";
 import { useAuth } from "../../Components/utils/useAuthClient";
-import { toast } from "react-toastify";
+import toast from 'react-hot-toast';
 import { CircularProgress } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { Principal } from "@dfinity/principal";
@@ -77,11 +77,43 @@ function CreateProposal() {
     bounty_task: '',
   });
 
+  const [isPrivate, setIsPrivate] = useState(dao?.ask_to_join_dao);
+  console.log("private",isPrivate);
+  
+  const [showModal, setShowModal] = useState(false);
+  const modalMessage = isPrivate
+  ? "This action will make the DAO public, allowing anyone to join without creating a proposal. Are you sure you want to make it public?"
+  : "This action will make the DAO private. A proposal will be created for users to join.";
+  const confirmMakePrivate = () => {
+    
+    setIsPrivate(!isPrivate);
+    setShowModal(false);
+
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: 'smooth',
+    });
+  };
+
+  const cancelMakePrivate = () => {
+    setShowModal(false);
+
+
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: 'smooth',
+    });
+  };
+
+
   const [changePolicy, setChangePolicy] = useState({
     description: '',
     cool_down_period: '',
     required_votes: '',
+    ask_to_join_dao: true,
   });
+  // console.log("as",dao.ask_to_join_dao);
+  
 
   const [poll, setPoll] = useState({
     proposal_expired_at: "",
@@ -367,7 +399,7 @@ function CreateProposal() {
           await submitChangePolicy({
             proposal_entry: proposalEntry,
             description: changePolicy.description,
-            
+            ask_to_join_dao : isPrivate,
             cool_down_period: Number(changePolicy.cool_down_period) || 1,
             required_votes: Number(changePolicy.required_votes) || 1,
           });
@@ -687,6 +719,8 @@ function CreateProposal() {
   };
 
   const submitChangePolicy = async (changePolicy) => {
+    console.log("chajkdpayload",changePolicy);
+    
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
       const response = await daoCanister.proposal_to_change_dao_policy(changePolicy);
@@ -770,6 +804,31 @@ function CreateProposal() {
     }
   };
 
+  useEffect(() => {
+    if (showModal) {
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    return () => {
+      document.body.classList.remove('overflow-hidden');
+    };
+  }, [showModal]);
+
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      body.overflow-hidden {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+      }
+    `;
+    document.head.append(style);
+    return () => style.remove();
+  }, []);
   return (
     <div className="bg-zinc-200 w-full">
       <div
@@ -930,10 +989,16 @@ function CreateProposal() {
                   )}
 
                   {proposalType === "ChangePolicy" && (
-                    <DaoPolicy
+                    <DaoPolicy    
                       changePolicy={changePolicy}
                       handleInputDaoPolicy={handleInputDaoPolicy}
                       dao={dao}
+                      setShowModal={setShowModal}
+                      isPrivate={isPrivate}
+                      cancelMakePrivate={cancelMakePrivate}
+                      confirmMakePrivate={confirmMakePrivate}
+                      modalMessage={modalMessage}
+                      showModal={showModal}
                     />
                   )}
 

@@ -92,11 +92,11 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
   };
   const handleNameChange = (e) => {
     setName(e.target.value);
-    setErrors((prevErrors) => ({ ...prevErrors, name: null })); // Clear name error
+    setErrors((prevErrors) => ({ ...prevErrors, name: null })); 
   };
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
-    setErrors((prevErrors) => ({ ...prevErrors, email: null })); // Clear email error
+    setErrors((prevErrors) => ({ ...prevErrors, email: null })); 
   };
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -107,7 +107,7 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
       }
       setProfileImage(file);
       setFileURL(URL.createObjectURL(file));
-      setErrors((prevErrors) => ({ ...prevErrors, profileImage: null })); // Clear profile image error
+      setErrors((prevErrors) => ({ ...prevErrors, profileImage: null })); 
     }
   };
   if (!isOpen) return null;
