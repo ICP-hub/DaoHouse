@@ -2,10 +2,6 @@ import React from "react";
 import { useEffect } from "react";
 
 const DaoPolicy = ({ changePolicy, handleInputDaoPolicy, dao ,setShowModal,isPrivate,showModal,cancelMakePrivate,confirmMakePrivate,modalMessage}) => {
-   
-    useEffect(() => {
-        console.log("dao to",dao.ask_to_join_dao);
-    }, [dao.ask_to_join_dao])
     
    return(
 
@@ -106,7 +102,7 @@ const DaoPolicy = ({ changePolicy, handleInputDaoPolicy, dao ,setShowModal,isPri
             <label className="flex items-center cursor-pointer">
               <input
                 type="checkbox"
-                checked={isPrivate}
+                checked={dao.ask_to_join_dao}
                 onChange={() => { setShowModal(true) }}
                 className="hidden toggle-checkbox"
               />
