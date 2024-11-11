@@ -86,7 +86,6 @@ async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, 
         poll_title: None,
         required_votes: None,
         cool_down_period: None,
-        new_dao_type: None,
         group_to_remove: None,
         minimum_threadsold: required_thredshold,
         link_of_task: None,
@@ -172,7 +171,6 @@ async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<St
         poll_title: None,
         required_votes: None,
         cool_down_period: None,
-        new_dao_type: None,
         minimum_threadsold: required_thredshold,
         link_of_task: None,
         associated_proposal_id: None,
@@ -242,7 +240,6 @@ async fn proposal_to_remove_member_to_dao(args: RemoveDaoMemberArgs) -> Result<S
         poll_title: None,
         required_votes: None,
         cool_down_period: None,
-        new_dao_type: None,
         group_to_remove: None,
         minimum_threadsold: required_thredshold,
         link_of_task: None,
@@ -300,7 +297,6 @@ async fn proposal_to_change_dao_config(args: ChangeDaoConfigArg) -> Result<Strin
         proposal_title: String::from(crate::utils::TITLE_CHANGE_DAO_CONFIG),
         proposal_type: ProposalType::ChangeDaoConfig,
         new_dao_name: Some(args.new_dao_name),
-        new_dao_type: Some(args.daotype),
         group_to_join: None,
         dao_purpose: Some(args.purpose),
         tokens: None,
@@ -371,7 +367,6 @@ async fn proposal_to_change_dao_policy(args: ChangeDaoPolicy) -> Result<String, 
         proposal_expired_at: None,
         bounty_task: None,
         poll_title: None,
-        new_dao_type: None,
         group_to_remove: None,
         required_votes: None,
         cool_down_period: Some(args.cool_down_period),
@@ -439,7 +434,6 @@ async fn proposal_to_transfer_token(args: TokenTransferPolicy) -> Result<String,
         poll_title: None,
         required_votes: None,
         cool_down_period: None,
-        new_dao_type: None,
         group_to_remove: None,
         minimum_threadsold: required_thredshold,
         link_of_task: None,
@@ -487,11 +481,17 @@ async fn transfer(tokens: u64, user_principal: Principal) -> Result<BlockIndex, 
 
 #[update(guard = prevent_anonymous)]
 async fn make_payment(tokens: u64, user: Principal) -> Result<Nat, String> {
+    if tokens.clone() < 1{
+        return Err(String::from("tokens should be greater than 0"));
+     }
     transfer(tokens, user).await
 }
 
 #[update(guard = prevent_anonymous)]
 async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String> {
+    if args.tokens.clone() < 1{
+        return Err(String::from("tokens should be greater than 0"));
+     }
     let proposal_data = ProposalCreation {
         entry: args.proposal_entry.clone(),
         proposal_type: ProposalType::BountyRaised,
@@ -520,16 +520,13 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
                 Ok(())
             }
             None => {
-                return Err(format!(
-                    "No place Found with the name of {:?}",
-                    args.proposal_entry
-                ));
+               Err(format!("No place Found with the name of {}",args.proposal_entry))
             }
         }
     });
 
-    let proposal_expire_time =
-        ic_cdk::api::time() + (args.task_completion_day * 86_400 * 1_000_000_000);
+    // let proposal_expire_time =
+    //     ic_cdk::api::time() + (args.task_completion_day * 86_400 * 1_000_000_000);
 
     let test_expire_time = 8 * 60 * 1_000_000_000;
 
@@ -551,7 +548,6 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
         required_votes: None,
         cool_down_period: None,
         group_to_remove: None,
-        new_dao_type: None,
         minimum_threadsold: required_thredshold,
         link_of_task: None,
         associated_proposal_id: None,
@@ -576,12 +572,12 @@ async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
     let daohouse_backend_id = with_state(|state| state.dao.daohouse_canister_id);
     guard_check_proposal_creation(proposal_data)?;
     let proposals_data = with_state(|state| state.proposals.get(&args.associated_proposal_id));
-
+    
     let principal_id: Principal = api::id();
     let token_ledger_id: Principal = with_state(|state| state.dao.token_ledger_id.id);
-
+    
     let balance: Nat = icrc_get_balance(token_ledger_id, principal_id)
-        .await
+    .await
         .map_err(|err| format!("Error while fetching user balance: {}", err))?;
 
     if balance < args.tokens as u64 {
@@ -668,7 +664,6 @@ async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
         required_votes: None,
         cool_down_period: None,
         group_to_remove: None,
-        new_dao_type: None,
         minimum_threadsold: required_thredshold,
         link_of_task: None,
         associated_proposal_id: Some(args.associated_proposal_id.clone()),
@@ -789,7 +784,6 @@ async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
         poll_title: Some(args.poll_title),
         required_votes: None,
         cool_down_period: None,
-        new_dao_type: None,
         group_to_remove: None,
         minimum_threadsold: required_thredshold,
         link_of_task: None,
@@ -852,7 +846,6 @@ async fn proposal_to_create_general_purpose(args: CreateGeneralPurpose) -> Resul
         poll_title: Some(args.proposal_title),
         required_votes: None,
         cool_down_period: None,
-        new_dao_type: None,
         group_to_remove: None,
         minimum_threadsold: required_thredshold,
         link_of_task: None,
@@ -953,7 +946,6 @@ async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
         poll_title: None,
         required_votes: None,
         cool_down_period: None,
-        new_dao_type: None,
         group_to_remove: None,
         minimum_threadsold: required_thredshold,
         link_of_task: None,
@@ -994,8 +986,7 @@ pub async fn follow_dao() -> Result<String, String> {
         daohouse_backend_id,
         "store_follow_dao",
         (dao_id,api::caller(),),
-    )
-    .await;
+    ).await;
 
     match response {
         Ok((Ok(()),)) => (),
@@ -1090,6 +1081,9 @@ fn get_dao_groups() -> Vec<DaoGroup> {
 
 #[update]
 pub async fn proposal_to_mint_new_dao_tokens(args: MintTokenArgs) -> Result<String, String> {
+    if args.total_amount.clone() < 1{
+       return Err(String::from("total amount should be greater than 0"));
+    }
     let proposal_data = ProposalCreation {
         entry: args.proposal_entry.clone(),
         proposal_type: ProposalType::MintNewTokens,
@@ -1133,7 +1127,6 @@ pub async fn proposal_to_mint_new_dao_tokens(args: MintTokenArgs) -> Result<Stri
         required_votes: None,
         cool_down_period: None,
         group_to_remove: None,
-        new_dao_type: None,
         minimum_threadsold: required_thredshold,
         link_of_task: None,
         associated_proposal_id: None,

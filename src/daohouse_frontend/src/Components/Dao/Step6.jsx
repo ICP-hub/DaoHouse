@@ -44,7 +44,7 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, s
 
 
   const LEDGER_CANISTER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai";
-  const createTokenActor = async (canisterId) => {
+  const createTokenActor = async () => {
     const tokenActorrr = createActor(LEDGER_CANISTER_ID, { agentOptions: { identity } });
     return tokenActorrr
 
@@ -68,7 +68,7 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, s
     }
   };
 
-  const afterPaymentApprove = async (sendableAmount) => {
+  const afterPaymentApprove = async () => {
 
     const { step1, step2, step3, step4, step5, step6 } = data;
 
@@ -127,11 +127,9 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, s
         token_supply: Number(step2.TokenSupply) || 4,
         all_dao_user: allDaoUsers
       };
-      const res = await backendActor.make_payment_and_create_dao(sendableAmount, Principal.fromText(stringPrincipal), daoPayload);
-      console.log("resghfgg", res)
-      if (res.Ok) {
-        console.log("success");
-
+      const res = await backendActor.make_payment_and_create_dao(daoPayload);
+      console.log("this is backend res : ", res)
+      if (res.Ok) {        
         toast.success("Payment successful!");
         setLoadingPayment(false)
         setIsModalOpen(false);
@@ -144,11 +142,11 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, s
         }, 2000);
         setLoadingNext(false);
       } else {
-        toast.error(`${response.Err}`);
-        toast.error(`Failed to create Dao`);
-        setLoadingNext(false)
-        console.log(res);
-        toast.error(res.Err);
+          toast.error(`${res.Err}`);
+          toast.error(`Failed to create Dao`);
+          setLoadingNext(false)
+          console.log(res);
+          toast.error(res.Err);
       }
     } catch (error) {
       console.log("error : ", error)
@@ -176,10 +174,10 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, s
     tokenActor
   ) => {
     try {
-      // const sendableAmount = parseInt(0.1 * Math.pow(10,8));
-      const sendableAmount = 1;
-      console.log("sendable amount ","current balance", sendableAmount,currentBalance);
-      console.log();
+      const sendableAmount = parseInt(0.1 * Math.pow(10,8));
+      // const sendableAmount = 1;
+      console.log("sendable amount ",sendableAmount);
+      console.log("current balance ", currentBalance);
 
       const backendCanisterId = process.env.CANISTER_ID_DAOHOUSE_BACKEND;
       let transaction = {
