@@ -96,7 +96,8 @@ pub async fn create_proposal_controller(
         state.proposals.insert(proposal_id, new_proposal);
     });
     // start_proposal_checker();
-    start_proposal_checker();
+    let expird_at: u64 = 1 * 60 * 1_000_000_000;
+    start_proposal_checker(expird_at);
     return String::from(crate::utils::REQUEST_CREATE_PROPOSAL);
     
 }
