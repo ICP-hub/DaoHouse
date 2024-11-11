@@ -31,7 +31,7 @@ pub async fn create_proposal_controller(
         proposal_description: proposal.proposal_description.clone(),
         proposal_status: ProposalState::Open,
         proposal_submitted_at: ic_cdk::api::time(),
-        proposal_expired_at: proposal.proposal_expired_at.unwrap_or(proposal_expire_time),
+        proposal_expired_at: proposal.proposal_expired_at.unwrap_or(proposal_expire_time.clone()),
         proposal_approved_votes: 0,
         approved_votes_list: Vec::new(),
         proposal_rejected_votes: 0,
@@ -96,8 +96,8 @@ pub async fn create_proposal_controller(
         state.proposals.insert(proposal_id, new_proposal);
     });
     // start_proposal_checker();
-    let expird_at: u64 = 1 * 60 * 1_000_000_000;
-    start_proposal_checker(expird_at);
+    // let expird_at: u64 = 1 * 60 * 1_000_000_000;
+    start_proposal_checker(proposal_expire_time.clone());
     return String::from(crate::utils::REQUEST_CREATE_PROPOSAL);
     
 }
