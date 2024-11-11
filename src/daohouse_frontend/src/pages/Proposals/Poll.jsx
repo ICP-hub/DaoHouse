@@ -109,7 +109,7 @@ const Poll = ({ poll, handleInputPoll, setPoll }) => {
                     {options.map((optionObj, index) => (
                         <div
                             key={index}
-                            className="flex items-center justify-between bg-teal-100 px-4 py-2 rounded-lg"
+                            className="flex items-center justify-between bg-[#D3EDED] px-4 py-2 rounded-lg"
                         >
                             <span>{optionObj.option}</span>
                             <button
