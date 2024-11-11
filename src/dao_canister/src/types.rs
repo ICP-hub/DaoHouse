@@ -274,17 +274,6 @@ pub struct DaoInput {
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
-pub struct UpdateDaoSettings {
-    pub dao_name: String,
-    pub purpose: String,
-    pub daotype: String,
-    pub link_of_document: String,
-    pub linksandsocials: Vec<String>,
-    pub members: Vec<Principal>,
-    pub followers: Vec<Principal>,
-}
-
-#[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct AddMemberArgs {
     pub group_name: String,
     pub new_member: Principal,

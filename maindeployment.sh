@@ -69,7 +69,6 @@ DAOHOUSE_BACKEND_ID=$(dfx canister id daohouse_backend --ic)
 #     token_symbol = \"BUNNU\";
 #     token_supply = 12;
 #     purpose = \"To manage community projects\";
-#     daotype = \"Non-profit\";
 #     link_of_document = \"https://example.com/charter.pdf\";
 #     cool_down_period = 7;
 #     members = vec {
