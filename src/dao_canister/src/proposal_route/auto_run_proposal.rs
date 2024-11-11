@@ -1,6 +1,6 @@
 use candid::{Nat, Principal};
 use ic_cdk::api::{self, call::CallResult, time};
-use ic_cdk_timers::set_timer_interval;
+use ic_cdk_timers::set_timer;
 use icrc_ledger_types::icrc1::transfer::BlockIndex;
 use std::time::Duration;
 
@@ -10,15 +10,14 @@ use crate::{
     with_state, ProposalState, ProposalType, Proposals, TokenTransferArgs,
 };
 
-const EXPIRATION_TIME: u64 = 1 * 60 * 1_000_000_000;
 
-pub fn start_proposal_checker() {
-    set_timer_interval(Duration::from_secs(60), || {
-        check_proposals();
+pub fn start_proposal_checker(expird_at : u64) {
+    set_timer(Duration::from_nanos(expird_at.clone()), move || {
+        check_proposals(expird_at.clone());
     });
 }
 
-pub fn check_proposals() {
+pub fn check_proposals(expird_at : u64) {
     with_state(|state: &mut State| {
         let timestamp = time();
 
@@ -28,7 +27,7 @@ pub fn check_proposals() {
             .filter_map(|(id, proposal)| {
                 let time_diff = timestamp.saturating_sub(proposal.proposal_submitted_at);
 
-                let should_process = time_diff >= EXPIRATION_TIME && !proposal.has_been_processed;
+                let should_process = time_diff >= expird_at.clone() && !proposal.has_been_processed;
 
                 // let should_process = time_diff >= proposal.proposal_expired_at && !proposal.has_been_processed;
 
@@ -201,7 +200,7 @@ pub fn check_proposals() {
                         }
                         _ => {}
                     }
-                } else if !proposal.has_been_processed_second && time_diff >= EXPIRATION_TIME {
+                } else if !proposal.has_been_processed_second && time_diff >= expird_at.clone() {
                     //else if !proposal.has_been_processed_second && time_diff >= proposal.proposal_expired_at {
                     ic_cdk::println!("proposal status : {:?} ", proposal.proposal_status);
                     let proposal_clone = proposal.clone();
