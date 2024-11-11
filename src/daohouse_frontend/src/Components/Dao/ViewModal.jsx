@@ -118,7 +118,7 @@ useEffect(() => {
       className="flex items-center justify-center backdrop-blur-md bg-black/50"
       closeAfterTransition
     >
-    <Box className="relative p-4 bg-white rounded-lg shadow-4xl max-w-2xl w-full mx-4 font-mulish">
+    <Box className="relative p-4 bg-white rounded-lg shadow-4xl  max-w-2xl h- w-full mx-4 font-mulish">
         {/* Close button positioned in the top-right corner */}
         <div style={{
           position: 'absolute',
@@ -126,17 +126,17 @@ useEffect(() => {
           right: '8px',
           zIndex: 10,
         }}>
-          <IconButton className='translate-y-[-60]'
+          <IconButton 
             onClick={onClose}
             style={{
-              backgroundColor: 'green',
+              backgroundColor: 'black',
               color: 'white',
-              width: '28px',
-              height: '28px',
+              width: '25px',
+              height: '25px',
               borderRadius: '50%',
               padding: '5px',
               boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
-               transform: 'translateY(-20px) translateX(20px)',
+               transform: 'translateY(-7px) translateX(5px)',
             }}
           >
             <CloseIcon fontSize="small" />
@@ -171,7 +171,7 @@ useEffect(() => {
                 <MemberSkeletonLoader />
             </div>
           ) : showVotes ? (
-            <div className="mt-4 overflow-y-auto max-h-96">
+            <div className="mt-4 overflow-y-auto  max-h-96">
               {/* Display the approved or rejected votes based on the active tab */}
               {activeTab === "approved" ? (
                 voteProfiles.approved.length > 0 ? (
@@ -180,7 +180,7 @@ useEffect(() => {
                       <img
                         src={vote.profileImage || avatar}
                         alt={`${vote.profileData?.username}'s profile`}
-                        className="w-16 h-16 mr-8 rounded-full border-2 border-gray-600 shadow-md"
+                        className="w-8 h-8 mr-8 rounded-full border-2 border-gray-600 shadow-md"
                       />
                       <div>
                         <p className="font-bold text-gray-800">{vote.profileData?.username || vote.vote.user}</p>
@@ -195,7 +195,7 @@ useEffect(() => {
                 voteProfiles.rejected.length > 0 ? (
                   voteProfiles.rejected.map((vote, index) => (
                     <div key={index} className="flex items-center p-2 mb-2 hover:bg-gray-100">
-                      <img src={vote.profileImage || avatar} alt={`${vote.profileData?.username}'s profile`} className="w-16 h-16 mr-6 rounded-full" />
+                      <img src={vote.profileImage || avatar} alt={`${vote.profileData?.username}'s profile`} className="w-8 h-8 mr-6 rounded-full" />
                       <div>
                         <p className="font-bold text-gray-800">{vote.profileData?.username || "Username"}</p>
                         <p className="text-sm text-gray-800">{principal || "aaaaa-aa"}</p>
