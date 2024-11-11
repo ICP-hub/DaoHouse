@@ -625,9 +625,9 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                               return (
                                 <div key={option.id} className="relative mt-4 cursor-pointer" onClick={() => handlePollVoteSubmit(option.id)}>
                                 {/* Option container with less rounded corners */}
-                                <div className={`relative bg-gray-200 rounded-lg h-10 flex items-center ${loadingOptionId === option.id && isPollVoteLoading ? 'sliding-lines' : ''}`}>
+                                <div className={`relative  rounded-lg h-10 flex items-center ${loadingOptionId === option.id && isPollVoteLoading ? 'sliding-lines' : ''}`}>
                                     <div
-                                        className="absolute top-0 left-0 h-10 bg-green-200  rounded-lg transition-all"
+                                        className="absolute top-0 left-0 h-10 bg-gray-200  rounded-lg transition-all"
                                         style={{ width: `${votePercentage}%` }}
                                     ></div>
                                     {/* Option text */}
