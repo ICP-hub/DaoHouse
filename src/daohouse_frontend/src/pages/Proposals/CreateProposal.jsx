@@ -960,6 +960,7 @@ function CreateProposal() {
                       daoConfig={daoConfig}
                       handleInputDaoConfig={handleInputDaoConfig}
                       dao={dao}
+                      setDaoConfig={setDaoConfig}
                     />
                   )}
 

@@ -14,6 +14,9 @@ import Avatar from "../../../assets/Avatar.png";
 
 
 export default function Card({ proposal, voteApi, showActions, isProposalDetails, isComment, setIsComment, commentCount, isSubmittedProposals, showComments, }) {
+
+  
+  
   const { backendActor, createDaoActor, stringPrincipal } = useAuth();
   const [voteStatus, setVoteStatus] = useState("");
   const [approvedVotes, setApprovedVotes] = useState(Number(proposal?.proposal_approved_votes || 0n));
@@ -412,7 +415,8 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
     document.head.append(style);
     return () => style.remove();
   }, []);
-
+  console.log("proposal in new daoasdasd",proposal.new_dao_name);
+  console.log("proosal in new dao pirpweow ",proposal.new_dao_purpose || proposal.new_dao_purpose);
 
   {
     return (
@@ -579,15 +583,26 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
             </div>
 
             <div className="flex flex-wrap gap-4 flex-col md:flex-row md:justify-between items-start md:items-center space-y-4 md:space-y-0">
+       
+              
               {!isSubmittedProposals && (proposal.proposal_type.ChangeDaoConfig !== undefined) && (
                 <div className="w-full">
                   <div className="flex flex-wrap">
-                    <span className="font-bold">Dao Name</span>: {proposal.new_dao_name}
-                    <strong>&nbsp; | &nbsp;</strong>
-                    <span className="font-bold">Dao Type</span>: {proposal.new_daotype}
+                   
+                    
+                    
+                    <span className="font-bold">Dao Name</span>: {proposal?.new_dao_name}
+                    
+                    
+                    {/* <strong>&nbsp; | &nbsp;</strong>
+                    <span className="font-bold">Dao Type</span>: {proposal.new_daotype} */}
+                    
+                    
                   </div>
                   <div className="whitespace-normal break-words mt-2">
-                    <span className="font-bold">Dao Purpose</span>: {proposal.new_dao_purpose}
+                    <span className="font-bold">Dao Purpose</span>: {proposal?.new_dao_purpose}
+                     
+                    
                   </div>
                 </div>
 

@@ -143,10 +143,10 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, s
         setLoadingNext(false);
       } else {
           toast.error(`${res.Err}`);
-          toast.error(`Failed to create Dao`);
+          // toast.error(`Failed to create Dao`);
           setLoadingNext(false)
-          console.log(res);
-          toast.error(res.Err);
+          console.log(res,"dffsdfsd");
+          // toast.error(res.Err);
       }
     } catch (error) {
       console.log("error : ", error)
@@ -365,8 +365,8 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, s
                 className="flex mobile:text-sm text-[10px]  font-semibold cursor-pointer mobile:m-4 m-2 flex-row items-center gap-2 bg-white px-6 py-2 text-center justify-center center rounded-[3rem] text-black shadow-xl"
               >
                 <FiUpload className="text-[12px] mobile:text-[16px]  text-center" />
-                <span className="truncate ... w-50 md:w-50">
-                  {fileName ? fileName : "Upload New Photo"}
+                <span className="truncate ... w-36">
+                  {fileName ? fileName : "Upload New Photos"}
                 </span>
 
               </label>
