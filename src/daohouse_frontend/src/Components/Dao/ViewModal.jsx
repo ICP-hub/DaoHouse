@@ -195,7 +195,7 @@ useEffect(() => {
                 voteProfiles.rejected.length > 0 ? (
                   voteProfiles.rejected.map((vote, index) => (
                     <div key={index} className="flex items-center p-2 mb-2 hover:bg-gray-100">
-                      <img src={vote.profileImage || avatar} alt={`${vote.profileData?.username}'s profile`} className="w-8 h-8 mr-6 rounded-full" />
+                      <img src={vote.profileImage || avatar} alt={`${vote.profileData?.username}'s profile`} className="w-14 h-14 mr-6 rounded-full" />
                       <div>
                         <p className="font-bold text-gray-800">{vote.profileData?.username || "Username"}</p>
                         <p className="text-sm text-gray-800">{principal || "aaaaa-aa"}</p>
@@ -221,7 +221,7 @@ useEffect(() => {
                           className="w-16 h-16 mr-6 rounded-full"
                       />
                       <div>
-                          <div className="flex flex-col items-start">
+                          <div className="flex flex-col trnaslate-y-[10px] items-start">
                               <p className="m-0 font-bold  text-[25px] font-mulish text-left">{member.profileData?.username || member.name}</p>
                               <span className="block m-0 text-xs text-gray-600">{member.user}</span>
                           </div>
