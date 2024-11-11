@@ -14,7 +14,6 @@ const Step5 = ({ setData, setActiveStep, data }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMembers, setSelectedMembers] = useState([]);
   const { council, groups } = data.step3;
-  const users = useMemo(() => data.step3, [data.step3]);
 
   const initialQuorum = useMemo(() => {
     const savedQuorum = JSON.parse(localStorage.getItem("step5Quorum"));

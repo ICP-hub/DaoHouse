@@ -5,7 +5,7 @@ import Container from "../../Components/Container/Container";
 import { Principal } from '@dfinity/principal';
 import { useAuth } from "../../Components/utils/useAuthClient";
 import { useUserProfile } from "../../context/UserProfileContext";
-import { toast } from "react-toastify";
+import toast from 'react-hot-toast';
 import MuiSkeleton from "../../Components/SkeletonLoaders/MuiSkeleton";
 import { CircularProgressBar } from "../../Components/Proposals/CircularProgressBar";
 import Card from "../../Components/Proposals/Card";
