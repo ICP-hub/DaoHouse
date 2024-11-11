@@ -24,7 +24,7 @@ const HeroSection = () => {
           className="absolute translate-y-[-250px] mobile:translate-y-[-225px] md:translate-y-[-620px] tablet:translate-y-[-510px] h-[500px] md:h-[1080px] opacity-5 w-[1100px] "
         />
       </div>
-      <div className="relative flex flex-col md:flex-row justify-center items-center  md:translate-y-[-70px]  md:translate-x-[22px  overflow-hidden">
+      <div className="relative flex flex-col md:flex-row justify-center items-center  md:translate-y-[-70px]  md:translate-x-[22px] overflow-hidden">
         <div className="md:w-[600px] w-full px-2 py-8 flex flex-col items-center text-center md:items-start md:text-left mt-5  gap-4 md:gap-6 z-10">
           <img
             src={bgLine}
