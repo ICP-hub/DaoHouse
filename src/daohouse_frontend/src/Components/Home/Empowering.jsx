@@ -3,7 +3,7 @@ import Container from '../Container/Container';
 
 const Empowering = () => {
   return (
-    <div className="">
+    <div className=" translate-y-[-28px]">
       <Container classes={'px-6 py-[2rem] md:py-[6rem] lg:py-[8rem] md:px-[8rem]'}>
         <div className="flex flex-col items-center">
           <h1 className="text-empowering-heading font-bold text-center font-mulish text-[#05212C] text-[20px] md:text-4xl lg:text-4xl xl:text-5xl leading-tight mb-2 md:mb-2">
