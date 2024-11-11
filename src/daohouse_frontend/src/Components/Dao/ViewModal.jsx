@@ -118,10 +118,28 @@ useEffect(() => {
       className="flex items-center justify-center backdrop-blur-md bg-black/50"
       closeAfterTransition
     >
-      <Box className="relative p-4 bg-white rounded-lg shadow-4xl max-w-2xl w-full mx-4 font-mulish">
-        <div className="absolute top-2 right-2">
-          <IconButton onClick={onClose} className="text-gray-500 hover:text-black z-10">
-            <CloseIcon />
+    <Box className="relative p-4 bg-white rounded-lg shadow-4xl max-w-2xl w-full mx-4 font-mulish">
+        {/* Close button positioned in the top-right corner */}
+        <div style={{
+          position: 'absolute',
+          top: '8px',
+          right: '8px',
+          zIndex: 10,
+        }}>
+          <IconButton className='translate-y-[-60]'
+            onClick={onClose}
+            style={{
+              backgroundColor: 'green',
+              color: 'white',
+              width: '28px',
+              height: '28px',
+              borderRadius: '50%',
+              padding: '5px',
+              boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+               transform: 'translateY(-20px) translateX(20px)',
+            }}
+          >
+            <CloseIcon fontSize="small" />
           </IconButton>
         </div>
         <div className="mt-4 sm:mt-0 sm:w-full">
