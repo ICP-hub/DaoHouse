@@ -12,12 +12,12 @@ use crate::{
 
 
 pub fn start_proposal_checker(expird_at : u64) {
-    set_timer(Duration::from_nanos(expird_at.clone()), move || {
-        check_proposals(expird_at.clone());
+    set_timer(Duration::from_nanos(expird_at), move || {
+        check_proposals();
     });
 }
 
-pub fn check_proposals(expird_at : u64) {
+pub fn check_proposals() {
     with_state(|state: &mut State| {
         let timestamp = time();
 
@@ -27,9 +27,7 @@ pub fn check_proposals(expird_at : u64) {
             .filter_map(|(id, proposal)| {
                 let time_diff = timestamp.saturating_sub(proposal.proposal_submitted_at);
 
-                let should_process = time_diff >= expird_at.clone() && !proposal.has_been_processed;
-
-                // let should_process = time_diff >= proposal.proposal_expired_at && !proposal.has_been_processed;
+                let should_process = time_diff >= (proposal.proposal_expired_at - proposal.proposal_submitted_at) && !proposal.has_been_processed;
 
                 if should_process {
                     Some(id.clone())
@@ -200,8 +198,7 @@ pub fn check_proposals(expird_at : u64) {
                         }
                         _ => {}
                     }
-                } else if !proposal.has_been_processed_second && time_diff >= expird_at.clone() {
-                    //else if !proposal.has_been_processed_second && time_diff >= proposal.proposal_expired_at {
+                } else if !proposal.has_been_processed_second && time_diff >= (proposal.proposal_expired_at - proposal.proposal_submitted_at) {
                     ic_cdk::println!("proposal status : {:?} ", proposal.proposal_status);
                     let proposal_clone = proposal.clone();
                     match proposal.proposal_type {

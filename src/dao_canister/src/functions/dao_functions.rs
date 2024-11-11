@@ -91,7 +91,6 @@ async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, 
         link_of_task: None,
         associated_proposal_id: None,
         new_required_votes: None,
-        task_completion_day: None,
         poll_query: None,
         poll_options: None,
         ask_to_join_dao : None,
@@ -175,7 +174,6 @@ async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<St
         link_of_task: None,
         associated_proposal_id: None,
         new_required_votes: None,
-        task_completion_day: None,
         poll_query: None,
         poll_options: None,
         ask_to_join_dao : None,
@@ -245,7 +243,6 @@ async fn proposal_to_remove_member_to_dao(args: RemoveDaoMemberArgs) -> Result<S
         link_of_task: None,
         associated_proposal_id: None,
         new_required_votes: None,
-        task_completion_day: None,
         poll_query: None,
         poll_options: None,
         ask_to_join_dao : None,
@@ -313,7 +310,6 @@ async fn proposal_to_change_dao_config(args: ChangeDaoConfigArg) -> Result<Strin
         link_of_task: None,
         associated_proposal_id: None,
         new_required_votes: None,
-        task_completion_day: None,
         poll_query: None,
         poll_options: None,
         ask_to_join_dao : None,
@@ -374,7 +370,6 @@ async fn proposal_to_change_dao_policy(args: ChangeDaoPolicy) -> Result<String, 
         link_of_task: None,
         associated_proposal_id: None,
         new_required_votes: Some(args.required_votes),
-        task_completion_day: None,
         poll_query: None,
         poll_options: None,
         ask_to_join_dao : Some(args.ask_to_join_dao),
@@ -439,7 +434,6 @@ async fn proposal_to_transfer_token(args: TokenTransferPolicy) -> Result<String,
         link_of_task: None,
         associated_proposal_id: None,
         new_required_votes: None,
-        task_completion_day: None,
         poll_query: None,
         poll_options: None,
         ask_to_join_dao : None,
@@ -524,12 +518,7 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
             }
         }
     });
-
-    // let proposal_expire_time =
-    //     ic_cdk::api::time() + (args.task_completion_day * 86_400 * 1_000_000_000);
-
-    let test_expire_time = 8 * 60 * 1_000_000_000;
-
+    
     let proposal = ProposalInput {
         principal_of_action: Some(api::caller()),
         proposal_description: args.description,
@@ -552,7 +541,6 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
         link_of_task: None,
         associated_proposal_id: None,
         new_required_votes: None,
-        task_completion_day: Some(test_expire_time),
         poll_query: None,
         ask_to_join_dao : None,
         poll_options: None,
@@ -584,7 +572,7 @@ async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
         return Err(format!("DAO doesn't have enough tokens."));
     }
 
-    let mut bounty_task = None;
+    let mut bounty_task: Option<String> = None;
     let mut token_to: Option<Principal> = None;
 
     if let Some(proposal) = proposals_data {
@@ -608,17 +596,6 @@ async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
             ));
         }
 
-        let current_time = ic_cdk::api::time();
-        let proposal_submitted_at = proposal.proposal_submitted_at;
-        let proposal_expiry_time = proposal.task_completion_day;
-
-        if let Some(expiry_time) = proposal_expiry_time {
-            if current_time > proposal_submitted_at + expiry_time {
-                return Err(String::from(
-                    "The proposal has expired and can't longer be completed.",
-                ));
-            }
-        }
         token_to = proposal.token_to;
         bounty_task = proposal.bounty_task;
     } else {
@@ -668,7 +645,6 @@ async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
         link_of_task: None,
         associated_proposal_id: Some(args.associated_proposal_id.clone()),
         new_required_votes: None,
-        task_completion_day: None,
         poll_query: None,
         poll_options: None,
         ask_to_join_dao : None,
@@ -724,9 +700,9 @@ async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
     guard_check_proposal_creation(proposal_data)?;
 
     let mut required_thredshold = 0;
-    let proposal_expire_time =
-        ic_cdk::api::time() + (args.proposal_expired_at as u64 * 86_400 * 1_000_000_000);
-
+    // let proposal_expire_time =
+    //     ic_cdk::api::time() + (args.proposal_expired_at as u64 * 86_400 * 1_000_000_000);
+    let proposal_expire_time_testing : u64 = 2 * 60 * 1_000_000_000 + ic_cdk::api::time();
     let _ = with_state(|state| {
         match state
             .dao
@@ -779,7 +755,7 @@ async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
         token_from: None,
         token_to: None,
         proposal_created_at: None,
-        proposal_expired_at: Some(proposal_expire_time),
+        proposal_expired_at: Some(proposal_expire_time_testing),
         bounty_task: None,
         poll_title: Some(args.poll_title),
         required_votes: None,
@@ -789,7 +765,6 @@ async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
         link_of_task: None,
         associated_proposal_id: None,
         new_required_votes: None,
-        task_completion_day: None,
         ask_to_join_dao : None,
         poll_query: Some(args.poll_query),
         poll_options: Some(poll_options),
@@ -851,7 +826,6 @@ async fn proposal_to_create_general_purpose(args: CreateGeneralPurpose) -> Resul
         link_of_task: None,
         associated_proposal_id: None,
         new_required_votes: None,
-        task_completion_day: None,
         ask_to_join_dao : None,
         poll_query: None,
         poll_options: None,
@@ -951,7 +925,6 @@ async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
         link_of_task: None,
         associated_proposal_id: None,
         new_required_votes: None,
-        task_completion_day: None,
         poll_query: None,
         poll_options: None,
         ask_to_join_dao : None,
@@ -1079,7 +1052,7 @@ fn get_dao_groups() -> Vec<DaoGroup> {
     groups
 }
 
-#[update]
+#[update(guard = prevent_anonymous)]
 pub async fn proposal_to_mint_new_dao_tokens(args: MintTokenArgs) -> Result<String, String> {
     if args.total_amount.clone() < 1{
        return Err(String::from("total amount should be greater than 0"));
@@ -1131,7 +1104,6 @@ pub async fn proposal_to_mint_new_dao_tokens(args: MintTokenArgs) -> Result<Stri
         link_of_task: None,
         associated_proposal_id: None,
         new_required_votes: None,
-        task_completion_day: None,
         poll_query: None,
         ask_to_join_dao : None,
         poll_options: None,

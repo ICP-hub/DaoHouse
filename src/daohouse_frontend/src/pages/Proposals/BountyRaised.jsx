@@ -58,20 +58,7 @@ const BountyRaised = ({ bountyRaised, handleInputBountyRaised, setBountyRaised, 
           min={1}
         />
       </div>
-      <div className="mb-4">
-        <label htmlFor="taskCompletionDay" className="mb-2 font-semibold text-xl">Task Completion Day</label>
-        <input
-          id="taskCompletionDay"
-          type="number"
-          name="task_completion_day"
-          value={bountyRaised.task_completion_day || 1}
-          onChange={handleInputBountyRaised}
-          className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-          required
-          min={1}
-          placeholder="No. of days"
-        />
-      </div>
+
     </>
   );
 };

@@ -14,7 +14,6 @@ type BountyDone = record {
 type BountyRaised = record {
   description : text;
   tokens : nat64;
-  task_completion_day : nat64;
   proposal_entry : text;
   bounty_task : text;
 };
@@ -181,7 +180,6 @@ type Proposals = record {
   approved_votes_list : vec principal;
   comments : nat32;
   ask_to_join_dao : opt bool;
-  task_completion_day : opt nat64;
   group_to_join : opt text;
   comments_list : vec Comment;
   token_from : opt principal;
