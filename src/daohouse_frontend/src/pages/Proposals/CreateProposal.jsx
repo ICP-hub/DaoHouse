@@ -336,12 +336,6 @@ function CreateProposal() {
       return;
     }
 
-    if (!changePolicy.description) {
-      toast.error("Description is required.");
-      setLoading(false);
-      return;
-  }
-
 
     try {
       switch (proposalType) {
