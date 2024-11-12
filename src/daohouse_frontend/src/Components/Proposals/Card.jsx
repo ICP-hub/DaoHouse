@@ -15,6 +15,7 @@ import Avatar from "../../../assets/Avatar.png";
 
 export default function Card({ proposal, voteApi, showActions, isProposalDetails, isComment, setIsComment, commentCount, isSubmittedProposals, showComments, }) {
 
+  console.log("propsoal",proposal.ask_to_join_dao);
   
   
   const { backendActor, createDaoActor, stringPrincipal } = useAuth();
@@ -594,8 +595,6 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                     <span className="font-bold">Dao Name</span>: {proposal?.new_dao_name}
                     
                     
-                    {/* <strong>&nbsp; | &nbsp;</strong>
-                    <span className="font-bold">Dao Type</span>: {proposal.new_daotype} */}
                     
                     
                   </div>
@@ -614,6 +613,9 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                   </div>
                   <div className="whitespace-normal break-words mt-2">
                     <span className="font-bold">Required Votes</span>: {proposal.new_required_votes}
+                    
+                    <strong>&nbsp; | &nbsp;</strong>
+                    <span className="font-bold">Proposal Type</span>: {proposal?.ask_to_join_dao}
                   </div>
                 </div>
               )}
