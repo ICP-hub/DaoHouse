@@ -77,7 +77,7 @@ function CreateProposal() {
     bounty_task: '',
   });
 
-  const [isPrivate, setIsPrivate] = useState(dao?.ask_to_join_dao);
+  const [isPrivate, setIsPrivate] = useState(true);
   console.log("private",isPrivate);
   
   const [showModal, setShowModal] = useState(false);
@@ -113,7 +113,9 @@ function CreateProposal() {
     ask_to_join_dao: true,
   });
   // console.log("as",dao.ask_to_join_dao);
-  
+ // Validate changePolicy fields
+ 
+
 
   const [poll, setPoll] = useState({
     proposal_expired_at: "",
@@ -151,6 +153,9 @@ function CreateProposal() {
           const daoDetails = await daoActor.get_dao_detail();
           setDao(daoDetails);
           console.log(daoDetails);
+            // Set isPrivate based on the fetched DAO details
+            setIsPrivate(daoDetails.ask_to_join_dao); // Update isPrivate based on API response
+
           
           const names = daoDetails.proposal_entry.filter((group) => group.place_name !== "Council").map((group) => group.place_name );
           setGroupNames(names);
@@ -330,6 +335,13 @@ function CreateProposal() {
       setLoading(false);
       return;
     }
+
+    if (!changePolicy.description) {
+      toast.error("Description is required.");
+      setLoading(false);
+      return;
+  }
+
 
     try {
       switch (proposalType) {
@@ -1018,12 +1030,12 @@ function CreateProposal() {
                     />
                   )}
 
-{proposalType === "MintNewTokens" && (
-  <MintNewTokens
-    mintTokenData={mintNewTokens}  // Updated prop name
-    handleInputMintToken={handleInputMintNewTokens}
-  />
-)}
+                 {proposalType === "MintNewTokens" && (
+                <MintNewTokens
+                mintTokenData={mintNewTokens}  // Updated prop name
+                 handleInputMintToken={handleInputMintNewTokens}
+                />
+                 )}
 
 
                   {/* Submit Button */}
