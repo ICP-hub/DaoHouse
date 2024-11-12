@@ -112,7 +112,6 @@ pub struct Proposals {
     pub bounty_task : Option<String>,
     pub associated_proposal_id : Option<String>,
     pub new_required_votes : Option<u32>,
-    pub task_completion_day : Option<u64>,
     pub poll_query :  Option<String>,
     pub poll_options: Option<Vec<PollOptions>>,
     pub ask_to_join_dao : Option<bool>
@@ -157,7 +156,6 @@ pub struct ProposalInput {
     pub link_of_task : Option<String>,
     pub associated_proposal_id :  Option<String>,
     pub new_required_votes : Option<u32>,
-    pub task_completion_day : Option<u64>,
     pub poll_query :  Option<String>,
     pub poll_options: Option<Vec<PollOptions>>,
     pub ask_to_join_dao : Option<bool>
@@ -274,17 +272,6 @@ pub struct DaoInput {
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
-pub struct UpdateDaoSettings {
-    pub dao_name: String,
-    pub purpose: String,
-    pub daotype: String,
-    pub link_of_document: String,
-    pub linksandsocials: Vec<String>,
-    pub members: Vec<Principal>,
-    pub followers: Vec<Principal>,
-}
-
-#[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct AddMemberArgs {
     pub group_name: String,
     pub new_member: Principal,
@@ -330,7 +317,6 @@ pub struct BountyRaised{
     pub bounty_task : String,
     pub proposal_entry : String,
     pub tokens: u64,
-    pub task_completion_day : u64,
 }
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct BountyDone{

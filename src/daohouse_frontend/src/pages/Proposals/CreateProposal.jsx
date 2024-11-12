@@ -352,10 +352,8 @@ function CreateProposal() {
         case "BountyRaised": 
           await submitBountyRaised({
             proposal_entry: proposalEntry,
-            task_completion_day: Number(bountyRaised.task_completion_day) || 1, 
             description: bountyRaised.description,
             tokens: Number(bountyRaised.tokens) || 1,
-            
             bounty_task: bountyRaised.bounty_task,
           });
           break;
