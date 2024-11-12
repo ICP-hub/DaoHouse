@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import defaultImage from "../../../assets/Avatar.png";
 import { useAuth } from "../utils/useAuthClient";
+import { FiUpload } from "react-icons/fi";
 
 
 const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
@@ -8,7 +9,8 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [profileImage, setProfileImage] = useState(null);
-  const [fileURL, setFileURL] = useState(defaultImage);
+  const [fileURL, setFileURL] = useState(defaultImage)
+  const [fileName, setFileName] = useState(null);
   const [errors, setErrors] = useState({});
   const fileInputRef = useRef(null);
   const { backendActor } = useAuth();
@@ -107,6 +109,7 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
       }
       setProfileImage(file);
       setFileURL(URL.createObjectURL(file));
+      setFileName(file.name)
       setErrors((prevErrors) => ({ ...prevErrors, profileImage: null })); 
     }
   };
@@ -160,7 +163,10 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
                       onClick={handleFileInput}
                       className="text-black text-sm border border-black py-2 px-2 rounded-lg flex justify-center items-center"
                     >
-                      Upload Image
+                    <FiUpload className="text-[12px] mobile:text-[16px]" />
+                      <span className="truncate ... w-24">
+                        {fileName ? fileName : "Upload Image"}
+                        </span>
                     </button>
                     <input
                       type="file"
