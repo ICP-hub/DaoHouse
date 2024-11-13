@@ -17,16 +17,16 @@ const HeroSection = () => {
 
   return (
     <Container className="w-full">
-      <div className="flex justify-center mt-[96px]">
+      <div className="flex justify-center  ">
         <img
           src={HeroGif}
           alt="hero section gradient"
-          className="absolute translate-y-[-250px] mobile:translate-y-[-225px] md:translate-y-[-620px] tablet:translate-y-[-510px] h-[410px] md:h-[1080px] opacity-5 w-[1100px] "
+          className="absolute translate-y-[-250px] mobile:translate-y-[-225px] md:translate-y-[-620px] tablet:translate-y-[-510px] h-[450px] md:h-[1080px] opacity-5 w-[1100px] "
         />
       </div>
 
       {/* Desktop View */}
-      <div className="relative hidden md:flex flex-col md:flex-row justify-center items-center md:translate-y-[-85px] md:translate-x-[-35] overflow-hidden">
+      <div className="relative hidden md:flex flex-col md:flex-row justify-center items-center md:translate-y-[-205px] md:translate-x-[-35] overflow-hidden">
         <div className="md:w-[600px] w-full px-2 py-8 flex flex-col items-center text-center md:items-start md:text-left mt-5 gap-4 md:gap-6 z-10">
           <img
             src={bgLine}
@@ -49,7 +49,7 @@ const HeroSection = () => {
           <div className="text-[#525252] mt-[-10px] mobile:px-20 md:px-0 md:ml-15 text-center text-[10px] md:text-[16px] lg:text-[18px] font-inter mx-[84px] small_phone:mx-[100px] md:mx-[60px] lg:mx-[8px]">
             Efficiently Manage Resources and Proposals with Our DAO Tools
           </div>
-          <div className="flex items-center text-center md:ml-40 lg:ml-28 md:items-center md:justify-center gap-2 mt-2 md:mt-4">
+          <div className="flex items-center text-center md:ml-40 lg:ml-28 md:items-center md:justify-center gap-2 mt-2 md:mt-4 md:translate-x-[10px]">
             <button
               onClick={handlemov}
               className="px-6 md:px-8 py-3 text-center text-[10px] md:text-sm lg:text-lg bg-[#0E3746] text-white rounded-full shadow-md hover:bg-blue-800 hover:text-white"
@@ -67,7 +67,7 @@ const HeroSection = () => {
       </div>
 
       {/* Mobile View */}
-      <div className="relative block md:hidden flex flex-col justify-center items-center translate-y-[-80px]  overflow-hidden">
+      <div className="relative block md:hidden flex flex-col justify-center items-center translate-y-[-110px]  overflow-hidden mt-[100px]">
       <div className="md:w-[600px] w-full px-2 py-8 flex flex-col items-center text-center md:items-start md:text-left mt-5 gap-4 md:gap-6 z-10">
           <img
             src={bgLine}
