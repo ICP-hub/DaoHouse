@@ -18,7 +18,7 @@ import FollowersContent from "../../Components/DaoProfile/FollowersContent";
 import FundsContent from "../../Components/DaoProfile/FundsContent";
 import Container from "../../Components/Container/Container";
 import { Principal } from "@dfinity/principal";
-import { useAuth, useAuthClient } from "../../Components/utils/useAuthClient";
+import { useAuth } from "../../Components/utils/useAuthClient";
 import toast from 'react-hot-toast';
 import ProposalLoaderSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/ProposalLoaderSkeleton";
 import DaoProfileLoaderSkeleton from "../../Components/SkeletonLoaders/DaoProfileLoaderSkeleton/DaoProfileLoaderSkeleton";
@@ -43,7 +43,6 @@ const DaoProfile = () => {
   const { daoCanisterId } = useParams();
   const [joinStatus, setJoinStatus] = useState("Join DAO");
   const [isMember, setIsMember] = useState(false);
-  // const [voteApi, setVoteApi] = useState({})
   const [daoFollowers, setDaoFollowers] = useState([]);
   const [daoMembers, setDaoMembers] = useState([]);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -53,12 +52,10 @@ const DaoProfile = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const maxWords = 250;
   const toggleExpanded = () => setIsExpanded(!isExpanded);
-  const [DaoBalance, setDaoBalance] = useState(0);
+  const [DaoBalance, setDaoBalance] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followersCount, setFollowersCount] = useState(0);
   const [userProfile, setUserProfile] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 40;
 
 
   const fetchMetadataAndBalance = async (tokenActor, ownerPrincipal) => {
@@ -159,7 +156,6 @@ const DaoProfile = () => {
         } catch (error) {
           console.error("Error fetching DAO details:", error);
         }
-      daoBalance();
       }
     };
 
@@ -167,7 +163,7 @@ const DaoProfile = () => {
       setLoadingProposals(true);
       if (daoCanisterId) {
         try {
-          const start = (currentPage - 1) * itemsPerPage;
+          const start = 0;
           const end = start + itemsPerPage;
           const daoActor = await createDaoActor(daoCanisterId);
           const proposals = await daoActor.get_all_proposals({ start, end });
@@ -181,7 +177,7 @@ const DaoProfile = () => {
     };
     fetchDaoDetails();
     fetchProposals();
-  }, [backendActor, createDaoActor, currentPage, daoCanisterId]);
+  }, [backendActor, createDaoActor, daoCanisterId,]);
 
   const handleJoinDao = async () => {
     if (joinStatus === "Joined") {
@@ -271,7 +267,6 @@ const DaoProfile = () => {
 
   const handleClick = (linkName) => {
     setActiveLink(linkName);
-    // navigate(`/dao/profile/${daoCanisterId}/${linkName}`);
   };
 
   if (!dao && !loadingProfile) {
@@ -282,7 +277,7 @@ const DaoProfile = () => {
     );
   }
 
-  // Animation options for the big circle
+
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -293,7 +288,6 @@ const DaoProfile = () => {
     },
   };
 
-  // Animation options for the small circle
   const defaultOptions2 = {
     loop: true,
     autoplay: true,
@@ -314,6 +308,10 @@ const DaoProfile = () => {
       id: "lottie-mediumCircle",
     },
   };
+
+   useEffect(()=>{
+    daoBalance();
+  },[dao?.token_ledger_id?.id]) 
 
   return (
     <div className={className + " bg-zinc-200 w-full relative"}>
@@ -437,7 +435,7 @@ const DaoProfile = () => {
                       </span>
                     </span>
                     <span className="text-[18px] sm:text-[20px] md:text-[24px] lg:text-[32px] font-normal text-[#05212C] user-acc-info">
-                      {parseInt(DaoBalance) || 0}&nbsp;
+                      {Number(DaoBalance)}&nbsp;
                       <span className="text-[12px] sm:text-[14px] md:text-[16px] mx-1">
                         Tokens
                       </span>
