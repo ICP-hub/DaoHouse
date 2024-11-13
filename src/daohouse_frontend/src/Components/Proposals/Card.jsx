@@ -13,9 +13,9 @@ import coin from "../../../assets/coin.jpg";
 import Avatar from "../../../assets/Avatar.png";
 
 
-export default function Card({ proposal, voteApi, showActions, isProposalDetails, isComment, setIsComment, commentCount, isSubmittedProposals, showComments, }) {
+export default function Card({ proposal, voteApi, showActions, isProposalDetails, isComment, setIsComment, commentCount, isSubmittedProposals, showComments}) {
 
-  console.log("propsoal",proposal.ask_to_join_dao);
+ 
   
   
   const { backendActor, createDaoActor, stringPrincipal } = useAuth();
@@ -39,6 +39,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
   const [isPollVoteLoading, setIsPollVoteLoading] = useState(false);
   const [loadingOptionId, setLoadingOptionId] = useState(null);
   const [pollOptions, setPollOptions] = useState(proposal?.poll_options ? proposal.poll_options[0] : []);
+
 
 
 
@@ -416,8 +417,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
     document.head.append(style);
     return () => style.remove();
   }, []);
-  console.log("proposal in new daoasdasd",proposal.new_dao_name);
-  console.log("proosal in new dao pirpweow ",proposal.new_dao_purpose || proposal.new_dao_purpose);
+
 
   {
     return (
@@ -608,16 +608,25 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
               )}
               {!isSubmittedProposals && (proposal.proposal_type.ChangeDaoPolicy !== undefined) && (
                 <div className="w-full">
-                  <div className="flex">
-                    <span className="font-bold">Cool Down Period</span>: {proposal.cool_down_period}
+                  <div className="flex justify-start">
+                    <span className="font-bold  ">Cool Down Period</span>: {proposal.cool_down_period}
                   </div>
-                  <div className="whitespace-normal break-words mt-2">
-                    <span className="font-bold">Required Votes</span>: {proposal.new_required_votes}
-                    
-                    <strong>&nbsp; | &nbsp;</strong>
-                    <span className="font-bold">Proposal Type</span>: {proposal?.ask_to_join_dao}
-                  </div>
+                  <div className="flex flex-wrap justify-between">
+  <div className="whitespace-normal break-words">
+    <span className="font-bold">Required Votes to Approve DAO Policy Change</span>: {proposal.new_required_votes}
+  </div>
+  
+  <div className="flex items-center mt-2 sm:mt-0">
+   
+    <span className="font-bold">Proposal Type</span>: {proposal?.ask_to_join_dao?.[0] ? 'Private' : 'Public'}
+  </div>
+</div>
+
+                 
+                  
                 </div>
+
+
               )}
               
               {!isSubmittedProposals && proposal.proposal_type.Polls !== undefined && (

@@ -8,8 +8,6 @@ import { useNavigate } from "react-router-dom";
 import ProposalsContent from "../../Components/DaoProfile/ProposalsContent";
 import SearchProposals from "../../Components/Proposals/SearchProposals";
 import ProposalLoaderSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/ProposalLoaderSkeleton";
-import Pagination from "../../Components/pagination/Pagination";
-
 
 const FeedPage = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -23,18 +21,11 @@ const FeedPage = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
+  const [totalPages, setTotalPages] = useState(1);
 
   const className = "FeedPage";
 
-  // const setLatestActive = () => {
-  //   setActive({ all: false, latest: true });
-  //   setCurrentPage(1);
-  // };
 
-  // // Handle Create Post Popup
-  // const handleCreatePostClick = () => {
-  //   setShowPopup(!showPopup);
-  // };
 
   // Handle Login Functions
   const handleLogin = async () => {
@@ -83,7 +74,7 @@ const FeedPage = () => {
       for (const dao of allDaos) {
         const proposalPagination = {
           start: 0,
-          end: 1000, 
+          end: 1000,
         };
 
         try {
@@ -105,14 +96,14 @@ const FeedPage = () => {
           proposal.proposal_id.toLowerCase().includes(searchTerm.trim().toLowerCase())
         );
       }
-  
+
       const start = (currentPage - 1) * itemsPerPage;
       const end = start + itemsPerPage;
       const currentProposals = allProposals.slice(start, end);
 
       setProposals(currentProposals);
       setHasMore(end < allProposals.length);
-
+      setTotalPages(Math.ceil(allProposals.length / itemsPerPage));
     } catch (error) {
       console.error("Error fetching DAOs and proposals:", error);
     } finally {
@@ -137,6 +128,22 @@ const FeedPage = () => {
     if (!isAuthenticated) {
       navigate("/");
     }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePageClick = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   return (
@@ -188,28 +195,53 @@ const FeedPage = () => {
       >
         {loading ? (
           <ProposalLoaderSkeleton />
-        ) :proposals.length === 0 ? (
+        ) : proposals.length === 0 ? (
           <div className="flex justify-center items-center h-full mb-10 mt-10 ">
-          <Container className="w-full flex flex-col items-center justify-center   ">
-            <img src={nodata} alt="No Data" className="mb-1  ml-[42px]" />
-            <p className="text-center mt-4  text-gray-700 text-base">
-              You have not created any DAO
-            </p>
+            <Container className="w-full flex flex-col items-center justify-center   ">
+              <img src={nodata} alt="No Data" className="mb-1  ml-[42px]" />
+              <p className="text-center mt-4  text-gray-700 text-base">
+                You have not created any DAO
+              </p>
 
-          </Container>
-        </div>
+            </Container>
+          </div>
         ) : (
-          <div className="mx-2 small_phone:mx-4 mobile:mx-1 lg:mx-16 desktop:mx-20">
-          <Container>
-            <div className="desktop:mx-12">
-            <ProposalsContent
-              proposals={proposals}
-              isMember={true}
-              showActions={false}
-            />
-            </div>
+          <div className="mx-2 small_phone:mx-4 mobile:mx-1 lg:mx-16 desktop:mx-20 ">
+            <Container>
+              <div className="desktop:mx-12">
+                <ProposalsContent
+                  proposals={proposals}
+                  isMember={true}
+                  showActions={false}
+                />
+              </div>
+              <div className="flex justify-center mt-4 mb-4">
+                <button
+                  onClick={handlePreviousPage}
+                  disabled={currentPage === 1}
+                  className="mr-2 p-2 border"
+                >
+                  Previous
+                </button>
+                {[...Array(totalPages)].map((_, pageNumber) => (
+                  <button
+                    key={pageNumber + 1}
+                    onClick={() => handlePageClick(pageNumber + 1)}
+                    className={`p-2 border ${currentPage === pageNumber + 1 ? "bg-black text-white" : ""}`}
+                  >
+                    {pageNumber + 1}
+                  </button>
+                ))}
+                <button
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                  className="ml-2 p-2 border"
+                >
+                  Next
+                </button>
+              </div>
 
-          </Container>
+            </Container>
           </div>
         )}
       </div>
@@ -222,17 +254,6 @@ const FeedPage = () => {
           onLogin={handleLogin}
           onNFIDLogin={handleNFIDLogin}
         />
-      )}
-
-      {/* Pagination Controls */}
-      {!loading && proposals.length > 0 && (
-        <div className={`${className}__pagination pb-10 bg-[#c8ced3] gap-8 flex flex-col`}>
-          <Pagination
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            hasMore={hasMore}
-          />
-        </div>
       )}
     </div>
   );
