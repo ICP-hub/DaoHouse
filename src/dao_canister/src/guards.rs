@@ -10,17 +10,6 @@ pub fn prevent_anonymous() -> Result<(), String> {
     Ok(())
 }
 
-pub fn guard_check_members() -> Result<(), String> {
-    prevent_anonymous()?;
-    with_state(|state| {
-        if state.dao.members.contains(&api::caller()) {
-            return Ok(());
-        } else {
-            return Err(String::from(crate::utils::WARNING_DAO_MEMBER_ONLY));
-        }
-    })
-}
-
 pub fn check_voting_right(proposal_id: &String) -> Result<(), String> {
     // guard_check_members()?;
     prevent_anonymous()?;
