@@ -15,8 +15,8 @@ import { idlFactory as ledgerIDL } from "./ledger.did";
 import { createActor } from "../../../../declarations/icp_ledger_canister";
 import UserDetailsModal from "./UserDetailsModal";
 import { useNavigate } from "react-router-dom";
-import { useAuth, useAuthClient } from "../../connect/useClient";
 import { ConnectWallet } from "@nfid/identitykit/react";
+import { useAuth } from "../../connect/useClient";
 
 
 export const ConnectBtn = ({ onClick }) => (
@@ -49,7 +49,7 @@ const Navbar = () => {
     isAuthenticated
 
     
-  } = useAuthClient();
+  } = useAuth();
   // const { isConnected, disconnect, principal, actor } = useAuth();
 
   

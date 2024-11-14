@@ -4,14 +4,18 @@ import PersonalLinksAndContactInfo from "../PersonalLinksAndContactInfo";
 import { useUserProfile } from "../../../context/UserProfileContext";
 
 import { toast } from "react-toastify";
+import { useAuth } from "../../../connect/useClient";
 
 
 const AboutMe = () => {
+  const { backendActor, identity, principal } = useAuth();
+
+  console.log("sandlkansdlknasld 12", principal);
   const className = "AboutMe";
   const { userProfile } = useUserProfile() || {};
   const principalstring = userProfile?.user_id?.toString() || "";
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(principalstring).then(() => {
+    navigator.clipboard.writeText(principal).then(() => {
       toast.success('Copied to clipboard!');
     }).catch((err) => {
       console.error('Could not copy text: ', err);
@@ -38,7 +42,7 @@ const AboutMe = () => {
               Principal Id
             </p>
             <div className="flex items-center w-full max-w-[1200px] bg-white lg:text-[16px] md:text-[14px] text-[12px] font-normal text-[#646464] p-1 rounded-lg">
-              <span className="flex-grow p-2">{principalstring}</span>
+              <span className="flex-grow p-2"> {principal?.toString() || "N/A"}</span>
               <button
                 onClick={copyToClipboard}
                 className="text-white p-2 rounded flex items-center justify-center ml-4"

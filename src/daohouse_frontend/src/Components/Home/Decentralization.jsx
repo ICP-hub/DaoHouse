@@ -14,6 +14,7 @@ import { useAuthClient } from "../../connect/useClient";
 const Decentralization = () => {
   const className = "Decentralization";
   const { backendActor } = useAuthClient();
+  console.log("backendActor : ", backendActor);
   const [analtics, setGetAnaltics] = useState({});
   const navigate = useNavigate();
 

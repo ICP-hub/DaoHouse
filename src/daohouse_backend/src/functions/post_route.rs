@@ -1,5 +1,5 @@
 // use std::collections::BTreeMap;
-use crate::{with_state, Analytics, DaoDetails, Pagination};
+use crate::{with_state, Analytics, DaoDetails, Icrc28TrustedOriginsResponse, Pagination};
 use candid::{Nat, Principal};
 use ic_cdk::{api, update};
 use icrc_ledger_types::{icrc1::{account::Account, transfer::BlockIndex}, icrc2::transfer_from::{TransferFromArgs, TransferFromError}};
@@ -95,6 +95,18 @@ async fn make_payment(tokens: u64, user: Principal) -> Result<Nat, String> {
 #[query]
 fn get_cycles() -> u64 {
     api::canister_balance()
+}
+
+pub async fn icrc28_trusted_origins() -> Icrc28TrustedOriginsResponse {
+    let trusted_origins = vec![
+        String::from("https://2gcn4-liaaa-aaaap-aknpa-cai.icp0.io"),
+        String::from("http://localhost:3000"),
+        String::from("http://b77ix-eeaaa-aaaaa-qaada-cai.localhost:4943"),
+        String::from("http://127.0.0.1:4943/?canisterId=b77ix-eeaaa-aaaaa-qaada-cai"),
+        String::from("http://127.0.0.1:4943"),
+        String::from("http://localhost:4200"),
+    ];
+    return Icrc28TrustedOriginsResponse { trusted_origins };
 }
 
 #[query(guard = prevent_anonymous)]

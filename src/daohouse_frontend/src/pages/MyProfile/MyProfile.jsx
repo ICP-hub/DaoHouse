@@ -21,20 +21,20 @@ import SmallCircleComponent from "../../Components/Ellipse-Animation/SmallCircle
 import ProfileTitleDivider from "../../Components/ProfileTitleDivider/ProfileTitleDivider";
 import { useUserProfile } from "../../context/UserProfileContext";
 import Container from "../../Components/Container/Container";
-import { useAuth } from "../../Components/utils/useAuthClient";
 import NoFollowers from "./NoFollowers";
 import NoFollowing from "./NoFollowing";
 import { Principal } from "@dfinity/principal";
 import { createActor } from "../../../../declarations/icp_ledger_canister";
-import { useAuthClient } from "../../connect/useClient";
+import { useAuth } from "../../connect/useClient";
+
 
 
 
 
 const MyProfile = ({ childComponent }) => {
-  const { backendActor, identity, stringPrincipal } = useAuthClient();
+  const { backendActor, identity, principal } = useAuth();
 
-  console.log("sandlkansdlknasld", stringPrincipal);
+  console.log("sandlkansdlknasld", principal);
 
   const { userProfile } = useUserProfile() || {};
 
@@ -106,7 +106,6 @@ const MyProfile = ({ childComponent }) => {
   };
 
   const [data, setData] = useState({});
-  const [tokens, setTokens] = useState(0);
   const followers = data?.followers_count ? Number(data.followers_count) : 0;
   const post = data?.submitted_proposals ? Number(data.submitted_proposals) : 0;
   const following = data?.join_dao ? Number(data.join_dao.length) : 0;
@@ -115,9 +114,10 @@ const MyProfile = ({ childComponent }) => {
 
   const getData = async () => {
     try {
+       console.log("backendActor ", backendActor);
       const response = await backendActor.get_user_profile();
       console.log("api response", response);
-      setData(response.Ok || {});
+      // setData(response.Ok || {});
     } catch (error) {
       console.error("Error :", error);
     }

@@ -23,12 +23,12 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Container from "../../Components/Container/Container";
 import CircularProgress from '@mui/material/CircularProgress';
-import { useAuthClient } from "../../connect/useClient";
+import { useAuth, useAuthClient } from "../../connect/useClient";
 
 const EditProfile = () => {
   const { userProfile, fetchUserProfile } = useUserProfile();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { backendActor, frontendCanisterId, identity, principal } = useAuthClient();
+  const { backendActor, frontendCanisterId, identity, principal } = useAuth();
   console.log('frontendCanisterId:', frontendCanisterId); // Debugging line
 
   const [loading, setLoading] = useState(false);
