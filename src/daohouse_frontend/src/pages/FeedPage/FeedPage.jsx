@@ -15,14 +15,12 @@ const FeedPage = () => {
   const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [hasMore, setHasMore] = useState(true);
   const [proposals, setProposals] = useState([]);
   const [loading, setLoading] = useState(false);
   const pageGroupSize = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
   const [totalPages, setTotalPages] = useState(1);
-
   const className = "FeedPage";
 
 
