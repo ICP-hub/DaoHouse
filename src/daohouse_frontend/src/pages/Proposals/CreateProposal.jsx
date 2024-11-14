@@ -5,7 +5,7 @@ import Container from "../../Components/Container/Container";
 import { useAuth } from "../../Components/utils/useAuthClient";
 import toast from 'react-hot-toast';
 import { CircularProgress } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
+import { useFetcher, useNavigate, useParams } from "react-router-dom";
 import { Principal } from "@dfinity/principal";
 import BountyDone from "./BountyDone";
 import TokenTransfer from "./TokenTransfer";
@@ -229,12 +229,29 @@ function CreateProposal() {
     }
   };
 
+  // const handleInputDaoConfig = (e) => {
+  //   setDaoConfig({
+  //     ...daoConfig,
+  //     [e.target.name]: e.target.value,
+  //   });
+  // };
   const handleInputDaoConfig = (e) => {
-    setDaoConfig({
-      ...daoConfig,
-      [e.target.name]: e.target.value,
-    });
-  };
+    const { name, value } = e.target;
+
+    // Update daoConfig state
+    setDaoConfig((prevConfig) => ({
+        ...prevConfig,
+        [name]: value,
+    }));
+
+    // Clear the specific field's error when the user starts typing
+    if (errors[name]) {
+        setErrors((prevErrors) => ({
+            ...prevErrors,
+            [name]: "",
+        }));
+    }
+};
 
   const handleInputAddMember = (e) => {
     setAddMember({
@@ -319,10 +336,16 @@ function CreateProposal() {
     });
   };
 
+  const [errors, setErrors] = useState({});
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setErrors({});
 
+    // Basic validation
+    let hasErrors = false;
+    const newErrors = {};
     // Basic validation
     if (!proposalType) {
       toast.error("Please select a proposal type.");
@@ -335,7 +358,27 @@ function CreateProposal() {
       setLoading(false);
       return;
     }
+    if (!daoConfig.description || daoConfig.description.trim() === "") {
+      newErrors.description = "Description is required.";
+      hasErrors = true;
+    }
+    if (!daoConfig.new_dao_name || daoConfig.new_dao_name.trim() === "") {
+      newErrors.new_dao_name = "DAO Name is required.";
+      hasErrors = true;
+  }
+  if (!daoConfig.purpose || daoConfig.purpose.trim() === "") {
+      newErrors.purpose = "DAO Purpose is required.";
+      hasErrors = true;
+  }
 
+
+    if (hasErrors) {
+      setErrors(newErrors);
+      setLoading(false);
+      return;
+    }
+
+   
 
     try {
       switch (proposalType) {
@@ -451,6 +494,8 @@ function CreateProposal() {
   };
 
   const submitTokenTransferProposal = async (tokenTransfer) => {
+    console.log("token tranferr api", tokenTransfer);
+    
     try {
       const actor = await createTokenActor(dao.token_ledger_id.id);
       const { metadata, balance } = await fetchMetadataAndBalance(actor, Principal.fromText(stringPrincipal));
@@ -965,6 +1010,7 @@ function CreateProposal() {
                       handleInputDaoConfig={handleInputDaoConfig}
                       dao={dao}
                       setDaoConfig={setDaoConfig}
+                      errors={errors}
                     />
                   )}
 
