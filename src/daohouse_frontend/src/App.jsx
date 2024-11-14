@@ -31,8 +31,6 @@ import ProposalsDetails from "./pages/FeedPage/ProposalDetails";
 const App = () => {
 
   const location = useLocation();
-  
-  const marginTop = location.pathname === '/' ? '4rem' : '0';
 
   return (
     <PostProvider>

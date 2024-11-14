@@ -27,6 +27,7 @@ import { CircularProgress } from "@mui/material";
 import messagesound from "../../Sound/messagesound.mp3";
 import daoImage from "../../../assets/daoImage.png";
 import { createActor } from "../../../../declarations/icrc1_ledger_canister";
+import Pagination from "../../Components/pagination/Pagination";
 
 const DaoProfile = () => {
   const className = "DaoProfile";
@@ -56,8 +57,9 @@ const DaoProfile = () => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [followersCount, setFollowersCount] = useState(0);
   const [userProfile, setUserProfile] = useState(null);
-  const itemsPerPage = 4;
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  let itemsPerPage = 4;
 
   const fetchMetadataAndBalance = async (tokenActor, ownerPrincipal) => {
     console.log(tokenActor, ownerPrincipal.toText());
@@ -160,15 +162,21 @@ const DaoProfile = () => {
       }
     };
 
-    const fetchProposals = async () => {
+    const fetchProposals = async (pagination = {}) => {
       setLoadingProposals(true);
       if (daoCanisterId) {
         try {
-          const start = 0;
-          const end = start + itemsPerPage;
           const daoActor = await createDaoActor(daoCanisterId);
-          const proposals = await daoActor.get_all_proposals({ start, end });
-          setProposals(proposals);
+          const proposalPagination = {
+            start: pagination.start,
+            end: pagination.end + 1,
+          };
+          console.log("proposalPagination : ",proposalPagination);
+          const proposals = await daoActor.get_all_proposals(proposalPagination);
+          const hasMoreData = proposals.length > itemsPerPage;
+          setHasMore(hasMoreData);
+          const proposalsToDisplay = proposals.slice(0, itemsPerPage);
+          setProposals(proposalsToDisplay);
         } catch (error) {
           console.error("Error fetching proposals:", error);
         } finally {
@@ -177,8 +185,8 @@ const DaoProfile = () => {
       }
     };
     fetchDaoDetails();
-    fetchProposals();
-  }, [backendActor, createDaoActor, daoCanisterId,]);
+    fetchProposals({ start: (currentPage - 1) * itemsPerPage, end: currentPage * itemsPerPage });
+  }, [backendActor, createDaoActor, daoCanisterId, currentPage]);
 
   const handleJoinDao = async () => {
     if (joinStatus === "Joined") {
@@ -193,9 +201,6 @@ const DaoProfile = () => {
   const confirmJoinDao = async () => {
     setLoading(true);
     try {
-      const daohouseBackendId = Principal.fromText(
-        process.env.CANISTER_ID_DAOHOUSE_BACKEND
-      );
       const place_to_join = "Council";
 
       const joinDaoPayload = {
@@ -576,6 +581,9 @@ const DaoProfile = () => {
               />
             )}
             {activeLink === "funds" && <FundsContent />}
+
+            <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} hasMore={hasMore}/>
+
           </Container>
         </div>
       )}

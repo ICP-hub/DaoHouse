@@ -54,7 +54,7 @@ const Dao = () => {
   const getDaos = async (pagination = {}) => {
     setLoading(true);
     try {
-      const response = await backendActor.get_all_dao({
+      const response = await backendActor.get_all_dao_pagination({
         start: pagination.start,
         end: pagination.end + 1
       });

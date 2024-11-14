@@ -1,26 +1,19 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { proposalsArray } from "../../Components/Proposals/proposalsData";
+import React, { useState, useEffect } from "react";
 import Card from "../Proposals/Card";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../Components/utils/useAuthClient";
-import { useParams } from "react-router-dom";
 import nodata from "../../../assets/nodata.png";
 
 const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, daoCanisterId }) => {
-  const { backendActor, createDaoActor } = useAuth();
+  const { createDaoActor } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [fetchedProposals, setFetchedProposals] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const proposalsPerPage = 4;
-
   const allProposals = proposals && Array.isArray(proposals) ? proposals : [];
 
-  // Function to handle search input changes
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
 
-  // Update getproposal to properly handle passed IDs
   const getproposal = async () => {
     if (searchTerm.trim() === "") {
       setFetchedProposals([]);
@@ -43,28 +36,6 @@ const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, da
   const displayedProposals =
     searchTerm.trim() === "" ? allProposals : fetchedProposals;
 
-  // Pagination logic
-  const totalPages = Math.ceil(displayedProposals.length / proposalsPerPage);
-  const indexOfLastProposal = currentPage * proposalsPerPage;
-  const indexOfFirstProposal = indexOfLastProposal - proposalsPerPage;
-  const currentProposals = displayedProposals.slice(indexOfFirstProposal, indexOfLastProposal);
-
-  // Handle next and previous pages
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const handlePageClick = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
 
   return (
     <div className="mt-6 mb-6">
@@ -108,47 +79,19 @@ const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, da
         )}
         <div className={`${showActions ? "w-full border-t py-6 border-[#0000004D] rounded-[10px] mb-4" : ""}`}>
           <div className="bg-transparent rounded flex flex-col gap-8">
-            {currentProposals.length === 0 ? (
+            {displayedProposals.length === 0 ? (
               <p className="text-center font-black">
                 <img src={nodata} alt="No Data" className="mx-auto block " />
                 <p className="text-xl mt-5 font-bold">No Proposal Found!</p>
               </p>
             ) : (
-              currentProposals.map((proposal, index) => (
+              displayedProposals.map((proposal, index) => (
                 <div className="desktop:mx-[-24px]" key={index}>
                   <Card key={index} proposal={proposal} voteApi={voteApi} />
                 </div>
               ))
             )}
           </div>
-          {/* Pagination Controls */}
-          {totalPages > 1 && (
-            <div className="flex justify-center mt-4">
-              <button
-                onClick={handlePreviousPage}
-                disabled={currentPage === 1}
-                className="mr-2 p-2 border"
-              >
-                Previous
-              </button>
-              {[...Array(totalPages)].map((_, pageNumber) => (
-                <button
-                  key={pageNumber + 1}
-                  onClick={() => handlePageClick(pageNumber + 1)}
-                  className={`p-2 border ${currentPage === pageNumber + 1 ? "bg-gray-300" : ""}`}
-                >
-                  {pageNumber + 1}
-                </button>
-              ))}
-              <button
-                onClick={handleNextPage}
-                disabled={currentPage === totalPages}
-                className="ml-2 p-2 border"
-              >
-                Next
-              </button>
-            </div>
-          )}
         </div>
       </div>
     </div>
