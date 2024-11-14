@@ -102,7 +102,6 @@ const FeedPage = () => {
       const currentProposals = allProposals.slice(start, end);
 
       setProposals(currentProposals);
-      setHasMore(end < allProposals.length);
       setTotalPages(Math.ceil(allProposals.length / itemsPerPage));
     } catch (error) {
       console.error("Error fetching DAOs and proposals:", error);
@@ -146,8 +145,8 @@ const FeedPage = () => {
     setCurrentPage(pageNumber);
   };
 
-  const currentGroupStart = Math.floor((currentPage - 1) / pageGroupSize) * pageGroupSize + 1;
-const currentGroupEnd = Math.min(currentGroupStart + pageGroupSize - 1, totalPages);
+  const currentGroupStart = Math.max(currentPage - 1, 0) + 1;
+  const currentGroupEnd = Math.min(currentGroupStart + pageGroupSize - 1, totalPages);  
 
 
   return (
