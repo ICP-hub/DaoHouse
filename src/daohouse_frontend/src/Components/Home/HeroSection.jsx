@@ -68,22 +68,22 @@ const HeroSection = () => {
 
       {/* Mobile View */}
       <div className="relative md:hidden flex flex-col justify-center items-center translate-y-[-180px]  overflow-hidden mt-[100px]">
-      <div className="md:w-[600px] w-full px-2 py-8 flex flex-col items-center text-center md:items-start md:text-left mt-5 gap-4 md:gap-6 z-10">
+      <div className="md:w-[600px] w-full px-2 py-8 flex flex-col items-center text-center md:items-start md:text-left mt-5 gap-4 md:gap-6 z-10 mobile-margin-heading">
           <img
             src={bgLine}
             alt="hero section gradient"
-            className="sm:top-[210px] top-[185px] right-[62%] sm:right-[65%] w-[90px]  z-[-1] sticky"
+            className="sm:top-[210px] top-[185px] right-[62%] sm:right-[65%] w-[90px]  z-[-1] sticky highlight-heading"
           />
           <img
             src={bgLine}
             alt="hero section gradient"
-            className="top-[125px] sm:top-[130px] left-[59%] sm:left-[60%]  w-[90px]  z-[-1] sticky"
+            className="top-[125px] sm:top-[130px] left-[59%] sm:left-[60%]  w-[90px]  z-[-1] sticky highlight-heading"
           />
           <div className="md:ml-[60px] lg:ml-[0px] mt-[-16px] md:mt-0 lg:mt-16 flex flex-col gap-0 md:gap-2 justify-center">
-            <p className="text-[#0E3746] font-mulish font-bold text-center text-[40px] sm:text-[50px] md:text-6xl lg:text-[72px] justify-center">
+            <p className="text-[#0E3746] font-mulish font-bold text-center text-[40px] sm:text-[50px] md:text-6xl lg:text-[72px] justify-center home-mobile-text">
               Building Better
             </p>
-            <p className="text-[#0E3746] font-mulish font-bold text-center text-[40px] sm:text-[50px] md:text-6xl lg:text-[72px]">
+            <p className="text-[#0E3746] font-mulish font-bold text-center text-[40px] sm:text-[50px] md:text-6xl lg:text-[72px] home-mobile-text">
               Future, Together
             </p>
           </div>

@@ -56,6 +56,7 @@ const DaoProfile = () => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [followersCount, setFollowersCount] = useState(0);
   const [userProfile, setUserProfile] = useState(null);
+  const itemsPerPage = 4;
 
 
   const fetchMetadataAndBalance = async (tokenActor, ownerPrincipal) => {
@@ -310,7 +311,9 @@ const DaoProfile = () => {
   };
 
    useEffect(()=>{
-    daoBalance();
+    if(dao?.token_ledger_id?.id){
+      daoBalance();
+    }
   },[dao?.token_ledger_id?.id]) 
 
   return (

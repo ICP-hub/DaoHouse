@@ -15,14 +15,12 @@ const FeedPage = () => {
   const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [hasMore, setHasMore] = useState(true);
   const [proposals, setProposals] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const pageGroupSize = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
   const [totalPages, setTotalPages] = useState(1);
-
   const className = "FeedPage";
 
 
@@ -102,7 +100,6 @@ const FeedPage = () => {
       const currentProposals = allProposals.slice(start, end);
 
       setProposals(currentProposals);
-      setHasMore(end < allProposals.length);
       setTotalPages(Math.ceil(allProposals.length / itemsPerPage));
     } catch (error) {
       console.error("Error fetching DAOs and proposals:", error);
@@ -145,6 +142,10 @@ const FeedPage = () => {
   const handlePageClick = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
+
+  const currentGroupStart = Math.max(currentPage - 1, 0) + 1;
+  const currentGroupEnd = Math.min(currentGroupStart + pageGroupSize - 1, totalPages);  
+
 
   return (
     <div className={`${className} w-full`}>
@@ -190,61 +191,63 @@ const FeedPage = () => {
       </div>
 
       {/* Post Section */}
-      <div
-        className={`${className}__postCards mobile:px-10 px-6 pb-10 bg-[#c8ced3] gap-8 flex flex-col`}
-      >
-        {loading ? (
-          <ProposalLoaderSkeleton />
-        ) : proposals.length === 0 ? (
-          <div className="flex justify-center items-center h-full mb-10 mt-10 ">
-            <Container className="w-full flex flex-col items-center justify-center   ">
-              <img src={nodata} alt="No Data" className="mb-1  ml-[42px]" />
-              <p className="text-center mt-4  text-gray-700 text-base">
-                You have not created any DAO
-              </p>
-
-            </Container>
-          </div>
-        ) : (
-          <div className="mx-2 small_phone:mx-4 mobile:mx-1 lg:mx-16 desktop:mx-20 ">
-            <Container>
-              <div className="desktop:mx-12">
-                <ProposalsContent
-                  proposals={proposals}
-                  isMember={true}
-                  showActions={false}
-                />
-              </div>
-              <div className="flex justify-center mt-4 mb-4">
-                <button
-                  onClick={handlePreviousPage}
-                  disabled={currentPage === 1}
-                  className="mr-2 p-2 border"
-                >
-                  Previous
-                </button>
-                {[...Array(totalPages)].map((_, pageNumber) => (
-                  <button
-                    key={pageNumber + 1}
-                    onClick={() => handlePageClick(pageNumber + 1)}
-                    className={`p-2 border ${currentPage === pageNumber + 1 ? "bg-black text-white" : ""}`}
-                  >
-                    {pageNumber + 1}
-                  </button>
-                ))}
-                <button
-                  onClick={handleNextPage}
-                  disabled={currentPage === totalPages}
-                  className="ml-2 p-2 border"
-                >
-                  Next
-                </button>
-              </div>
-
-            </Container>
-          </div>
-        )}
+      <div className={`${className}__postCards mobile:px-10 px-6 pb-10 bg-[#c8ced3] gap-8 flex flex-col`}>
+    {loading ? (
+      <ProposalLoaderSkeleton />
+    ) : proposals.length === 0 ? (
+      <div className="flex justify-center items-center h-full mb-10 mt-10">
+        <Container className="w-full flex flex-col items-center justify-center">
+          <img src={nodata} alt="No Data" className="mb-1 ml-[42px]" />
+          <p className="text-center mt-4 text-gray-700 text-base">
+            You have not created any DAO
+          </p>
+        </Container>
       </div>
+    ) : (
+      <div className="mx-2 small_phone:mx-4 mobile:mx-1 lg:mx-16 desktop:mx-20">
+        <Container>
+          <div className="desktop:mx-12">
+            <ProposalsContent
+              proposals={proposals}
+              isMember={true}
+              showActions={false}
+            />
+          </div>
+          <div className="flex justify-center mt-4 mb-4">
+            <button
+              onClick={handlePreviousPage}
+              disabled={currentPage === 1}
+              className="mr-2 p-2 border"
+            >
+              Previous
+            </button>
+
+            {/* Page buttons based on the current group */}
+            {[...Array(currentGroupEnd - currentGroupStart + 1)].map((_, idx) => {
+              const pageNumber = currentGroupStart + idx;
+              return (
+                <button
+                  key={pageNumber}
+                  onClick={() => handlePageClick(pageNumber)}
+                  className={`p-2 border ${currentPage === pageNumber ? "bg-black text-white" : ""}`}
+                >
+                  {pageNumber}
+                </button>
+              );
+            })}
+
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+              className="ml-2 p-2 border"
+            >
+              Next
+            </button>
+          </div>
+        </Container>
+      </div>
+    )}
+  </div>
 
       {/* Login Modal */}
       {showLoginModal && (
