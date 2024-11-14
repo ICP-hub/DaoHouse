@@ -116,14 +116,10 @@ const DaoProfile = () => {
       setLoadingProfile(true);
       if (daoCanisterId) {
         try {
-          // setVoteApi(daoActor);
           const daoActor = await createDaoActor(daoCanisterId);
           setDaoActor(daoActor);
           const daoDetails = await daoActor.get_dao_detail();
-          console.log("details", daoDetails);
           setDao(daoDetails);
-
-          // Fetch user profile
           const profileResponse = await backendActor.get_user_profile();
           if (profileResponse.Ok) {
             setUserProfile(profileResponse.Ok);
@@ -171,7 +167,6 @@ const DaoProfile = () => {
             start: pagination.start,
             end: pagination.end + 1,
           };
-          console.log("proposalPagination : ",proposalPagination);
           const proposals = await daoActor.get_all_proposals(proposalPagination);
           const hasMoreData = proposals.length > itemsPerPage;
           setHasMore(hasMoreData);
