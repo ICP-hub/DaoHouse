@@ -97,6 +97,9 @@ function CreateProposal() {
 
   const [errorMessage, setErrorMessage] = useState("");
   const [descriptionError, setDescriptionError] = useState("");
+  const [pollTitleError, setPollTitleError] = useState("");
+  const [pollDescriptionError, setPollDescriptionError] = useState("");
+
 
   const cancelMakePrivate = () => {
     setShowModal(false);
@@ -327,6 +330,9 @@ function CreateProposal() {
     setLoading(true);
     setErrorMessage(""); // Reset error message
     setDescriptionError(""); // Reset error message
+    setPollTitleError(""); // Reset poll title error
+    setPollDescriptionError(""); // Reset poll description error
+
 
     // Basic validation
     if (!proposalType) {
@@ -356,6 +362,19 @@ function CreateProposal() {
       setDescriptionError("Please fill out this field");
       setLoading(false);
       return;
+    }
+
+    if (proposalType === "Poll") {
+      if (!poll.poll_title) {
+        setPollTitleError("Poll Title is required.");
+        setLoading(false);
+        return;
+      }
+      if (!poll.description) {
+        setPollDescriptionError("Poll Description is required.");
+        setLoading(false);
+        return;
+      }
     }
 
 
@@ -1036,6 +1055,8 @@ function CreateProposal() {
                       poll={poll}
                       setPoll={setPoll}
                       handleInputPoll={handleInputPoll}
+                      pollTitleError={pollTitleError} // Pass error state
+                      pollDescriptionError={pollDescriptionError} // Pass error state
                     />
                   )}
 

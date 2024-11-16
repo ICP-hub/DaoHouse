@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 
-const Poll = ({ poll, handleInputPoll, setPoll }) => {
+const Poll = ({ poll, handleInputPoll, setPoll, pollTitleError, pollDescriptionError }) => {
     const [options, setOptions] = useState([]); // Start with an empty array to hide initially
     const [newOption, setNewOption] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
-    const [formErrors, setFormErrors] = useState({}); // State to hold error messages for fields
+    const [getMessage, setGetMessage] = useState("");
 
     // Get today's date in the format YYYY-MM-DD
     const getTodayDate = () => {
@@ -20,28 +19,21 @@ const Poll = ({ poll, handleInputPoll, setPoll }) => {
         }));
     }, [setPoll]);
 
-    // Add a new option up to the limit of 4, and check for duplicates
+    // Add a new option up to the limit of 4
     const addOption = () => {
-        if (newOption.trim() === "") {
-            setErrorMessage("Option cannot be empty.");
-            return;
+        if (newOption.trim() && options.length < 4) {
+            setOptions([...options, { option: newOption }]);
+            setNewOption("");
+            setPoll((prevPoll) => ({
+                ...prevPoll,
+                poll_options: [...options, { option: newOption }],
+            }));
+            setGetMessage(""); // Clear any existing error messages
+        } else if (options.length >= 4) {
+            setGetMessage("You can add a maximum of 4 options.");
+        } else if (options.length < 2) {
+            setGetMessage("Please add at least 2 options.");
         }
-        if (options.length >= 4) {
-            setErrorMessage("You can add a maximum of 4 options.");
-            return;
-        }
-        if (options.some(option => option.option.toLowerCase() === newOption.toLowerCase())) {
-            setErrorMessage("Poll options must be unique.");
-            return;
-        }
-
-        setOptions([...options, { option: newOption }]);
-        setNewOption("");
-        setPoll((prevPoll) => ({
-            ...prevPoll,
-            poll_options: [...options, { option: newOption }],
-        }));
-        setErrorMessage(""); // Clear any existing error messages
     };
 
     // Remove an option
@@ -52,28 +44,8 @@ const Poll = ({ poll, handleInputPoll, setPoll }) => {
             ...prevPoll,
             poll_options: newOptions,
         }));
-        setErrorMessage(""); // Clear error message when option count changes
+        setGetMessage(""); // Clear error message when option count changes
     };
-
-    // Validate required fields
-    const validateFields = () => {
-        const errors = {};
-        if (!poll.poll_title.trim()) {
-            errors.poll_title = "Please fill in the poll title.";
-        }
-        if (!poll.description.trim()) {
-            errors.description = "Please fill in the description.";
-        }
-        if (!poll.proposal_expired_at) {
-            errors.proposal_expired_at = "Please select an expiration date.";
-        }
-        setFormErrors(errors);
-    };
-
-    // Trigger validation when poll values change
-    useEffect(() => {
-        validateFields();
-    }, [poll]);
 
     return (
         <form className="space-y-4">
@@ -84,15 +56,12 @@ const Poll = ({ poll, handleInputPoll, setPoll }) => {
                     type="text"
                     name="poll_title"
                     value={poll.poll_title}
-                    onChange={(e) => {
-                        handleInputPoll(e);
-                        setFormErrors({ ...formErrors, poll_title: "" }); // Clear error on input
-                    }}
+                    onChange={handleInputPoll}
                     className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                     placeholder="Enter Poll Title"
                     required
                 />
-                {formErrors.poll_title && <p className="text-red-500">{formErrors.poll_title}</p>}
+                {pollTitleError && <p className="text-red-500 text-sm">{pollTitleError}</p>} {/* Display error */}
             </div>
 
             <div className="mb-4">
@@ -102,29 +71,23 @@ const Poll = ({ poll, handleInputPoll, setPoll }) => {
                     type="text"
                     name="description"
                     value={poll.description}
-                    onChange={(e) => {
-                        handleInputPoll(e);
-                        setFormErrors({ ...formErrors, description: "" }); // Clear error on input
-                    }}
+                    onChange={handleInputPoll}
                     className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                     placeholder="Enter Description"
                     rows={4}
                     required
                 />
-                {formErrors.description && <p className="text-red-500">{formErrors.description}</p>}
+                {pollDescriptionError && <p className="text-red-500 text-sm">{pollDescriptionError}</p>} {/* Display error */}
             </div>
 
             {/* Add option input and button */}
             <div className="mb-4">
-                <label htmlFor="polltitle" className="mb-2 font-semibold text-xl">Poll Options</label>
+                <label htmlFor="pollOptions" className="mb-2 font-semibold text-xl">Poll Options</label>
                 <div className="flex items-center space-x-2 mb-4">
                     <input
                         type="text"
                         value={newOption}
-                        onChange={(e) => {
-                            setNewOption(e.target.value);
-                            setErrorMessage(""); // Clear error when typing starts
-                        }}
+                        onChange={(e) => setNewOption(e.target.value)}
                         placeholder="Add option"
                         className="w-full px-4 py-2 border border-[#aba9a5] rounded-lg bg-white"
                     />
@@ -136,10 +99,8 @@ const Poll = ({ poll, handleInputPoll, setPoll }) => {
                         ADD
                     </button>
                 </div>
+                {getMessage && <p className="text-red-500">{getMessage}</p>} {/* Display option error message */}
             </div>
-
-            {/* Error Message for Poll Options */}
-            {errorMessage && <p className="text-red-500">{errorMessage}</p>}
 
             {/* Display added options only if there's at least one option */}
             {options.length > 0 && (
@@ -169,15 +130,11 @@ const Poll = ({ poll, handleInputPoll, setPoll }) => {
                     type="date"
                     name="proposal_expired_at"
                     value={poll.proposal_expired_at}
-                    onChange={(e) => {
-                        handleInputPoll(e);
-                        setFormErrors({ ...formErrors, proposal_expired_at: "" }); // Clear error on input
-                    }}
+                    onChange={handleInputPoll}
                     className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                     min={getTodayDate()}
                     required
                 />
-                {formErrors.proposal_expired_at && <p className="text-red-500">{formErrors.proposal_expired_at}</p>}
             </div>
         </form>
     );
