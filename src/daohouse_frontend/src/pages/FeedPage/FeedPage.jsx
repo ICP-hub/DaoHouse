@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import ProposalsContent from "../../Components/DaoProfile/ProposalsContent";
 import SearchProposals from "../../Components/Proposals/SearchProposals";
 import ProposalLoaderSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/ProposalLoaderSkeleton";
+import Pagination from "../../Components/pagination/Pagination";
 
 const FeedPage = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -17,15 +18,12 @@ const FeedPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [proposals, setProposals] = useState([]);
   const [loading, setLoading] = useState(false);
-  const pageGroupSize = 10;
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
-  const [totalPages, setTotalPages] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  let itemsPerPage = 4;
   const className = "FeedPage";
 
 
-
-  // Handle Login Functions
   const handleLogin = async () => {
     setLoading(true);
     try {
@@ -50,57 +48,36 @@ const FeedPage = () => {
     }
   };
 
-  // Handle Search Input Change with Debounce (Optional)
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1);
   };
 
-  // Fetch All Proposals Across All DAOs
-  const fetchAllProposals = async () => {
-    setLoading(true);
-    const daoPagination = {
-      start: 0,
-      end: 1000,
-    };
-
+  const fetchAllProposals = async (pagination = {}) => {
+    
     try {
-      // Fetch all DAOs
-      const allDaos = await backendActor.get_all_dao(daoPagination);
-      let allProposals = [];
-
+      setLoading(true);
+      const allDaos = await backendActor.get_all_dao();
       for (const dao of allDaos) {
         const proposalPagination = {
-          start: 0,
-          end: 1000,
+          start: pagination.start,
+          end: pagination.end + 1,
         };
-
         try {
           const daoActor = await createDaoActor(dao.dao_canister_id);
           const daoProposals = await daoActor.get_all_proposals(proposalPagination);
-          console.log(`Proposals from DAO ${dao.dao_canister_id}:`, daoProposals);
           const proposalsWithDaoId = daoProposals.map((proposal) => ({
             ...proposal,
             dao_canister_id: dao.dao_canister_id,
           }));
-          allProposals = allProposals.concat(proposalsWithDaoId);
+          const hasMoreData = daoProposals.length > itemsPerPage;
+          setHasMore(hasMoreData);
+          const proposalsToDisplay = proposalsWithDaoId.slice(0, itemsPerPage);
+          setProposals(proposalsToDisplay);
         } catch (error) {
           console.error(`Error fetching proposals from DAO ${dao.dao_canister_id}:`, error);
         }
       }
 
-      if (searchTerm.trim() !== "") {
-        allProposals = allProposals.filter((proposal) =>
-          proposal.proposal_id.toLowerCase().includes(searchTerm.trim().toLowerCase())
-        );
-      }
-
-      const start = (currentPage - 1) * itemsPerPage;
-      const end = start + itemsPerPage;
-      const currentProposals = allProposals.slice(start, end);
-
-      setProposals(currentProposals);
-      setTotalPages(Math.ceil(allProposals.length / itemsPerPage));
     } catch (error) {
       console.error("Error fetching DAOs and proposals:", error);
     } finally {
@@ -115,7 +92,7 @@ const FeedPage = () => {
       return;
     }
     setShowLoginModal(false);
-    fetchAllProposals();
+    fetchAllProposals({ start: (currentPage - 1) * itemsPerPage, end: currentPage * itemsPerPage });
 
   }, [isAuthenticated, backendActor, createDaoActor, currentPage, searchTerm]);
 
@@ -126,26 +103,6 @@ const FeedPage = () => {
       navigate("/");
     }
   };
-
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePageClick = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  const currentGroupStart = Math.max(currentPage - 1, 0) + 1;
-  const currentGroupEnd = Math.min(currentGroupStart + pageGroupSize - 1, totalPages);  
-
 
   return (
     <div className={`${className} w-full`}>
@@ -213,37 +170,7 @@ const FeedPage = () => {
               showActions={false}
             />
           </div>
-          <div className="flex justify-center mt-4 mb-4">
-            <button
-              onClick={handlePreviousPage}
-              disabled={currentPage === 1}
-              className="mr-2 p-2 border"
-            >
-              Previous
-            </button>
-
-            {/* Page buttons based on the current group */}
-            {[...Array(currentGroupEnd - currentGroupStart + 1)].map((_, idx) => {
-              const pageNumber = currentGroupStart + idx;
-              return (
-                <button
-                  key={pageNumber}
-                  onClick={() => handlePageClick(pageNumber)}
-                  className={`p-2 border ${currentPage === pageNumber ? "bg-black text-white" : ""}`}
-                >
-                  {pageNumber}
-                </button>
-              );
-            })}
-
-            <button
-              onClick={handleNextPage}
-              disabled={currentPage === totalPages}
-              className="ml-2 p-2 border"
-            >
-              Next
-            </button>
-          </div>
+          <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} hasMore={hasMore} />
         </Container>
       </div>
     )}

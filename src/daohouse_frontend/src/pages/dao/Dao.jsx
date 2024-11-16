@@ -21,7 +21,7 @@ const Dao = () => {
   const [loadingJoinedDAO, setLoaadingJoinedDao] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [fetchedDAOs, setFetchedDAOs] = useState([]);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
 
@@ -54,7 +54,7 @@ const Dao = () => {
   const getDaos = async (pagination = {}) => {
     setLoading(true);
     try {
-      const response = await backendActor.get_all_dao({
+      const response = await backendActor.get_all_dao_pagination({
         start: pagination.start,
         end: pagination.end + 1
       });

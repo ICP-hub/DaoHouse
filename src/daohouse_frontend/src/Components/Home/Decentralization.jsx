@@ -27,7 +27,6 @@ const Decentralization = () => {
 
     try {
       const response = await backendActor?.get_analytics();
-      console.log("anltyics_API_response", response);
       setGetAnaltics(response?.Ok || {});
     } catch (error) {
       console.error("Error fetching analytics:", error);

@@ -5,13 +5,14 @@ chmod 777 ./create_profile.sh
 
 # ASSET_HANDLER_ID=$(dfx canister id ic_asset_handler)
 # echo "ASSET_HANDLER_ID: $ASSET_HANDLER_ID"
+# dfx ledger fabricate-cycles --all
 
-COUNT=12
+COUNT=1
 
 for ((i = 1; i <= COUNT; i++)); do
   dao_test=$(dfx canister call daohouse_backend create_dao '(
     record {
-      dao_name = "first dao";
+      dao_name = "1";
       purpose = "test krne ke liye ke chota sa sentence";
       link_of_document = "https://example.com/charter.pdf";
       cool_down_period = 7;
