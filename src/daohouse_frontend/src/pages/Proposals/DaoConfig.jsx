@@ -1,85 +1,4 @@
-// import React, { useEffect } from "react";
-
-
-// function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig, setLoading }) {
-//     console.log("dao in dao config", dao);
-//     console.log("dao name in dao config", daoConfig.new_dao_name);
-
-    
-//     useEffect(() => {
-//         // Set initial daoConfig values if they're not already set
-//         setDaoConfig((prevConfig) => ({
-//             ...prevConfig,
-//             new_dao_name: prevConfig.new_dao_name || dao.dao_name || "",
-//             purpose: prevConfig.purpose || dao.purpose || "",
-//         }));
-//     }, [dao, setDaoConfig]);
-
-//     return (
-//         <form className="space-y-4">
-//             <div className="mb-4">
-//                 <label htmlFor="description" className="mb-2 font-semibold text-xl">Description</label>
-//                 <textarea
-//                     id="description"
-//                     name="description"
-//                     value={daoConfig.description}
-//                     onChange={handleInputDaoConfig}
-//                     className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-//                     placeholder="Enter Description"
-//                     rows={4}
-//                     required
-//                 />
-//             </div>
-
-//             <div className="mb-4">
-//                 <label htmlFor="daoName" className="mb-2 font-semibold text-xl">DAO Name</label>
-//                 <input
-//                     id="NewdaoName"
-//                     type="text"
-//                     name="new_dao_name"
-//                     value={daoConfig.new_dao_name}
-//                     onChange={handleInputDaoConfig}
-//                     className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-//                     placeholder="Enter DAO Name"
-//                     required
-//                 />
-//             </div>
-
-//             {/* Uncomment if needed for additional fields
-//             <div className="mb-4">
-//                 <label htmlFor="actionMember" className="mb-2 font-semibold text-xl">Action Member (Principal)</label>
-//                 <input
-//                     id="actionMember"
-//                     type="text"
-//                     name="action_member"
-//                     value={daoConfig.action_member}
-//                     onChange={handleInputDaoConfig}
-//                     className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-//                     placeholder="Enter Action Member Principal"
-//                 />
-//             </div> 
-//             */}
-
-//             <div className="mb-4">
-//                 <label htmlFor="purpose" className="mb-2 font-semibold text-xl">DAO Purpose</label>
-//                 <input
-//                     id="purpose"
-//                     type="text"
-//                     name="purpose"
-//                     value={daoConfig.purpose}
-//                     onChange={handleInputDaoConfig}
-//                     className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-//                     placeholder="Enter Purpose"
-//                     required
-//                 />
-//             </div>
-//         </form>
-//     );
-// }
-
-// export default DaoConfig;
-
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 
 function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig, errors }) {
     useEffect(() => {
@@ -98,15 +17,15 @@ function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig, errors 
                 <textarea
                     id="description"
                     name="description"
-                    value={daoConfig.description}
+                    value={daoConfig?.description || ""}
                     onChange={handleInputDaoConfig}
                     className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                     placeholder="Enter Description"
                     rows={4}
                     required
                 />
-                {errors.description && (
-                    <p className="text-red-500 text-sm mt-1">{errors.description}</p>
+                {errors?.description && (
+                    <p className="text-red-500 text-sm mt-1">{errors?.description}</p>
                 )}
             </div>
 
@@ -116,14 +35,14 @@ function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig, errors 
                     id="NewdaoName"
                     type="text"
                     name="new_dao_name"
-                    value={daoConfig.new_dao_name}
+                    value={daoConfig?.new_dao_name}
                     onChange={handleInputDaoConfig}
                     className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                     placeholder="Enter DAO Name"
                     required
                 />
-                {errors.new_dao_name && (
-                    <p className="text-red-500 text-sm mt-1">{errors.new_dao_name}</p>
+                {errors?.new_dao_name && (
+                    <p className="text-red-500 text-sm mt-1">{errors?.new_dao_name}</p>
                 )}
             </div>
 
@@ -133,14 +52,14 @@ function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig, errors 
                     id="purpose"
                     type="text"
                     name="purpose"
-                    value={daoConfig.purpose}
+                    value={daoConfig?.purpose}
                     onChange={handleInputDaoConfig}
                     className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                     placeholder="Enter Purpose"
                     required
                 />
-                {errors.purpose && (
-                    <p className="text-red-500 text-sm mt-1">{errors.purpose}</p>
+                {errors?.purpose && (
+                    <p className="text-red-500 text-sm mt-1">{errors?.purpose}</p>
                 )}
             </div>
         </form>
