@@ -90,7 +90,7 @@ function CreateProposal() {
   };
 
   const [errorMessage, setErrorMessage] = useState("");
-  const [descriptionError, setDescriptionError] = useState("");
+
   const [pollTitleError, setPollTitleError] = useState("");
   const [pollDescriptionError, setPollDescriptionError] = useState("");
 
@@ -366,7 +366,7 @@ function CreateProposal() {
           await submitBountyRaised({
             proposal_entry: proposalEntry,
             description: bountyRaised.description,
-            tokens: Number(bountyRaised.tokens),
+            tokens: Number(bountyRaised.tokens) || 1,
             bounty_task: bountyRaised.bounty_task,
           });
           break;
@@ -376,7 +376,7 @@ function CreateProposal() {
             proposal_entry: proposalEntry,
             associated_proposal_id: bountyDone.associated_proposal_id,
             description: bountyDone.description,
-            tokens: Number(bountyDone.tokens),
+            tokens: Number(bountyDone.tokens) ||1,
           });
           break;
 

@@ -36,7 +36,7 @@ const BountyDone = ({ bountyDone, handleInputBountyDone, dao }) => (
           id="bountyTokens"
           type="number"
           name="tokens"
-          value={bountyDone.tokens || dao.total_tokens}
+          value={dao.total_tokens ? dao.total_tokens : bountyDone.tokens}
           onChange={handleInputBountyDone}
           className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
           placeholder="Enter Tokens"

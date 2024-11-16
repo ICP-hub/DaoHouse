@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 
 
 
-function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig,errorMessage , setLoading }) {
+function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig,errorMessage ,errors }) {
     console.log("dao in dao config", dao);
     console.log("dao name in dao config", daoConfig.new_dao_name);
 
