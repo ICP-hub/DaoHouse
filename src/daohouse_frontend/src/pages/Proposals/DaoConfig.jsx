@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 
-function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig, setLoading }) {
+function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig,errorMessage , setLoading }) {
     console.log("dao in dao config", dao);
     console.log("dao name in dao config", daoConfig.new_dao_name);
     useEffect(() => {
@@ -27,6 +27,10 @@ function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig, setLoad
                     rows={4}
                     required
                 />
+
+                   {errorMessage && (
+                    <p className="text-red-500 text-sm">{errorMessage}</p>
+                )}
             </div>
 
             <div className="mb-4">

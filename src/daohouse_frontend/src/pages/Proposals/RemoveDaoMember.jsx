@@ -1,6 +1,6 @@
 import React from "react";
 
-const RemoveDaoMember = ({ removeDaoMember, handleInputRemoveDaoMember }) => (
+const RemoveDaoMember = ({ removeDaoMember, handleInputRemoveDaoMember,errorMessage  }) => (
     <form className="space-y-4">
         <div className="mb-4">
             <label htmlFor="description" className="mb-2 font-semibold text-xl">Description</label>
@@ -14,6 +14,10 @@ const RemoveDaoMember = ({ removeDaoMember, handleInputRemoveDaoMember }) => (
                 placeholder="Enter Description"
                 required
             />
+            
+            {errorMessage && (
+                    <p className="text-red-500 text-sm">{errorMessage}</p>
+                )}
         </div>
 
         <div className="mb-4">

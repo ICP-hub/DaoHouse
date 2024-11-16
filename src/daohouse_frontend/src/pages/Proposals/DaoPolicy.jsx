@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect } from "react";
 
-const DaoPolicy = ({ changePolicy, handleInputDaoPolicy, dao ,setShowModal,isPrivate,showModal,cancelMakePrivate,confirmMakePrivate,modalMessage}) => {
+const DaoPolicy = ({ changePolicy, handleInputDaoPolicy, dao ,setShowModal,isPrivate,showModal,cancelMakePrivate,confirmMakePrivate,modalMessage,errorMessage}) => {
     
    return(
 
@@ -50,9 +50,12 @@ const DaoPolicy = ({ changePolicy, handleInputDaoPolicy, dao ,setShowModal,isPri
                 onChange={handleInputDaoPolicy}
                 className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                 placeholder="Enter Description"
-                rows={4}
                 required
+                rows={4}
             />
+             {errorMessage && (
+                        <p className="text-red-500 text-sm">{errorMessage}</p>
+                    )}
         </div>
 
         {/* <div className="mb-4">

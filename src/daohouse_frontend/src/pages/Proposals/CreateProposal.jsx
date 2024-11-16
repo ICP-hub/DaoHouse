@@ -95,6 +95,9 @@ function CreateProposal() {
     });
   };
 
+  const [errorMessage, setErrorMessage] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
+
   const cancelMakePrivate = () => {
     setShowModal(false);
 
@@ -322,6 +325,8 @@ function CreateProposal() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setErrorMessage(""); // Reset error message
+    setDescriptionError(""); // Reset error message
 
     // Basic validation
     if (!proposalType) {
@@ -332,6 +337,23 @@ function CreateProposal() {
 
     if (!proposalEntry) {
       toast.error("Please select a proposal entry.");
+      setLoading(false);
+      return;
+    }
+    if (proposalType === "ChangePolicy" && !changePolicy.description) {
+      setErrorMessage("Please fill out this field.");
+      setLoading(false);
+      return;
+    }
+
+    if (proposalType === "DaoConfig" && !daoConfig.description) {
+      setDescriptionError("Please fill out this field");
+      setLoading(false);
+      return;
+    }
+
+    if (proposalType === "RemoveDaoMember" && !removeDaoMember.description) {
+      setDescriptionError("Please fill out this field");
       setLoading(false);
       return;
     }
@@ -965,6 +987,7 @@ function CreateProposal() {
                       handleInputDaoConfig={handleInputDaoConfig}
                       dao={dao}
                       setDaoConfig={setDaoConfig}
+                      errorMessage={descriptionError}
                     />
                   )}
 
@@ -1004,6 +1027,7 @@ function CreateProposal() {
                       confirmMakePrivate={confirmMakePrivate}
                       modalMessage={modalMessage}
                       showModal={showModal}
+                      errorMessage={errorMessage}
                     />
                   )}
 
@@ -1019,6 +1043,7 @@ function CreateProposal() {
                     <RemoveDaoMember
                       removeDaoMember={removeDaoMember}
                       handleInputRemoveDaoMember={handleInputRemoveDaoMember}
+                      errorMessage={descriptionError}
                     />
                   )}
 
