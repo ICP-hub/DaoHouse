@@ -284,40 +284,52 @@ function CreateProposal() {
     });
   };
 
+  // const handleInputPoll = (e) => {
+  //   const { name, value } = e.target;
+
+  //   if (name === "proposal_expired_at") {
+  //     const createdAtDate = new Date(poll.proposal_created_at); 
+  //     const selectedExpiredDate = new Date(value);
+
+  //     // Calculate the difference in days between the created at date and the selected expired at date
+  //     const differenceInDays = Math.floor(
+  //       (selectedExpiredDate - createdAtDate) / (1000 * 60 * 60 * 24)
+  //     );
+
+  //     // Store both the selected date (for frontend display) and the difference in days for the backend
+  //     setPoll({
+  //       ...poll,
+  //       proposal_expired_at: value, 
+  //       days_until_expiration: differenceInDays, 
+  //     });
+
+  //   } else {
+  //     setPoll({
+  //       ...poll,
+  //       [name]: value,
+  //     });
+
+  //   }
+  // };
+
   const handleInputPoll = (e) => {
     const { name, value } = e.target;
-
-    if (name === "proposal_expired_at") {
-      const createdAtDate = new Date(poll.proposal_created_at); 
-      const selectedExpiredDate = new Date(value);
-
-      // Calculate the difference in days between the created at date and the selected expired at date
-      const differenceInDays = Math.floor(
-        (selectedExpiredDate - createdAtDate) / (1000 * 60 * 60 * 24)
-      );
-
-      // Store both the selected date (for frontend display) and the difference in days for the backend
-      setPoll({
-        ...poll,
-        proposal_expired_at: value, 
-        days_until_expiration: differenceInDays, 
-      });
-
-    } else {
-      setPoll({
-        ...poll,
+    setPoll((prevPoll) => ({
+        ...prevPoll,
         [name]: value,
-      });
-
-    }
-  };
-
+    }));
+};
   const handleInputRemoveDaoMember = (e) => {
     setRemoveDaoMember({
       ...removeDaoMember,
       [e.target.name]: e.target.value,
     });
   };
+  const [titleError, setTitleError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
+  const [optionsError, setOptionsError] = useState("");
+  const [expiresAtError, setExpiresAtError] = useState("");
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -335,7 +347,31 @@ function CreateProposal() {
       setLoading(false);
       return;
     }
-
+    if (proposalType === "ChangePolicy" && !changePolicy.description.trim()) {
+      setDescriptionError("Description is required.");
+      setLoading(false);
+      return;
+  }
+//   if (!poll.poll_title.trim()) {
+//     setTitleError("Poll Title is required.");
+//     setLoading(false);
+//     return;
+// }
+// if (!poll.description.trim()) {
+//     setDescriptionError("Description is required.");
+//     setLoading(false);
+//     return;
+// }
+// if (poll.poll_options.length < 2) {
+//     setOptionsError("At least two poll options are required.");
+//     setLoading(false);
+//     return;
+// }
+// if (!poll.proposal_expired_at.trim()) {
+//     setExpiresAtError("Expiration Time is required.");
+//     setLoading(false);
+//     return;
+// }
 
     try {
       switch (proposalType) {
@@ -530,6 +566,8 @@ function CreateProposal() {
   };
 
   const submitBountyRaised = async (bountyRaised) => {
+    console.log("bounty raised",bountyRaised);
+    
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
       const response = await daoCanister.proposal_to_bounty_raised(bountyRaised);
@@ -723,14 +761,14 @@ function CreateProposal() {
   };
 
   const submitChangePolicy = async (changePolicy) => {
-    console.log("chajkdpayload",changePolicy);
+    console.log("chage dao policy payload",changePolicy);
     
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
       const response = await daoCanister.proposal_to_change_dao_policy(changePolicy);
       if(response.Ok) {
         toast.success(response.Ok);
-        movetodao();
+        // movetodao();
       } else {
         toast.error(response.Err)
       }
@@ -1004,6 +1042,8 @@ function CreateProposal() {
                       confirmMakePrivate={confirmMakePrivate}
                       modalMessage={modalMessage}
                       showModal={showModal}
+                      descriptionError={descriptionError}
+                      setDescriptionError={setDescriptionError}
                     />
                   )}
 
@@ -1012,6 +1052,15 @@ function CreateProposal() {
                       poll={poll}
                       setPoll={setPoll}
                       handleInputPoll={handleInputPoll}
+                    //  optionsError={optionsError}
+                    //  setOptionsError={setOptionsError}
+                    //  titleError={titleError}
+                    //  setTitleError={setTitleError}
+                    //  descriptionError={descriptionError}
+                    //  setDescriptionError={setDescriptionError}
+                    //  expiresAtError={expiresAtError}
+                    //  setExpiresAtError={setExpiresAtError}
+                     
                     />
                   )}
 
