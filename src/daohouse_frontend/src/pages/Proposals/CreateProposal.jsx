@@ -95,6 +95,12 @@ function CreateProposal() {
     });
   };
 
+  const [errorMessage, setErrorMessage] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
+  const [pollTitleError, setPollTitleError] = useState("");
+  const [pollDescriptionError, setPollDescriptionError] = useState("");
+
+
   const cancelMakePrivate = () => {
     setShowModal(false);
 
@@ -326,7 +332,7 @@ function CreateProposal() {
     });
   };
   const [titleError, setTitleError] = useState("");
-  const [descriptionError, setDescriptionError] = useState("");
+  
   const [optionsError, setOptionsError] = useState("");
   const [expiresAtError, setExpiresAtError] = useState("");
 
@@ -334,6 +340,11 @@ function CreateProposal() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setErrorMessage(""); // Reset error message
+    setDescriptionError(""); // Reset error message
+    setPollTitleError(""); // Reset poll title error
+    setPollDescriptionError(""); // Reset poll description error
+
 
     // Basic validation
     if (!proposalType) {
@@ -347,31 +358,37 @@ function CreateProposal() {
       setLoading(false);
       return;
     }
-    if (proposalType === "ChangePolicy" && !changePolicy.description.trim()) {
-      setDescriptionError("Description is required.");
+    if (proposalType === "ChangePolicy" && !changePolicy.description) {
+      setErrorMessage("Please fill out this field.");
       setLoading(false);
       return;
-  }
-//   if (!poll.poll_title.trim()) {
-//     setTitleError("Poll Title is required.");
-//     setLoading(false);
-//     return;
-// }
-// if (!poll.description.trim()) {
-//     setDescriptionError("Description is required.");
-//     setLoading(false);
-//     return;
-// }
-// if (poll.poll_options.length < 2) {
-//     setOptionsError("At least two poll options are required.");
-//     setLoading(false);
-//     return;
-// }
-// if (!poll.proposal_expired_at.trim()) {
-//     setExpiresAtError("Expiration Time is required.");
-//     setLoading(false);
-//     return;
-// }
+    }
+
+    if (proposalType === "DaoConfig" && !daoConfig.description) {
+      setDescriptionError("Please fill out this field");
+      setLoading(false);
+      return;
+    }
+
+    if (proposalType === "RemoveDaoMember" && !removeDaoMember.description) {
+      setDescriptionError("Please fill out this field");
+      setLoading(false);
+      return;
+    }
+
+    if (proposalType === "Poll") {
+      if (!poll.poll_title) {
+        setPollTitleError("Poll Title is required.");
+        setLoading(false);
+        return;
+      }
+      if (!poll.description) {
+        setPollDescriptionError("Poll Description is required.");
+        setLoading(false);
+        return;
+      }
+    }
+
 
     try {
       switch (proposalType) {
@@ -768,7 +785,7 @@ function CreateProposal() {
       const response = await daoCanister.proposal_to_change_dao_policy(changePolicy);
       if(response.Ok) {
         toast.success(response.Ok);
-        // movetodao();
+         movetodao();
       } else {
         toast.error(response.Err)
       }
@@ -1003,6 +1020,7 @@ function CreateProposal() {
                       handleInputDaoConfig={handleInputDaoConfig}
                       dao={dao}
                       setDaoConfig={setDaoConfig}
+                      errorMessage={descriptionError}
                     />
                   )}
 
@@ -1042,8 +1060,7 @@ function CreateProposal() {
                       confirmMakePrivate={confirmMakePrivate}
                       modalMessage={modalMessage}
                       showModal={showModal}
-                      descriptionError={descriptionError}
-                      setDescriptionError={setDescriptionError}
+                      errorMessage={errorMessage}
                     />
                   )}
 
@@ -1052,15 +1069,8 @@ function CreateProposal() {
                       poll={poll}
                       setPoll={setPoll}
                       handleInputPoll={handleInputPoll}
-                    //  optionsError={optionsError}
-                    //  setOptionsError={setOptionsError}
-                    //  titleError={titleError}
-                    //  setTitleError={setTitleError}
-                    //  descriptionError={descriptionError}
-                    //  setDescriptionError={setDescriptionError}
-                    //  expiresAtError={expiresAtError}
-                    //  setExpiresAtError={setExpiresAtError}
-                     
+                      pollTitleError={pollTitleError} // Pass error state
+                      pollDescriptionError={pollDescriptionError} // Pass error state
                     />
                   )}
 
@@ -1068,6 +1078,7 @@ function CreateProposal() {
                     <RemoveDaoMember
                       removeDaoMember={removeDaoMember}
                       handleInputRemoveDaoMember={handleInputRemoveDaoMember}
+                      errorMessage={descriptionError}
                     />
                   )}
 
