@@ -319,7 +319,7 @@ function CreateProposal() {
           await submitBountyRaised({
             proposal_entry: proposalEntry,
             description: bountyRaised.description,
-            tokens: Number(bountyRaised.tokens) || 1,
+            tokens: Number(bountyRaised.tokens),
             bounty_task: bountyRaised.bounty_task,
           });
           break;
@@ -329,16 +329,14 @@ function CreateProposal() {
             proposal_entry: proposalEntry,
             associated_proposal_id: bountyDone.associated_proposal_id,
             description: bountyDone.description,
-            tokens: Number(bountyDone.tokens) || 1,
+            tokens: Number(bountyDone.tokens),
           });
           break;
 
         case 'GeneralPurp':
           await submitGeneralPurp({
             proposal_entry: proposalEntry,
-       
-            description: generalPurp.description,
-      
+            description: generalPurp.description,      
             proposal_title: generalPurp.proposalTitle,
            
           });
@@ -376,8 +374,8 @@ function CreateProposal() {
             proposal_entry: proposalEntry,
             description: changePolicy.description,
             ask_to_join_dao : isPrivate,
-            cool_down_period: Number(changePolicy.cool_down_period) || 1,
-            required_votes: Number(changePolicy.required_votes) || 1,
+            cool_down_period: Number(changePolicy.cool_down_period),
+            required_votes: Number(changePolicy.required_votes),
           });
           break;
 
@@ -403,7 +401,7 @@ function CreateProposal() {
 
           case "MintNewTokens":
             await submitMintNewTokens({
-              total_amount: Number(mintNewTokens.total_amount) || 0,
+              total_amount: Number(mintNewTokens.total_amount),
               description: mintNewTokens.description,
               proposal_entry: proposalEntry,
             });
