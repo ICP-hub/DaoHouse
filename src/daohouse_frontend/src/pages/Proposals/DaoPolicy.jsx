@@ -1,11 +1,8 @@
 import React from "react";
 
-const DaoPolicy = ({ changePolicy, handleInputDaoPolicy, dao, setShowModal, isPrivate, showModal, cancelMakePrivate, confirmMakePrivate, modalMessage, descriptionError, setDescriptionError }) => {
-  const handleDescriptionChange = (e) => {
-    setDescriptionError("");
-    handleInputDaoPolicy(e);
-  };
-  return (
+const DaoPolicy = ({ changePolicy, handleInputDaoPolicy, dao ,setShowModal,isPrivate,showModal,cancelMakePrivate,confirmMakePrivate,modalMessage,errorMessage}) => {
+    
+   return(
 
 
 
@@ -43,19 +40,21 @@ const DaoPolicy = ({ changePolicy, handleInputDaoPolicy, dao, setShowModal, isPr
 
 
         <div className="mb-4">
-          <label htmlFor="description" className="mb-2 font-semibold text-xl">Description</label>
-          <textarea
-            id="description"
-            type="text"
-            name="description"
-            value={changePolicy.description}
-            onChange={handleDescriptionChange}
-            className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-            placeholder="Enter Description"
-            rows={4}
-            required
-          />
-          {descriptionError && <p className="text-red-500 mt-1">{descriptionError}</p>}
+            <label htmlFor="description" className="mb-2 font-semibold text-xl">Description</label>
+            <textarea
+                id="description"
+                type="text"
+                name="description"
+                value={changePolicy.description}
+                onChange={handleInputDaoPolicy}
+                className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+                placeholder="Enter Description"
+                required
+                rows={4}
+            />
+             {errorMessage && (
+                        <p className="text-red-500 text-sm">{errorMessage}</p>
+                    )}
         </div>
 
 
