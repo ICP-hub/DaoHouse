@@ -90,7 +90,7 @@ function CreateProposal() {
   };
 
   const [errorMessage, setErrorMessage] = useState("");
-  const [descriptionError, setDescriptionError] = useState("");
+ 
   const [pollTitleError, setPollTitleError] = useState("");
   const [pollDescriptionError, setPollDescriptionError] = useState("");
 
