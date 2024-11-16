@@ -1,9 +1,11 @@
 import React, { useEffect } from "react";
 
 
+
 function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig,errorMessage , setLoading }) {
     console.log("dao in dao config", dao);
     console.log("dao name in dao config", daoConfig.new_dao_name);
+
     useEffect(() => {
         // Set initial daoConfig values if they're not already set
         setDaoConfig((prevConfig) => ({
@@ -20,7 +22,7 @@ function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig,errorMes
                 <textarea
                     id="description"
                     name="description"
-                    value={daoConfig.description}
+                    value={daoConfig?.description || ""}
                     onChange={handleInputDaoConfig}
                     className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                     placeholder="Enter Description"
@@ -30,6 +32,7 @@ function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig,errorMes
 
                    {errorMessage && (
                     <p className="text-red-500 text-sm">{errorMessage}</p>
+
                 )}
             </div>
 
@@ -39,12 +42,17 @@ function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig,errorMes
                     id="NewdaoName"
                     type="text"
                     name="new_dao_name"
-                    value={daoConfig.new_dao_name}
+                    value={daoConfig?.new_dao_name}
                     onChange={handleInputDaoConfig}
                     className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                     placeholder="Enter DAO Name"
                     required
                 />
+
+                {errors?.new_dao_name && (
+                    <p className="text-red-500 text-sm mt-1">{errors?.new_dao_name}</p>
+                )}
+
             </div>
 
             {/* Uncomment if needed for additional fields
@@ -68,12 +76,17 @@ function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig,errorMes
                     id="purpose"
                     type="text"
                     name="purpose"
-                    value={daoConfig.purpose}
+                    value={daoConfig?.purpose}
                     onChange={handleInputDaoConfig}
                     className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                     placeholder="Enter Purpose"
                     required
                 />
+
+                {errors?.purpose && (
+                    <p className="text-red-500 text-sm mt-1">{errors?.purpose}</p>
+                )}
+
             </div>
         </form>
     );

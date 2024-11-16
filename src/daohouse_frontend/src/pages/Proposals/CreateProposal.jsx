@@ -4,7 +4,6 @@ import createProposalNew from "../../../assets/gif/createProposalNew.svg";
 import Container from "../../Components/Container/Container";
 import { useAuth } from "../../Components/utils/useAuthClient";
 import toast from 'react-hot-toast';
-import { CircularProgress } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { Principal } from "@dfinity/principal";
 import BountyDone from "./BountyDone";
@@ -21,16 +20,13 @@ import { createActor } from "../../../../declarations/icp_ledger_canister";
 import TokenPaymentModal from "./TokenPaymentModal";
 import MintNewTokens from "./MintNewTokens";
 
-
-
-
 function CreateProposal() {
-
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loadingPayment, setLoadingPayment] = useState(false);
   const [proposalType, setProposalType] = useState('');
   const [dao, setDao] = useState(null);
+  const [descriptionError, setDescriptionError] = useState("");
   const [proposalEntry, setProposalEntry] = useState(''); 
   const [tokenTransfer, setTokenTransfer] = useState({
     to: '',
@@ -77,9 +73,7 @@ function CreateProposal() {
     bounty_task: '',
   });
 
-  const [isPrivate, setIsPrivate] = useState(true);
-  console.log("private",isPrivate);
-  
+  const [isPrivate, setIsPrivate] = useState(true);  
   const [showModal, setShowModal] = useState(false);
   const modalMessage = isPrivate
   ? "This action will make the DAO public, allowing anyone to join without creating a proposal. Are you sure you want to make it public?"
@@ -158,11 +152,7 @@ function CreateProposal() {
         if (daoActor) {
           const daoDetails = await daoActor.get_dao_detail();
           setDao(daoDetails);
-          console.log(daoDetails);
-            // Set isPrivate based on the fetched DAO details
-            setIsPrivate(daoDetails.ask_to_join_dao); // Update isPrivate based on API response
-
-          
+            setIsPrivate(daoDetails.ask_to_join_dao);
           const names = daoDetails.proposal_entry.filter((group) => group.place_name !== "Council").map((group) => group.place_name );
           setGroupNames(names);
         }
@@ -290,34 +280,6 @@ function CreateProposal() {
     });
   };
 
-  // const handleInputPoll = (e) => {
-  //   const { name, value } = e.target;
-
-  //   if (name === "proposal_expired_at") {
-  //     const createdAtDate = new Date(poll.proposal_created_at); 
-  //     const selectedExpiredDate = new Date(value);
-
-  //     // Calculate the difference in days between the created at date and the selected expired at date
-  //     const differenceInDays = Math.floor(
-  //       (selectedExpiredDate - createdAtDate) / (1000 * 60 * 60 * 24)
-  //     );
-
-  //     // Store both the selected date (for frontend display) and the difference in days for the backend
-  //     setPoll({
-  //       ...poll,
-  //       proposal_expired_at: value, 
-  //       days_until_expiration: differenceInDays, 
-  //     });
-
-  //   } else {
-  //     setPoll({
-  //       ...poll,
-  //       [name]: value,
-  //     });
-
-  //   }
-  // };
-
   const handleInputPoll = (e) => {
     const { name, value } = e.target;
     setPoll((prevPoll) => ({
@@ -331,10 +293,12 @@ function CreateProposal() {
       [e.target.name]: e.target.value,
     });
   };
+
   const [titleError, setTitleError] = useState("");
   
   const [optionsError, setOptionsError] = useState("");
   const [expiresAtError, setExpiresAtError] = useState("");
+
 
 
   const handleSubmit = async (e) => {
@@ -374,6 +338,7 @@ function CreateProposal() {
       setDescriptionError("Please fill out this field");
       setLoading(false);
       return;
+
     }
 
     if (proposalType === "Poll") {
@@ -390,6 +355,7 @@ function CreateProposal() {
     }
 
 
+ 
     try {
       switch (proposalType) {
         case "tokenTransfer":
@@ -400,7 +366,7 @@ function CreateProposal() {
           await submitBountyRaised({
             proposal_entry: proposalEntry,
             description: bountyRaised.description,
-            tokens: Number(bountyRaised.tokens) || 1,
+            tokens: Number(bountyRaised.tokens),
             bounty_task: bountyRaised.bounty_task,
           });
           break;
@@ -410,16 +376,14 @@ function CreateProposal() {
             proposal_entry: proposalEntry,
             associated_proposal_id: bountyDone.associated_proposal_id,
             description: bountyDone.description,
-            tokens: Number(bountyDone.tokens) || 1,
+            tokens: Number(bountyDone.tokens),
           });
           break;
 
         case 'GeneralPurp':
           await submitGeneralPurp({
             proposal_entry: proposalEntry,
-       
-            description: generalPurp.description,
-      
+            description: generalPurp.description,      
             proposal_title: generalPurp.proposalTitle,
            
           });
@@ -428,9 +392,9 @@ function CreateProposal() {
         case "DaoConfig":
           await submitDaoConfig({
             proposal_entry: proposalEntry,
-            description: daoConfig.description,
-            new_dao_name: daoConfig.new_dao_name,
-            purpose: daoConfig.purpose,
+            description: daoConfig?.description,
+            new_dao_name: daoConfig?.new_dao_name,
+            purpose: daoConfig?.purpose,
           });
           break;
 
@@ -457,8 +421,8 @@ function CreateProposal() {
             proposal_entry: proposalEntry,
             description: changePolicy.description,
             ask_to_join_dao : isPrivate,
-            cool_down_period: Number(changePolicy.cool_down_period) || 1,
-            required_votes: Number(changePolicy.required_votes) || 1,
+            cool_down_period: Number(changePolicy.cool_down_period),
+            required_votes: Number(changePolicy.required_votes),
           });
           break;
 
@@ -484,7 +448,7 @@ function CreateProposal() {
 
           case "MintNewTokens":
             await submitMintNewTokens({
-              total_amount: Number(mintNewTokens.total_amount) || 0,
+              total_amount: Number(mintNewTokens.total_amount),
               description: mintNewTokens.description,
               proposal_entry: proposalEntry,
             });
@@ -512,11 +476,11 @@ function CreateProposal() {
       let response = await transferApprove(currentBalance,actor,formattedMetadata,tokenTransfer.tokens);
       console.log("res", response);
       
-      if (response.Ok) {
+      if (response?.Ok) {
         toast.success(response.Ok);
         movetodao();
-      }else{
-        toast.error(response.Err);
+      }else if (response?.Err){
+        toast.error(response?.Err);
       }
     } catch (err) {
       console.error("Error submitting Token Transfer proposal:", err);
@@ -785,7 +749,9 @@ function CreateProposal() {
       const response = await daoCanister.proposal_to_change_dao_policy(changePolicy);
       if(response.Ok) {
         toast.success(response.Ok);
+
          movetodao();
+
       } else {
         toast.error(response.Err)
       }
