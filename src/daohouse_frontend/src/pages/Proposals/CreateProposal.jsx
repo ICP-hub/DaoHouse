@@ -220,21 +220,10 @@ function CreateProposal() {
   };
 
   const handleInputDaoConfig = (e) => {
-    const { name, value } = e.target;
-
-    // Update daoConfig state
-    setDaoConfig((prevConfig) => ({
-        ...prevConfig,
-        [name]: value,
-    }));
-
-    // Clear the specific field's error when the user starts typing
-    if (errors[name]) {
-        setErrors((prevErrors) => ({
-            ...prevErrors,
-            [name]: "",
-        }));
-    }
+    setDaoConfig({
+      ...daoConfig,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleInputAddMember = (e) => {
@@ -303,6 +292,7 @@ function CreateProposal() {
     e.preventDefault();
     setLoading(true);
 
+    // Basic validation
     if (!proposalType) {
       toast.error("Please select a proposal type.");
       setLoading(false);
@@ -319,7 +309,6 @@ function CreateProposal() {
       setLoading(false);
       return;
   }
-
     try {
       switch (proposalType) {
         case "tokenTransfer":
@@ -715,7 +704,7 @@ function CreateProposal() {
       const response = await daoCanister.proposal_to_change_dao_policy(changePolicy);
       if(response.Ok) {
         toast.success(response.Ok);
-        // movetodao();
+        movetodao();
       } else {
         toast.error(response.Err)
       }
