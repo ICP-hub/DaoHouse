@@ -10,34 +10,41 @@ use icrc_ledger_types::{
 use crate::guards::*;
 use ic_cdk::query;
 
-use super::{call_inter_canister, create_dao};
+use super::create_dao;
 
 #[query(guard = prevent_anonymous)]
-fn get_all_dao(page_data: Pagination) -> Vec<DaoDetails> {
+fn get_all_dao_pagination(page_data: Pagination) -> Vec<DaoDetails> {
     let mut daos: Vec<DaoDetails> = Vec::new();
-
     with_state(|state| {
         for y in state.dao_details.iter() {
             daos.push(y.1);
         }
     });
-
     let ending = daos.len();
-
     if ending == 0 {
         return daos;
     }
-
     let start = page_data.start as usize;
     let end = page_data.end as usize;
-
     if start < ending {
         let end = end.min(ending);
         return daos[start..end].to_vec();
     }
     Vec::new()
-
     // daos
+}
+
+
+
+#[query(guard = prevent_anonymous)]
+fn get_all_dao() -> Vec<DaoDetails> {
+    let mut daos: Vec<DaoDetails> = Vec::new();
+    with_state(|state| {
+        for y in state.dao_details.iter() {
+            daos.push(y.1);
+        }
+    });
+    return  daos;
 }
 
 #[query]

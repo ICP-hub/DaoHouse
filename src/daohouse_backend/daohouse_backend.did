@@ -138,7 +138,8 @@ service : (InitialArgs) -> {
   check_user_existance : () -> (Result) query;
   create_profile : (MinimalProfileinput) -> (Result);
   delete_profile : () -> (Result_1);
-  get_all_dao : (Pagination) -> (vec DaoDetails) query;
+  get_all_dao : () -> (vec DaoDetails) query;
+  get_all_dao_pagination : (Pagination) -> (vec DaoDetails) query;
   get_analytics : () -> (Result_2) query;
   get_canister_meta_data : () -> (Result_3) query;
   get_cycles : () -> (nat64) query;

@@ -111,7 +111,6 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
         const daoPrincipal = Principal.fromUint8Array(new Uint8Array(daoId._arr));
         const daoPrincipalText = daoPrincipal.toText();
 
-        console.log("DAO Principal (Text):", daoPrincipalText);
         const daoActor = await createDaoActor(daoPrincipalText);
 
         if (!daoActor) {
