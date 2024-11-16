@@ -495,11 +495,11 @@ function CreateProposal() {
       let response = await transferApprove(currentBalance,actor,formattedMetadata,tokenTransfer.tokens);
       console.log("res", response);
       
-      if (response.Ok) {
+      if (response?.Ok) {
         toast.success(response.Ok);
         movetodao();
-      }else{
-        toast.error(response.Err);
+      }else if (response?.Err){
+        toast.error(response?.Err);
       }
     } catch (err) {
       console.error("Error submitting Token Transfer proposal:", err);

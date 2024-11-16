@@ -51,7 +51,7 @@ const DaoProfile = () => {
   const [loading, setLoading] = useState(false);
   const [daoGroups, setDaoGroups] = useState([]);
   const [isExpanded, setIsExpanded] = useState(false);
-  const maxWords = 250;
+  const maxWords = 120;
   const toggleExpanded = () => setIsExpanded(!isExpanded);
   const [DaoBalance, setDaoBalance] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
@@ -563,6 +563,7 @@ const DaoProfile = () => {
                     daoCanisterId={daoCanisterId}
                   />
                 )}
+               <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} hasMore={hasMore}/>
               </div>
             )}
             {activeLink === "feeds" && <FeedsContent />}
@@ -576,9 +577,6 @@ const DaoProfile = () => {
               />
             )}
             {activeLink === "funds" && <FundsContent />}
-
-            <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} hasMore={hasMore}/>
-
           </Container>
         </div>
       )}
