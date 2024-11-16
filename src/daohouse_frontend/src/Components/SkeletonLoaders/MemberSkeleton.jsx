@@ -1,14 +1,10 @@
 import React from "react";
 import Skeleton from "@mui/material/Skeleton";
 
-const MemberSkeleton = ({ gridView }) => {
+const MemberSkeleton = () => {
   return (
-    <div
-      className={gridView
-        ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" // Responsive grid
-        : "flex flex-col gap-4"} // Flex for list view
-    >
-      {[1, 2, 3, 4].map((index) => (
+    <div className={"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"}>
+      {[1, 2, 3].map((index) => (
         <div
           key={index}
           className="flex flex-col p-4 border border-[#97C3D3] rounded-lg"

@@ -58,7 +58,7 @@ const DaoProfile = () => {
   const [followersCount, setFollowersCount] = useState(0);
   const [userProfile, setUserProfile] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
   let itemsPerPage = 4;
 
   const fetchMetadataAndBalance = async (tokenActor, ownerPrincipal) => {

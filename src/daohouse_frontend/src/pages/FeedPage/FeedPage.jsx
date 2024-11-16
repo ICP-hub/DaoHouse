@@ -19,7 +19,7 @@ const FeedPage = () => {
   const [proposals, setProposals] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
   let itemsPerPage = 4;
   const className = "FeedPage";
 
