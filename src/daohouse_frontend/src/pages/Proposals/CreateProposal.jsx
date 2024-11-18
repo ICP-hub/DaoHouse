@@ -94,7 +94,7 @@ function CreateProposal() {
   const [pollTitleError, setPollTitleError] = useState("");
   const [pollDescriptionError, setPollDescriptionError] = useState("");
   const [pollOptionError, setPollOptionError] = useState("");
-
+  const [pollExpiryError, setPollExpiryError] = useState("");
 
   const cancelMakePrivate = () => {
     setShowModal(false);
@@ -282,6 +282,9 @@ function CreateProposal() {
 
   const handleInputPoll = (e) => {
     const { name, value } = e.target;
+    setPollTitleError("")
+    setPollDescriptionError("")
+    setPollExpiryError("")
     if (name === "proposal_expired_at") {
       const createdAtDate = new Date(poll.proposal_created_at); 
       const selectedExpiredDate = new Date(value);
@@ -316,9 +319,14 @@ function CreateProposal() {
     setPollDescriptionError("");
     setDaoNameError(""); 
     setDaoPurposeError(""); 
-    setPollOptionError("");
+
+   
     setPrincipalError("");
 
+
+
+    setPollOptionError("")
+    setPollExpiryError("")
 
     if (!proposalType) {
       toast.error("Please select a proposal type.");
@@ -804,6 +812,11 @@ function CreateProposal() {
       setPollOptionError("You cannot add more than four poll options.");
       return;
     }
+
+    if(poll.proposal_expired_at ==( null || undefined)){
+      setPollExpiryError("Select Expiry time of proposal")
+      return;
+    }
   
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
@@ -1072,6 +1085,7 @@ function CreateProposal() {
                       pollDescriptionError={pollDescriptionError} // Pass error state
                       pollOptionError={pollOptionError}
                       setPollOptionError={setPollOptionError}
+                      pollExpiryError={pollExpiryError}
                     />
                   )}
 

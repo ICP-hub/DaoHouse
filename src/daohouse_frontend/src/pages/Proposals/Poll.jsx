@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const Poll = ({ poll, pollOptionError ,handleInputPoll, setPoll, pollTitleError, pollDescriptionError,setPollOptionError }) => {
+const Poll = ({ poll, pollOptionError ,handleInputPoll, setPoll, pollTitleError, pollDescriptionError,setPollOptionError,pollExpiryError }) => {
     const [options, setOptions] = useState([]); 
     const [newOption, setNewOption] = useState("");
 
@@ -131,6 +131,7 @@ const Poll = ({ poll, pollOptionError ,handleInputPoll, setPoll, pollTitleError,
                     min={getTodayDate()}
                     required
                 />
+                {pollExpiryError && <p className="text-red-500">{pollExpiryError}</p>}
             </div>
         </form>
     );
