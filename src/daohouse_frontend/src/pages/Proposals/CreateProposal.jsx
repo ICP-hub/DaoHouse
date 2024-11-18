@@ -93,6 +93,7 @@ function CreateProposal() {
 
   const [pollTitleError, setPollTitleError] = useState("");
   const [pollDescriptionError, setPollDescriptionError] = useState("");
+  const [pollOptionError, setPollOptionError] = useState("");
 
 
   const cancelMakePrivate = () => {
@@ -112,10 +113,6 @@ function CreateProposal() {
     required_votes: '',
     ask_to_join_dao: true,
   });
-  // console.log("as",dao.ask_to_join_dao);
- // Validate changePolicy fields
- 
-
 
   const [poll, setPoll] = useState({
     proposal_expired_at: "",
@@ -294,12 +291,6 @@ function CreateProposal() {
     });
   };
 
-  const [titleError, setTitleError] = useState("");
-  
-  const [optionsError, setOptionsError] = useState("");
-  const [expiresAtError, setExpiresAtError] = useState("");
-
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -308,7 +299,7 @@ function CreateProposal() {
     setDescriptionError(""); // Reset error message
     setPollTitleError(""); // Reset poll title error
     setPollDescriptionError(""); // Reset poll description error
-
+    setPollOptionError("")
 
     // Basic validation
     if (!proposalType) {
@@ -349,6 +340,11 @@ function CreateProposal() {
       }
       if (!poll.description) {
         setPollDescriptionError("Poll Description is required.");
+        setLoading(false);
+        return;
+      }
+      if (!poll.poll_options) {
+        setPollDescriptionError("Poll options are required.");
         setLoading(false);
         return;
       }
@@ -428,7 +424,6 @@ function CreateProposal() {
 
         case "Poll":
           await submitPoll({
-            poll_title: "sdcfsdfs",
             proposal_entry: proposalEntry,
             proposal_expired_at: poll.days_until_expiration, 
             poll_query: poll.poll_title,
@@ -764,29 +759,26 @@ function CreateProposal() {
   const submitPoll = async (poll) => {
 
     if (!poll.poll_options || poll.poll_options.length < 2) {
-      toast.error("Please add at least two poll options before submitting.");
+      setPollOptionError("At least 2 Poll options are required.");
       return;
     }
   
 
     if (poll.poll_options.length > 4) {
-      toast.error("You cannot add more than four poll options.");
+      setPollOptionError("You cannot add more than four poll options.");
       return;
     }
   
     try {
-      const daoCanister = await createDaoActor(daoCanisterId);
-     
-  
-      const response = await daoCanister.proposal_to_create_poll(poll);
-      console.log("Response of Poll Proposal:", response);
-  
-      if (response.Ok) {
-        toast.success(response.Ok);
-        movetodao();
-      } else {
-        toast.error(response.Err);
-      }
+      // const daoCanister = await createDaoActor(daoCanisterId);
+      console.log("Response of Poll Proposal:", poll.proposal_expired_at);
+      // const response = await daoCanister.proposal_to_create_poll(poll);
+      // if (response.Ok) {
+      //   toast.success(response.Ok);
+      //   movetodao();
+      // } else {
+      //   toast.error(response.Err);
+      // }
     } catch (error) {
       console.error("Error submitting Poll proposal:", error);
       toast.error("Failed to create Poll proposal");
@@ -1037,6 +1029,8 @@ function CreateProposal() {
                       handleInputPoll={handleInputPoll}
                       pollTitleError={pollTitleError} // Pass error state
                       pollDescriptionError={pollDescriptionError} // Pass error state
+                      pollOptionError={pollOptionError}
+                      setPollOptionError={setPollOptionError}
                     />
                   )}
 

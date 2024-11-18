@@ -1,25 +1,21 @@
 import React, { useEffect, useState } from "react";
 
-const Poll = ({ poll, handleInputPoll, setPoll, pollTitleError, pollDescriptionError }) => {
-    const [options, setOptions] = useState([]); // Start with an empty array to hide initially
+const Poll = ({ poll, pollOptionError ,handleInputPoll, setPoll, pollTitleError, pollDescriptionError,setPollOptionError }) => {
+    const [options, setOptions] = useState([]); 
     const [newOption, setNewOption] = useState("");
-    const [getMessage, setGetMessage] = useState("");
 
-    // Get today's date in the format YYYY-MM-DD
     const getTodayDate = () => {
         const today = new Date();
         return today.toISOString().split("T")[0];
     };
 
     useEffect(() => {
-        // Set today's date for "Created At" field when the component loads
         setPoll((prevPoll) => ({
             ...prevPoll,
             proposal_created_at: getTodayDate(),
         }));
     }, [setPoll]);
 
-    // Add a new option up to the limit of 4
     const addOption = () => {
         if (newOption.trim() && options.length < 4) {
             setOptions([...options, { option: newOption }]);
@@ -28,11 +24,9 @@ const Poll = ({ poll, handleInputPoll, setPoll, pollTitleError, pollDescriptionE
                 ...prevPoll,
                 poll_options: [...options, { option: newOption }],
             }));
-            setGetMessage(""); // Clear any existing error messages
-        } else if (options.length >= 4) {
-            setGetMessage("You can add a maximum of 4 options.");
-        } else if (options.length < 2) {
-            setGetMessage("Please add at least 2 options.");
+            setPollOptionError("")
+        } else {
+            setPollOptionError("Only Four Options are allowed")
         }
     };
 
@@ -44,7 +38,6 @@ const Poll = ({ poll, handleInputPoll, setPoll, pollTitleError, pollDescriptionE
             ...prevPoll,
             poll_options: newOptions,
         }));
-        setGetMessage(""); // Clear error message when option count changes
     };
 
     return (
@@ -99,7 +92,7 @@ const Poll = ({ poll, handleInputPoll, setPoll, pollTitleError, pollDescriptionE
                         ADD
                     </button>
                 </div>
-                {getMessage && <p className="text-red-500">{getMessage}</p>} {/* Display option error message */}
+                {pollOptionError && <p className="text-red-500">{pollOptionError}</p>}
             </div>
 
             {/* Display added options only if there's at least one option */}

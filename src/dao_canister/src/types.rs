@@ -150,7 +150,6 @@ pub struct ProposalInput {
     pub proposal_created_at: Option<u64>,
     pub proposal_expired_at: Option<u64>,
     pub bounty_task : Option<String>,
-    pub poll_title : Option<String>, 
     pub cool_down_period : Option<u32>,
     pub minimum_threadsold : u64,
     pub link_of_task : Option<String>,
