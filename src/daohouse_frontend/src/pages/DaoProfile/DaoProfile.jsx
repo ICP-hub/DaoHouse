@@ -62,7 +62,6 @@ const DaoProfile = () => {
   let itemsPerPage = 4;
 
   const fetchMetadataAndBalance = async (tokenActor, ownerPrincipal) => {
-    console.log(tokenActor, ownerPrincipal.toText());
     try {
       const [metadata, balance] = await Promise.all([
         tokenActor.icrc1_metadata(),
@@ -71,7 +70,6 @@ const DaoProfile = () => {
           subaccount: [],
         }),
       ]);
-      console.log("Fetched metadata:", metadata);
       return { metadata, balance };
     } catch (err) {
       console.error("Error fetching metadata and balance:", err);

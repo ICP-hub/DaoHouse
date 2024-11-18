@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-const DaoPolicy = ({ changePolicy,setChangePolicy, handleInputDaoPolicy, dao, setShowModal, isPrivate, showModal, cancelMakePrivate, confirmMakePrivate, modalMessage, errorMessage, setErrorMessage }) => {
+const DaoPolicy = ({ changePolicy,setChangePolicy, handleInputDaoPolicy, dao, setShowModal, isPrivate, showModal, cancelMakePrivate, confirmMakePrivate, modalMessage, errorMessage, }) => {
   useEffect(()=>{
     setChangePolicy({
       ...changePolicy,
@@ -13,7 +13,7 @@ const DaoPolicy = ({ changePolicy,setChangePolicy, handleInputDaoPolicy, dao, se
         <div>
             {showModal && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-4">
-                    <div className="w-full max-w-lg bg-white rounded-lg shadow-lg w-11/12 md:w-1/3 p-6 border border-gray-300 p-4 rounded shadow flex flex-col justify-between h-auto sm:w-[400px] md:w-[45%] lg:w-[30%]">
+                    <div className="w-full max-w-lg bg-white rounded-lg shadow-lg md:w-1/3 p-6 border border-gray-300 flex flex-col justify-between h-auto sm:w-[400px]">
                         <div>
                             <h2 className="font-bold text-center font-mulish text-[18px] mb-2">Privacy Confirmation</h2>
                         </div>
