@@ -39,7 +39,7 @@ function CreateProposal() {
     description: '',
     link_of_task: '',
     bounty_task: '',
-    daohouse_canister_id: ''
+    daohouse_canister_id: '',
   });
 
   const [generalPurp, setGeneralPurp] = useState({
@@ -134,6 +134,10 @@ function CreateProposal() {
   const [loading, setLoading] = useState(false);
   const { createDaoActor, stringPrincipal, identity } = useAuth();
   const { daoCanisterId } = useParams();
+
+   const [daoNameError, setDaoNameError] = useState("");
+  const [daoPurposeError, setDaoPurposeError] = useState("");
+
 
   const movetodao = () => {
     navigate(`/dao/profile/${daoCanisterId}`);
@@ -309,9 +313,11 @@ function CreateProposal() {
     setDescriptionError(""); // Reset error message
     setPollTitleError(""); // Reset poll title error
     setPollDescriptionError(""); // Reset poll description error
+    setDaoNameError(""); // Reset DAO Name error message
+    setDaoPurposeError(""); // Reset DAO Purpose error message
+    // Basic validation
     setPollOptionError("")
 
-    // Basic validation
     if (!proposalType) {
       toast.error("Please select a proposal type.");
       setLoading(false);
@@ -323,10 +329,22 @@ function CreateProposal() {
       setLoading(false);
       return;
     }
-    if (proposalType === "ChangePolicy" && !changePolicy.description) {
-      setErrorMessage("Please fill out this field.");
-      setLoading(false);
-      return;
+    if (proposalType === "DaoConfig") {
+      if (!daoConfig.description) {
+        setDescriptionError("Please fill out this field");
+        setLoading(false);
+        return;
+      }
+      if (!daoConfig.new_dao_name) {
+        setDaoNameError("Please fill out this field");
+        setLoading(false);
+        return;
+      }
+      if (!daoConfig.purpose) {
+        setDaoPurposeError("Please fill out this field");
+        setLoading(false);
+        return;
+      }
     }
 
     if (proposalType === "DaoConfig" && !daoConfig.description) {
@@ -983,13 +1001,17 @@ function CreateProposal() {
                   )}
 
                   {proposalType === "DaoConfig" && (
-                    <DaoConfig
-                      daoConfig={daoConfig}
-                      handleInputDaoConfig={handleInputDaoConfig}
-                      dao={dao}
-                      setDaoConfig={setDaoConfig}
-                      errorMessage={descriptionError}
-                    />
+                     <DaoConfig
+                     daoConfig={daoConfig}
+                     handleInputDaoConfig={handleInputDaoConfig}
+                     dao={dao}
+                     setDaoConfig={setDaoConfig}
+                     errorMessage={descriptionError}
+                     errors={{ new_dao_name: daoNameError, purpose: daoPurposeError }} // Pass errors
+                     setDescriptionError={setDescriptionError}
+                     setDaoNameError={setDaoNameError} // Pass the function to clear the DAO Name error
+                     setDaoPurposeError={setDaoPurposeError} // Pass the function to clear the DAO Purpose error
+                   />
                   )}
 
                   {proposalType === "AddMember" && (
