@@ -328,7 +328,6 @@ pub struct BountyDone{
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct CreatePoll{
     pub description: String,
-    pub poll_title : String,
     pub poll_options : Vec<String>,
     pub proposal_expired_at: u64,
     pub proposal_entry : String,

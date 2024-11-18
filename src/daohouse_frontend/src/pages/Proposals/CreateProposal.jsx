@@ -309,13 +309,12 @@ function CreateProposal() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setErrorMessage(""); // Reset error message
-    setDescriptionError(""); // Reset error message
-    setPollTitleError(""); // Reset poll title error
-    setPollDescriptionError(""); // Reset poll description error
-    setDaoNameError(""); // Reset DAO Name error message
-    setDaoPurposeError(""); // Reset DAO Purpose error message
-    // Basic validation
+    setErrorMessage(""); 
+    setDescriptionError(""); 
+    setPollTitleError("");
+    setPollDescriptionError("");
+    setDaoNameError(""); 
+    setDaoPurposeError(""); 
     setPollOptionError("")
 
     if (!proposalType) {
