@@ -90,7 +90,6 @@ function CreateProposal() {
     });
   };
 
-  const [errorMessage, setErrorMessage] = useState("");
   const [pollTitleError, setPollTitleError] = useState("");
   const [pollDescriptionError, setPollDescriptionError] = useState("");
   const [pollOptionError, setPollOptionError] = useState("");
@@ -275,10 +274,15 @@ function CreateProposal() {
 
   const handleInputDaoPolicy = (e) => {
     setChangePolicy({
-      ...changePolicy,
-      [e.target.name]: e.target.value,
+        ...changePolicy,
+        [e.target.name]: e.target.value,
     });
-  };
+    // Clear the error message when the user starts typing
+    if (e.target.name === "description") {
+        setDescriptionError(""); // Clear description error
+    }
+};
+
 
   const handleInputPoll = (e) => {
     const { name, value } = e.target;
@@ -313,7 +317,6 @@ function CreateProposal() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setErrorMessage(""); 
     setDescriptionError(""); 
     setPollTitleError("");
     setPollDescriptionError("");
@@ -375,6 +378,14 @@ function CreateProposal() {
       return;
 
     }
+
+    if (proposalType === "ChangePolicy") {
+      // Validate Change Policy fields
+      if (changePolicy.description.trim() === "") {
+        setDescriptionError("Please fill out this field Or Blank Space is not allowed");
+        setLoading(false);
+        return;
+      }}
 
     if (proposalType === "Poll") {
       if (!poll.poll_title) {
@@ -461,8 +472,8 @@ function CreateProposal() {
             proposal_entry: proposalEntry,
             description: changePolicy.description,
             ask_to_join_dao : isPrivate,
-            cool_down_period: Number(changePolicy.cool_down_period),
-            required_votes: Number(changePolicy.required_votes),
+            cool_down_period: Number(changePolicy.cool_down_period ),
+            required_votes: Number(changePolicy.required_votes ),
           });
           break;
 
@@ -1072,7 +1083,8 @@ function CreateProposal() {
                       confirmMakePrivate={confirmMakePrivate}
                       modalMessage={modalMessage}
                       showModal={showModal}
-                      errorMessage={errorMessage}
+                      errorMessage={descriptionError}
+                      setChangePolicy={setChangePolicy}
                     />
                   )}
 

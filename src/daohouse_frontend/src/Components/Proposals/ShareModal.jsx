@@ -1,8 +1,21 @@
 import React from 'react';
+import toast from 'react-hot-toast';
 import { FaLink, FaClipboard, FaTimes } from 'react-icons/fa';
 
-const ShareModal = ({ isOpen, proposalId, daoCanisterId, toggleModal, copyToClipboard }) => {
+const ShareModal = ({ isOpen, proposalId, daoCanisterId, toggleModal }) => {
   if (!isOpen) return null;
+
+  // Function to copy the link to the clipboard
+  const copyToClipboard = () => {
+    const shareLink = `${window.location.origin}/social-feed/proposal/${proposalId}/dao/${daoCanisterId}`;
+    navigator.clipboard.writeText(shareLink)
+      .then(() => {
+        toast.success('Link copy succesfully!');
+      })
+      .catch(() => {
+        toast.error('Failed to copy the link.');
+      });
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md p-4">
