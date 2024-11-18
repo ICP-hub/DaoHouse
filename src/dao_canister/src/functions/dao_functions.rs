@@ -155,7 +155,7 @@ async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<St
     let proposal = ProposalInput {
         principal_of_action: Some(args.action_member),
         proposal_description: args.description,
-        proposal_title: String::from(crate::utils::TITLE_REMOVE_MEMBER),
+        proposal_title: String::from(crate::utils::TITLE_REMOVE_MEMBER_FROM_GROUP),
         proposal_type: ProposalType::RemoveMemberToGroupProposal,
         group_to_remove: Some(args.group_name.clone()),
         new_dao_name: None,
