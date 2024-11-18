@@ -450,8 +450,8 @@ function CreateProposal() {
             proposal_entry: proposalEntry,
             description: changePolicy.description,
             ask_to_join_dao : isPrivate,
-            cool_down_period: Number(changePolicy.cool_down_period || 1),
-            required_votes: Number(changePolicy.required_votes || 1),
+            cool_down_period: Number(changePolicy.cool_down_period ),
+            required_votes: Number(changePolicy.required_votes ),
           });
           break;
 
@@ -1060,6 +1060,7 @@ function CreateProposal() {
                       modalMessage={modalMessage}
                       showModal={showModal}
                       errorMessage={descriptionError}
+                      setChangePolicy={setChangePolicy}
                     />
                   )}
 

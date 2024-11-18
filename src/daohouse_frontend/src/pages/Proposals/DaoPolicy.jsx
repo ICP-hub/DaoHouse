@@ -1,17 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
+const DaoPolicy = ({ changePolicy,setChangePolicy, handleInputDaoPolicy, dao, setShowModal, isPrivate, showModal, cancelMakePrivate, confirmMakePrivate, modalMessage, errorMessage, setErrorMessage }) => {
+  useEffect(()=>{
+    setChangePolicy({
+      ...changePolicy,
+      cool_down_period : dao.cool_down_period,
+      required_votes : dao.required_votes,
+    })
+  },[])
 
-const DaoPolicy = ({ changePolicy, handleInputDaoPolicy, dao, setShowModal, isPrivate, showModal, cancelMakePrivate, confirmMakePrivate, modalMessage, errorMessage, setErrorMessage }) => {
-    const handleDescriptionChange = (e) => {
-        const value = e.target.value; 
-        handleInputDaoPolicy(e); // Call the original handler to update the state
-
-        // Validate the input and set the error message if necessary
-        if (value.trim() === "") { 
-            setErrorMessage("Description cannot be empty or just spaces."); 
-        } else {
-            setErrorMessage(""); // Clear the error message when the user types valid input
-        }
-    };
 
     return (
         <div>
@@ -49,7 +45,7 @@ const DaoPolicy = ({ changePolicy, handleInputDaoPolicy, dao, setShowModal, isPr
                         id="description"
                         name="description"
                         value={changePolicy.description}
-                        onChange={handleDescriptionChange}  // Use the new handler
+                        onChange={handleInputDaoPolicy} // Use the new handler
                         className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                         placeholder="Enter Description"
                         required
