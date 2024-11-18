@@ -14,24 +14,36 @@ function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig, errorMe
     }, [dao, setDaoConfig]);
 
     const handleDescriptionChange = (e) => {
-        handleInputDaoConfig(e); 
-        if (errorMessage) {
+        const value = e.target.value; 
+        if (value.trim() === "") { 
+            setDescriptionError("Description cannot be empty or just spaces."); 
+            e.target.value = ""; 
+        } else {
             setDescriptionError(""); 
         }
+        handleInputDaoConfig(e); 
     };
 
     const handleDaoNameChange = (e) => {
-        handleInputDaoConfig(e); 
-        if (errors?.new_dao_name) {
-            setDaoNameError(""); 
+        const value = e.target.value; 
+        if (value.trim() === "") { 
+            setDaoNameError("DAO Name cannot be empty or just spaces."); 
+            e.target.value = ""; 
+        } else {
+            setDaoNameError("");
         }
+        handleInputDaoConfig(e); 
     };
 
     const handlePurposeChange = (e) => {
-        handleInputDaoConfig(e); 
-        if (errors?.purpose) {
-            setDaoPurposeError(""); 
+        const value = e.target.value; // Get the input value
+        if (value.trim() === "") { // Check if the trimmed value is empty
+            setDaoPurposeError("DAO Purpose cannot be empty or just spaces."); // Set error if empty
+            e.target.value = ""; // Clear the input field
+        } else {
+            setDaoPurposeError(""); // Clear the error message
         }
+        handleInputDaoConfig(e); // Update the state
     };
 
     return (
@@ -48,7 +60,6 @@ function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig, errorMe
                     rows={4}
                     required
                 />
-
                 {errorMessage && (
                     <p className="text-red-500 text-sm">{errorMessage}</p>
                 )}
@@ -66,28 +77,10 @@ function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig, errorMe
                     placeholder="Enter DAO Name"
                     required
                 />
-
                 {errors?.new_dao_name && (
                     <p className="text-red-500 text-sm mt-1">{errors?.new_dao_name}</p>
                 )}
             </div>
-                     
-
-               
-            {/* Uncomment if needed for additional fields
-            <div className="mb-4">
-                <label htmlFor="actionMember" className="mb-2 font-semibold text-xl">Action Member (Principal)</label>
-                <input
-                    id="actionMember"
-                    type="text"
-                    name="action_member"
-                    value={daoConfig.action_member}
-                    onChange={handleInputDaoConfig}
-                    className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                    placeholder="Enter Action Member Principal"
-                />
-            </div> 
-            */}
 
             <div className="mb-4">
                 <label htmlFor="purpose" className="mb-2 font-semibold text-xl">DAO Purpose</label>
@@ -96,12 +89,11 @@ function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig, errorMe
                     type="text"
                     name="purpose"
                     value={daoConfig?.purpose}
-                    onChange={handlePurposeChange} // Use the new handler
+                    onChange={handlePurposeChange} 
                     className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                     placeholder="Enter Purpose"
                     required
                 />
-
                 {errors?.purpose && (
                     <p className="text-red-500 text-sm mt-1">{errors?.purpose}</p>
                 )}

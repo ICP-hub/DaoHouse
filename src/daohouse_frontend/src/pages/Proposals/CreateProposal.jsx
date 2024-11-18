@@ -140,7 +140,7 @@ function CreateProposal() {
   const { createDaoActor, stringPrincipal, identity } = useAuth();
   const { daoCanisterId } = useParams();
 
-  const [daoNameError, setDaoNameError] = useState("");
+   const [daoNameError, setDaoNameError] = useState("");
   const [daoPurposeError, setDaoPurposeError] = useState("");
 
 
