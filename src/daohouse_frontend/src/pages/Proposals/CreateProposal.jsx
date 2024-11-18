@@ -27,6 +27,7 @@ function CreateProposal() {
   const [proposalType, setProposalType] = useState('');
   const [dao, setDao] = useState(null);
   const [descriptionError, setDescriptionError] = useState("");
+  const[principalError,setPrincipalError] = useState("");
   const [proposalEntry, setProposalEntry] = useState(''); 
   const [tokenTransfer, setTokenTransfer] = useState({
     to: '',
@@ -90,15 +91,13 @@ function CreateProposal() {
   };
 
   const [errorMessage, setErrorMessage] = useState("");
-
   const [pollTitleError, setPollTitleError] = useState("");
   const [pollDescriptionError, setPollDescriptionError] = useState("");
-
+  const [pollOptionError, setPollOptionError] = useState("");
+  const [pollExpiryError, setPollExpiryError] = useState("");
 
   const cancelMakePrivate = () => {
     setShowModal(false);
-
-
     window.scrollTo({
       top: document.body.scrollHeight,
       behavior: 'smooth',
@@ -112,15 +111,12 @@ function CreateProposal() {
     required_votes: '',
     ask_to_join_dao: true,
   });
-  // console.log("as",dao.ask_to_join_dao);
- // Validate changePolicy fields
- 
-
 
   const [poll, setPoll] = useState({
     proposal_expired_at: "",
     poll_title: "",
     description: "",
+    days_until_expiration : null,
     proposal_created_at: "",
     poll_options: []
   });
@@ -291,6 +287,21 @@ function CreateProposal() {
 
   const handleInputPoll = (e) => {
     const { name, value } = e.target;
+    setPollTitleError("")
+    setPollDescriptionError("")
+    setPollExpiryError("")
+    if (name === "proposal_expired_at") {
+      const createdAtDate = new Date(poll.proposal_created_at); 
+      const selectedExpiredDate = new Date(value);
+      const differenceInDays = Math.floor((selectedExpiredDate - createdAtDate)
+       / (1000 * 60 * 60 * 24));
+       setPoll({
+        ...poll,
+        proposal_expired_at: value, 
+        days_until_expiration: differenceInDays, 
+      });
+    }
+
     setPoll((prevPoll) => ({
         ...prevPoll,
         [name]: value,
@@ -303,23 +314,25 @@ function CreateProposal() {
     });
   };
 
-  const [titleError, setTitleError] = useState("");
-  
-  const [optionsError, setOptionsError] = useState("");
-  const [expiresAtError, setExpiresAtError] = useState("");
-
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setErrorMessage(""); // Reset error message
-    setDescriptionError(""); // Reset error message
-    setPollTitleError(""); // Reset poll title error
-    setPollDescriptionError(""); // Reset poll description error
-    setDaoNameError(""); // Reset DAO Name error message
-    setDaoPurposeError(""); // Reset DAO Purpose error message
-    // Basic validation
+    setErrorMessage(""); 
+    setDescriptionError(""); 
+    setPollTitleError("");
+    setPollDescriptionError("");
+    setDaoNameError(""); 
+    setDaoPurposeError(""); 
+
+   
+    setPrincipalError("");
+
+
+
+    setPollOptionError("")
+    setPollExpiryError("")
+
     if (!proposalType) {
       toast.error("Please select a proposal type.");
       setLoading(false);
@@ -361,6 +374,12 @@ function CreateProposal() {
       return;
 
     }
+    if (proposalType === "RemoveDaoMember" && !removeDaoMember.action_member) {
+      setPrincipalError("Please fill out this field");
+      setLoading(false);
+      return;
+
+    }
 
     if (proposalType === "ChangePolicy") {
       // Validate Change Policy fields
@@ -378,6 +397,11 @@ function CreateProposal() {
       }
       if (!poll.description) {
         setPollDescriptionError("Poll Description is required.");
+        setLoading(false);
+        return;
+      }
+      if (!poll.poll_options) {
+        setPollDescriptionError("Poll options are required.");
         setLoading(false);
         return;
       }
@@ -457,7 +481,6 @@ function CreateProposal() {
 
         case "Poll":
           await submitPoll({
-            poll_title: "sdcfsdfs",
             proposal_entry: proposalEntry,
             proposal_expired_at: poll.days_until_expiration, 
             poll_query: poll.poll_title,
@@ -793,23 +816,25 @@ function CreateProposal() {
   const submitPoll = async (poll) => {
 
     if (!poll.poll_options || poll.poll_options.length < 2) {
-      toast.error("Please add at least two poll options before submitting.");
+      setPollOptionError("At least 2 Poll options are required.");
       return;
     }
   
 
     if (poll.poll_options.length > 4) {
-      toast.error("You cannot add more than four poll options.");
+      setPollOptionError("You cannot add more than four poll options.");
+      return;
+    }
+
+    if(poll.proposal_expired_at ==( null || undefined)){
+      setPollExpiryError("Select Expiry time of proposal")
       return;
     }
   
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
-     
-  
+      console.log("Response of Poll Proposal:", poll);
       const response = await daoCanister.proposal_to_create_poll(poll);
-      console.log("Response of Poll Proposal:", response);
-  
       if (response.Ok) {
         toast.success(response.Ok);
         movetodao();
@@ -828,13 +853,14 @@ function CreateProposal() {
 
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
-
-
       const response = await daoCanister.proposal_to_remove_member_to_dao(removeDaoMember);
       console.log("Response of Remove DAO Member:", response);
-
-      toast.success("Remove DAO Member proposal created successfully");
-      movetodao();
+       if (response.Ok) {
+        toast.success(response.Ok);
+        movetodao();
+      } else {
+        toast.error(response.Err);
+      }
     } catch (error) {
       console.error("Error submitting Remove DAO Member proposal:", error);
       toast.error("Failed to create Remove DAO Member proposal");
@@ -950,7 +976,7 @@ function CreateProposal() {
                       <option value="ChangePolicy">Change Dao Policy</option>
                       <option value="Poll">Polls</option>
                       <option value="RemoveDaoMember">
-                        RemoveMemberToDaoProposal
+                        Remove Member From Dao
                       </option>
                       <option value="MintNewTokens">
                         Mint New Tokens
@@ -1071,6 +1097,9 @@ function CreateProposal() {
                       handleInputPoll={handleInputPoll}
                       pollTitleError={pollTitleError} // Pass error state
                       pollDescriptionError={pollDescriptionError} // Pass error state
+                      pollOptionError={pollOptionError}
+                      setPollOptionError={setPollOptionError}
+                      pollExpiryError={pollExpiryError}
                     />
                   )}
 
@@ -1078,7 +1107,10 @@ function CreateProposal() {
                     <RemoveDaoMember
                       removeDaoMember={removeDaoMember}
                       handleInputRemoveDaoMember={handleInputRemoveDaoMember}
-                      errorMessage={descriptionError}
+                      descriptionError={descriptionError}
+                      principalError={principalError}
+                      setDescriptionError={setDescriptionError}
+                      setPrincipalError={setPrincipalError}
                     />
                   )}
 

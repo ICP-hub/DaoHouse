@@ -45,7 +45,6 @@ type CreateGeneralPurpose = record {
 };
 type CreatePoll = record {
   proposal_expired_at : nat64;
-  poll_title : text;
   description : text;
   poll_query : text;
   poll_options : vec text;
