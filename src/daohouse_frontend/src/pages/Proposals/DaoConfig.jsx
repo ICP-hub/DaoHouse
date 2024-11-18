@@ -14,23 +14,23 @@ function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig, errorMe
     }, [dao, setDaoConfig]);
 
     const handleDescriptionChange = (e) => {
-        handleInputDaoConfig(e); // Call the original handler
+        handleInputDaoConfig(e); 
         if (errorMessage) {
-            setDescriptionError(""); // Clear the error message when user starts typing
+            setDescriptionError(""); 
         }
     };
 
     const handleDaoNameChange = (e) => {
-        handleInputDaoConfig(e); // Call the original handler
+        handleInputDaoConfig(e); 
         if (errors?.new_dao_name) {
-            setDaoNameError(""); // Clear the error message when user starts typing
+            setDaoNameError(""); 
         }
     };
 
     const handlePurposeChange = (e) => {
-        handleInputDaoConfig(e); // Call the original handler
+        handleInputDaoConfig(e); 
         if (errors?.purpose) {
-            setDaoPurposeError(""); // Clear the error message when user starts typing
+            setDaoPurposeError(""); 
         }
     };
 
@@ -42,7 +42,7 @@ function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig, errorMe
                     id="description"
                     name="description"
                     value={daoConfig?.description || ""}
-                    onChange={handleDescriptionChange} // Use the new handler
+                    onChange={handleDescriptionChange} 
                     className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                     placeholder="Enter Description"
                     rows={4}
@@ -61,7 +61,7 @@ function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig, errorMe
                     type="text"
                     name="new_dao_name"
                     value={daoConfig?.new_dao_name}
-                    onChange={handleDaoNameChange} // Use the new handler
+                    onChange={handleDaoNameChange} 
                     className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                     placeholder="Enter DAO Name"
                     required
@@ -71,6 +71,23 @@ function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig, errorMe
                     <p className="text-red-500 text-sm mt-1">{errors?.new_dao_name}</p>
                 )}
             </div>
+                     
+
+               
+            {/* Uncomment if needed for additional fields
+            <div className="mb-4">
+                <label htmlFor="actionMember" className="mb-2 font-semibold text-xl">Action Member (Principal)</label>
+                <input
+                    id="actionMember"
+                    type="text"
+                    name="action_member"
+                    value={daoConfig.action_member}
+                    onChange={handleInputDaoConfig}
+                    className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+                    placeholder="Enter Action Member Principal"
+                />
+            </div> 
+            */}
 
             <div className="mb-4">
                 <label htmlFor="purpose" className="mb-2 font-semibold text-xl">DAO Purpose</label>
