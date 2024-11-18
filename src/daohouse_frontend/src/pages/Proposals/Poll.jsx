@@ -17,7 +17,11 @@ const Poll = ({ poll, pollOptionError ,handleInputPoll, setPoll, pollTitleError,
     }, [setPoll]);
 
     const addOption = () => {
-        if (newOption.trim() && options.length < 4) {
+        if (options.some(optionObj => optionObj.option.trim().toLowerCase() === newOption.trim().toLowerCase())) {
+            setPollOptionError("Options can't be the same");
+            return;
+        }
+        else if (newOption.trim() && options.length < 4) {
             setOptions([...options, { option: newOption }]);
             setNewOption("");
             setPoll((prevPoll) => ({
@@ -30,7 +34,6 @@ const Poll = ({ poll, pollOptionError ,handleInputPoll, setPoll, pollTitleError,
         }
     };
 
-    // Remove an option
     const removeOption = (index) => {
         const newOptions = options.filter((_, i) => i !== index);
         setOptions(newOptions);

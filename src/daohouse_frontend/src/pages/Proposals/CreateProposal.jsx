@@ -90,7 +90,6 @@ function CreateProposal() {
   };
 
   const [errorMessage, setErrorMessage] = useState("");
-
   const [pollTitleError, setPollTitleError] = useState("");
   const [pollDescriptionError, setPollDescriptionError] = useState("");
   const [pollOptionError, setPollOptionError] = useState("");
@@ -98,8 +97,6 @@ function CreateProposal() {
 
   const cancelMakePrivate = () => {
     setShowModal(false);
-
-
     window.scrollTo({
       top: document.body.scrollHeight,
       behavior: 'smooth',
@@ -118,6 +115,7 @@ function CreateProposal() {
     proposal_expired_at: "",
     poll_title: "",
     description: "",
+    days_until_expiration : null,
     proposal_created_at: "",
     poll_options: []
   });
@@ -279,6 +277,18 @@ function CreateProposal() {
 
   const handleInputPoll = (e) => {
     const { name, value } = e.target;
+    if (name === "proposal_expired_at") {
+      const createdAtDate = new Date(poll.proposal_created_at); 
+      const selectedExpiredDate = new Date(value);
+      const differenceInDays = Math.floor((selectedExpiredDate - createdAtDate)
+       / (1000 * 60 * 60 * 24));
+       setPoll({
+        ...poll,
+        proposal_expired_at: value, 
+        days_until_expiration: differenceInDays, 
+      });
+    }
+
     setPoll((prevPoll) => ({
         ...prevPoll,
         [name]: value,
@@ -770,15 +780,15 @@ function CreateProposal() {
     }
   
     try {
-      // const daoCanister = await createDaoActor(daoCanisterId);
-      console.log("Response of Poll Proposal:", poll.proposal_expired_at);
-      // const response = await daoCanister.proposal_to_create_poll(poll);
-      // if (response.Ok) {
-      //   toast.success(response.Ok);
-      //   movetodao();
-      // } else {
-      //   toast.error(response.Err);
-      // }
+      const daoCanister = await createDaoActor(daoCanisterId);
+      console.log("Response of Poll Proposal:", poll);
+      const response = await daoCanister.proposal_to_create_poll(poll);
+      if (response.Ok) {
+        toast.success(response.Ok);
+        movetodao();
+      } else {
+        toast.error(response.Err);
+      }
     } catch (error) {
       console.error("Error submitting Poll proposal:", error);
       toast.error("Failed to create Poll proposal");
