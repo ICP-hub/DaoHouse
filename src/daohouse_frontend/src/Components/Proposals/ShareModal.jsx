@@ -10,7 +10,7 @@ const ShareModal = ({ isOpen, proposalId, daoCanisterId, toggleModal }) => {
     const shareLink = `${window.location.origin}/social-feed/proposal/${proposalId}/dao/${daoCanisterId}`;
     navigator.clipboard.writeText(shareLink)
       .then(() => {
-        toast.success('Link copied to succesfully!');
+        toast.success('Link copied succesfully!');
       })
       .catch(() => {
         toast.error('Failed to copy the link.');
