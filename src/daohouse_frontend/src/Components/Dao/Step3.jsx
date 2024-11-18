@@ -26,6 +26,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
   const [isAdding, setIsAdding] = useState(false);
   // const [openGroups, setOpenGroups] = useState([]);
   const [newGroupIndex, setNewGroupIndex] = useState(null);
+  const [activeGroupIndex, setActiveGroupIndex] = useState(null);
 
   const [list, setList] = useState([
     { name: "Council", index: 0, members: [] },
@@ -128,6 +129,7 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
     }
     setShowMemberNameInput(true);
   };
+  
   const handleAddMember = async () => {
     if (memberName.trim() !== "") {
       setIsAdding(true);
@@ -493,8 +495,8 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
                 })}
           </div>
 
-          {/* Groups */}
-          <div className="DAO__Step3__container w-full flex flex-col gap-2">
+                {/* Groups */}
+          {/* <div className="DAO__Step3__container w-full flex flex-col gap-2">
             {list
               .filter((group) => group.name !== "Council")
               .map((item, index) => (
@@ -639,7 +641,139 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref, data }) => {
                   )}
                 </div>
               ))}
+          </div> */}
+          <div className="DAO__Step3__container w-full flex flex-col gap-2">
+  {list
+    .filter((group) => group.name !== "Council")
+    .map((item, index) => (
+      <div
+        key={index}
+        className={`flex flex-col bg-[#E9EAEA] rounded-lg`}
+      >
+        <section className="w-full py-2 mobile:px-8 p-2 pl-4 flex flex-row items-center justify-between border-b-2 border-[#b4b4b4]">
+          {groupNameInputIndex === item.index ? (
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                className="p-1 w-24 md:w-60 rounded-md border border-slate-500 text-sm"
+                placeholder="Group Name"
+                value={updatedGroupName}
+                onChange={(e) => setUpdatedGroupName(e.target.value)}
+              />
+              <button
+                onClick={handleUpdateGroupName}
+                className="text-blue-500 truncate ... w-30 bg-slate-200 p-1 rounded-md"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-5 h-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M20 6L9 17l-5-5" />
+                </svg>
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 py-1">
+              <p
+                className="font-semibold py-1 cursor-pointer mobile:text-base text-sm"
+                onDoubleClick={() => handleShowGroupNameInput(item.index)}
+              >
+                {item.name}
+              </p>
+              <button
+                onClick={() => handleEditGroup(item.index)}
+                className="text-blue-500 truncate ... w-30"
+              >
+                <img
+                  src={EditPen}
+                  alt="edit"
+                  className="tablet:mr-2 h-4 w-4 edit-pen"
+                />
+              </button>
+            </div>
+          )}
+          <div className="flex flex-row small_phone:gap-4 gap-2">
+            <button
+              onClick={() => handleMemberAdding(item.index)}
+              className="flex flex-row items-center gap-1 text-[#229ED9] bg-white mobile:p-1 p-1 rounded-md"
+            >
+              Add Member
+            </button>
+            <button onClick={() => deleteGroup(item.index)}>
+              <MdOutlineDeleteOutline className="text-red-500 mobile:text-2xl text-lg" />
+            </button>
           </div>
+        </section>
+
+        {/* Group Content (always visible) */}
+        <section className="py-4 gap-2 flex flex-col items-start">
+          {showMemberNameInput ? (
+            <div className="flex flex-col sm:flex-row gap-2 px-8 items-center w-full">
+              <input
+                type="text"
+                className="w-full sm:w-auto md:w-[1500px] h-[48px] sm:h-[40px] md:h-[48px] p-2 text-sm sm:text-base rounded-md border border-slate-500"
+                placeholder="Enter Member Principal Id"
+                onChange={(e) => setMemberName(e.target.value)}
+              />
+              <div className="flex flex-row gap-2">
+                <button
+                  onClick={handleAddMember}
+                  className="w-[100px] flex justify-center items-center sm:w-auto md:w-[100px] lg:w-[155px] h-[48px] sm:h-[40px] md:h-[48px]  bg-black text-white p-2 rounded-md"
+                >
+                  {isAdding ? (
+                    <div className="w-6 h-6 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+                  ) : (
+                    "Add"
+                  )}
+                </button>
+                <button
+                  onClick={closeInputField}
+                  className="w-[100px] flex justify-center items-center sm:w-auto md:w-[100px] lg:w-[155px] h-[48px] sm:h-[40px] md:h-[48px]  bg-black text-white p-2 rounded-md"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ) : null}
+          
+          {item.members.map((member, idx) => {
+            const username = memberUsernames[member] || "Loading...";
+            return (
+              <div
+                key={idx}
+                className="w-full bg-white py-2 p-2 md:px-8 flex flex-col items-center justify-between mb-4"
+              >
+                <div className="w-full flex flex-col mobile:items-start md:flex-row md:items-center justify-between mb-2">
+                  <div>
+                    <p className="font-semibold mobile:text-base text-sm">
+                      {username}
+                    </p>
+                    <p className="text-sm mobile:mt-1 md:mt-0">{member}</p>
+                  </div>
+                  <button
+                    onClick={() => handleRemoveMember(item.index, member)}
+                    className="ml-auto"
+                  >
+                    <MdOutlineDeleteOutline className="text-red-500 text-xl sm:text-2xl md:text-2xl lg:text-2xl" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </section>
+      </div>
+    ))}
+</div>
+
+
+
+
 
           <div
             className={
