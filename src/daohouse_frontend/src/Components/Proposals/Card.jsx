@@ -573,7 +573,7 @@ export default function Card({
               className={`${
                 isSubmittedProposals
                   ? "flex flex-wrap lg:gap-4 justify-between"
-                  : "flex flex-col xl:flex-row justify-between items-start xl:items-center mb-4 gap-4"
+                  : "flex flex-col xl:flex-row justify-between items-start xl:items-center mb-4 gap-0"
               }`}
             >
               <div className="max-w-full lg:max-w-full">
@@ -590,7 +590,7 @@ export default function Card({
                 </h4>
               </div>
 
-              <div className="flex col-span-4 gap-1  small_phone:gap-4 self-start">
+              <div className="flex col-span-4 gap-1  small_phone:gap-2 self-start">
                 <span
                   className={` px-1 mini_phone:px-2 big_phone:px-2 big_phone:w-[185px] self-center py-1 rounded-full bg-[#4993B0] text-white font-semibold text-sm text-center big_phone:text-base`}
                 >
