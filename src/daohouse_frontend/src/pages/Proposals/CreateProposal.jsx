@@ -90,7 +90,6 @@ function CreateProposal() {
     });
   };
 
-  const [errorMessage, setErrorMessage] = useState("");
   const [pollTitleError, setPollTitleError] = useState("");
   const [pollDescriptionError, setPollDescriptionError] = useState("");
   const [pollOptionError, setPollOptionError] = useState("");
@@ -318,7 +317,6 @@ function CreateProposal() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setErrorMessage(""); 
     setDescriptionError(""); 
     setPollTitleError("");
     setPollDescriptionError("");
