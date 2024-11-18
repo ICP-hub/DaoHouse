@@ -27,6 +27,7 @@ function CreateProposal() {
   const [proposalType, setProposalType] = useState('');
   const [dao, setDao] = useState(null);
   const [descriptionError, setDescriptionError] = useState("");
+  const[principalError,setPrincipalError] = useState("");
   const [proposalEntry, setProposalEntry] = useState(''); 
   const [tokenTransfer, setTokenTransfer] = useState({
     to: '',
@@ -318,8 +319,15 @@ function CreateProposal() {
     setPollDescriptionError("");
     setDaoNameError(""); 
     setDaoPurposeError(""); 
+
+   
+    setPrincipalError("");
+
+
+
     setPollOptionError("")
     setPollExpiryError("")
+
     if (!proposalType) {
       toast.error("Please select a proposal type.");
       setLoading(false);
@@ -357,6 +365,12 @@ function CreateProposal() {
 
     if (proposalType === "RemoveDaoMember" && !removeDaoMember.description) {
       setDescriptionError("Please fill out this field");
+      setLoading(false);
+      return;
+
+    }
+    if (proposalType === "RemoveDaoMember" && !removeDaoMember.action_member) {
+      setPrincipalError("Please fill out this field");
       setLoading(false);
       return;
 
@@ -826,13 +840,14 @@ function CreateProposal() {
 
     try {
       const daoCanister = await createDaoActor(daoCanisterId);
-
-
       const response = await daoCanister.proposal_to_remove_member_to_dao(removeDaoMember);
       console.log("Response of Remove DAO Member:", response);
-
-      toast.success("Remove DAO Member proposal created successfully");
-      movetodao();
+       if (response.Ok) {
+        toast.success(response.Ok);
+        movetodao();
+      } else {
+        toast.error(response.Err);
+      }
     } catch (error) {
       console.error("Error submitting Remove DAO Member proposal:", error);
       toast.error("Failed to create Remove DAO Member proposal");
@@ -948,7 +963,7 @@ function CreateProposal() {
                       <option value="ChangePolicy">Change Dao Policy</option>
                       <option value="Poll">Polls</option>
                       <option value="RemoveDaoMember">
-                        RemoveMemberToDaoProposal
+                        Remove Member From Dao
                       </option>
                       <option value="MintNewTokens">
                         Mint New Tokens
@@ -1078,7 +1093,10 @@ function CreateProposal() {
                     <RemoveDaoMember
                       removeDaoMember={removeDaoMember}
                       handleInputRemoveDaoMember={handleInputRemoveDaoMember}
-                      errorMessage={descriptionError}
+                      descriptionError={descriptionError}
+                      principalError={principalError}
+                      setDescriptionError={setDescriptionError}
+                      setPrincipalError={setPrincipalError}
                     />
                   )}
 

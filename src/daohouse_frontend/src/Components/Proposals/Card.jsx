@@ -876,10 +876,7 @@ export default function Card({
                 proposal.proposal_type.RemoveMemberToDaoProposal !==
                   undefined && (
                   <div className="w-full">
-                    <div className="flex">
-                      <span className="font-bold">Dao Name</span>:{" "}
-                      {proposal.new_dao_name}
-                    </div>
+                    
                     <div className="whitespace-normal break-words mt-2">
                       <span className="font-bold">Principal ID</span>:{" "}
                       {Principal.fromUint8Array(
