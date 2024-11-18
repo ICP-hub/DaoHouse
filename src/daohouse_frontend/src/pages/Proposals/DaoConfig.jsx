@@ -1,8 +1,6 @@
 import React, { useEffect } from "react";
 
-
-
-function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig,errorMessage ,errors }) {
+function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig, errorMessage, errors, setDescriptionError, setDaoNameError, setDaoPurposeError }) {
     console.log("dao in dao config", dao);
     console.log("dao name in dao config", daoConfig.new_dao_name);
 
@@ -15,6 +13,27 @@ function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig,errorMes
         }));
     }, [dao, setDaoConfig]);
 
+    const handleDescriptionChange = (e) => {
+        handleInputDaoConfig(e); // Call the original handler
+        if (errorMessage) {
+            setDescriptionError(""); // Clear the error message when user starts typing
+        }
+    };
+
+    const handleDaoNameChange = (e) => {
+        handleInputDaoConfig(e); // Call the original handler
+        if (errors?.new_dao_name) {
+            setDaoNameError(""); // Clear the error message when user starts typing
+        }
+    };
+
+    const handlePurposeChange = (e) => {
+        handleInputDaoConfig(e); // Call the original handler
+        if (errors?.purpose) {
+            setDaoPurposeError(""); // Clear the error message when user starts typing
+        }
+    };
+
     return (
         <form className="space-y-4">
             <div className="mb-4">
@@ -23,16 +42,15 @@ function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig,errorMes
                     id="description"
                     name="description"
                     value={daoConfig?.description || ""}
-                    onChange={handleInputDaoConfig}
+                    onChange={handleDescriptionChange} // Use the new handler
                     className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                     placeholder="Enter Description"
                     rows={4}
                     required
                 />
 
-                   {errorMessage && (
+                {errorMessage && (
                     <p className="text-red-500 text-sm">{errorMessage}</p>
-
                 )}
             </div>
 
@@ -43,7 +61,7 @@ function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig,errorMes
                     type="text"
                     name="new_dao_name"
                     value={daoConfig?.new_dao_name}
-                    onChange={handleInputDaoConfig}
+                    onChange={handleDaoNameChange} // Use the new handler
                     className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                     placeholder="Enter DAO Name"
                     required
@@ -52,23 +70,7 @@ function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig,errorMes
                 {errors?.new_dao_name && (
                     <p className="text-red-500 text-sm mt-1">{errors?.new_dao_name}</p>
                 )}
-
             </div>
-
-            {/* Uncomment if needed for additional fields
-            <div className="mb-4">
-                <label htmlFor="actionMember" className="mb-2 font-semibold text-xl">Action Member (Principal)</label>
-                <input
-                    id="actionMember"
-                    type="text"
-                    name="action_member"
-                    value={daoConfig.action_member}
-                    onChange={handleInputDaoConfig}
-                    className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                    placeholder="Enter Action Member Principal"
-                />
-            </div> 
-            */}
 
             <div className="mb-4">
                 <label htmlFor="purpose" className="mb-2 font-semibold text-xl">DAO Purpose</label>
@@ -77,7 +79,7 @@ function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig,errorMes
                     type="text"
                     name="purpose"
                     value={daoConfig?.purpose}
-                    onChange={handleInputDaoConfig}
+                    onChange={handlePurposeChange} // Use the new handler
                     className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
                     placeholder="Enter Purpose"
                     required
@@ -86,11 +88,9 @@ function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig,errorMes
                 {errors?.purpose && (
                     <p className="text-red-500 text-sm mt-1">{errors?.purpose}</p>
                 )}
-
             </div>
         </form>
     );
 }
 
 export default DaoConfig;
-
