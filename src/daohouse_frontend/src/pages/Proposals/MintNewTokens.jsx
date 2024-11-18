@@ -7,7 +7,7 @@ const MintNewTokens = ({ mintTokenData, handleInputMintToken }) => (
       <input
         type="number"
         name="total_amount" // Ensure this matches your state key for consistency
-        value={mintTokenData.total_amount || 0}
+        value={mintTokenData.total_amount}
         onChange={handleInputMintToken}
         className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
         placeholder="Enter total amount"
