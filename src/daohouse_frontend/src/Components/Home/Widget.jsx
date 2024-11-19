@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth, useAuthClient } from "../../Components/utils/useAuthClient";
+import { useAuth } from '../../connect/useClient';
 
 export default function Widget() {
     const { backendActor } = useAuth();
@@ -20,7 +20,7 @@ export default function Widget() {
         }
     };
 
-    const authClient = useAuthClient();
+    const authClient = useAuth();
     const prinic = authClient.getPrincipalId();
     console.log("value ", prinic);
 

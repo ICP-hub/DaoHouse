@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../../utils/useAuthClient";
+
 import MyProfileSkelton from "../../SkeletonLoaders/MyProfileSkelton";
 import NoDataComponent from "../../Dao/NoDataComponent";
 import { Principal } from "@dfinity/principal";
 import Container from "../../Container/Container";
 import SearchProposals from "../../../Components/Proposals/SearchProposals"; 
 import "./Following.scss"; 
-import { useAuthClient } from "../../../connect/useClient";
+import { useAuth } from "../../../connect/useClient";
 
 const Following = () => {
   const className = "Following";
-  const { backendActor, createDaoActor, stringPrincipal } = useAuthClient();
+  const { backendActor, createDaoActor, stringPrincipal } = useAuth();
   const [joinedDAO, setJoinedDAO] = useState([]);
   const [fetchedDAOs, setFetchedDAOs] = useState([]); 
   const [loading, setLoading] = useState(false);

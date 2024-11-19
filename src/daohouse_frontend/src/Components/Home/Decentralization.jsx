@@ -7,13 +7,13 @@ import smallcircle from "../../../assets/smallcircle.png";
 import mediumcircle from "../../../assets/mediumcircle.png";
 import mobileviewCircleBig from "../../../assets/mobileviewCircleBig.png";
 import mobilecircleSmall from "../../../assets/mobilecircleSmall.png";
-import { useAuthClient } from "../../connect/useClient";
+import { useAuth } from "../../connect/useClient";
 // import { useAuth, useAuthClient } from "../../Components/utils/useAuthClient";
 
 
 const Decentralization = () => {
   const className = "Decentralization";
-  const { backendActor } = useAuthClient();
+  const { backendActor } = useAuth();
   console.log("backendActor : ", backendActor);
   const [analtics, setGetAnaltics] = useState({});
   const navigate = useNavigate();

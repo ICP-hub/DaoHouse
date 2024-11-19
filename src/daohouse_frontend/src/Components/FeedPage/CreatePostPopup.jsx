@@ -5,7 +5,7 @@ import closeIcon from "../../../assets/close-icon.png";
 import TrashIcon from "../../../assets/Trash.png";
 import avtarProfileIcon from "../../../assets/Avatar.png";
 import { FaArrowRightLong } from "react-icons/fa6";
-import { useAuth } from "../utils/useAuthClient";
+import { useAuth } from "../../connect/useClient";
 import { constant } from "../utils/constants";
 import { toast } from "react-toastify";
 import { useUserProfile } from "../../context/UserProfileContext";

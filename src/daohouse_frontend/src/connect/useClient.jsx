@@ -169,7 +169,10 @@ import { createActor } from "../../../declarations/daohouse_backend/index.js";
 import { idlFactory as ledgerIDL } from "./ledger.did.js";
 const AuthContext = createContext();
 
-const canisterID = process.env.CANISTER_ID_ICPLAUNCHPAD_BACKEND;
+
+const canisterID = process.env.CANISTER_ID_DAOHOUSE_BACKEND;
+console.log("canister",canisterID);
+
 export const useAuthClient = () => {
     const identityKit = useIdentityKit();
 
@@ -228,21 +231,21 @@ const frontendCanisterId =
 
 
     //actor
-    useEffect(() => {
-        if (agent) {
-            const initActor = async () => {
-                try {
-                    const actor = createActor(process.env.CANISTER_ID_ICPLAUNCHPAD_BACKEND, { agent });
+    // useEffect(() => {
+    //     if (agent) {
+    //         const initActor = async () => {
+    //             try {
+    //                 const actor = createActor(process.env.CANISTER_ID_DAOHOUSE_BACKEND, { agent });
                     
                    
-                    console.log("Authenticated actor initialized.");
-                } catch (error) {
-                    console.error("Failed to create actor:", error);
-                }
-            };
-            initActor();
-        }
-    }, [agent, ]);
+    //                 console.log("Authenticated actor initialized.");
+    //             } catch (error) {
+    //                 console.error("Failed to create actor:", error);
+    //             }
+    //         };
+    //         initActor();
+    //     }
+    // }, [agent, ]);
 
   
 
@@ -332,6 +335,7 @@ const frontendCanisterId =
         orderPlacementLoad,
         frontendCanisterId,
         setOrderPlacementLoad,
+        canisterID,
         backendActor: createActor(canisterID, {
             agentOptions: { identity, verifyQuerySignatures: false },
         }),

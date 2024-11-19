@@ -52,9 +52,8 @@ const Navbar = () => {
   } = useAuth();
   // const { isConnected, disconnect, principal, actor } = useAuth();
 
-  console.log("backendActor",backendActor);
-  // console.log("principal state",principal.toString());
-  
+
+
   
   const location = useLocation();
 

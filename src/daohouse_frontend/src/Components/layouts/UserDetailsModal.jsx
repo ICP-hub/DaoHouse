@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import defaultImage from "../../../assets/Avatar.png";
-import { useAuth } from "../utils/useAuthClient";
-import { useAuthClient } from "../../connect/useClient";
+import { useAuth } from "../../connect/useClient";
 
 
 const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
@@ -12,7 +11,7 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
   const [fileURL, setFileURL] = useState(defaultImage);
   const [errors, setErrors] = useState({});
   const fileInputRef = useRef(null);
-  const { backendActor } = useAuthClient();
+  const { backendActor } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
 

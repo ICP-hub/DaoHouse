@@ -11,12 +11,12 @@ import userImage from "../../../assets/avatar.png";
 import ShareModal from "./ShareModal";
 import coin from "../../../assets/coin.jpg";
 import Avatar from "../../../assets/Avatar.png";
-import { useAuthClient } from "../../connect/useClient";
+import { useAuth } from "../../connect/useClient";
 
 
 export default function Card({ proposal, voteApi, showActions, isProposalDetails, isComment, setIsComment, commentCount, isSubmittedProposals, showComments, }) {
   
-  const { backendActor, createDaoActor, stringPrincipal ,principals} = useAuthClient();
+  const { backendActor, createDaoActor, stringPrincipal ,principal} = useAuth();
   const [voteStatus, setVoteStatus] = useState("");
   const [approvedVotes, setApprovedVotes] = useState(Number(proposal?.proposal_approved_votes || 0n));
   const [rejectedVotes, setRejectedVotes] = useState(Number(proposal?.proposal_rejected_votes || 0n));
@@ -345,7 +345,7 @@ export default function Card({ proposal, voteApi, showActions, isProposalDetails
                         ? {
                             ...option,
                             poll_approved_votes: option.poll_approved_votes + 1n,
-                            approved_users: [...option.approved_users, stringPrincipal ? stringPrincipal : principals.toString()], // Add current user to approved users list
+                            approved_users: [...option.approved_users, stringPrincipal ? stringPrincipal : principal.toString()], // Add current user to approved users list
                         }
                         : option
                 )
