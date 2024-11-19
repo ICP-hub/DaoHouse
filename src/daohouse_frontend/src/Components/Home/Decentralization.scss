@@ -15,8 +15,12 @@
   border: 2px solid rgba(255, 255, 255, 0.6); /* Full border for large screens */
   border-radius: 6px;
   padding: 20px;
-  text-align: left;
+  text-align: center; /* Center text horizontally */
   overflow: hidden;
+  display: flex; /* Use flexbox */
+  flex-direction: column; /* Stack children vertically */
+  justify-content: center; /* Center children vertically */
+  align-items: center; /* Center children horizontally */
 
   /* Set a default minimum height for large devices */
   min-height: 200px;
@@ -27,7 +31,6 @@
     border-color: rgba(255, 255, 255, 0.4); /* Lighter border for mobile */
     min-height: 150px; /* Adjusted height for smaller screens */
   }
-
 
   h2 {
     font-size: 1.25rem; /* text-xl equivalent */
@@ -48,6 +51,7 @@
     }
   }
 }
+
 
 /* Small circle image */
 .small-circle {
