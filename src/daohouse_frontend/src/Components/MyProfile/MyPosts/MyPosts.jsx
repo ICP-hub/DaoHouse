@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { usePostContext } from "../../../PostProvider";
 import NoDataComponent from "../../Dao/NoDataComponent";
-import { useAuth } from "../../utils/useAuthClient";
 import Card from "../../Proposals/Card";
 import SearchProposals from "../../Proposals/SearchProposals";
 import MyPostsSkeleton from "../../SkeletonLoaders/MyPostsSkeleton";
-import { useAuthClient } from "../../../connect/useClient";
+import { useAuth } from "../../../connect/useClient";
 
 const MyPosts = () => {
-  const { backendActor } = useAuthClient();
+  const { backendActor } = useAuth();
   const { setSelectedPost } = usePostContext();
   const [myProposals, setMyProposals] = useState([]);
   const [totalItems, setTotalItems] = useState(0);

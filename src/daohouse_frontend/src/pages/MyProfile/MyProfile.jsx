@@ -52,10 +52,10 @@ const MyProfile = ({ childComponent }) => {
   };
 
   useEffect(() => {
-    console.log("User Profile Image:", userProfile?.profile_img);
+    //  console.log("User Profile Image:", userProfile?.profile_img);
     if (userProfile?.profile_img) {
       const profileImageUrl = `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${userProfile.profile_img}`;
-      console.log("Profile Image URL:", profileImageUrl);
+     
       setImageSrc(profileImageUrl);
     } else {
       console.log("No profile image found. Using default.");
@@ -112,10 +112,10 @@ const MyProfile = ({ childComponent }) => {
   const post = data?.submitted_proposals ? Number(data.submitted_proposals) : 0;
   const following = data?.join_dao ? Number(data.join_dao.length) : 0;
   const email = data?.email_id;
-  console.log("email",email);
+
   
   const name = data?.username;
-  console.log("name",name);
+ 
   
 
   const getData = async () => {

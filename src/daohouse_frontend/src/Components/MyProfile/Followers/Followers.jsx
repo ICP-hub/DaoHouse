@@ -9,7 +9,9 @@ import { useAuth } from "../../../connect/useClient";
 
 const Followers = () => {
   const className = "Followers";
-  const { backendActor, createDaoActor, stringPrincipal } = useAuth();
+  const { backendActor, createDaoActor, stringPrincipal, principal} = useAuth();
+  console.log("stringPrincipal",principal);
+  
   const [joinedDAO, setJoinedDAO] = useState([]);
   const [fetchedDAOs, setFetchedDAOs] = useState([]); 
   const [loading, setLoading] = useState(false);
