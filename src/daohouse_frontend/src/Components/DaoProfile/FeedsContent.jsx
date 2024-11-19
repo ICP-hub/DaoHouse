@@ -1,6 +1,6 @@
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { useAuth } from "../utils/useAuthClient";
+import { useAuth } from "../../connect/useClient";
 import { useUserProfile } from "../../context/UserProfileContext";
 import { useEffect, useState } from "react";
 import MyProfileImage from "../../../assets/MyProfile-img.png";

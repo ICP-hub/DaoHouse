@@ -5,13 +5,12 @@ import DaoCard from "../../Components/Dao/DaoCard";
 import nodata from "../../../assets/gif/nodata.svg";
 import TopComponent from "../../Components/Dao/TopComponent";
 import Container from "../../Components/Container/Container";
-import { useAuth } from "../../Components/utils/useAuthClient";
 import LoginModal from "../../Components/Auth/LoginModal";
 import SearchProposals from "../../Components/Proposals/SearchProposals";
 import { Principal } from "@dfinity/principal";
 import DaoCardLoaderSkeleton from "../../Components/SkeletonLoaders/DaoCardLoaderSkeleton/DaoCardLoaderSkeleton";
 import Pagination from "../../Components/pagination/Pagination";
-import { useAuthClient } from "../../connect/useClient";
+import { useAuth } from "../../connect/useClient";
 
 const Dao = () => {
   const [showAll, setShowAll] = useState(true);
@@ -26,7 +25,7 @@ const Dao = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
 
-  const { isAuthenticated, backendActor, createDaoActor, login,principal, signInNFID, stringPrincipal,identity } = useAuthClient();
+  const { isAuthenticated, backendActor, createDaoActor, login,principal, signInNFID, stringPrincipal,identity } = useAuth();
   // console.log("createDaoActor",createDaoActor);
   // console.log("string Principal",stringPrincipal);
   // console.log("login",login);

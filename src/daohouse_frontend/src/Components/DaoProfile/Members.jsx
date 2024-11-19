@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Members.scss";
 import { useMediaQuery } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../utils/useAuthClient";
+import { useAuth } from "../../connect/useClient";
 import { Principal } from "@dfinity/principal";
 import { MdAddBox } from "react-icons/md";
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";

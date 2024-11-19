@@ -26,14 +26,14 @@ import NoDataComponent from "../../Components/Dao/NoDataComponent";
 import { CircularProgress } from "@mui/material";
 import messagesound from "../../Sound/messagesound.mp3";
 import daoImage from "../../../assets/daoImage.png"
-import { useAuthClient } from "../../connect/useClient";
+import { useAuth } from "../../connect/useClient";
 
 
 const DaoProfile = () => {
 
   const className = "DaoProfile";
   const [activeLink, setActiveLink] = useState("proposals");
-  const { backendActor, createDaoActor } = useAuthClient();
+  const { backendActor, createDaoActor } = useAuth();
   const [dao, setDao] = useState(null);
   const [proposals, setProposals] = useState([]);
   const [loadingProfile, setLoadingProfile] = useState(false);

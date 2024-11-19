@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Principal } from "@dfinity/principal";
-import { useAuth } from "../utils/useAuthClient";
+import { useAuth } from "../../connect/useClient";
 import { toast } from 'react-toastify';
 import { CircularProgress } from "@mui/material";
 import messagesound from "../../Sound/messagesound.mp3";
 import daoImage from "../../../assets/daoImage.png"
-import { useAuthClient } from "../../connect/useClient";
+
 
 const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, isJoinedDAO }) => {
 
   const navigate = useNavigate();
-  const { backendActor, stringPrincipal, createDaoActor } = useAuthClient();
+  const { backendActor, stringPrincipal, createDaoActor } = useAuth();
   const canisterId = process.env.CANISTER_ID_IC_ASSET_HANDLER;
   const [isFollowing, setIsFollowing] = useState(false);
   const [daoActor, setDaoActor] = useState({})

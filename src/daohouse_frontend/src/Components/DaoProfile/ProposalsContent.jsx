@@ -5,10 +5,9 @@ import { Link } from "react-router-dom";
 
 import { useParams } from "react-router-dom";
 import nodata from "../../../assets/nodata.png";
-import { useAuthClient } from "../../connect/useClient";
-
+import { useAuth } from "../../connect/useClient";
 const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, daoCanisterId }) => {
-  const { backendActor, createDaoActor } = useAuthClient();
+  const { backendActor, createDaoActor } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [fetchedProposals, setFetchedProposals] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
