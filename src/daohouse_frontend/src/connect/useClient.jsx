@@ -205,7 +205,7 @@ const frontendCanisterId =
                 if (process.env.DFX_NETWORK !== "ic") {
                     await agentInstance.fetchRootKey();
                 }
-            console.log(" agent created:", agent);
+            console.log(" agent created:", agentInstance);
                 const newActor = Actor.createActor(ledgerIDL, {
                     agent: agentInstance,
                     canisterId: canisterID,

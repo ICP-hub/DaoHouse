@@ -52,6 +52,9 @@ const Navbar = () => {
   } = useAuth();
   // const { isConnected, disconnect, principal, actor } = useAuth();
 
+  console.log("backendActor",backendActor);
+  // console.log("principal state",principal.toString());
+  
   
   const location = useLocation();
 
@@ -75,7 +78,8 @@ const Navbar = () => {
     const createAndFetchUserProfile = async () => {
       try {
         const response = await backendActor.check_user_existance();
-
+       console.log("response of create amd fetch user profile",response);
+       
         if (response.Ok) {
           await fetchUserProfile();
         } else {

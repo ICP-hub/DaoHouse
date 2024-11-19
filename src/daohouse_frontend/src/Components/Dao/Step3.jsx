@@ -4,11 +4,11 @@ import { MdOutlineDeleteOutline } from "react-icons/md";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import { Principal } from "@dfinity/principal";
 import { toast } from "react-toastify";
-import { useAuth } from "../../Components/utils/useAuthClient";
+
 import Container from "../Container/Container";
 import EditPen from "../../../assets/edit_pen.png";
 import { RiGroupFill } from "react-icons/ri";
-import { useAuthClient } from "../../connect/useClient";
+import { useAuth } from "../../connect/useClient";
 
 
 
@@ -22,8 +22,8 @@ const Step3 = ({ setData, setActiveStep, }) => {
   const [memberUsernames, setMemberUsernames] = useState({});
   const [updatedGroupName, setUpdatedGroupName] = useState("");
   const [memberName, setMemberName] = useState("");
-  const { backendActor, stringPrincipal ,principals } = useAuthClient();
-  // console.log("principal",principals.toString());
+  const { backendActor, stringPrincipal ,principal } = useAuth();
+  console.log("principal",principal.toString());
   // console.log("steokrwe",stringPrincipal);
   // console.log("backendActor",backendActor);
   
@@ -379,10 +379,10 @@ const Step3 = ({ setData, setActiveStep, }) => {
     const council = initialList.find((group) => group.name === "Council");
    
 
-    if (council && !council.members.includes(stringPrincipal ? stringPrincipal : principals.toString())) {
+    if (council && !council.members.includes(stringPrincipal ? stringPrincipal : principal.toString())) {
       const updatedList = initialList.map((group) => {
         if (group.name === "Council") {
-          return { ...group, members: [...group.members, stringPrincipal ? stringPrincipal : principals.toString() ] };
+          return { ...group, members: [...group.members, stringPrincipal ? stringPrincipal : principal.toString() ] };
         }
         return group;
       });
@@ -397,7 +397,7 @@ const Step3 = ({ setData, setActiveStep, }) => {
     }
 
     
-  }, [stringPrincipal ? stringPrincipal : principals.toString()]);
+  }, [stringPrincipal ? stringPrincipal : principal.toString()]);
 
   const handleEditGroup = (index) => {
     setGroupNameInputIndex(index);

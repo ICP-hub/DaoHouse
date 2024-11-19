@@ -10,12 +10,12 @@ import Container from "../Container/Container";
 
 import PaymentModal from "./PaymentModal";
 import coinsound from "../../../../daohouse_frontend/src/Sound/coinsound.mp3";
-import { useAuthClient } from "../../connect/useClient";
+import { useAuth } from "../../connect/useClient";
 
 const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setLoadingNext }) => {
   const [file, setFile] = useState(null);
-  const { identity, stringPrincipal, backendActor,balance ,principals } = useAuthClient();
-  console.log("balsad",principals);
+  const { identity, stringPrincipal, backendActor,balance ,principal } = useAuth();
+  console.log("balsad",principal);
   
   const [fileURL, setFileURL] = useState(daoImage);
   const [shouldCreateDAO, setShouldCreateDAO] = useState(false);
@@ -77,7 +77,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
 
     try {
       //uncomment later
-      const res = await backendActor.make_payment(sendableAmount, Principal.fromText(stringPrincipal ? stringPrincipal : principals.toString()));
+      const res = await backendActor.make_payment(sendableAmount, Principal.fromText(stringPrincipal ? stringPrincipal : principal.toString()));
       console.log(res)
       if (res.Ok) {
         toast.success("Payment successful!");
@@ -118,7 +118,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
       );
       console.log("sendable amount console ", sendableAmount);
       console.log("current balance console ", currentBalance);
-      console.log("prjkjekwr",principals.toString());
+      console.log("prjkjekwr",principal.toString());
       
 
       const backendCanisterId = process.env.CANISTER_ID_DAOHOUSE_BACKEND;
@@ -178,7 +178,7 @@ const Step6 = ({ data, setData, setActiveStep, handleDaoClick, loadingNext, setL
       const name = await actor.icrc1_name();
       console.log("balance is ", name);
 
-      const { metadata, balance } = await fetchMetadataAndBalance(actor, Principal.fromText(stringPrincipal ? stringPrincipal : principals.toString()));
+      const { metadata, balance } = await fetchMetadataAndBalance(actor, Principal.fromText(stringPrincipal ? stringPrincipal : principal.toString()));
 
       const formattedMetadata = formatTokenMetaData(metadata);
       const parsedBalance = parseInt(balance, 10);

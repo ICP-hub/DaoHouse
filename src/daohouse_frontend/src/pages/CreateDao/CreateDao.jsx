@@ -8,18 +8,18 @@ import Step4 from "../../Components/Dao/Step4";
 import Step5 from "../../Components/Dao/Step5";
 import Step6 from "../../Components/Dao/Step6";
 import TopComponent from "../../Components/Dao/TopComponent";
-import { useAuth } from "../../Components/utils/useAuthClient";
+
 import { Principal } from "@dfinity/principal";
 import { toast } from "react-toastify";
 import Container from "../../Components/Container/Container";
 import LoginModal from "../../Components/Auth/LoginModal";
 import { useNavigate } from "react-router-dom";
-import { useAuthClient } from "../../connect/useClient";
+import { useAuth } from "../../connect/useClient";
 
 const CreateDao = () => {
   const className = "CreateDAO";
   const [activeStep, setActiveStep] = useState(0);
-  const { backendActor, isAuthenticated, login, signInNFID } = useAuthClient();
+  const { backendActor, isAuthenticated, login, signInNFID } = useAuth();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingNext, setLoadingNext] = useState(false)
@@ -180,6 +180,8 @@ const CreateDao = () => {
   
 
     try {
+      console.log("backendActor",backendActor);
+      
       const response = await backendActor.create_dao(daoPayload);
       console.log("response",response);
       

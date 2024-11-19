@@ -4,13 +4,14 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import avatar from "../../../assets/avatar.png";
-import { useAuth } from '../utils/useAuthClient';
 import { Principal } from '@dfinity/principal';
 import MemberSkeletonLoader from '../SkeletonLoaders/MemberSkeletonLoader/MemberSkeletonLoader';
-import { useAuthClient } from '../../connect/useClient';
+import { useAuth } from '../../connect/useClient';
 
 function ViewModal({ open, onClose, users = [], approvedVotesList = [], rejectedVotesList = [], showVotes = false }) {
-  const { backendActor } = useAuthClient();
+  const { backendActor } = useAuth();
+  console.log("backendActor",backendActor);
+  
   const [profiles, setProfiles] = useState([])
   const [voteProfiles, setVoteProfiles] = useState({ approved: [], rejected: [] });
   const [loading, setLoading] = useState(false);
@@ -27,6 +28,8 @@ function ViewModal({ open, onClose, users = [], approvedVotesList = [], rejected
         const fetchedProfiles = await Promise.all(users.map(async (user) => {
             try {
                 console.log("I'm in");
+                console.log("user",Principal.fromText(user));
+                
                 const userDetail = await backendActor.get_profile_by_id(Principal.fromText(user));
                 console.log("userdetail",userDetail);
                 
