@@ -169,7 +169,8 @@ import { createActor } from "../../../declarations/daohouse_backend/index.js";
 import { idlFactory as ledgerIDL } from "./ledger.did.js";
 const AuthContext = createContext();
 
-const canisterID = process.env.CANISTER_ID_ICPLAUNCHPAD_BACKEND;
+const canisterID = process.env.CANISTER_ID_DAOHOUSE_BACKEND;
+console.log("canister",canisterID);
 export const useAuthClient = () => {
     const identityKit = useIdentityKit();
 
