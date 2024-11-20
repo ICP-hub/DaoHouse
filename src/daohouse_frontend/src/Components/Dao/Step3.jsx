@@ -67,8 +67,8 @@ const Step3 = ({ setData, setActiveStep }) => {
       return;
     }
     const invalidGroup = list
-      .slice(1)
-      .find((group) => group.members.length === 0);
+      ?.slice(1)
+      ?.find((group) => group.members.length === 0);
     if (invalidGroup) {
       toast.error(`Please add at least one member to ${invalidGroup.name}.`);
       return;
@@ -82,7 +82,7 @@ const Step3 = ({ setData, setActiveStep }) => {
     setData((prev) => ({
       ...prev,
       step3: {
-        groups: list.slice(1) || [],
+        groups: list?.slice(1) || [],
         council: council.members || [],
         members: uniqueMembers || [],
       },
@@ -140,7 +140,6 @@ const Step3 = ({ setData, setActiveStep }) => {
         
         const principal = Principal.fromText(memberName.trim());       
         const principalId = principal.toText();
-  
         const council = list.find((group) => group.name === "Council");
         if (council && council.members.includes(principalId)) {
           toast.error("Principal ID already exists");
@@ -148,12 +147,9 @@ const Step3 = ({ setData, setActiveStep }) => {
           setIsAdding(false); 
           return;
         }
-  
-        const response = await backendActor.get_profile_by_id(principal);
-  
+        const response = await backendActor?.get_profile_by_id(principal);  
         if (response.Ok) {
           const username = response.Ok.username;
-  
           setList((prevList) =>
             prevList.map((item) => {
               if (item.name === "Council") {
@@ -182,6 +178,7 @@ const Step3 = ({ setData, setActiveStep }) => {
           toast.error("User does not exist");
         }
       } catch (error) {
+        console.log(error)
         toast.error("Invalid Principal ID or error fetching profile");
       } finally {
         setIsAdding(false);
@@ -444,7 +441,7 @@ const Step3 = ({ setData, setActiveStep }) => {
               ? skeletonLoader() // Show skeleton loader while data is being fetched
               : councilUsernames.map((fullName, index) => {
                   const [username, principalId] = fullName.split(" ("); // Split the string to separate username and principal ID
-                  const formattedPrincipalId = principalId.slice(0, -1); // Remove the closing parenthesis
+                  const formattedPrincipalId = principalId?.slice(0, -1); // Remove the closing parenthesis
 
                   return (
                     <section
