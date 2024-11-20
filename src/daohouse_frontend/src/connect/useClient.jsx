@@ -167,6 +167,7 @@ import { Actor, HttpAgent } from "@dfinity/agent";
 import { createActor } from "../../../declarations/daohouse_backend/index.js";
 
 import { idlFactory as ledgerIDL } from "./ledger.did.js";
+import { idlFactory as DaoFactory } from "../../../declarations/dao_canister/index.js"
 const AuthContext = createContext();
 
 const canisterID = process.env.CANISTER_ID_DAOHOUSE_BACKEND;
@@ -225,7 +226,22 @@ const frontendCanisterId =
         createAgent();
     }, [authenticatedAgent]);
       
-
+    const createDaoActor1 = (canisterId) => {
+        try {
+          const agent = new HttpAgent({ identity });      
+    
+          if (process.env.DFX_NETWORK !== 'production') {
+            agent.fetchRootKey().catch(err => {
+              console.warn('Unable to fetch root key. Check to ensure that your local replica is running');
+              console.error(err);
+            });
+          }
+    
+          return Actor.createActor(DaoFactory, { agent, canisterId });
+        } catch (err) {
+          console.error("Error creating DAO actor:", err);
+        }
+      };
 
     //actor
     useEffect(() => {
@@ -327,7 +343,7 @@ const frontendCanisterId =
         principal,
         agent: agent || null,
         createDaoActor: backendActor || null,
-        // createDaoActor,
+        createDaoActor1,
         identity,
         orderPlacementLoad,
         frontendCanisterId,

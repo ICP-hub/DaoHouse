@@ -351,7 +351,9 @@ const Dao = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
 
-  const { isAuthenticated, backendActor, createDaoActor, login, signInNFID, stringPrincipal,principal } = useAuth();
+  const { isAuthenticated, backendActor, createDaoActor, login, signInNFID, stringPrincipal,principal
+    ,createDaoActor1
+   } = useAuth();
  
   
   const navigate = useNavigate();
@@ -365,7 +367,7 @@ const Dao = () => {
     const allDaoDetails = await Promise.all(
       daoList.map(async (data) => {
         try {
-          const daoCanister = await createDaoActor(data.dao_canister_id);
+          const daoCanister = await createDaoActor1(data.dao_canister_id);
           const dao_details = await daoCanister.get_dao_detail();
           console.log("dao details", dao_details);
 
@@ -439,7 +441,7 @@ const Dao = () => {
         joinedDaoPrincipals.map(async (daoPrincipal) => {
           try {
             const daoCanisterPrincipal = Principal.fromUint8Array(daoPrincipal._arr);
-            const daoCanister = await createDaoActor(daoCanisterPrincipal);
+            const daoCanister = await createDaoActor1(daoCanisterPrincipal);
             const daoDetails = await daoCanister.get_dao_detail();
             return { ...daoDetails, dao_canister_id: daoCanisterPrincipal.toText() };
           } catch (error) {
