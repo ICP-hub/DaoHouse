@@ -3,8 +3,12 @@ import Tags from "../../../Components/MyProfile/Tags";
 import PersonalLinksAndContactInfo from "../PersonalLinksAndContactInfo";
 import { useUserProfile } from "../../../context/UserProfileContext";
 
+<<<<<<< HEAD
 import { toast } from "react-toastify";
 import { useAuth } from "../../../connect/useClient";
+=======
+import toast from 'react-hot-toast';
+>>>>>>> main
 
 
 const AboutMe = () => {
@@ -32,7 +36,7 @@ const AboutMe = () => {
   return (
     <div className={className + "w-full md:w-[100%] big_phone:w-full lg:w-[100%] xl:w-full"}>
       <div className=" mt-5">
-        <h3 className="text-[#05212C] lg:text-[24px]  md:text-[18px] text-[16px] md:font-bold font-semibold">
+        <h3 className="text-[#05212C] lg:text-[24px]  md:text-[18px] text-[16px] md:font-bold font-semibold  hidden md:block">
           About Me
         </h3>
         <div className="md:mt-4 mt-2 mb-6 bg-[#F4F2EC] p-4 rounded-lg ">

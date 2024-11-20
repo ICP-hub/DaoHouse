@@ -1,22 +1,26 @@
 import React, { useEffect, useRef, useState } from "react";
+<<<<<<< HEAD
 import { Link, Navigate, useLocation } from "react-router-dom";
 // import { useAuth, useAuthClient } from "../utils/useAuthClient";
+=======
+import { Link,  useLocation,useNavigate  } from "react-router-dom";
+import { useAuth} from "../utils/useAuthClient";
+>>>>>>> main
 import { LuChevronDown } from "react-icons/lu";
 import LoginModal from "../Auth/LoginModal";
 import { FaUser, FaSignOutAlt, FaSitemap, FaComments } from "react-icons/fa";
 import logo from "../../../assets/ColorLogo.png";
 import MyProfileImage from "../../../assets/Avatar.png";
 import { useUserProfile } from "../../context/UserProfileContext";
-import { toast } from "react-toastify";
+import toast from 'react-hot-toast';
 import Container from "../Container/Container";
-import { Principal } from "@dfinity/principal";
-import { Actor, HttpAgent } from "@dfinity/agent";
-import { idlFactory as ledgerIDL } from "./ledger.did";
-import { createActor } from "../../../../declarations/icp_ledger_canister";
 import UserDetailsModal from "./UserDetailsModal";
+<<<<<<< HEAD
 import { useNavigate } from "react-router-dom";
 import { ConnectWallet } from "@nfid/identitykit/react";
 import { useAuth } from "../../connect/useClient";
+=======
+>>>>>>> main
 
 
 export const ConnectBtn = ({ onClick }) => (
@@ -76,14 +80,19 @@ const Navbar = () => {
 
     const createAndFetchUserProfile = async () => {
       try {
+<<<<<<< HEAD
         const response = await backendActor.check_user_existance();
        console.log("response of create amd fetch user profile",response);
        
+=======
+        const response = await backendActor?.check_user_existance();
+
+>>>>>>> main
         if (response.Ok) {
           await fetchUserProfile();
         } else {
           setIsDetailsModalOpen(true)
-          const profileResponse = await backendActor.create_profile();
+          const profileResponse = await backendActor?.create_profile();
 
           if (profileResponse.Ok === null && !hasShownToastRef.current) {
             toast.success("User login successfully");

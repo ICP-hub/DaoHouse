@@ -1,9 +1,6 @@
 use crate::proposal_route::create_proposal_controller;
 use crate::{
-    guards::*, AddMemberArgs, BountyDone, BountyRaised, ChangeDaoConfigArg, ChangeDaoPolicy,
-    CreateGeneralPurpose, CreatePoll, DaoGroup, JoinDao, LedgerCanisterId, PollOptions,
-    ProposalCreation, ProposalInput, ProposalState, RemoveDaoMemberArgs, RemoveMemberArgs,
-    TokenTransferPolicy,
+    guards::*, AddMemberArgs, BountyDone, BountyRaised, ChangeDaoConfigArg, ChangeDaoPolicy, CreateGeneralPurpose, CreatePoll, DaoGroup, JoinDao, LedgerCanisterId, MintTokenArgs, PollOptions, ProposalCreation, ProposalInput, ProposalState, RemoveDaoMemberArgs, RemoveMemberArgs, TokenTransferPolicy
 };
 use crate::icrc_get_balance;
 use crate::{with_state, ProposalType};
@@ -86,18 +83,17 @@ async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, 
         proposal_created_at: None,
         proposal_expired_at: None,
         bounty_task: None,
-        poll_title: None,
+        
         required_votes: None,
         cool_down_period: None,
-        new_dao_type: None,
         group_to_remove: None,
         minimum_threadsold: required_thredshold,
         link_of_task: None,
         associated_proposal_id: None,
         new_required_votes: None,
-        task_completion_day: None,
         poll_query: None,
         poll_options: None,
+        ask_to_join_dao : None,
     };
 
     with_state(|state| {
@@ -159,7 +155,7 @@ async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<St
     let proposal = ProposalInput {
         principal_of_action: Some(args.action_member),
         proposal_description: args.description,
-        proposal_title: String::from(crate::utils::TITLE_REMOVE_MEMBER),
+        proposal_title: String::from(crate::utils::TITLE_REMOVE_MEMBER_FROM_GROUP),
         proposal_type: ProposalType::RemoveMemberToGroupProposal,
         group_to_remove: Some(args.group_name.clone()),
         new_dao_name: None,
@@ -171,17 +167,16 @@ async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<St
         proposal_created_at: None,
         proposal_expired_at: None,
         bounty_task: None,
-        poll_title: None,
+        
         required_votes: None,
         cool_down_period: None,
-        new_dao_type: None,
         minimum_threadsold: required_thredshold,
         link_of_task: None,
         associated_proposal_id: None,
         new_required_votes: None,
-        task_completion_day: None,
         poll_query: None,
         poll_options: None,
+        ask_to_join_dao : None,
     };
 
     with_state(|state| {
@@ -240,18 +235,17 @@ async fn proposal_to_remove_member_to_dao(args: RemoveDaoMemberArgs) -> Result<S
         proposal_created_at: None,
         proposal_expired_at: None,
         bounty_task: None,
-        poll_title: None,
+        
         required_votes: None,
         cool_down_period: None,
-        new_dao_type: None,
         group_to_remove: None,
         minimum_threadsold: required_thredshold,
         link_of_task: None,
         associated_proposal_id: None,
         new_required_votes: None,
-        task_completion_day: None,
         poll_query: None,
         poll_options: None,
+        ask_to_join_dao : None,
     };
 
     with_state(|state| {
@@ -300,7 +294,6 @@ async fn proposal_to_change_dao_config(args: ChangeDaoConfigArg) -> Result<Strin
         proposal_title: String::from(crate::utils::TITLE_CHANGE_DAO_CONFIG),
         proposal_type: ProposalType::ChangeDaoConfig,
         new_dao_name: Some(args.new_dao_name),
-        new_dao_type: Some(args.daotype),
         group_to_join: None,
         dao_purpose: Some(args.purpose),
         tokens: None,
@@ -309,7 +302,7 @@ async fn proposal_to_change_dao_config(args: ChangeDaoConfigArg) -> Result<Strin
         proposal_created_at: None,
         proposal_expired_at: None,
         bounty_task: None,
-        poll_title: None,
+        
         required_votes: None,
         cool_down_period: None,
         group_to_remove: None,
@@ -317,9 +310,9 @@ async fn proposal_to_change_dao_config(args: ChangeDaoConfigArg) -> Result<Strin
         link_of_task: None,
         associated_proposal_id: None,
         new_required_votes: None,
-        task_completion_day: None,
         poll_query: None,
         poll_options: None,
+        ask_to_join_dao : None,
     };
 
     create_proposal_controller(with_state(|state| state.dao.daohouse_canister_id), proposal).await;
@@ -369,8 +362,7 @@ async fn proposal_to_change_dao_policy(args: ChangeDaoPolicy) -> Result<String, 
         proposal_created_at: None,
         proposal_expired_at: None,
         bounty_task: None,
-        poll_title: None,
-        new_dao_type: None,
+        
         group_to_remove: None,
         required_votes: None,
         cool_down_period: Some(args.cool_down_period),
@@ -378,9 +370,9 @@ async fn proposal_to_change_dao_policy(args: ChangeDaoPolicy) -> Result<String, 
         link_of_task: None,
         associated_proposal_id: None,
         new_required_votes: Some(args.required_votes),
-        task_completion_day: None,
         poll_query: None,
         poll_options: None,
+        ask_to_join_dao : Some(args.ask_to_join_dao),
     };
     create_proposal_controller(with_state(|state| state.dao.daohouse_canister_id), proposal).await;
     Ok(String::from(crate::utils::MESSAGE_CHANGE_DAO_POLICY))
@@ -434,18 +426,17 @@ async fn proposal_to_transfer_token(args: TokenTransferPolicy) -> Result<String,
         proposal_created_at: None,
         proposal_expired_at: None,
         bounty_task: None,
-        poll_title: None,
+        
         required_votes: None,
         cool_down_period: None,
-        new_dao_type: None,
         group_to_remove: None,
         minimum_threadsold: required_thredshold,
         link_of_task: None,
         associated_proposal_id: None,
         new_required_votes: None,
-        task_completion_day: None,
         poll_query: None,
         poll_options: None,
+        ask_to_join_dao : None,
     };
     create_proposal_controller(with_state(|state| state.dao.daohouse_canister_id), proposal).await;
     Ok(String::from(crate::utils::MESSAGE_TOKEN_TRANSFER_POLICY))
@@ -484,11 +475,17 @@ async fn transfer(tokens: u64, user_principal: Principal) -> Result<BlockIndex, 
 
 #[update(guard = prevent_anonymous)]
 async fn make_payment(tokens: u64, user: Principal) -> Result<Nat, String> {
+    if tokens.clone() < 1{
+        return Err(String::from("tokens should be greater than 0"));
+     }
     transfer(tokens, user).await
 }
 
 #[update(guard = prevent_anonymous)]
 async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String> {
+    if args.tokens.clone() < 1{
+        return Err(String::from("tokens should be greater than 0"));
+     }
     let proposal_data = ProposalCreation {
         entry: args.proposal_entry.clone(),
         proposal_type: ProposalType::BountyRaised,
@@ -517,19 +514,11 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
                 Ok(())
             }
             None => {
-                return Err(format!(
-                    "No place Found with the name of {:?}",
-                    args.proposal_entry
-                ));
+               Err(format!("No place Found with the name of {}",args.proposal_entry))
             }
         }
     });
-
-    let proposal_expire_time =
-        ic_cdk::api::time() + (args.task_completion_day * 86_400 * 1_000_000_000);
-
-    let test_expire_time = 10 * 60 * 1_000_000_000;
-
+    
     let proposal = ProposalInput {
         principal_of_action: Some(api::caller()),
         proposal_description: args.description,
@@ -544,17 +533,16 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
         proposal_created_at: None,
         proposal_expired_at: None,
         bounty_task: Some(args.bounty_task),
-        poll_title: None,
+        
         required_votes: None,
         cool_down_period: None,
         group_to_remove: None,
-        new_dao_type: None,
         minimum_threadsold: required_thredshold,
         link_of_task: None,
         associated_proposal_id: None,
         new_required_votes: None,
-        task_completion_day: Some(test_expire_time),
         poll_query: None,
+        ask_to_join_dao : None,
         poll_options: None,
     };
 
@@ -569,22 +557,22 @@ async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
         entry: args.proposal_entry.clone(),
         proposal_type: ProposalType::BountyRaised,
     };
-
+    let daohouse_backend_id = with_state(|state| state.dao.daohouse_canister_id);
     guard_check_proposal_creation(proposal_data)?;
     let proposals_data = with_state(|state| state.proposals.get(&args.associated_proposal_id));
-
+    
     let principal_id: Principal = api::id();
     let token_ledger_id: Principal = with_state(|state| state.dao.token_ledger_id.id);
-
+    
     let balance: Nat = icrc_get_balance(token_ledger_id, principal_id)
-        .await
+    .await
         .map_err(|err| format!("Error while fetching user balance: {}", err))?;
 
     if balance < args.tokens as u64 {
         return Err(format!("DAO doesn't have enough tokens."));
     }
 
-    let mut bounty_task = None;
+    let mut bounty_task: Option<String> = None;
     let mut token_to: Option<Principal> = None;
 
     if let Some(proposal) = proposals_data {
@@ -608,17 +596,6 @@ async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
             ));
         }
 
-        let current_time = ic_cdk::api::time();
-        let proposal_submitted_at = proposal.proposal_submitted_at;
-        let proposal_expiry_time = proposal.task_completion_day;
-
-        if let Some(expiry_time) = proposal_expiry_time {
-            if current_time > proposal_submitted_at + expiry_time {
-                return Err(String::from(
-                    "The proposal has expired and can't longer be completed.",
-                ));
-            }
-        }
         token_to = proposal.token_to;
         bounty_task = proposal.bounty_task;
     } else {
@@ -660,24 +637,23 @@ async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
         proposal_created_at: None,
         proposal_expired_at: None,
         bounty_task,
-        poll_title: None,
+        
         required_votes: None,
         cool_down_period: None,
         group_to_remove: None,
-        new_dao_type: None,
         minimum_threadsold: required_thredshold,
         link_of_task: None,
         associated_proposal_id: Some(args.associated_proposal_id.clone()),
         new_required_votes: None,
-        task_completion_day: None,
         poll_query: None,
         poll_options: None,
+        ask_to_join_dao : None,
     };
-    create_proposal_controller(args.daohouse_canister_id.clone(), proposal_input.clone()).await;
+    create_proposal_controller(daohouse_backend_id.clone(), proposal_input.clone()).await;
     Ok(String::from(crate::utils::MESSAGE_BOUNTY_DONE))
 }
 
-#[update(guard = prevent_anonymous)]
+#[update(guard = vote_allow_dao_user_only)]
 async fn vote_on_poll_options(proposal_id: String, option_id: String) -> Result<String, String> {
     with_state(|state| match &mut state.proposals.get(&proposal_id) {
         Some(proposal_data) => {
@@ -724,9 +700,9 @@ async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
     guard_check_proposal_creation(proposal_data)?;
 
     let mut required_thredshold = 0;
-    let proposal_expire_time =
-        ic_cdk::api::time() + (args.proposal_expired_at as u64 * 86_400 * 1_000_000_000);
-
+    // let proposal_expire_time =
+    //     ic_cdk::api::time() + (args.proposal_expired_at as u64 * 86_400 * 1_000_000_000);
+    let proposal_expire_time_testing : u64 = 2 * 60 * 1_000_000_000 + ic_cdk::api::time();
     let _ = with_state(|state| {
         match state
             .dao
@@ -779,18 +755,16 @@ async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
         token_from: None,
         token_to: None,
         proposal_created_at: None,
-        proposal_expired_at: Some(proposal_expire_time),
+        proposal_expired_at: Some(proposal_expire_time_testing),
         bounty_task: None,
-        poll_title: Some(args.poll_title),
         required_votes: None,
         cool_down_period: None,
-        new_dao_type: None,
         group_to_remove: None,
         minimum_threadsold: required_thredshold,
         link_of_task: None,
         associated_proposal_id: None,
         new_required_votes: None,
-        task_completion_day: None,
+        ask_to_join_dao : None,
         poll_query: Some(args.poll_query),
         poll_options: Some(poll_options),
     };
@@ -843,16 +817,14 @@ async fn proposal_to_create_general_purpose(args: CreateGeneralPurpose) -> Resul
         proposal_created_at: None,
         proposal_expired_at: None,
         bounty_task: None,
-        poll_title: Some(args.proposal_title),
         required_votes: None,
         cool_down_period: None,
-        new_dao_type: None,
         group_to_remove: None,
         minimum_threadsold: required_thredshold,
         link_of_task: None,
         associated_proposal_id: None,
         new_required_votes: None,
-        task_completion_day: None,
+        ask_to_join_dao : None,
         poll_query: None,
         poll_options: None,
     };
@@ -866,7 +838,7 @@ async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
         api::caller(),
         ProposalType::AddMemberToDaoProposal,
     )?;
-
+    let daohouse_backend_id = with_state(|state| state.dao.daohouse_canister_id);
     with_state(|state| {
         if state.dao.members.contains(&api::caller()) {
             return Err(format!("Member already exist in this dao"));
@@ -877,12 +849,13 @@ async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
     let should_ask = with_state(|state| state.dao.ask_to_join_dao);
     if !should_ask {
         with_state(|state| {
+            state.dao.all_dao_user.push(api::caller());
             state.dao.members.push(api::caller());
             state.dao.members_count += 1;
         });
 
         let response: CallResult<(Result<(), String>,)> = ic_cdk::call(
-            args.daohouse_backend_id,
+            daohouse_backend_id,
             "store_join_dao",
             (api::id(), api::caller()),
         ).await;
@@ -905,8 +878,6 @@ async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
 
         return Ok(String::from("Dao Joined successfully"));
     };
-    let principal_id = api::caller();
-    let dao_id = api::id();
     let mut required_thredshold = 0;
 
     let result = with_state(|state| {
@@ -944,45 +915,19 @@ async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
         proposal_created_at: None,
         proposal_expired_at: None,
         bounty_task: None,
-        poll_title: None,
+        
         required_votes: None,
         cool_down_period: None,
-        new_dao_type: None,
         group_to_remove: None,
         minimum_threadsold: required_thredshold,
         link_of_task: None,
         associated_proposal_id: None,
         new_required_votes: None,
-        task_completion_day: None,
         poll_query: None,
         poll_options: None,
+        ask_to_join_dao : None,
     };
-
-    let response: CallResult<(Result<(), String>,)> = ic_cdk::call(
-        args.daohouse_backend_id,
-        "store_join_dao",
-        (dao_id, principal_id),
-    )
-    .await;
-
-    match response {
-        Ok((Ok(()),)) => (),
-        Ok((Err(err),)) => return Err(err),
-        Err((code, message)) => {
-            let err_msg = match code {
-                RejectionCode::NoError => "NoError".to_string(),
-                RejectionCode::SysFatal => "SysFatal".to_string(),
-                RejectionCode::SysTransient => "SysTransient".to_string(),
-                RejectionCode::DestinationInvalid => "DestinationInvalid".to_string(),
-                RejectionCode::CanisterReject => "CanisterReject".to_string(),
-                _ => format!("Unknown rejection code: {:?}: {}", code, message),
-            };
-            return Err(err_msg);
-        }
-    };
-
-    create_proposal_controller(args.daohouse_backend_id, proposal).await;
-
+    create_proposal_controller(daohouse_backend_id, proposal).await;
     Ok(String::from("Join DAO request sent successfully"))
 }
 
@@ -997,9 +942,9 @@ fn get_dao_followers() -> Vec<Principal> {
 }
 
 #[update(guard=prevent_anonymous)]
-pub async fn follow_dao(daohouse_backend_id: Principal) -> Result<String, String> {
+pub async fn follow_dao() -> Result<String, String> {
     let dao_id = ic_cdk::api::id();
-
+    let daohouse_backend_id = with_state(|state| state.dao.daohouse_canister_id);
     let already_following = with_state(|state| {
         let dao = &state.dao;
         dao.followers.contains(&api::caller())
@@ -1012,8 +957,7 @@ pub async fn follow_dao(daohouse_backend_id: Principal) -> Result<String, String
         daohouse_backend_id,
         "store_follow_dao",
         (dao_id,api::caller(),),
-    )
-    .await;
+    ).await;
 
     match response {
         Ok((Ok(()),)) => (),
@@ -1041,7 +985,9 @@ pub async fn follow_dao(daohouse_backend_id: Principal) -> Result<String, String
 }
 
 #[update(guard=prevent_anonymous)]
-pub async fn unfollow_dao(daohouse_backend_id: Principal) -> Result<String, String> {
+pub async fn unfollow_dao() -> Result<String, String> {
+    let daohouse_backend_id = with_state(|state| state.dao.daohouse_canister_id);
+
     let principal_id = api::caller();
     let dao_id = ic_cdk::api::id();
 
@@ -1102,4 +1048,64 @@ fn get_dao_groups() -> Vec<DaoGroup> {
     });
 
     groups
+}
+
+#[update(guard = prevent_anonymous)]
+pub async fn proposal_to_mint_new_dao_tokens(args: MintTokenArgs) -> Result<String, String> {
+    if args.total_amount.clone() < 1{
+       return Err(String::from("total amount should be greater than 0"));
+    }
+    let proposal_data = ProposalCreation {
+        entry: args.proposal_entry.clone(),
+        proposal_type: ProposalType::MintNewTokens,
+    };
+    guard_check_proposal_creation(proposal_data)?;
+    let mut required_thredshold = 0;
+    let _ = with_state(|state| {
+        match state
+            .dao
+            .proposal_entry
+            .iter()
+            .find(|place| place.place_name == args.proposal_entry)
+        {
+            Some(val) => {
+                required_thredshold = val.min_required_thredshold;
+                Ok(())
+            }
+            None => {
+                return Err(format!(
+                    "No place Found with the name of {:?}",
+                    args.proposal_entry
+                ));
+            }
+        }
+    });
+    let proposal = ProposalInput {
+        principal_of_action: Some(api::caller()),
+        proposal_description: args.description,
+        proposal_title: String::from(crate::utils::TITLE_MINT_NEW_TOKENS),
+        proposal_type: ProposalType::MintNewTokens,
+        new_dao_name: None,
+        group_to_join: None,
+        dao_purpose: None,
+        tokens: Some(args.total_amount),
+        token_from: None,
+        token_to: None,
+        proposal_created_at: None,
+        proposal_expired_at: None,
+        bounty_task: None,
+        
+        required_votes: None,
+        cool_down_period: None,
+        group_to_remove: None,
+        minimum_threadsold: required_thredshold,
+        link_of_task: None,
+        associated_proposal_id: None,
+        new_required_votes: None,
+        poll_query: None,
+        ask_to_join_dao : None,
+        poll_options: None,
+    };
+    create_proposal_controller(with_state(|state| state.dao.daohouse_canister_id), proposal).await;
+    Ok(String::from(crate::utils::MESSAGE_TOKEN_MINT))
 }

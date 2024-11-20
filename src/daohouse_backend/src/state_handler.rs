@@ -21,6 +21,8 @@ pub struct State {
 
     pub ledger_wasm: Vec<u8>,
 
+    pub canister_ids : StableBTreeMap<Principal, Principal, Memory>,
+
     pub canister_data: StableBTreeMap<u8, CanisterData, Memory>,
 }
 
@@ -32,7 +34,7 @@ impl State {
             dao_details: dao_file_contents(),
             analytics_content: analytics_content(),
             wasm_module: init_wasm_module(),
-            // payment_recipient: None,
+            canister_ids : init_canister_ids(),
             ledger_wasm: vec![],
             canister_data: init_canister_data(), // ..Default::default()
             proposal_store: init_proposal_state(),
@@ -57,6 +59,10 @@ fn analytics_content() -> StableBTreeMap<u64, Analytics, Memory> {
 
 fn init_wasm_module() -> StableBTreeMap<u64, WasmArgs, Memory> {
     StableBTreeMap::init(crate::memory::get_wasm_memory())
+}
+
+fn init_canister_ids() -> StableBTreeMap<Principal, Principal, Memory> {
+    StableBTreeMap::init(crate::memory::get_canister_id())
 }
 
 fn init_canister_data() -> StableBTreeMap<u8, CanisterData, Memory> {

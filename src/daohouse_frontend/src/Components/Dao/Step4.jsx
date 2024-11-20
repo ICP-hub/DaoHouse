@@ -5,6 +5,7 @@ import { getTruePermissions } from "./Getpermission";
 import Container from "../Container/Container";
 import { Principal } from "@dfinity/principal";
 
+
 const Step4 = ({ data, setData, setActiveStep }) => {
   const [activeStage, setActiveStage] = useState(0);
   const [groups, setGroups] = useState(() => {
@@ -19,7 +20,7 @@ const Step4 = ({ data, setData, setActiveStep }) => {
     const savedToggleState = localStorage.getItem("isPrivate");
     return savedToggleState !== null ? JSON.parse(savedToggleState) : true;
   });
-  const [showModal, setShowModal] = useState(false); // State for modal visibility
+  const [showModal, setShowModal] = useState(false);
 
 
   const className = "DAO__Step4";
@@ -71,6 +72,8 @@ const Step4 = ({ data, setData, setActiveStep }) => {
     BountyRaised: groupName === "Council" ? true : false,
     AddMemberToGroupProposal: groupName === "Council" ? true : false,
     GeneralPurpose: groupName === "Council" ? true : false,
+    MintNewTokens: groupName === "Council" ? true : false,
+
   });
 
   const permissionList = [
@@ -85,6 +88,7 @@ const Step4 = ({ data, setData, setActiveStep }) => {
     "BountyRaised",
     "AddMemberToGroupProposal",
     "GeneralPurpose",
+    "MintNewTokens",
   ];
 
   const initializePermissions = () => {

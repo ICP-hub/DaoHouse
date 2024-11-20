@@ -19,7 +19,6 @@ impl State {
                 dao_id: Principal::anonymous(),
                 dao_name: String::from("Example DAO"),
                 purpose: String::from("Example Purpose"),
-                daotype: String::from("Example Type"),
                 link_of_document: String::from("Example Document"),
                 cool_down_period: 7,
                 // tokenissuer: String::from("Example Token Issuer"),
@@ -45,6 +44,7 @@ impl State {
                 daohouse_canister_id: Principal::anonymous(),
                 proposal_entry : vec![],
                 ask_to_join_dao : true,
+                all_dao_user :  vec![],
             },
 
             dao_groups: init_group_data(),

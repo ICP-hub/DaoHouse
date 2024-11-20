@@ -23,18 +23,27 @@ import { useUserProfile } from "../../context/UserProfileContext";
 import Container from "../../Components/Container/Container";
 import NoFollowers from "./NoFollowers";
 import NoFollowing from "./NoFollowing";
+<<<<<<< HEAD
 import { Principal } from "@dfinity/principal";
 import { createActor } from "../../../../declarations/icp_ledger_canister";
 import { useAuth } from "../../connect/useClient";
+=======
+>>>>>>> main
 
 
 
 
 
 const MyProfile = ({ childComponent }) => {
+<<<<<<< HEAD
   const { backendActor, identity, principal } = useAuth();
 
  
+=======
+  const { backendActor } = useAuth();
+
+
+>>>>>>> main
 
   const { userProfile } = useUserProfile() || {};
 
@@ -43,7 +52,7 @@ const MyProfile = ({ childComponent }) => {
   const [imageSrc, setImageSrc] = useState(MyProfileImage);
   const location = useLocation();
 
- 
+
   const tabPathMap = {
     "/my-profile": 0,
     "/my-profile/posts": 1,
@@ -52,10 +61,10 @@ const MyProfile = ({ childComponent }) => {
   };
 
   useEffect(() => {
-    console.log("User Profile Image:", userProfile?.profile_img);
+
     if (userProfile?.profile_img) {
       const profileImageUrl = `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${userProfile.profile_img}`;
-      console.log("Profile Image URL:", profileImageUrl);
+
       setImageSrc(profileImageUrl);
     } else {
       console.log("No profile image found. Using default.");
@@ -69,7 +78,7 @@ const MyProfile = ({ childComponent }) => {
 
   const [activeTab, setActiveTab] = useState(0);
   const [showNoFollowers, setShowNoFollowers] = useState(false);
-  const [showNoFollowing, setShowNoFollowing] = useState(false); 
+  const [showNoFollowing, setShowNoFollowing] = useState(false);
   const navigate = useNavigate();
   const [loadingPayment, setLoadingPayment] = useState(false);
   const className = "MyProfile";
@@ -106,8 +115,11 @@ const MyProfile = ({ childComponent }) => {
   };
 
   const [data, setData] = useState({});
+<<<<<<< HEAD
  
   
+=======
+>>>>>>> main
   const followers = data?.followers_count ? Number(data.followers_count) : 0;
   const post = data?.submitted_proposals ? Number(data.submitted_proposals) : 0;
   const following = data?.join_dao ? Number(data.join_dao.length) : 0;
@@ -122,7 +134,7 @@ const MyProfile = ({ childComponent }) => {
     try {
     
       const response = await backendActor.get_user_profile();
-      console.log("api response", response);
+      console.log("api response of get user profile", response);
       setData(response.Ok || {});
     } catch (error) {
       console.error("Error :", error);
@@ -147,83 +159,16 @@ const MyProfile = ({ childComponent }) => {
     } else {
       setShowNoFollowing(false);
     }
-  }, [activeTab, following]); // Updated to include following
+  }, [activeTab, following]);
 
   useEffect(() => {
     const currentPath = location.pathname;
     const tabIndex = tabPathMap[currentPath] !== undefined ? tabPathMap[currentPath] : 0;
     setActiveTab(tabIndex);
   }, [location.pathname]);
-  // Remove this duplicated function
-  // const LEDGER_CANISTER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai";
-  // const createTokenActor = async (canisterId) => {
-  //   console.log("canister id", canisterId);
-
-  //   try {
-  //     const tokenActorrr = createActor(Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"), { agentOptions: { identity } });
-  //     console.log("Created token actor successfully:", tokenActorrr);
-  //     return tokenActorrr;
-  //   } catch (err) {
-  //     console.error("Error creating token actor:", err);
-  //     throw err;
-  //   }
-  // };
-  // const fetchMetadataAndBalance = async (tokenActor, ownerPrincipal) => {
-  //   try {
-  //     const [metadata, balance] = await Promise.all([
-  //       tokenActor.icrc1_metadata(),
-  //       tokenActor.icrc1_balance_of({ owner: ownerPrincipal, subaccount: [] }),
-  //     ]);
-  //     console.log("Metadata and balance fetched:", { metadata, balance });
-  //     setTokens(balance);
-  //     return { metadata, balance };
-  //   } catch (err) {
-  //     console.error("Error fetching metadata and balance:", err);
-  //     throw err;
-  //   }
-  // };
-
-  // createTokenActor();
-  // async function paymentTest() {
-  //   console.log("owner principal is ", stringPrincipal);
-  //   console.log("printing payment");
-
-  //   const backendCanisterId = process.env.CANISTER_ID_DAOHOUSE_BACKEND;
-  //   console.log("backend", backendCanisterId);
-  //   console.log("ledger", LEDGER_CANISTER_ID);
-  //   const a = Principal.fromText(LEDGER_CANISTER_ID)
-  //   console.log("a", a);
-
-  //   const actor = await createTokenActor(Principal.fromText(LEDGER_CANISTER_ID));
-  //   console.log("actor", actor);
 
 
-  //   try {
 
-  //     const actor = await createTokenActor(Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"));
-
-  //     console.log("backend canister id: ", backendCanisterId);
-  //     console.log("actor is ", actor);
-
-  //     const name = await actor.icrc1_name();
-  //     console.log("balance is ", name);
-
-  //     const { metadata, balance } = await fetchMetadataAndBalance(actor, Principal.fromText(stringPrincipal));
-
-  //     const formattedMetadata = formatTokenMetaData(metadata);
-  //     const parsedBalance = parseInt(balance, 10);
-  //     console.log("Balance:", parsedBalance);
-
-  //     const sendableAmount = parseInt(10000);
-  //     if (sendableAmount) {
-  //       afterPaymentApprove(sendableAmount);
-  //     }
-  //   } catch (err) {
-  //     // toast.error("Payment failed. Please try again.");
-  //     setLoadingPayment(false);
-  //   }
-  // }
-  // paymentTest();
   return (
     <div className={`${className} bg-zinc-200 w-full relative `}>
 
@@ -303,14 +248,14 @@ const MyProfile = ({ childComponent }) => {
                   z-50 sm:z-40 md:z-20 lg:z-20 md:translate-x-[-90px] lg:translate-x-[-55px]"
                   style={{
                     boxShadow: "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
-                    // Adjust values as needed
+
                   }}
                 >
                   <img
                     className="w-full h-full object-cover"
-                    src={imageSrc} // Dynamically set to user's profile image or default
+                    src={imageSrc}
                     alt="profile-pic"
-                    onError={handleImageError} // Handle image loading errors
+                    onError={handleImageError}
                   />
                 </div>
                 <div
@@ -395,7 +340,7 @@ const MyProfile = ({ childComponent }) => {
 
                         {/* user information */}
                         <div className="md:flex md:gap-1 lg: hidden  mt-3">
-                        
+
                           <span className=" tablet:text-[32px] text-[24px] font-normal text-[#05212C] user-acc-info">
                             {post}
                             <span className="tablet:text-[16px] text-[14px] mx-1">
@@ -418,12 +363,12 @@ const MyProfile = ({ childComponent }) => {
                       </div>
                     </div>
                   </div>
-                  
+
                 </div>
                 {childComponent}
                 {activeTab === 2 && showNoFollowers && <NoFollowers setFollowers={setShowNoFollowers} />}
                 {activeTab === 3 && showNoFollowing && <NoFollowing />}
-                {/* Render NoFollowing component */}
+
               </div>
 
             </div>
@@ -498,7 +443,7 @@ const MyProfile = ({ childComponent }) => {
         </div>
         <Container classes={`__mainComponent big_phone:py-8 big_phone:pb-20 py-7 md:px-8 flex md:flex-row gap-2 flex-col w-full user-container`}>
           <div className={`${className}__mainComponent__leftSide md:mx-0 mx-5 lg:px-20 flex flex-col tablet:items-start justify-center md:w-[204px] md:h-[600px] lg:w-[252px] translate-y-[50px] lg:h-[600px] md:px-14 rounded-[10px] bg-[#0E3746] text-white text-opacity-50 font-normal md:mt-[-65px] mt-[-45px] z-20`}>
-          
+
           </div>
           <div className={`${className}__rightSide w-full`}>
             <div className="flex md:justify-between justify-start w-full gap-2 relative">
@@ -509,21 +454,21 @@ const MyProfile = ({ childComponent }) => {
     "
                   style={{
                     boxShadow: "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
-                    // Adjust values as needed
+
                   }}
                 >
                   <img
                     className="w-full h-full object-cover"
-                    src={imageSrc} // Dynamically set to user's profile image or default
+                    src={imageSrc}
                     alt="profile-pic"
-                    onError={handleImageError} // Handle image loading errors
+                    onError={handleImageError}
                   />
                 </div>
 
                 <div className="mr-20  ">
 
                   <div className="md:flex justify- translate-x-[60px] translate-y-[30px] translate top-[204px] left-[20px] mt-3">
-                     
+
                     <span className="md:mr-5 tablet:text-[32px] text-[18px] font-mulish text-[#05212C] user-acc-info">
                       {post}
                       <span className="tablet:text-[16px] text-[8px] mx-1">
@@ -595,49 +540,59 @@ const MyProfile = ({ childComponent }) => {
                 font-mulish font-bold text-[10px]  text-left 
                 relative
               ">
-              {/* Dark gray base line */}
 
-              {/* Thicker line to overlap and change width */}
+
+
               <div className="absolute bottom-1 flex justify-center   w-full h-[2px] bg-black transition-all duration-300 hover:w-[20px]"></div>
 
 
-              {/* First tab */}
+              {/* My Profile Tab */}
+              <div className="">
+                <div className="flex items-center gap-4">
+                  {/* My Profile Tab */}
+                  <Link to="/my-profile" onClick={() => setActiveTab(0)} className="flex-none text-center">
+                    <p className={`${tabButtonsStyle} ${activeTab === 0 ? "text-black border-b-2 border-black " : ""}  relative pb-2 z-10 transition-all duration-300`}>
+                      Profile
+                      {activeTab === 0 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
+                      <span className={`${activeTab === 0 ? "absolute w-full h-[2px] bg-black right-0 bottom-0" : "hidden"}`}></span>
+                    </p>
+                  </Link>
 
-              <Link to="/my-profile/posts" onClick={() => setActiveTab(1)}>
-                <p className={`${tabButtonsStyle} ${activeTab === 1 ? "text-hex text-[14px] border-b-1 border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
-                  Proposals
-                  {activeTab === 1 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
-                  {/* Tab underlining effect */}
-                  <span className={`${activeTab === 1 ? "absolute w-full h-[4px] bg-black  text-[14px] left-0 bottom-0 -z-10" : "hover:w-full hover:h-[4px] hover:bg-black left-0 bottom-0 -z-10 transition-all duration-300"}`}></span>
-                </p>
-              </Link>
+                  {/* Proposals Tab */}
+                  <Link to="/my-profile/posts" onClick={() => setActiveTab(1)} className="flex-none text-center">
+                    <p className={`${tabButtonsStyle} ${activeTab === 1 ? "text-black border-b-2 border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
+                      Proposals
+                      {activeTab === 1 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
+                      <span className={`${activeTab === 1 ? "absolute w-full h-[2px] bg-black left-0 bottom-0" : "hidden"}`}></span>
+                    </p>
+                  </Link>
 
-              {/* Second tab */}
-              <Link to="/my-profile/followers" onClick={() => setActiveTab(2)}>
-                <p className={`${tabButtonsStyle} ${activeTab === 2 ? "text-black border-b-1 text-[14px]  border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
-                  Followed Dao
-                  {activeTab === 2 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
-                  {/* Tab underlining effect */}
-                  <span className={`${activeTab === 2 ? "absolute w-full h-[4px] bg-black left-0 text-[14px]  bottom-0 -z-10" : "hover:w-full hover:h-[4px]  hover:bg-black left-0 bottom-0 -z-10 transition-all duration-300"}`}></span>
-                </p>
-              </Link>
+                  {/* Followed Dao Tab */}
+                  <Link to="/my-profile/followers" onClick={() => setActiveTab(2)} className="flex-none text-center">
+                    <p className={`${tabButtonsStyle} ${activeTab === 2 ? "text-black border-b-2 border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
+                      Followed Dao
+                      {activeTab === 2 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
+                      <span className={`${activeTab === 2 ? "absolute w-full h-[2px] bg-black left-0 bottom-0" : "hidden"}`}></span>
+                    </p>
+                  </Link>
 
-              {/* Third tab */}
-              <Link to="/my-profile/following" onClick={() => setActiveTab(3)}>
-                <p className={`${tabButtonsStyle} ${activeTab === 3 ? "text-black border-b-1 text-[14px]  border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
-                  Dao Joined
-                  {activeTab === 3 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
-                  {/* Tab underlining effect */}
-                  <span className={`${activeTab === 3 ? "absolute w-full h-[4px] bg-black left-0 bottom-0 -z-10" : "hover:w-full hover:h-[4px] hover:bg-black left-0 bottom-0 -z-10 transition-all duration-300"}`}></span>
-                </p>
-              </Link>
-            </div>
+                  {/* Dao Joined Tab */}
+                  <Link to="/my-profile/following" onClick={() => setActiveTab(3)} className="flex-none text-center">
+                    <p className={`${tabButtonsStyle} ${activeTab === 3 ? "text-black border-b-2 border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
+                      Dao Joined
+                      {activeTab === 3 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
+                      <span className={`${activeTab === 3 ? "absolute w-full h-[2px] bg-black left-0 bottom-0" : "hidden"}`}></span>
+                    </p>
+                  </Link>
+                </div>
+              </div></div>
+
 
             <div className="mx-6">
               {childComponent}
               {activeTab === 2 && showNoFollowers && <NoFollowers setFollowers={setShowNoFollowers} />}
               {activeTab === 3 && showNoFollowing && <NoFollowing />}
-              {/* Render NoFollowing component */}
+
             </div>
           </div>
 

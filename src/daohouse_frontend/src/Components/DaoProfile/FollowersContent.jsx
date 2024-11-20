@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import SearchProposals from "../Proposals/SearchProposals";
-import { MdAddBox } from "react-icons/md";
 import { IoFilterSharp } from "react-icons/io5";
 import { LuSearch } from "react-icons/lu";
-import { useMediaQuery } from "@mui/material";
 import { useAuth } from "../utils/useAuthClient";
 import Avatar from "../../../assets/Avatar.png";
 import nodata from "../../../assets/nodata.png";
@@ -15,15 +13,6 @@ const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
   const [followerProfiles, setFollowerProfiles] = useState([]);
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
-  const [imageSrc, setImageSrc] = useState(Avatar);
-
-  const minWidth = useMediaQuery("(min-width: 800px)");
-  const listTemplateColumns = `repeat(auto-fill, minmax(${minWidth ? 300 : 220}px, 1fr))`;
-  const listContainerStyle = { 
-    display: "grid", 
-    gridTemplateColumns: listTemplateColumns, 
-    gap: "2rem"  // Setting the gap between grid items
-  };
   const noDataContainerStyle = { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%" };
 
   const [fetchFollower, setFetchFollower] = useState([]);
@@ -39,7 +28,6 @@ const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
       setLoading(false);
       return;
     }
-
     setLoading(true);
 
     try {
@@ -80,18 +68,7 @@ const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
           const profiles = await Promise.all(
             principalArray.map((principal) => backendActor.get_profile_by_id(principal))
           );
-
           setFollowerProfiles(profiles);
-
-          const updatedImageSrcs = profiles.map((profile) => {
-            if (profile?.Ok?.profile_img) {
-              return `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${profile.Ok.profile_img}`;
-            } else {
-              return Avatar;
-            }
-          });
-
-          setImageSrc(updatedImageSrcs);
         } else {
           setFollowerProfiles([]);
         }
@@ -125,7 +102,7 @@ const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
                 className="border-2 border-[#AAC8D6] w-full max-w-lg"
               />
             </div>
-            <button className="bg-white text-[16px] text-[#05212C] gap-1 md:px-7 shadow-xl py-3 px-3 rounded-full shadow-md flex items-center space-x-4 rounded-2xl">
+            <button className="bg-white text-[16px] text-[#05212C] gap-1 md:px-7 shadow-xl py-3 px-3 flex items-center space-x-4 rounded-2xl">
               <IoFilterSharp />
               <span className="hidden md:block">Filter</span>
             </button>
@@ -142,16 +119,16 @@ const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
           />
           <LuSearch className="ml-4 absolute left-0 bottom-3 text-slate-400" />
         </div>
-        <div className="md:max-h-[400px] max-h-[300px]  overflow-y-scroll">
-          <div className="flex md:flex-row flex-col md:justify-center lg:justify-start flex-wrap bg-white md:mx-7 md:mt-2 mx-2 rounded-[10px] md:p-8 lg:p-6 mobile:p-4 p-2" style={listContainerStyle}>
+        <div className="px-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {loading ? (
               <FollowersSkeleton count={daoFollowers.length || 3} />
             ) : searchTerm.trim() === "" ? (
               followerProfiles.map((follower, index) => {
                 const profile = follower?.Ok;
                 return (
-                  <div key={index} className="flex w-full flex-row items-center justify-between border border-[#97C3D3] rounded-lg big_phone:p-4 p-2">
-                    <section className="flex flex-row items-center gap-2">
+                  <div key={index} className="flex flex-row items-center  border border-[#97C3D3] rounded-lg big_phone:p-4 p-2 overflow-x-hidden">
+                    <section className="flex flex-row items-center gap-6">
                       <img
                         src={profile?.profile_img ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${profile.profile_img}` : Avatar}
                         alt="User"
@@ -163,10 +140,7 @@ const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
                         </p>
                         <p className="text-center text-xs">{profile?.email_id || ""}</p>
                       </div>
-                    </section>
-                    <section>
-                      <MdAddBox className="mx-1 text-[#97C3D3] big_phone:text-2xl text-lg" />
-                    </section>
+                    </section>  
                   </div>
                 );
               })

@@ -13,10 +13,7 @@ import { useAuthClient } from "../../connect/useClient";
 
 
 
-
 const FeedPage = () => {
-  const [active, setActive] = useState({ all: false, latest: true });
-  const [showPopup, setShowPopup] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { isAuthenticated, login, signInNFID, backendActor, createDaoActor } = useAuthClient();
   console.log("isauthe",isAuthenticated);
@@ -28,35 +25,14 @@ console.log("backendactr",backendActor);
   const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [hasMore, setHasMore] = useState(true);
   const [proposals, setProposals] = useState([]);
-  const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(false);
-
   const [currentPage, setCurrentPage] = useState(1);
-  const [fetchedProposals, setFetchedProposals] = useState([]);
-
-  const itemsPerPage = 4;
-
+  const [hasMore, setHasMore] = useState(false);
+  let itemsPerPage = 4;
   const className = "FeedPage";
 
-  // Function to set active tabs
-  const setAllActive = () => {
-    setActive({ all: true, latest: false });
-    setCurrentPage(1);
-  };
 
-  // const setLatestActive = () => {
-  //   setActive({ all: false, latest: true });
-  //   setCurrentPage(1);
-  // };
-
-  // // Handle Create Post Popup
-  // const handleCreatePostClick = () => {
-  //   setShowPopup(!showPopup);
-  // };
-
-  // Handle Login Functions
   const handleLogin = async () => {
     // setLoading(true);
     try {
@@ -81,12 +57,11 @@ console.log("backendactr",backendActor);
     }
   };
 
-  // Handle Search Input Change with Debounce (Optional)
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1);
   };
 
+<<<<<<< HEAD
   // Fetch All Proposals Across All DAOs
   const fetchAllProposals = async () => {
     // setLoading(true);
@@ -95,47 +70,33 @@ console.log("backendactr",backendActor);
       end: 1000,
     };
 
+=======
+  const fetchAllProposals = async (pagination = {}) => {
+    
+>>>>>>> main
     try {
-      // Fetch all DAOs
-      const allDaos = await backendActor.get_all_dao(daoPagination);
-      let allProposals = [];
-
+      setLoading(true);
+      const allDaos = await backendActor.get_all_dao();
       for (const dao of allDaos) {
         const proposalPagination = {
-          start: 0,
-          end: 1000, 
+          start: pagination.start,
+          end: pagination.end + 1,
         };
-
         try {
           const daoActor = await createDaoActor(dao.dao_canister_id);
           const daoProposals = await daoActor.get_all_proposals(proposalPagination);
-          console.log(`Proposals from DAO ${dao.dao_canister_id}:`, daoProposals);
           const proposalsWithDaoId = daoProposals.map((proposal) => ({
             ...proposal,
             dao_canister_id: dao.dao_canister_id,
           }));
-          allProposals = allProposals.concat(proposalsWithDaoId);
+          const hasMoreData = daoProposals.length > itemsPerPage;
+          setHasMore(hasMoreData);
+          const proposalsToDisplay = proposalsWithDaoId.slice(0, itemsPerPage);
+          setProposals(proposalsToDisplay);
         } catch (error) {
           console.error(`Error fetching proposals from DAO ${dao.dao_canister_id}:`, error);
         }
       }
-
-      if (searchTerm.trim() !== "") {
-        allProposals = allProposals.filter((proposal) =>
-          proposal.proposal_id.toLowerCase().includes(searchTerm.trim().toLowerCase())
-        );
-      }
-
-      setTotalItems(allProposals.length);
-      setFetchedProposals(allProposals);
-
-  
-      const start = (currentPage - 1) * itemsPerPage;
-      const end = start + itemsPerPage;
-      const currentProposals = allProposals.slice(start, end);
-
-      setProposals(currentProposals);
-      setHasMore(end < allProposals.length);
 
     } catch (error) {
       console.error("Error fetching DAOs and proposals:", error);
@@ -151,7 +112,7 @@ console.log("backendactr",backendActor);
       return;
     }
     setShowLoginModal(false);
-    fetchAllProposals();
+    fetchAllProposals({ start: (currentPage - 1) * itemsPerPage, end: currentPage * itemsPerPage });
 
   }, [isAuthenticated, backendActor, createDaoActor, currentPage, searchTerm]);
 
@@ -165,9 +126,6 @@ console.log("backendactr",backendActor);
 
   return (
     <div className={`${className} w-full`}>
-      {showPopup && (
-        <div className="fixed inset-0 bg-black opacity-40 z-40"></div>
-      )}
       {/* Header Section with Background Image */}
       <div
         style={{
@@ -210,36 +168,33 @@ console.log("backendactr",backendActor);
       </div>
 
       {/* Post Section */}
-      <div
-        className={`${className}__postCards mobile:px-10 px-6 pb-10 bg-[#c8ced3] gap-8 flex flex-col`}
-      >
-        {loading ? (
-          <ProposalLoaderSkeleton />
-        ) :proposals.length === 0 ? (
-          <div className="flex justify-center items-center h-full mb-10 mt-10 ">
-          <Container className="w-full flex flex-col items-center justify-center   ">
-            <img src={nodata} alt="No Data" className="mb-1  ml-[42px]  " />
-            <p className="text-center  ml-[42px] mt-4  text-gray-700 text-base">
-              You have not created any DAO
-            </p>
-
-          </Container>
-        </div>
-        ) : (
-          <div className="mx-2 small_phone:mx-4 mobile:mx-1 lg:mx-16 desktop:mx-20">
-          <Container>
-            <div className="desktop:mx-12">
+      <div className={`${className}__postCards mobile:px-10 px-6 pb-10 bg-[#c8ced3] gap-8 flex flex-col`}>
+    {loading ? (
+      <ProposalLoaderSkeleton />
+    ) : proposals.length === 0 ? (
+      <div className="flex justify-center items-center h-full mb-10 mt-10">
+        <Container className="w-full flex flex-col items-center justify-center">
+          <img src={nodata} alt="No Data" className="mb-1 ml-[42px]" />
+          <p className="text-center mt-4 text-gray-700 text-base">
+            You have not created any DAO
+          </p>
+        </Container>
+      </div>
+    ) : (
+      <div className="mx-2 small_phone:mx-4 mobile:mx-1 lg:mx-16 desktop:mx-20">
+        <Container>
+          <div className="desktop:mx-12">
             <ProposalsContent
               proposals={proposals}
               isMember={true}
               showActions={false}
             />
-            </div>
-
-          </Container>
           </div>
-        )}
+          <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} hasMore={hasMore} />
+        </Container>
       </div>
+    )}
+  </div>
 
       {/* Login Modal */}
       {showLoginModal && (
@@ -251,6 +206,7 @@ console.log("backendactr",backendActor);
         />
       
       )}
+<<<<<<< HEAD
 
 
 
@@ -264,6 +220,8 @@ console.log("backendactr",backendActor);
           />
         </div>
       )}
+=======
+>>>>>>> main
     </div>
   );
 };

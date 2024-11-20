@@ -1,38 +1,54 @@
 // use std::collections::BTreeMap;
+<<<<<<< HEAD
 use crate::{with_state, Analytics, DaoDetails, Icrc28TrustedOriginsResponse, Pagination};
+=======
+use crate::{with_state, Analytics, DaoDetails, DaoInput, Pagination};
+>>>>>>> main
 use candid::{Nat, Principal};
-use ic_cdk::{api, update};
-use icrc_ledger_types::{icrc1::{account::Account, transfer::BlockIndex}, icrc2::transfer_from::{TransferFromArgs, TransferFromError}};
+use ic_cdk::{api::{self, call::CallResult}, call, update};
+use icrc_ledger_types::{
+    icrc1::{account::Account, transfer::BlockIndex},
+    icrc2::transfer_from::{TransferFromArgs, TransferFromError},
+};
 
 use crate::guards::*;
 use ic_cdk::query;
 
-#[query(guard = prevent_anonymous)]
-fn get_all_dao(page_data: Pagination) -> Vec<DaoDetails> {
-    let mut daos: Vec<DaoDetails> = Vec::new();
+use super::create_dao;
 
+#[query(guard = prevent_anonymous)]
+fn get_all_dao_pagination(page_data: Pagination) -> Vec<DaoDetails> {
+    let mut daos: Vec<DaoDetails> = Vec::new();
     with_state(|state| {
         for y in state.dao_details.iter() {
             daos.push(y.1);
         }
     });
-
     let ending = daos.len();
-
     if ending == 0 {
         return daos;
     }
-
     let start = page_data.start as usize;
     let end = page_data.end as usize;
-
     if start < ending {
         let end = end.min(ending);
         return daos[start..end].to_vec();
     }
     Vec::new()
-
     // daos
+}
+
+
+
+#[query(guard = prevent_anonymous)]
+fn get_all_dao() -> Vec<DaoDetails> {
+    let mut daos: Vec<DaoDetails> = Vec::new();
+    with_state(|state| {
+        for y in state.dao_details.iter() {
+            daos.push(y.1);
+        }
+    });
+    return  daos;
 }
 
 #[query]
@@ -47,9 +63,8 @@ fn get_analytics() -> Result<Analytics, String> {
     })
 }
 
-
 // ledger handlers
-async fn transfer(tokens: u64, user_principal: Principal) -> Result<BlockIndex, String> {
+async fn transfer(tokens: Nat, user_principal: Principal) -> Result<BlockIndex, String> {
     // let payment_recipient = with_state(|state| state.borrow_mut().get_payment_recipient());
     let canister_meta_data = with_state(|state| state.canister_data.get(&0));
 
@@ -59,7 +74,7 @@ async fn transfer(tokens: u64, user_principal: Principal) -> Result<BlockIndex, 
     };
 
     let transfer_args = TransferFromArgs {
-        amount: tokens.into(),
+        amount: tokens,
         to: Account {
             owner: payment_recipient,
             subaccount: None,
@@ -88,8 +103,43 @@ async fn transfer(tokens: u64, user_principal: Principal) -> Result<BlockIndex, 
 
 // make payment
 #[update(guard = prevent_anonymous)]
-async fn make_payment(tokens: u64, user: Principal) -> Result<Nat, String> {
-    transfer(tokens, user).await
+async fn make_payment_and_create_dao(dao_details:DaoInput)->Result<String, String> {
+    
+    let required_balance: Nat = Nat::from(10_000_000u64);
+    let account = Account {
+        owner: api::caller(),
+        subaccount: None,
+    };
+    let canister_id = Principal::from_text("ryjl3-tyaaa-aaaaa-aaaba-cai")
+        .expect("Could not decode the principal if ICP ledger.");
+    
+    let response: CallResult<(Nat,)> = call(canister_id, "icrc1_balance_of", (account,)).await;
+
+    ic_cdk::println!("response : {:?} ", response);
+
+    let (balance,) = match response {
+        Ok(balance_tuple) => balance_tuple,
+        Err(error) => return Err(format!("Failed to get balance: {:?}", error)),
+    };
+
+    ic_cdk::println!("balance : {} ", balance);
+
+    if balance < required_balance {
+      ic_cdk::println!("come 2");
+      return Err(String::from("You don't have .1 ICP for creating this Dao"));
+    }
+    
+    let result: Result<Nat, String> = transfer(required_balance, api::caller()).await;
+    match result {
+        Err(error) => Err(error),
+        Ok(_) => {
+            let dao_response: Result<String, String> = create_dao(dao_details).await;
+            match dao_response {
+                Err(error) => Err(error),
+                Ok(response) => Ok(response),
+            }
+        }
+    }
 }
 
 #[query]
@@ -123,4 +173,3 @@ fn search_dao(dao_name: String) -> Vec<DaoDetails> {
         daos
     })
 }
-

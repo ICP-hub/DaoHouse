@@ -1,29 +1,24 @@
 import React, { useState, useEffect } from "react";
 import "./Members.scss";
 import { useMediaQuery } from "@mui/material";
+<<<<<<< HEAD
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../connect/useClient";
+=======
+import { useAuth } from "../utils/useAuthClient";
+>>>>>>> main
 import { Principal } from "@dfinity/principal";
-import { MdAddBox } from "react-icons/md";
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 import userImage from "../../../assets/Avatar.png";
 import MemberSkeleton from "../SkeletonLoaders/MemberSkeleton";
 
 const Members = ({ daoGroups, daoMembers }) => {
   const { backendActor } = useAuth();
-  const [gridView, setGridView] = useState(true);
   const [councilMembers, setCouncilMembers] = useState([]);
   const [groupMembers, setGroupMembers] = useState({});
   const [openedGroupIndex, setOpenedGroupIndex] = useState(null);
   const [isCouncilOpen, setIsCouncilOpen] = useState(false); 
   const [loading, setLoading] = useState(true); 
-  const navigate = useNavigate();
-  const minWidth = useMediaQuery("(min-width: 800px)");
-  const gridTemplateColumns = `repeat(auto-fill, minmax(${minWidth ? 370 : 165}px, 1fr))`;
-  const listTemplateColumns = `repeat(auto-fill, minmax(${minWidth ? 300 : 220}px, 1fr))`;
-  const gridContainerStyle = { display: "grid", gridTemplateColumns: gridTemplateColumns };
-  const listContainerStyle = { display: "grid", gridTemplateColumns: listTemplateColumns };
-
 
   useEffect(() => {
     async function fetchCouncilProfiles() {
@@ -105,12 +100,12 @@ const Members = ({ daoGroups, daoMembers }) => {
             {isCouncilOpen && (
               <div className="bg-white rounded-lg p-8">
                 {loading ? ( 
-                  <MemberSkeleton gridView={gridView} />
+                  <MemberSkeleton/>
                 ) : (
-                  <div style={gridView ? gridContainerStyle : listContainerStyle}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {councilMembers.map((member, index) => (
                       <React.Fragment key={index}>
-                        {gridView ? <GridView member={member} /> : <ListView member={member} />}
+                          <ListView member={member} />
                       </React.Fragment>
                     ))}
                   </div>
@@ -143,12 +138,12 @@ const Members = ({ daoGroups, daoMembers }) => {
               {openedGroupIndex === index && (
                 <div className="bg-white rounded-lg p-8">
                   {loading ? (
-                    <MemberSkeleton gridView={gridView} /> 
+                    <MemberSkeleton /> 
                   ) : (
-                    <div style={gridView ? gridContainerStyle : listContainerStyle}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {groupMembers[group.group_name]?.map((member, memberIndex) => (
                         <React.Fragment key={memberIndex}>
-                          {gridView ? <GridView member={member} /> : <ListView member={member} />}
+                     <ListView member={member} />
                         </React.Fragment>
                       ))}
                     </div>
@@ -165,53 +160,24 @@ const Members = ({ daoGroups, daoMembers }) => {
 
 export default Members;
 
-// GridView Component for both council and group members
-const GridView = ({ member }) => {
-  const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
-  const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
-  const profileImgSrc = member.Ok.profile_img
-    ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${member.Ok.profile_img}`
-    : userImage;
-
-  return (
-    <div className="big_phone:flex flex-col px-4 py-2 border border-[#97C3D3] rounded-lg">
-      <div className="top flex flex-row items-start justify-between">
-        <section className="relative w-12 h-12 sm:w-16 sm:h-16">
-          <img
-            src={profileImgSrc}
-            alt="Image"
-            className="rounded-full w-full h-full object-cover shadow-lg" 
-          />
-        </section>
-        <section className="details flex flex-col items-start ml-2"> 
-          <p className="font-semibold text-lg">{member.Ok.username}</p>
-          <p className="text-sm">{member.Ok.email_id}</p>
-        </section>
-        <MdAddBox className="mx-2 text-[#97C3D3] text-2xl self-center" />
-      </div>
-    </div>
-  );
-};
-
-
 const ListView = ({ member }) => {
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
-  const profileImgSrc = member.Ok.profile_img
-    ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${member.Ok.profile_img}`
+  const profileImgSrc = member?.Ok?.profile_img
+    ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${member?.Ok?.profile_img}`
     : userImage;
 
   return (
-    <div className="flex flex-col big_phone:p-2 px-1 py-2 gap-y-2 border border-[#97C3D3] rounded-lg">
-      <section className="top flex flex-row items-start justify-between">
+    <div className="flex flex-col big_phone:p-2 px-1 py-2 gap-y-2 border border-[#97C3D3] rounded-lg overflow-x-hidden">
+      <section className="top flex flex-row items-start gap-3">
         <img
           src={profileImgSrc}
           alt="Image"
           className="w-12 h-12 rounded-full object-cover shadow-lg" 
         />
         <section className="details flex flex-col items-start ml-2">
-          <p className="font-semibold text-base">{member.Ok.username}</p>
-          <p className="text-sm">{member.Ok.email_id}</p>
+          <p className="font-semibold text-base">{member?.Ok?.username}</p>
+          <p className="text-sm">{member?.Ok?.email_id}</p>
         </section>
      
       </section>
