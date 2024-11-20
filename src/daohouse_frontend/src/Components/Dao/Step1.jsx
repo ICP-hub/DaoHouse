@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { FaArrowRightLong } from "react-icons/fa6";
-import toast from 'react-hot-toast';
+import { toast } from "react-toastify";
 import Container from "../Container/Container";
 
 const Step1 = ({ setData, setActiveStep, data }) => {
   const [inputData, setInputData] = useState({
     DAOIdentifier: "",
     Purpose: "",
-    SetUpPeriod: 1, // Default value for SetUpPeriod
+    SetUpPeriod: data?.step1?.SetUpPeriod || 1,
   });
 
   const [errors, setErrors] = useState({});
@@ -20,22 +20,23 @@ const Step1 = ({ setData, setActiveStep, data }) => {
     const savedData = localStorage.getItem("step1Data");
     if (savedData) {
       setInputData(JSON.parse(savedData));
-    } else if (data && data.step1) {
+    } else if (data) {
       setInputData({
         DAOIdentifier: data.DAOIdentifier || "",
         Purpose: data.Purpose || "",
-        SetUpPeriod: data.step1?.SetUpPeriod || 1, // Ensure SetUpPeriod comes from data
+        SetUpPeriod: data?.step1?.SetUpPeriod || 1,
       });
     }
   }, [data]);
 
   useEffect(() => {
-    // Store data in localStorage whenever inputData changes
     localStorage.setItem("step1Data", JSON.stringify(inputData));
   }, [inputData]);
 
+
   const validate = () => {
     const newErrors = {};
+
 
     if (!inputData.DAOIdentifier.trim()) {
       newErrors.DAOIdentifier = "DAO Identifier is required.";
@@ -51,6 +52,7 @@ const Step1 = ({ setData, setActiveStep, data }) => {
         "Purpose should be at least 10 characters to provide sufficient detail.";
     }
 
+
     if (inputData.SetUpPeriod === "" || inputData.SetUpPeriod === null) {
       newErrors.SetUpPeriod = "Setup Period is required.";
     } else if (
@@ -63,8 +65,10 @@ const Step1 = ({ setData, setActiveStep, data }) => {
 
     setErrors(newErrors);
 
+
     return Object.keys(newErrors).length === 0;
   };
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -74,6 +78,7 @@ const Step1 = ({ setData, setActiveStep, data }) => {
       [name]: value,
     });
 
+
     if (errors[name]) {
       setErrors({
         ...errors,
@@ -82,12 +87,15 @@ const Step1 = ({ setData, setActiveStep, data }) => {
     }
   };
 
+
+
   const changePeriod = (value) => {
     const numberValue = Math.max(parseInt(value, 10) || 1, 1);
     setInputData({
       ...inputData,
       SetUpPeriod: numberValue,
     });
+
 
     if (errors.SetUpPeriod) {
       setErrors({
@@ -108,11 +116,14 @@ const Step1 = ({ setData, setActiveStep, data }) => {
           step1: { ...inputData },
         }));
 
+
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        // Removed the localStorage.removeItem() line
+
+        localStorage.removeItem("step1Data");
+
         setActiveStep(1);
-        toast.success("Step 1 completed successfully!");
+        // toast.success("Step 1 completed successfully!");
       } catch (error) {
         console.error("Error saving data:", error);
         toast.error("An error occurred while saving. Please try again.");
@@ -150,8 +161,8 @@ const Step1 = ({ setData, setActiveStep, data }) => {
               value={inputData.DAOIdentifier}
               placeholder="Enter DAO Identifier"
               className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm ${errors.DAOIdentifier
-                ? "border border-red-500"
-                : "border border-gray-300"
+                  ? "border border-red-500"
+                  : "border border-gray-300"
                 }`}
               onChange={handleChange}
             />
@@ -199,8 +210,8 @@ const Step1 = ({ setData, setActiveStep, data }) => {
               value={inputData.SetUpPeriod}
               placeholder="Enter setup period in days"
               className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm ${errors.SetUpPeriod
-                ? "border border-red-500"
-                : "border border-gray-300"
+                  ? "border border-red-500"
+                  : "border border-gray-300"
                 }`}
               onChange={(e) => changePeriod(e.target.value)}
               min="1"
@@ -219,7 +230,6 @@ const Step1 = ({ setData, setActiveStep, data }) => {
               "__submitButton w-full flex flex-row items-center justify-end"
             }
           >
-       
             <button
               type="submit"
               className="flex mobile:m-4 my-4 flex-row items-center gap-2 bg-[#0E3746] px-4 py-2 rounded-[2rem] text-white mobile:text-base text-sm disabled:opacity-50"
