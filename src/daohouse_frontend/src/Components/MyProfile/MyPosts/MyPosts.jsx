@@ -63,10 +63,10 @@ const MyPosts = () => {
     <div className={className}>
       <div className="mt-5 md:mt-10">
         <div className="flex gap-10">
-        <h3 className="text-[#05212C] md:text-[24px] text-[18px] md:font-bold font-mulish self-center">
+        <h3 className="text-[#05212C] md:text-[24px] text-[18px] md:font-bold font-mulish self-center hidden md:block">
           Submitted Proposals
         </h3>
-        <div className="  flex-grow lg:flex justify-end hidden">
+        <div className="  flex-grow lg:flex justify-end ">
           <SearchProposals
             onChange={handleSearchChange}
             value={searchTerm}

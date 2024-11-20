@@ -24,9 +24,9 @@ type DaoGroup = record {
 type DaoInput = record {
   members : vec principal;
   image_title : text;
+  all_dao_user : vec principal;
   token_symbol : text;
   linksandsocials : vec text;
-  daotype : text;
   tokens_required_to_vote : nat32;
   image_content : blob;
   dao_groups : vec DaoGroup;
@@ -81,6 +81,7 @@ type ProposalType = variant {
   BountyDone;
   Polls;
   ChangeDaoPolicy;
+  MintNewTokens;
   TokenTransfer;
   AddMemberToDaoProposal;
   RemoveMemberToGroupProposal;
@@ -135,11 +136,10 @@ service : (InitialArgs) -> {
   add_proposal : (ProposalValueStore) -> (Result);
   check_profile_existence : () -> (Result_1) query;
   check_user_existance : () -> (Result) query;
-  create_dao : (DaoInput) -> (Result);
   create_profile : (MinimalProfileinput) -> (Result);
   delete_profile : () -> (Result_1);
-  delete_proposal : (text) -> (Result);
-  get_all_dao : (Pagination) -> (vec DaoDetails) query;
+  get_all_dao : () -> (vec DaoDetails) query;
+  get_all_dao_pagination : (Pagination) -> (vec DaoDetails) query;
   get_analytics : () -> (Result_2) query;
   get_canister_meta_data : () -> (Result_3) query;
   get_cycles : () -> (nat64) query;
@@ -148,7 +148,8 @@ service : (InitialArgs) -> {
   get_profile_by_id : (principal) -> (Result_4);
   get_proposals : (Pagination) -> (vec ProposalValueStore) query;
   get_user_profile : () -> (Result_4) query;
-  make_payment : (nat64, principal) -> (Result_5);
+  make_payment_and_create_dao : (DaoInput) -> (Result);
+  proposal_to_mint_new_dao_tokens : (principal, nat64) -> (Result_5);
   remove_follow_dao : (principal, principal) -> (Result_1);
   remove_joined_dao : (principal, principal) -> (Result_1);
   search_dao : (text) -> (vec DaoDetails) query;

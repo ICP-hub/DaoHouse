@@ -39,7 +39,6 @@ export const useAuthClient = (options = defaultOptions) => {
   const [identity, setIdentity] = useState(null);
   const [principal, setPrincipal] = useState(null);
   const [backendActor, setBackendActor] = useState(null);
-  console.log("backendActor",backendActor)
   const [stringPrincipal, setStringPrincipal] = useState(null);
   const [nfid, setNfid] = useState(null);
   const [error, setError] = useState(null);
@@ -66,14 +65,9 @@ export const useAuthClient = (options = defaultOptions) => {
     const principal = identity.getPrincipal();
     setAuthClient(client);
     setIsAuthenticated(isAuthenticated);
-    setIdentity(identity);
-    console.log(identity);
-    
+    setIdentity(identity);    
     setPrincipal(principal);
-    setStringPrincipal(principal.toString());
-    console.log(principal.toString());
-    
-
+    setStringPrincipal(principal.toString());    
     if (isAuthenticated && identity && principal && principal.isAnonymous() === false) {
       const backendActor = createActor(backendCanisterId, { agentOptions: { identity, verifyQuerySignatures: false } });
       setBackendActor(backendActor);
@@ -203,7 +197,6 @@ export const useAuthClient = (options = defaultOptions) => {
         });
         setNfid(nfIDInstance);
       } catch (error) {
-        console.error("Error initializing NFID:", error);
         setError("Failed to initialize NFID.");
       }
     };
@@ -250,36 +243,27 @@ export const useAuthClient = (options = defaultOptions) => {
     }
   
     const canisterArray = [process.env.CANISTER_ID_DAOHOUSE_BACKEND];
-    console.log("Canister Array:", canisterArray);
   
     try {
       const delegationResult = await nfid.getDelegation({ targets: canisterArray, maxTimeToLive: BigInt(8) * BigInt(3_600_000_000_000) });
-      console.log("Delegation Result:", delegationResult);
   
       
       const isLogin = await nfid.getDelegationType();
-      console.log('Delegation type', isLogin);
       // const identity = delegationResult.getIdentity();
       const agent = new HttpAgent({ identity: delegationResult });
-      console.log("HttpAgent created with identity:", identity);
   
       if (process.env.DFX_NETWORK !== 'ic') {
         await agent.fetchRootKey();
-        console.log("Fetched root key");
       }
   
       const backendActor = Actor.createActor({
         canisterId: backendCanisterId,
         interfaceFactory: BackendidlFactory,
       });
-      console.log("Backend Actor created:", backendActor);
-  
       setBackendActor(backendActor);
 
       const identity = await nfid.getIdentity();
-      console.log(identity);
-      const theUserPrincipal = identity.getPrincipalId.toText()
-      console.log("The User principal:", theUserPrincipal);
+      const theUserPrincipal = identity.getPrincipalId.toText();
       setIsAuthenticated(true);
       setIdentity(identity);
       setPrincipal(theUserPrincipal);
@@ -299,9 +283,7 @@ export const useAuthClient = (options = defaultOptions) => {
 
   const createDaoActor = (canisterId) => {
     try {
-      const agent = new HttpAgent({ identity });
-      console.log(identity);
-      
+      const agent = new HttpAgent({ identity });      
 
       if (process.env.DFX_NETWORK !== 'production') {
         agent.fetchRootKey().catch(err => {

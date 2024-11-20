@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-const BountyRaised = ({ bountyRaised, handleInputBountyRaised, setBountyRaised }) => {
+const BountyRaised = ({ bountyRaised, handleInputBountyRaised, setBountyRaised, dao }) => {
 
   return (
     <>
@@ -18,19 +18,6 @@ const BountyRaised = ({ bountyRaised, handleInputBountyRaised, setBountyRaised }
           rows={4}
         />
       </div>
-      {/* <div className="mb-4">
-        <label htmlFor="actionMember" className="mb-2 font-semibold text-xl">Action Member (Principal)</label>
-        <input
-          id="actionMember"
-          type="text"
-          name="action_member"
-          value={bountyRaised.action_member}
-          onChange={handleInputBountyRaised}
-          className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-          placeholder="Enter action member principal"
-          required
-        />
-      </div> */}
       <div className="mb-4">
         <label htmlFor="bountyTask" className="mb-2 font-semibold text-xl">Bounty Task</label>
         <input
@@ -50,7 +37,7 @@ const BountyRaised = ({ bountyRaised, handleInputBountyRaised, setBountyRaised }
           id="bountyTokens"
           type="number"
           name="tokens"
-          value={bountyRaised.tokens || 1}
+          value={bountyRaised.tokens}
           onChange={handleInputBountyRaised}
           className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
           placeholder="Enter Tokens"
@@ -58,20 +45,7 @@ const BountyRaised = ({ bountyRaised, handleInputBountyRaised, setBountyRaised }
           min={1}
         />
       </div>
-      <div className="mb-4">
-        <label htmlFor="taskCompletionDay" className="mb-2 font-semibold text-xl">Task Completion Day</label>
-        <input
-          id="taskCompletionDay"
-          type="number"
-          name="task_completion_day"
-          value={bountyRaised.task_completion_day || 1}
-          onChange={handleInputBountyRaised}
-          className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-          required
-          min={1}
-          placeholder="No. of days"
-        />
-      </div>
+
     </>
   );
 };

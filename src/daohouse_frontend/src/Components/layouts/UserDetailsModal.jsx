@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import defaultImage from "../../../assets/Avatar.png";
 import { useAuth } from "../../connect/useClient";
+import { FiUpload } from "react-icons/fi";
 
 
 const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
@@ -8,7 +9,8 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [profileImage, setProfileImage] = useState(null);
-  const [fileURL, setFileURL] = useState(defaultImage);
+  const [fileURL, setFileURL] = useState(defaultImage)
+  const [fileName, setFileName] = useState(null);
   const [errors, setErrors] = useState({});
   const fileInputRef = useRef(null);
   const { backendActor } = useAuth();
@@ -92,11 +94,11 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
   };
   const handleNameChange = (e) => {
     setName(e.target.value);
-    setErrors((prevErrors) => ({ ...prevErrors, name: null })); // Clear name error
+    setErrors((prevErrors) => ({ ...prevErrors, name: null })); 
   };
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
-    setErrors((prevErrors) => ({ ...prevErrors, email: null })); // Clear email error
+    setErrors((prevErrors) => ({ ...prevErrors, email: null })); 
   };
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -107,7 +109,8 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
       }
       setProfileImage(file);
       setFileURL(URL.createObjectURL(file));
-      setErrors((prevErrors) => ({ ...prevErrors, profileImage: null })); // Clear profile image error
+      setFileName(file.name)
+      setErrors((prevErrors) => ({ ...prevErrors, profileImage: null })); 
     }
   };
   if (!isOpen) return null;
@@ -160,7 +163,10 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
                       onClick={handleFileInput}
                       className="text-black text-sm border border-black py-2 px-2 rounded-lg flex justify-center items-center"
                     >
-                      Upload Image
+                    <FiUpload className="text-[12px] mobile:text-[16px]" />
+                      <span className="truncate ... w-24">
+                        {fileName ? fileName : "Upload Image"}
+                        </span>
                     </button>
                     <input
                       type="file"

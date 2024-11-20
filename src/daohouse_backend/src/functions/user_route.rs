@@ -13,7 +13,7 @@ use ic_cdk::{query, update};
 
 use super::canister_functions::call_inter_canister;
 use super::ledger_functions::create_ledger_canister;
-use super::{reverse_canister_creation, store_follow_dao, store_join_dao};
+use super::reverse_canister_creation;
 
 #[update(guard=prevent_anonymous)]
 async fn create_profile(profile: MinimalProfileinput) -> Result<String, String> {
@@ -88,7 +88,6 @@ async fn create_profile(profile: MinimalProfileinput) -> Result<String, String> 
         Ok(String::from(crate::utils::PROFILE_UPDATE_SUCCESS))
     })
 }
-
 
 #[query(guard = prevent_anonymous)]
 async fn get_user_profile() -> Result<UserProfile, String> {
@@ -174,11 +173,8 @@ async fn delete_profile() -> Result<(), String> {
     with_state(|state| routes::delete_profile(state))
 }
 
-#[update(guard = prevent_anonymous)]
+// #[update]
 pub async fn create_dao(dao_detail: DaoInput) -> Result<String, String> {
-    // Note: This method follows approach of transaction.
-
-    // getting user account
     let principal_id = ic_cdk::api::caller();
     let user_profile_detail = with_state(|state| state.user_profile.get(&principal_id).clone());
 
@@ -261,13 +257,20 @@ pub async fn create_dao(dao_detail: DaoInput) -> Result<String, String> {
         state.user_profile.insert(principal_id, user_profile_detail)
     });
 
-    store_follow_dao(dao_canister_id.clone(), ic_cdk::api::caller())
-        .await
-        .map_err(|err|  format!("Failed to store DAO follow info: {}", err))?;
+    with_state(|state| {
+        let new_canister_id = dao_canister_id.clone();
+        state.canister_ids.insert(new_canister_id, new_canister_id)
+    });
 
-    store_join_dao(dao_canister_id.clone(), ic_cdk::api::caller())
-        .await
-        .map_err(|err|  format!("Failed to store DAO follow info: {}", err))?;
+    with_state(|state| {
+        if let Some(profile) = state.user_profile.get(&api::caller()) {
+            let mut updated_profile = profile.clone();
+            updated_profile.join_dao.push(dao_canister_id.clone());
+            updated_profile.follow_dao.push(dao_canister_id.clone());
+            updated_profile.followers_count += 1;
+            state.user_profile.insert(principal_id, updated_profile);
+        }
+    });
 
     Ok(format!(
         "Dao created, canister id: {} ledger id: {}",
@@ -332,7 +335,7 @@ pub async fn create_ledger(
         token_name: token_name,
         token_symbol: token_symbol,
         minting_account: Account {
-            owner: api::caller(),
+            owner: ic_cdk::api::id(),
             subaccount: None,
         },
         transfer_fee: Nat::from(0 as u32),

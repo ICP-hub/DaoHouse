@@ -47,9 +47,8 @@ const Feature = () => {
 
           <div className="flex flex-col items-center gap-2 px-4 mt-10">
             {cardData.map((card, index) => (
-              <div
-                key={index}
-                className="relative bg-[#0E3746] text-white p-4 rounded-lg shadow-lg w-full sm:w-[300px] mb-6"
+              <div key={index}
+              className="relative bg-[#0E3746] text-white p-4 rounded-lg shadow-lg w-[85%] sm:w-[450px] mb-6 h-auto sm:h-[150px]"
                 onMouseEnter={() => setHoveredCardIndex(index)}
                 onMouseLeave={() => setHoveredCardIndex(null)}
               >
@@ -59,11 +58,11 @@ const Feature = () => {
                     alt={card.title}
                     className="w-[24px] h-[24px] mb-[8px]"
                   />
-                  <h3 className="text-[10px] font-mulish font-semibold text-left">
+                  <h3 className="text-[14px] font-bold font-mulish text-left">
                     {card.title}
                   </h3>
                 </div>
-                <p className="text-[11px] font-mulish mb-[8px] text-left">
+                <p className="text-[13px] font-mulish mb-[8px] text-left">
                   {card.subtitle}
                 </p>
               </div>

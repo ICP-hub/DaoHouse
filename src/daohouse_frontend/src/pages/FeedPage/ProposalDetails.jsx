@@ -5,7 +5,7 @@ import Container from "../../Components/Container/Container";
 import { Principal } from '@dfinity/principal';
 
 import { useUserProfile } from "../../context/UserProfileContext";
-import { toast } from "react-toastify";
+import toast from 'react-hot-toast';
 import MuiSkeleton from "../../Components/SkeletonLoaders/MuiSkeleton";
 import { CircularProgressBar } from "../../Components/Proposals/CircularProgressBar";
 import Card from "../../Components/Proposals/Card";
@@ -139,7 +139,6 @@ const ProposalsDetails = () => {
   
       const joinDaoPayload = {
         place_to_join: place_to_join,
-        daohouse_backend_id: daohouseBackendId,
       };
       
       const response = await daoActor.ask_to_join_dao(joinDaoPayload);
@@ -147,7 +146,7 @@ const ProposalsDetails = () => {
       const sound = new Audio(messagesound)
       if (response.Ok) {
         setJoinStatus("Requested");
-        toast.success(res.Ok);
+        toast.success(response.Ok);
         sound.play();
       } else {
         console.error( response.Err );
@@ -174,8 +173,8 @@ const ProposalsDetails = () => {
     try {
       const daoActor = createDaoActor(daoCanisterId);
       const response = isFollowing
-        ? await daoActor.unfollow_dao(backendCanisterId)
-        : await daoActor.follow_dao(backendCanisterId);
+        ? await daoActor.unfollow_dao()
+        : await daoActor.follow_dao();
   
         if (response?.Ok) {
           toast.success(newIsFollowing ? "Successfully followed" : "Successfully unfollowed");

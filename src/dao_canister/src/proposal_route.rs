@@ -1,6 +1,5 @@
 mod proposal_controller;
 pub use proposal_controller::*;
 
-
-mod dao_controllers;
-pub use dao_controllers::*;
+mod auto_run_proposal;
+pub use auto_run_proposal::*;

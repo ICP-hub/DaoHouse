@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Principal } from "@dfinity/principal";
-import { useAuth } from "../../connect/useClient";
-import { toast } from 'react-toastify';
+import { useAuth } from "../utils/useAuthClient";
+import toast, { Toaster } from 'react-hot-toast';
 import { CircularProgress } from "@mui/material";
 import messagesound from "../../Sound/messagesound.mp3";
 import daoImage from "../../../assets/daoImage.png"
@@ -73,8 +73,8 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
       if (!userProfile) return;
       setIsFollowing(!isFollowing);
       const response = isFollowing
-        ? await daoActor.unfollow_dao(backendCanisterId)
-        : await daoActor.follow_dao(backendCanisterId);
+        ? await daoActor.unfollow_dao()
+        : await daoActor.follow_dao();
 
       if (response?.Ok) {
         const updatedFollowers = await daoActor.get_dao_followers();
@@ -115,7 +115,6 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
   
       const joinDaoPayload = {
         place_to_join: place_to_join,
-        daohouse_backend_id: daohouseBackendId,
       };
   
       const response = await daoActor.ask_to_join_dao(joinDaoPayload);
@@ -124,7 +123,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
       if (response.Ok) {
         setJoinStatus("Requested");
         sound.play();
-        toast.success(res.Ok);
+        toast.success(response.Ok);
       } else {
         console.error(response.Err );
         toast.error(response.Err);
@@ -170,16 +169,15 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
     };
   }, [showConfirmModal, preventScroll]);
 
-
   return (
     <div className="bg-[#F4F2EC] shadow-lg tablet:p-6 big_phone:p-3 small_phone:p-5 p-3 rounded-lg md:mx-8 tablet:mx-16">
   <div className="flex flex-col items-center big_phone:flex-row small_phone:flex-col justify-center mb-4 gap-2">
     {/* Image Container */}
-    <div className="w-full big_phone:w-40 lg:w-60 mobile:h-[120px] border border-black rounded">
+    <div className="w-full big_phone:w-40 lg:w-60 mobile:h-40 border border-black rounded">
       <img
         src={image_id ? imageUrl : daoImage}
         alt="DAO Image"
-        className="w-full h-32 big_phone:h-full object-cover rounded"
+        className="w-full h-40 object-cover rounded"
       />
     </div>
        
@@ -199,36 +197,38 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
       </div>
 
       {/* Adjusted flexbox for larger screens */}
-      <div className="big_phone:flex hidden justify-between text-center mb-4 bg-white tablet:p-4 pb-4 p-2 rounded-lg gap-0">
-        <div className="flex-1 ml-5">
-          <p className="font-bold text-dark-green">{members}</p>
-          <p className="text-sm text-dark-green">Members</p>
-        </div>
-        <div className="flex-1 text-center">
-          <p className="font-bold text-dark-green">{groups || '0'}</p>
-          <p className="text-sm text-dark-green">Groups</p>
-        </div>
-        <div className="flex-1 mr-5">
-          <p className="font-bold text-dark-green">{proposals}</p>
-          <p className="text-sm text-dark-green">Active Proposals</p>
-        </div>
-      </div>
+<div className="big_phone:flex hidden justify-between text-center mb-4 bg-white tablet:p-4 pb-4 p-2 rounded-lg gap-0">
+  <div className="flex-1 ml-5">
+    <p className="font-bold text-dark-green">{members}</p>
+    <p className="text-sm text-dark-green">Members</p>
+  </div>
+  <div className="flex-1 text-center">
+    <p className="font-bold text-dark-green">{groups || '0'}</p>
+    <p className="text-sm text-dark-green">Groups</p>
+  </div>
+  <div className="flex-1 mr-5">
+    <p className="font-bold text-dark-green">{proposals}</p>
+    <p className="text-sm text-dark-green">Active Proposals</p>
+  </div>
+</div>
 
-      {/* Adjusted grid layout for smaller screens */}
-      <div className="big_phone:hidden grid grid-cols-1 text-center my-5 mx-5 gap-1">
-        <div className="bg-white rounded-lg py-4">
-          <p className="font-bold text-dark-green">{members}</p>
-          <p className="text-sm text-dark-green">Members</p>
-        </div>
-        <div className="bg-white rounded-lg py-4">
-          <p className="font-bold text-dark-green">{groups || '0'}</p>
-          <p className="text-sm text-dark-green">Groups</p>
-        </div>
-        <div className="bg-white rounded-lg py-4">
-          <p className="font-bold text-dark-green">{proposals}</p>
-          <p className="text-sm text-dark-green">Active Proposals</p>
-        </div>
-      </div>
+{/* Adjusted grid layout for smaller screens */}
+<div className="big_phone:hidden grid grid-cols-1 text-center my-5 mx-5 gap-1">
+  <div className="bg-white rounded-lg py-4 flex justify-between">
+    <div className="flex-1">
+      <p className="font-bold text-dark-green">{members}</p>
+      <p className="text-sm text-dark-green">Members</p>
+    </div>
+    <div className="flex-1">
+      <p className="font-bold text-dark-green">{groups || '0'}</p>
+      <p className="text-sm text-dark-green">Groups</p>
+    </div>
+  </div>
+  <div className="bg-white rounded-lg py-4">
+    <p className="font-bold text-dark-green">{proposals}</p>
+    <p className="text-sm text-dark-green">Active Proposals</p>
+  </div>
+</div>
 
       <div className="flex justify-between gap-2">
         <button

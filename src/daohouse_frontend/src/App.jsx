@@ -98,7 +98,6 @@
 
 
 import React, { Children } from "react";
-// import Login from './Components/Auth/Login';
 import './global.scss'
 import PostProvider from "./PostProvider";
 import Dao from "./pages/dao/Dao";
@@ -108,8 +107,6 @@ import Error404 from "./Components/utils/Error404";
 import Footer from "./Components/layouts/Footer";
 import FeedPage from "./pages/FeedPage/FeedPage";
 import CreateDao from "./pages/CreateDao/CreateDao";
-
-import Proposals from "./pages/Proposals/Proposals";
 import Post from "./pages/Post/Post";
 import MyProfile from "./pages/MyProfile/MyProfile";
 import EditProfile from "./pages/EditProfile/EditProfile";
@@ -124,7 +121,8 @@ import "react-quill/dist/quill.snow.css";
 import MyProposals from "./pages/Proposals/myproposals/MyProposals";
 import SingleProposal from "./Components/Proposals/SingleProposal/SingleProposal";
 import Following from "./Components/MyProfile/Following/Following";
-import { ToastContainer, toast } from 'react-toastify';
+
+import toast, { Toaster } from 'react-hot-toast';
 import ScrollToTop from "./Components/utils/ScrollToTop";
 import ProposalsDetails from "./pages/FeedPage/ProposalDetails";
 
@@ -132,16 +130,15 @@ import ProposalsDetails from "./pages/FeedPage/ProposalDetails";
 const App = () => {
 
   const location = useLocation();
-  
-  const marginTop = location.pathname === '/' ? '4rem' : '0';
 
   return (
     <PostProvider>
         <Navbar />
-        <ToastContainer
-          position="top-right"
-          style={{ marginTop }}
-        />
+       
+        <Toaster
+  position="top-center"
+  reverseOrder={false}
+/>
         <ScrollToTop />
         <Routes>
           <Route path="/*" element={<Error404 />} />

@@ -7,7 +7,7 @@ import avtarProfileIcon from "../../../assets/Avatar.png";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { useAuth } from "../../connect/useClient";
 import { constant } from "../utils/constants";
-import { toast } from "react-toastify";
+import toast from 'react-hot-toast';
 import { useUserProfile } from "../../context/UserProfileContext";
 import MyProfileImage from "../../../assets/MyProfile-img.png";
 import CircularProgress from '@mui/material/CircularProgress';

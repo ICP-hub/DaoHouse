@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
-import { toast } from "react-toastify";
+import toast, { Toaster } from 'react-hot-toast';
 import Container from "../Container/Container";
 
 const Step2 = ({ setData, setActiveStep, data }) => {

@@ -18,11 +18,16 @@
   text-align: left;
   overflow: hidden;
 
-  /* Responsive Borders */
+  /* Set a default minimum height for large devices */
+  min-height: 200px;
+
+  /* Responsive Borders and Height */
   @media (max-width: 640px) { /* For small devices */
     border-width: 1px;
     border-color: rgba(255, 255, 255, 0.4); /* Lighter border for mobile */
+    min-height: 150px; /* Adjusted height for smaller screens */
   }
+
 
   h2 {
     font-size: 1.25rem; /* text-xl equivalent */
@@ -31,15 +36,15 @@
   }
 
   .stat-number {
-    font-size: 7.75rem; /* text-6xl equivalent */
+    font-size: 7.7rem; /* text-6xl equivalent */
     font-weight: 500;
     color: #ffffff;
     position: relative;
-    bottom: -20%; /* Moves the number down and hides the bottom part */
+    bottom: -5%; /* Moves the number down and hides the bottom part */
 
     @media (max-width: 800px) { /* Mobile adjustments */
-      font-size: 5.4rem; /* Smaller number size on mobile */
-      bottom: -21%; /* Adjust the hiding effect for mobile */
+      font-size: 5.0rem; /* Smaller number size on mobile */
+      bottom: -22%; /* Adjust the hiding effect for mobile */
     }
   }
 }
