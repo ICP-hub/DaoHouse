@@ -17,29 +17,18 @@ import Members from "../../Components/DaoProfile/Members";
 import FollowersContent from "../../Components/DaoProfile/FollowersContent";
 import FundsContent from "../../Components/DaoProfile/FundsContent";
 import Container from "../../Components/Container/Container";
-<<<<<<< HEAD
-import { Principal } from '@dfinity/principal';
-
-import { toast } from "react-toastify";
-=======
 import { Principal } from "@dfinity/principal";
-import { useAuth } from "../../Components/utils/useAuthClient";
 import toast from 'react-hot-toast';
->>>>>>> main
 import ProposalLoaderSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/ProposalLoaderSkeleton";
 import DaoProfileLoaderSkeleton from "../../Components/SkeletonLoaders/DaoProfileLoaderSkeleton/DaoProfileLoaderSkeleton";
 import NoDataComponent from "../../Components/Dao/NoDataComponent";
 import { CircularProgress } from "@mui/material";
 import messagesound from "../../Sound/messagesound.mp3";
-<<<<<<< HEAD
-import daoImage from "../../../assets/daoImage.png"
 import { useAuth } from "../../connect/useClient";
 
-=======
 import daoImage from "../../../assets/daoImage.png";
 import { createActor } from "../../../../declarations/icrc1_ledger_canister";
 import Pagination from "../../Components/pagination/Pagination";
->>>>>>> main
 
 const DaoProfile = () => {
   const className = "DaoProfile";
@@ -161,24 +150,15 @@ const DaoProfile = () => {
               setJoinStatus("Join DAO");
             }
           }
-<<<<<<< HEAD
-          // setLoadingProfile(false)
-=======
           setLoadingProfile(false);
->>>>>>> main
         } catch (error) {
           console.error("Error fetching DAO details:", error);
         }
       }
     };
 
-<<<<<<< HEAD
-    const fetchProposals = async () => {
-      // setLoadingProposals(true);
-=======
     const fetchProposals = async (pagination = {}) => {
       setLoadingProposals(true);
->>>>>>> main
       if (daoCanisterId) {
         try {
           const daoActor = await createDaoActor(daoCanisterId);
@@ -213,11 +193,7 @@ const DaoProfile = () => {
   };
 
   const confirmJoinDao = async () => {
-<<<<<<< HEAD
-    // setLoading(true)
-=======
     setLoading(true);
->>>>>>> main
     try {
       const place_to_join = "Council";
 

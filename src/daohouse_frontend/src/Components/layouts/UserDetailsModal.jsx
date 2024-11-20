@@ -1,11 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import defaultImage from "../../../assets/Avatar.png";
-<<<<<<< HEAD
 import { useAuth } from "../../connect/useClient";
-=======
-import { useAuth } from "../utils/useAuthClient";
 import { FiUpload } from "react-icons/fi";
->>>>>>> main
 
 
 const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {

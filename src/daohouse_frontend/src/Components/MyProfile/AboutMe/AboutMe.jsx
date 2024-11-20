@@ -3,12 +3,8 @@ import Tags from "../../../Components/MyProfile/Tags";
 import PersonalLinksAndContactInfo from "../PersonalLinksAndContactInfo";
 import { useUserProfile } from "../../../context/UserProfileContext";
 
-<<<<<<< HEAD
-import { toast } from "react-toastify";
-import { useAuth } from "../../../connect/useClient";
-=======
 import toast from 'react-hot-toast';
->>>>>>> main
+import { useAuth } from "../../../connect/useClient";
 
 
 const AboutMe = () => {

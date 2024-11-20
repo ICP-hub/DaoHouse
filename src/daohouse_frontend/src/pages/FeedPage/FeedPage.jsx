@@ -61,19 +61,8 @@ console.log("backendactr",backendActor);
     setSearchTerm(event.target.value);
   };
 
-<<<<<<< HEAD
-  // Fetch All Proposals Across All DAOs
-  const fetchAllProposals = async () => {
-    // setLoading(true);
-    const daoPagination = {
-      start: 0,
-      end: 1000,
-    };
-
-=======
   const fetchAllProposals = async (pagination = {}) => {
     
->>>>>>> main
     try {
       setLoading(true);
       const allDaos = await backendActor.get_all_dao();
@@ -206,22 +195,6 @@ console.log("backendactr",backendActor);
         />
       
       )}
-<<<<<<< HEAD
-
-
-
-      {/* Pagination Controls */}
-      {!loading && proposals.length > 0 && (
-        <div className={`${className}__pagination pb-10 bg-[#c8ced3] gap-8 flex flex-col`}>
-          <Pagination
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            hasMore={hasMore}
-          />
-        </div>
-      )}
-=======
->>>>>>> main
     </div>
   );
 };

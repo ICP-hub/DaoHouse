@@ -1,13 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Principal } from "@dfinity/principal";
-<<<<<<< HEAD
-import { useAuth } from "../../connect/useClient";
-import { toast } from 'react-toastify';
-=======
 import { useAuth } from "../utils/useAuthClient";
 import toast, { Toaster } from 'react-hot-toast';
->>>>>>> main
 import { CircularProgress } from "@mui/material";
 import messagesound from "../../Sound/messagesound.mp3";
 import daoImage from "../../../assets/daoImage.png"

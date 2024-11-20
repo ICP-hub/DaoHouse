@@ -27,11 +27,6 @@ function ViewModal({ open, onClose, users = [], approvedVotesList = [], rejected
         setLoading(true);
         const fetchedProfiles = await Promise.all(users.map(async (user) => {
             try {
-<<<<<<< HEAD
-                console.log("I'm in");
-                console.log("user",Principal.fromText(user));
-=======
->>>>>>> main
                 
                 const userDetail = await backendActor.get_profile_by_id(Principal.fromText(user));
                 console.log("userdetail",userDetail);

@@ -23,27 +23,16 @@ import { useUserProfile } from "../../context/UserProfileContext";
 import Container from "../../Components/Container/Container";
 import NoFollowers from "./NoFollowers";
 import NoFollowing from "./NoFollowing";
-<<<<<<< HEAD
-import { Principal } from "@dfinity/principal";
-import { createActor } from "../../../../declarations/icp_ledger_canister";
 import { useAuth } from "../../connect/useClient";
-=======
->>>>>>> main
 
 
 
 
 
 const MyProfile = ({ childComponent }) => {
-<<<<<<< HEAD
-  const { backendActor, identity, principal } = useAuth();
-
- 
-=======
   const { backendActor } = useAuth();
 
 
->>>>>>> main
 
   const { userProfile } = useUserProfile() || {};
 
@@ -115,11 +104,6 @@ const MyProfile = ({ childComponent }) => {
   };
 
   const [data, setData] = useState({});
-<<<<<<< HEAD
- 
-  
-=======
->>>>>>> main
   const followers = data?.followers_count ? Number(data.followers_count) : 0;
   const post = data?.submitted_proposals ? Number(data.submitted_proposals) : 0;
   const following = data?.join_dao ? Number(data.join_dao.length) : 0;

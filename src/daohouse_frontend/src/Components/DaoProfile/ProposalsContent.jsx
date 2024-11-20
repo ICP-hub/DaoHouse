@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Card from "../Proposals/Card";
 import { Link } from "react-router-dom";
-<<<<<<< HEAD
-
-import { useParams } from "react-router-dom";
-=======
-import { useAuth } from "../../Components/utils/useAuthClient";
->>>>>>> main
 import nodata from "../../../assets/nodata.png";
 import { useAuth } from "../../connect/useClient";
 const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, daoCanisterId }) => {

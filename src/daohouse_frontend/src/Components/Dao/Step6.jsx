@@ -14,16 +14,9 @@ import { useAuth } from "../../connect/useClient";
 
 const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, setLoadingNext }) => {
   const [file, setFile] = useState(null);
-<<<<<<< HEAD
-  const { identity, stringPrincipal, backendActor,balance ,principal } = useAuth();
-  console.log("balsad",principal);
-  
-  const [fileURL, setFileURL] = useState(daoImage);
-=======
-  const { identity, stringPrincipal, backendActor } = useAuth()
+  const { identity, stringPrincipal, backendActor, principal } = useAuth()
   const [fileURL, setFileURL] = useState(null);
   const [fileName, setFileName] = useState(null);
->>>>>>> main
   const [shouldCreateDAO, setShouldCreateDAO] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loadingPayment, setLoadingPayment] = useState(false);
@@ -81,12 +74,6 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, s
     const { step1, step2, step3, step4, step5, step6 } = data;
 
     try {
-<<<<<<< HEAD
-      //uncomment later
-      const res = await backendActor.make_payment(sendableAmount, Principal.fromText(stringPrincipal ? stringPrincipal : principal.toString()));
-      console.log(res)
-      if (res.Ok) {
-=======
       setLoadingPayment(true)
 
       const council = step4.voting?.Council;
@@ -144,7 +131,6 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, s
       const res = await backendActor.make_payment_and_create_dao(daoPayload);
       console.log("this is backend res : ", res)
       if (res.Ok) {        
->>>>>>> main
         toast.success("Payment successful!");
         setLoadingPayment(false)
         setIsModalOpen(false);
@@ -189,53 +175,6 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, s
     tokenActor
   ) => {
     try {
-<<<<<<< HEAD
-      const decimals = parseInt(currentMetaData["icrc1:decimals"], 10);
-
-      const sendableAmount = parseInt(
-        10000
-      );
-      console.log("sendable amount console ", sendableAmount);
-      console.log("current balance console ", currentBalance);
-      console.log("prjkjekwr",principal.toString());
-      
-
-      const backendCanisterId = process.env.CANISTER_ID_DAOHOUSE_BACKEND;
-  console.log("dfdsfsd",backendCanisterId);
-  
-      if (currentBalance > sendableAmount) {
-
-        let transaction = {
-          from_subaccount: [],
-          spender: {
-            owner: Principal.fromText(backendCanisterId),
-            subaccount: [],
-          },
-          amount: Number(sendableAmount) + Number(currentMetaData["icrc1:fee"]),
-          expected_allowance: [],
-          expires_at: [],
-          fee: [currentMetaData["icrc1:fee"]],
-          memo: [],
-          created_at_time: [],
-        };
-        console.log("transaction ", transaction);
-        console.log("Token Actor ICRC2 APPROVE", tokenActor.icrc2_approve);
-        const approveRes = await tokenActor.icrc2_approve(transaction);
-        console.log("Payment Approve Response ", approveRes);
-        if (approveRes.Err) {
-          const errorMessage = `Insufficient funds. Balance: ${approveRes.Err.InsufficientFunds.balance}`;
-          toast.error(errorMessage);
-          return;
-        } else {
-          afterPaymentApprove(sendableAmount)
-
-        }
-      } else {
-        console.log("Insufficient Balance to purchase");
-        toast.error(
-          `Insufficient balance. Balance : ${currentBalance / 10 ** 8}`
-        );
-=======
       const sendableAmount = parseInt(0.1 * Math.pow(10,8));
       // const sendableAmount = 1;
       console.log("sendable amount ",sendableAmount);
@@ -263,7 +202,6 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, s
         const errorMessage = `Insufficient funds. Balance: ${approveRes.Err.InsufficientFunds.balance}`;
         console.log("Err", approveRes)
         toast.error(errorMessage);
->>>>>>> main
         setLoadingPayment(false)
         return;
       } else {
@@ -375,13 +313,6 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, s
 
   useEffect(() => {
     if (shouldCreateDAO) {
-<<<<<<< HEAD
-      console.log("should create");
-      
-      handleDaoClick();
-=======
-
->>>>>>> main
       setShouldCreateDAO(false);
     }
   }, [data, shouldCreateDAO]);

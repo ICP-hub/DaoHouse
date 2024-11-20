@@ -2,14 +2,8 @@ import React, { useState, useEffect } from "react";
 import proposals from "../../../assets/proposals.png";
 import createProposalNew from "../../../assets/gif/createProposalNew.svg";
 import Container from "../../Components/Container/Container";
-<<<<<<< HEAD
-
-import { toast } from "react-toastify";
 import { CircularProgress } from "@mui/material";
-=======
-import { useAuth } from "../../Components/utils/useAuthClient";
 import toast from 'react-hot-toast';
->>>>>>> main
 import { useNavigate, useParams } from "react-router-dom";
 import { Principal } from "@dfinity/principal";
 import BountyDone from "./BountyDone";
@@ -24,12 +18,8 @@ import Poll from "./Poll";
 import RemoveDaoMember from "./RemoveDaoMember";
 import { createActor } from "../../../../declarations/icp_ledger_canister";
 import TokenPaymentModal from "./TokenPaymentModal";
-<<<<<<< HEAD
 import { useAuth } from "../../connect/useClient";
-function CreateProposal() {
-=======
 import MintNewTokens from "./MintNewTokens";
->>>>>>> main
 
 function CreateProposal() {
   const navigate = useNavigate();

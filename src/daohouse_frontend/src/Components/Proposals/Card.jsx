@@ -5,25 +5,13 @@ import ProgressAnimation from "./MyProposals/proposal-cards-animations/progress-
 import { Principal } from "@dfinity/principal";
 import ViewModal from "../Dao/ViewModal";
 import { useNavigate, useParams } from "react-router-dom";
-<<<<<<< HEAD
-import { toast } from "react-toastify";
-
-=======
 import toast from "react-hot-toast";
-import { useAuth } from "../utils/useAuthClient";
->>>>>>> main
 import userImage from "../../../assets/avatar.png";
 import ShareModal from "./ShareModal";
 import coin from "../../../assets/coin.jpg";
 import Avatar from "../../../assets/Avatar.png";
 import { useAuth } from "../../connect/useClient";
 
-<<<<<<< HEAD
-
-export default function Card({ proposal, voteApi, showActions, isProposalDetails, isComment, setIsComment, commentCount, isSubmittedProposals, showComments, }) {
-  
-  const { backendActor, createDaoActor, stringPrincipal ,principal} = useAuth();
-=======
 export default function Card({
   proposal,
   voteApi,
@@ -35,8 +23,7 @@ export default function Card({
   isSubmittedProposals,
   showComments,
 }) {
-  const { backendActor, createDaoActor, stringPrincipal } = useAuth();
->>>>>>> main
+  const { backendActor, createDaoActor, stringPrincipal, principal } = useAuth();
   const [voteStatus, setVoteStatus] = useState("");
   const [approvedVotes, setApprovedVotes] = useState(
     Number(proposal?.proposal_approved_votes || 0n)
@@ -363,7 +350,7 @@ export default function Card({
               ? {
                   ...option,
                   poll_approved_votes: option.poll_approved_votes + 1n,
-                  approved_users: [...option.approved_users, stringPrincipal], // Add current user to approved users list
+                  approved_users: [...option.approved_users, principal.toString()], // Add current user to approved users list
                 }
               : option
           )
@@ -393,63 +380,6 @@ export default function Card({
     }
   };
 
-<<<<<<< HEAD
-
-  
-  const handlePollVoteSubmit = async (selectedOption) => {
-    if (!selectedOption) return;
-
-    // Check if the proposal is reachable
-    if (proposal.proposal_expired_at <= Date.now() * 1_000_000) {
-        toast.error("This proposal has expired and cannot be voted on.");
-        return;
-    }
-
-    try {
-        setIsPollVoteLoading(true);
-        setLoadingOptionId(selectedOption);
-        const result = await voteApi?.vote_on_poll_options(proposal.proposal_id, selectedOption);
-
-        if (result?.Ok) {
-            toast.success("Vote submitted successfully");
-
-            // Update vote count and approved users for the selected option
-            setPollOptions((prevOptions) =>
-                prevOptions.map((option) =>
-                    option.id === selectedOption
-                        ? {
-                            ...option,
-                            poll_approved_votes: option.poll_approved_votes + 1n,
-                            approved_users: [...option.approved_users, stringPrincipal ? stringPrincipal : principal.toString()], // Add current user to approved users list
-                        }
-                        : option
-                )
-            );
-
-            const updatedProposal = await voteApi?.get_proposal_by_id(proposal?.proposal_id);
-            setVoteCount((prev) => prev + 1);
-        setVotersList({
-          approvedVotes: updatedProposal?.approved_votes_list || [],
-          rejectedVotes: updatedProposal?.rejected_votes_list || [],
-        });
-
-            // Reset selected option after voting
-            setSelectedOption(null);
-        } else {
-            console.error("Error voting:", result.Err);
-            toast.error(result.Err);
-        }
-    } catch (error) {
-        console.error("Error submitting vote:", error);
-        toast.error("Error submitting vote: " + error.message);
-    } finally {
-        setIsPollVoteLoading(false);
-        setLoadingOptionId(null);
-    }
-};
-
-=======
->>>>>>> main
   useEffect(() => {
     const style = document.createElement("style");
     style.textContent = `

@@ -1,9 +1,5 @@
 // use std::collections::BTreeMap;
-<<<<<<< HEAD
-use crate::{with_state, Analytics, DaoDetails, Icrc28TrustedOriginsResponse, Pagination};
-=======
 use crate::{with_state, Analytics, DaoDetails, DaoInput, Pagination};
->>>>>>> main
 use candid::{Nat, Principal};
 use ic_cdk::{api::{self, call::CallResult}, call, update};
 use icrc_ledger_types::{

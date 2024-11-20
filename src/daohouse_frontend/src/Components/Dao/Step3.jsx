@@ -4,17 +4,13 @@ import { HiPlus } from "react-icons/hi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import { Principal } from "@dfinity/principal";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 
 import Container from "../Container/Container";
 import EditPen from "../../../assets/edit_pen.png";
 import { RiGroupFill } from "react-icons/ri";
-<<<<<<< HEAD
 import { useAuth } from "../../connect/useClient";
 
-=======
-import { CircularProgress } from "@mui/material";
->>>>>>> main
 
 const Step3 = ({ setData, setActiveStep }) => {
   const [count, setCount] = useState(1);
@@ -26,23 +22,9 @@ const Step3 = ({ setData, setActiveStep }) => {
   const [memberUsernames, setMemberUsernames] = useState({});
   const [updatedGroupName, setUpdatedGroupName] = useState("");
   const [memberName, setMemberName] = useState("");
-<<<<<<< HEAD
-  const { backendActor, stringPrincipal ,principal } = useAuth();
-  console.log("principal",principal.toString());
-  // console.log("steokrwe",stringPrincipal);
-  // console.log("backendActor",backendActor);
-  
-  
-  
-  const [isLoading, setIsLoading] = useState(false);
-  const [isAdding, setIsAdding] = useState(false)
-  const [openGroups, setOpenGroups] = useState([]);
-
-=======
-  const { backendActor, stringPrincipal } = useAuth();
+  const { backendActor, stringPrincipal, principal } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
->>>>>>> main
 
   const [list, setList] = useState([
     { name: "Council", index: 0, members: [] },
@@ -223,15 +205,8 @@ const Step3 = ({ setData, setActiveStep }) => {
 
   useEffect(() => {
     const fetchGroupUsernames = async () => {
-<<<<<<< HEAD
-      console.log("enter");
-      
-      const groups = list.filter(group => group.name !== "Council");
-      let updated = false;
-=======
       const groups = list.filter((group) => group.name !== "Council");
       let updated = false; // Track if we need to update state
->>>>>>> main
       const newUsernames = { ...memberUsernames };
 
       // Iterate through each group and its members
@@ -322,35 +297,6 @@ const Step3 = ({ setData, setActiveStep }) => {
     list.find((group) => group.name === "Council")?.members || [];
   useEffect(() => {
     const fetchCouncilUsernames = async () => {
-<<<<<<< HEAD
-      const council = list.find((group) => group.name === "Council");
-    //  console.log("council",council);
-     
-      const savedCouncilMembers = JSON.parse(localStorage.getItem('councilMembers'));
-    //  console.log("saved",savedCouncilMembers);
-     
-      if (savedCouncilMembers) {
-
-        setCouncilUsernames(savedCouncilMembers);
-      } else if (council && council.members.length > 0) {
-
-        setIsLoading(true)
-        const fetchedUsernames = [];
-        for (const member of council.members) {
-          const principal = Principal.fromText(member);
-          console.log("memeber princ",principal);
-          
-          try {
-            const response = await backendActor.get_profile_by_id(principal);
-            console.log("respinsd",response);
-            
-            if (response.Ok) {
-              fetchedUsernames.push(`${response.Ok.username} (${principal.toText()})`);
-            } else {
-              fetchedUsernames.push(member);
-            }
-          } catch (error) {
-=======
       const fetchedUsernames = [];
       for (const member of councilMembers) {
         const principal = Principal.fromText(member);
@@ -361,7 +307,6 @@ const Step3 = ({ setData, setActiveStep }) => {
               `${response.Ok.username} (${principal.toText()})`
             );
           } else {
->>>>>>> main
             fetchedUsernames.push(member);
           }
         } catch (error) {
@@ -388,12 +333,7 @@ const Step3 = ({ setData, setActiveStep }) => {
     const council = initialList.find((group) => group.name === "Council");
    
 
-<<<<<<< HEAD
     if (council && !council.members.includes(stringPrincipal ? stringPrincipal : principal.toString())) {
-=======
-    // Check if the current user is already in the council
-    if (council && !council.members.includes(stringPrincipal)) {
->>>>>>> main
       const updatedList = initialList.map((group) => {
         if (group.name === "Council") {
           return { ...group, members: [...group.members, stringPrincipal ? stringPrincipal : principal.toString() ] };
@@ -411,13 +351,8 @@ const Step3 = ({ setData, setActiveStep }) => {
       setList(initialList);
     }
 
-<<<<<<< HEAD
     
   }, [stringPrincipal ? stringPrincipal : principal.toString()]);
-=======
-    console.log("Current council members:", council?.members || []);
-  }, [stringPrincipal]); // Only rerun if stringPrincipal changes
->>>>>>> main
 
   const handleEditGroup = (index) => {
     setGroupNameInputIndex(index);
