@@ -15,7 +15,12 @@ import {
 } from "@nfid/identitykit/react";
 
 
-export const ConnectBtn = ({ onClick }) => (
+export const ConnectBtn = ({ onClick }) => {
+  // const test = async ()=>{
+  //   await onclick();
+  //   window.red
+  // }
+  return (
   <button
     onClick={onClick}
     className="mobile:px-8 px-4 py-2 rounded-[27.5px] bg-[#0E3746] shadow-md text-white big_phone:text-base small_phone:text-sm text-xs"
@@ -23,7 +28,7 @@ export const ConnectBtn = ({ onClick }) => (
     Connect Wallet
   </button>
 
-);
+)};
 
 
 const Navbar = () => {
