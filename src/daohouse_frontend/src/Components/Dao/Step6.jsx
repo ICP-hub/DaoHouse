@@ -7,12 +7,10 @@ import daoImage from "../../../assets/daoImage.png"
 import CircularProgress from '@mui/material/CircularProgress';
 import toast, { Toaster } from 'react-hot-toast';
 import Container from "../Container/Container";
-
-import PaymentModal from "./PaymentModal";
 import coinsound from "../../../../daohouse_frontend/src/Sound/coinsound.mp3";
 import { useAuth } from "../../connect/useClient";
 
-const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, setLoadingNext }) => {
+const Step6 = ({ data,handleDaoClick, setData, setActiveStep, loadingNext, clearLocalStorage, setLoadingNext }) => {
   const [file, setFile] = useState(null);
   const { identity, stringPrincipal, backendActor, principal } = useAuth()
   const [fileURL, setFileURL] = useState(null);
@@ -275,6 +273,7 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, s
       
 
     } catch (error) {
+      console.log(error)
       toast.error("Error reading image content.");
       setLoadingNext(false);
     }
