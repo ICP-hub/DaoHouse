@@ -3,7 +3,7 @@ import { FaArrowRightLong } from "react-icons/fa6";
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from "react-router-dom";
 import Container from "../Container/Container";
-import { useAuth } from '../../Components/utils/useAuthClient';
+import { useAuth } from "../../connect/useClient";
 import { Principal } from "@dfinity/principal";
 
 const DaoConfig = ({ setData, setActiveStep,setActiveLink, data }) => {

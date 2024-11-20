@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import SearchProposals from "../Proposals/SearchProposals";
 import { IoFilterSharp } from "react-icons/io5";
 import { LuSearch } from "react-icons/lu";
-import { useAuth } from "../utils/useAuthClient";
+import { useAuth } from "../../connect/useClient";
 import Avatar from "../../../assets/Avatar.png";
 import nodata from "../../../assets/nodata.png";
 import FollowersSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/FollowersSkeleton";

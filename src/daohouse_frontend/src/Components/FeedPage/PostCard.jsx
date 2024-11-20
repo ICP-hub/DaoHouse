@@ -6,7 +6,7 @@ import { FaRegHeart } from "react-icons/fa";
 import { PiTelegramLogoBold } from "react-icons/pi";
 import { MdOutlineInsertComment } from "react-icons/md";
 import { Principal } from "@dfinity/principal";
-import { useAuth } from "../../Components/utils/useAuthClient";
+import { useAuth } from '../../connect/useClient';
 import Post1 from "../../../assets/post1.png";
 import toast from 'react-hot-toast';
 
