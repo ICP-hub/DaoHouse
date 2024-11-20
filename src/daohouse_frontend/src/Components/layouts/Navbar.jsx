@@ -7,16 +7,9 @@ import { FaUser, FaSignOutAlt, FaSitemap, FaComments } from "react-icons/fa";
 import logo from "../../../assets/ColorLogo.png";
 import MyProfileImage from "../../../assets/Avatar.png";
 import { useUserProfile } from "../../context/UserProfileContext";
-import { toast } from "react-toastify";
+import toast from 'react-hot-toast';
 import Container from "../Container/Container";
-import { Principal } from "@dfinity/principal";
-import { Actor, HttpAgent } from "@dfinity/agent";
-import { idlFactory as ledgerIDL } from "./ledger.did";
-import { createActor } from "../../../../declarations/icp_ledger_canister";
 import UserDetailsModal from "./UserDetailsModal";
-import { useNavigate } from "react-router-dom";
-import { ConnectWallet } from "@nfid/identitykit/react";
-import { useAuth } from "../../connect/useClient";
 
 
 export const ConnectBtn = ({ onClick }) => (
@@ -52,9 +45,8 @@ const Navbar = () => {
   } = useAuth();
   // const { isConnected, disconnect, principal, actor } = useAuth();
 
-  console.log("backendActor",backendActor);
-  // console.log("principal state",principal.toString());
-  
+
+
   
   const location = useLocation();
 
@@ -77,14 +69,13 @@ const Navbar = () => {
 
     const createAndFetchUserProfile = async () => {
       try {
-        const response = await backendActor.check_user_existance();
-       console.log("response of create amd fetch user profile",response);
-       
+        const response = await backendActor?.check_user_existance();
+
         if (response.Ok) {
           await fetchUserProfile();
         } else {
           setIsDetailsModalOpen(true)
-          const profileResponse = await backendActor.create_profile();
+          const profileResponse = await backendActor?.create_profile();
 
           if (profileResponse.Ok === null && !hasShownToastRef.current) {
             toast.success("User login successfully");

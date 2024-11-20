@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import MyProfileSkelton from "../../SkeletonLoaders/MyProfileSkelton";
-import { useAuth } from "../../utils/useAuthClient";
+
 import { Principal } from "@dfinity/principal";
 import Container from "../../Container/Container";
 import NoDataComponent from "../../Dao/NoDataComponent";
 import SearchProposals from "../../../Components/Proposals/SearchProposals";
-import { useAuthClient } from "../../../connect/useClient";
+import { useAuth } from "../../../connect/useClient";
 
 const Followers = () => {
   const className = "Followers";
-  const { backendActor, createDaoActor, stringPrincipal } = useAuthClient();
+  const { backendActor, createDaoActor, stringPrincipal } = useAuth();
   const [joinedDAO, setJoinedDAO] = useState([]);
   const [fetchedDAOs, setFetchedDAOs] = useState([]); 
   const [loading, setLoading] = useState(false);
@@ -104,10 +104,10 @@ const Followers = () => {
     <div className={`${className} w-full`}>
       <div className=" tablet:mt-12 mt-5 md:px-0">
         <div className="flex flex-col md:flex-row justify-between space-y-4 md:space-y-0">
-          <h3 className="text-[#05212C] tablet:text-[24px] text-[18px] text-start tablet:font-bold  font-mulish">
+          <h3 className="text-[#05212C] tablet:text-[24px] text-[18px] text-start tablet:font-bold  font-mulish hidden md:block">
             {searchTerm ? "Search Results" : "Followed DAO List"}
           </h3>
-          <div className="w-full md:w-auto flex-grow lg:flex justify-end hidden">
+          <div className="w-full md:w-auto flex-grow lg:flex justify-end ">
             <SearchProposals
               width="80%"
               bgColor="transparent"
@@ -136,29 +136,39 @@ const Followers = () => {
               displayDAOs.length === 1 ? "min-h-[200px]" : "min-h-[328px]"
             }`}
           >
-            <Container classes="__cards p-[20px] rounded-lg overflow-hidden">
+            <Container classes="__cards p-[2px] md:p-[20px] rounded-lg overflow-hidden">
               <div className="grid grid-cols-1 tablet:grid-cols-2 gap-4 max-h-[350px] overflow-y-auto px-2 custom-scrollbar">
                 {displayDAOs.map((dao, index) => (
                   <div
                     key={index}
-                    className="bg-white shadow-lg rounded-lg flex items-center p-4 space-x-4 transition-transform"
+                    className="bg-white shadow-lg rounded-lg flex items-center p-4 gap-4 transition-transform"
                   >
-                    <img
-                      src={getImageUrl(dao?.image_id)}
-                      alt={dao.dao_name}
-                      className="w-16 h-16 rounded-full border-2 border-black object-cover shadow-lg"
-                    />
-                    <div className="flex-1 overflow-hidden">
-                      <h4 className="text-lg font-mulish truncate">
-                        {dao?.dao_name || "No Name"}
-                      </h4>
-                      <p className="text-gray-500 truncate max-w-[200px] whitespace-nowrap">
-                        {dao?.purpose || "No Purpose"}
-                      </p>
+                    <div className="w-full flex flex-col gap-2 md:items-center md:flex-row">
+                      <div className=" flex justify-between">
+                        <img
+                          src={getImageUrl(dao?.image_id)}
+                          alt={dao.dao_name}
+                          className="w-16 h-16 rounded-full border-2 border-black object-cover shadow-lg"
+                        />
+                        <button
+                          onClick={() => handleViewProfile(dao?.dao_canister_id)}
+                          className="border-2 md:hidden flex border-[#0E3746] text-[#0E3746] rounded-full px-4 py-2 self-center text-sm md:text-base hover:bg-[#0E3746] hover:text-white transition duration-300 whitespace-nowrap"
+                        >
+                          View
+                        </button>
+                      </div>
+                      <div className="flex-1 overflow-hidden">
+                        <h4 className="text-lg font-mulish truncate">
+                          {dao?.dao_name || "No Name"}
+                        </h4>
+                        <p className="text-gray-500 truncate max-w-[200px] whitespace-nowrap">
+                          {dao?.purpose || "No Purpose"}
+                        </p>
+                      </div>
                     </div>
                     <button
                       onClick={() => handleViewProfile(dao?.dao_canister_id)}
-                      className="border-2 border-[#0E3746] text-[#0E3746] rounded-full px-2 py-1 md:px-4 md:py-2 text-sm md:text-base hover:bg-[#0E3746] hover:text-white transition duration-300 whitespace-nowrap"
+                      className="border-2 hidden md:flex border-[#0E3746] text-[#0E3746] rounded-full px-2 py-1 md:px-4 md:py-2 text-sm md:text-base hover:bg-[#0E3746] hover:text-white transition duration-300 whitespace-nowrap"
                     >
                       View
                     </button>

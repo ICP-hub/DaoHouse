@@ -20,7 +20,7 @@ import {
 } from "@nfid/identitykit";
 import "@nfid/identitykit/react/styles.css";
 
-const signers = [NFIDW, InternetIdentity];
+const signers = [NFIDW, Plug, InternetIdentity];
 const canisterID = process.env.CANISTER_ID_DAOHOUSE_BACKEND;
 
 const root = createRoot(document.getElementById('root'));

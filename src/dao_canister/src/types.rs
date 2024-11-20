@@ -15,6 +15,11 @@ pub enum ProposalState {
     LateSubmission
 }
 
+#[derive(Clone, Debug, CandidType, Deserialize, PartialEq)]
+pub enum TransferResult {
+    Ok(String),
+    Err(String),
+}
 
 #[derive(
     CandidType, Serialize, Deserialize, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone, Default,
@@ -44,6 +49,7 @@ pub enum ProposalType {
     Polls,
     TokenTransfer,
     GeneralPurpose,
+    MintNewTokens,
 }
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
@@ -53,6 +59,14 @@ pub struct AccountBalance {
 }
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
+pub struct MintTokenArgs {
+    pub total_amount: u64,
+    pub description: String,
+    pub proposal_entry : String,
+}
+
+
+#[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct ProposalStakes {
     pub proposal_id: String,
     pub balances: Vec<AccountBalance>,
@@ -60,7 +74,6 @@ pub struct ProposalStakes {
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct JoinDao {
-    pub daohouse_backend_id: Principal,
     pub place_to_join : String,
 }
 
@@ -88,7 +101,6 @@ pub struct Proposals {
     pub new_dao_name : Option<String>,
     pub new_dao_purpose : Option<String>,
     pub group_to_remove: Option<String>,
-    pub new_daotype :  Option<String>,
     pub cool_down_period: Option<u32>,
     pub tokens: Option<u64>,
     pub token_from: Option<Principal>,
@@ -100,9 +112,9 @@ pub struct Proposals {
     pub bounty_task : Option<String>,
     pub associated_proposal_id : Option<String>,
     pub new_required_votes : Option<u32>,
-    pub task_completion_day : Option<u64>,
     pub poll_query :  Option<String>,
     pub poll_options: Option<Vec<PollOptions>>,
+    pub ask_to_join_dao : Option<bool>
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
@@ -131,7 +143,6 @@ pub struct ProposalInput {
     pub proposal_type: ProposalType,
     pub principal_of_action: Option<Principal>,
     pub new_dao_name : Option<String>,
-    pub new_dao_type : Option<String>,
     pub dao_purpose : Option<String>,
     pub tokens : Option<u64>,
     pub token_to: Option<Principal>,
@@ -139,15 +150,14 @@ pub struct ProposalInput {
     pub proposal_created_at: Option<u64>,
     pub proposal_expired_at: Option<u64>,
     pub bounty_task : Option<String>,
-    pub poll_title : Option<String>, 
     pub cool_down_period : Option<u32>,
     pub minimum_threadsold : u64,
     pub link_of_task : Option<String>,
     pub associated_proposal_id :  Option<String>,
     pub new_required_votes : Option<u32>,
-    pub task_completion_day : Option<u64>,
     pub poll_query :  Option<String>,
     pub poll_options: Option<Vec<PollOptions>>,
+    pub ask_to_join_dao : Option<bool>
 }
 
 #[derive(Clone , Debug, CandidType, Serialize, Deserialize)]
@@ -187,7 +197,6 @@ pub struct Dao {
     pub dao_id: Principal,
     pub dao_name: String,
     pub purpose: String,
-    pub daotype: String,
     pub link_of_document: String,
     pub cool_down_period: u32,
     pub linksandsocials: Vec<String>,
@@ -209,13 +218,13 @@ pub struct Dao {
     pub daohouse_canister_id: Principal,
     pub proposal_entry : Vec<ProposalPlace>,
     pub ask_to_join_dao : bool,
+    pub all_dao_user : Vec<Principal>,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct ChangeDaoConfigArg {
     pub new_dao_name: String,
     pub purpose: String,
-    pub daotype: String,
     pub description: String,
     pub proposal_entry : String,
 }
@@ -242,7 +251,6 @@ pub struct DaoGroup {
 pub struct DaoInput {
     pub dao_name: String,
     pub purpose: String,
-    pub daotype: String,
     pub link_of_document: String,
     pub cool_down_period: u32,
     pub members: Vec<Principal>,
@@ -259,17 +267,7 @@ pub struct DaoInput {
     pub daohouse_canister_id: Principal,
     pub proposal_entry : Vec<ProposalPlace>,
     pub ask_to_join_dao : bool,
-}
-
-#[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
-pub struct UpdateDaoSettings {
-    pub dao_name: String,
-    pub purpose: String,
-    pub daotype: String,
-    pub link_of_document: String,
-    pub linksandsocials: Vec<String>,
-    pub members: Vec<Principal>,
-    pub followers: Vec<Principal>,
+    pub all_dao_user : Vec<Principal>,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
@@ -301,6 +299,7 @@ pub struct ChangeDaoPolicy{
     pub required_votes : u32,
     pub cool_down_period : u32,
     pub proposal_entry : String,
+    pub ask_to_join_dao : bool,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
@@ -317,21 +316,18 @@ pub struct BountyRaised{
     pub bounty_task : String,
     pub proposal_entry : String,
     pub tokens: u64,
-    pub task_completion_day : u64,
 }
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct BountyDone{
     pub description: String,
     pub tokens: u64,
     pub proposal_entry : String,
-    pub daohouse_canister_id : Principal,
     pub associated_proposal_id : String,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct CreatePoll{
     pub description: String,
-    pub poll_title : String,
     pub poll_options : Vec<String>,
     pub proposal_expired_at: u64,
     pub proposal_entry : String,

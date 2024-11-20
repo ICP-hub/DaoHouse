@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../utils/useAuthClient";
+import { useAuth } from "../../connect/useClient";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import icp from "../../../assets/icp.png";

@@ -21,7 +21,7 @@ const Dao = () => {
   const [loadingJoinedDAO, setLoaadingJoinedDao] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [fetchedDAOs, setFetchedDAOs] = useState([]);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
 
@@ -70,7 +70,7 @@ const Dao = () => {
   const getDaos = async (pagination = {}) => {
     // setLoading(true);
     try {
-      const response = await backendActor.get_all_dao({
+      const response = await backendActor.get_all_dao_pagination({
         start: pagination.start,
         end: pagination.end + 1
       });
@@ -240,7 +240,7 @@ const Dao = () => {
           <div className="flex justify-center items-center h-full mb-10 mt-10 ">
             <Container className="w-full flex flex-col items-center justify-center   ">
               <img src={nodata} alt="No Data" className="mb-1  ml-[42px]  " />
-              <p className="text-center  ml-[42px] mt-4  text-gray-700 text-base">
+              <p className="text-center mt-4  text-gray-700 text-base">
                 You have not created any DAO
               </p>
 
@@ -300,13 +300,12 @@ const Dao = () => {
         <div className="flex justify-center items-center h-full mb-10 mt-10 ">
           <Container className="w-full flex flex-col items-center justify-center    ">
             <img src={nodata} alt="No Data" className="mb-1  ml-[42px]  " />
-            <p className="text-center  ml-[42px]  mt-4 text-gray-700 text-base">
+            <p className="text-center  mt-4 text-gray-700 text-base">
               You have not joined any DAO
             </p>
             <button
               onClick={handleJoinDaoClick}
-              className="px-16 py-3 ml-[56px]  mt-4 bg-black text-center text-white font-normal rounded-full shadow-md hover:bg-gray-200 hover:text-blue-900 transition-colors duration-300"
-            >
+              className="px-16 py-3 ml-[30px]  mt-4 bg-black text-center text-white font-normal rounded-full shadow-md hover:bg-gray-200 hover:text-blue-900 transition-colors duration-300">
               Join DAO
             </button>
           </Container>

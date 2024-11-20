@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../../utils/useAuthClient";
+
 import MyProfileSkelton from "../../SkeletonLoaders/MyProfileSkelton";
 import NoDataComponent from "../../Dao/NoDataComponent";
 import { Principal } from "@dfinity/principal";
 import Container from "../../Container/Container";
 import SearchProposals from "../../../Components/Proposals/SearchProposals"; 
 import "./Following.scss"; 
-import { useAuthClient } from "../../../connect/useClient";
+import { useAuth } from "../../../connect/useClient";
 
 const Following = () => {
   const className = "Following";
-  const { backendActor, createDaoActor, stringPrincipal } = useAuthClient();
+  const { backendActor, createDaoActor, stringPrincipal } = useAuth();
   const [joinedDAO, setJoinedDAO] = useState([]);
   const [fetchedDAOs, setFetchedDAOs] = useState([]); 
   const [loading, setLoading] = useState(false);
@@ -108,10 +108,11 @@ const Following = () => {
     <div className={`${className} w-full`}>
       <div className="tablet:mt-12 mt-5 md:px-0 px- 3">
         <div className="flex justify-between items-center">
-          <h3 className="text-[#05212C] tablet:text-[24px] text-[18px] tablet:font-bold font-mulish mb-4">
-            {searchTerm ? "Search Results" : "DAOs Joined"}
-          </h3>
-          <div className="flex-grow lg:flex justify-end hidden">
+        <h3 className="text-[#05212C] text-[18px] font-mulish mb-4 font-semibold hidden md:block tablet:text-[24px] tablet:font-bold">
+  {searchTerm ? "Search Results" : "DAOs Joined"}
+</h3>
+
+          <div className="flex-grow lg:flex justify-end ">
             <SearchProposals
               width="80%"
               bgColor="transparent"
@@ -147,22 +148,32 @@ const Following = () => {
                     key={index}
                     className="bg-white shadow-lg rounded-lg flex items-center p-4 space-x-4 transition-transform"
                   >
-                    <img
-                      src={getImageUrl(dao?.image_id)}
-                      alt={dao.dao_name}
-                      className="w-16 h-16 rounded-full border-2 border-black object-cover shadow-lg"
-                    />
-                    <div className="flex-1 overflow-hidden">
-                      <h4 className="text-lg font-mulish truncate">
-                        {dao?.dao_name || "No Name"}
-                      </h4>
-                      <p className="text-gray-500 truncate max-w-[200px] whitespace-nowrap">
-                        {dao?.purpose || "No Purpose"}
-                      </p>
+                    <div className="w-full flex flex-col gap-2 md:items-center md:flex-row">
+                      <div className=" flex justify-between">
+                        <img
+                          src={getImageUrl(dao?.image_id)}
+                          alt={dao.dao_name}
+                          className="w-16 h-16 rounded-full border-2 border-black object-cover shadow-lg"
+                        />
+                        <button
+                          onClick={() => handleViewProfile(dao?.dao_canister_id)}
+                          className="border-2 md:hidden flex border-[#0E3746] text-[#0E3746] rounded-full px-4 py-2 self-center text-sm md:text-base hover:bg-[#0E3746] hover:text-white transition duration-300 whitespace-nowrap"
+                        >
+                          View
+                        </button>
+                      </div>
+                      <div className="flex-1 overflow-hidden">
+                        <h4 className="text-lg font-mulish truncate">
+                          {dao?.dao_name || "No Name"}
+                        </h4>
+                        <p className="text-gray-500 truncate max-w-[200px] whitespace-nowrap">
+                          {dao?.purpose || "No Purpose"}
+                        </p>
+                      </div>
                     </div>
                     <button
                       onClick={() => handleViewProfile(dao?.dao_canister_id)}
-                      className="border-2 border-[#0E3746] text-[#0E3746] rounded-full px-2 py-1 md:px-4 md:py-2 text-sm md:text-base hover:bg-[#0E3746] hover:text-white transition duration-300 whitespace-nowrap"
+                      className="border-2 border-[#0E3746] hidden md:flex text-[#0E3746] rounded-full px-2 py-1 md:px-4 md:py-2 text-sm md:text-base hover:bg-[#0E3746] hover:text-white transition duration-300 whitespace-nowrap"
                     >
                       View
                     </button>

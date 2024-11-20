@@ -1,77 +1,105 @@
-import React from "react";
+import React, { useEffect } from "react";
 
-const DaoConfig = ({ daoConfig, handleInputDaoConfig }) => (
-    <form className="space-y-4">
-        <div className="mb-4">
-            <label htmlFor="daoType" className="mb-2 font-semibold text-xl">DAO Type</label>
-            <input
-                id="daoType"
-                type="text"
-                name="daotype"
-                value={daoConfig.daotype}
-                onChange={handleInputDaoConfig}
-                className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                placeholder="Enter DAO Type"
-                required
-            />
-        </div>
+function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig, errorMessage, errors, setDescriptionError, setDaoNameError, setDaoPurposeError }) {
+    console.log("dao in dao config", dao);
+    console.log("dao name in dao config", daoConfig.new_dao_name);
 
-        <div className="mb-4">
-            <label htmlFor="description" className="mb-2 font-semibold text-xl">Description</label>
-            <textarea
-                id="description"
-                type="text"
-                name="description"
-                value={daoConfig.description}
-                onChange={handleInputDaoConfig}
-                className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                placeholder="Enter Description"
-                rows={4}
-                required
-            />
-        </div>
+    useEffect(() => {
+        // Set initial daoConfig values if they're not already set
+        setDaoConfig((prevConfig) => ({
+            ...prevConfig,
+            new_dao_name: prevConfig.new_dao_name || dao.dao_name || "",
+            purpose: prevConfig.purpose || dao.purpose || "",
+        }));
+    }, [dao, setDaoConfig]);
 
-        <div className="mb-4">
-            <label htmlFor="daoName" className="mb-2 font-semibold text-xl"> New DAO Name</label>
-            <input
-                id="NewdaoName"
-                type="text"
-                name="new_dao_name"
-                value={daoConfig.new_dao_name}
-                onChange={handleInputDaoConfig}
-                className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                placeholder="Enter DAO Name"
-                required
-            />
-        </div>
+    const handleDescriptionChange = (e) => {
+        const value = e.target.value; 
+        if (value.trim() === "") { 
+            setDescriptionError("Description cannot be empty or just spaces."); 
+            e.target.value = ""; 
+        } else {
+            setDescriptionError(""); 
+        }
+        handleInputDaoConfig(e); 
+    };
 
-        {/* <div className="mb-4">
-            <label htmlFor="actionMember" className="mb-2 font-semibold text-xl">Action Member (Principal)</label>
-            <input
-                id="actionMember"
-                type="text"
-                name="action_member"
-                value={daoConfig.action_member}
-                onChange={handleInputDaoConfig}
-                className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                placeholder="Enter Action Member Principal"
-            />
-        </div> */}
+    const handleDaoNameChange = (e) => {
+        const value = e.target.value; 
+        if (value.trim() === "") { 
+            setDaoNameError("DAO Name cannot be empty or just spaces."); 
+            e.target.value = ""; 
+        } else {
+            setDaoNameError("");
+        }
+        handleInputDaoConfig(e); 
+    };
 
-        <div className="mb-4">
-            <label htmlFor="purpose" className="mb-2 font-semibold text-xl">Purpose</label>
-            <input
-                id="purpose"
-                type="text"
-                name="purpose"
-                value={daoConfig.purpose}
-                onChange={handleInputDaoConfig}
-                className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
-                placeholder="Enter Purpose"
-                required
-            />
-        </div>
-    </form>
-);
+    const handlePurposeChange = (e) => {
+        const value = e.target.value; // Get the input value
+        if (value.trim() === "") { // Check if the trimmed value is empty
+            setDaoPurposeError("DAO Purpose cannot be empty or just spaces."); // Set error if empty
+            e.target.value = ""; // Clear the input field
+        } else {
+            setDaoPurposeError(""); // Clear the error message
+        }
+        handleInputDaoConfig(e); // Update the state
+    };
+
+    return (
+        <form className="space-y-4">
+            <div className="mb-4">
+                <label htmlFor="description" className="mb-2 font-semibold text-xl">Description</label>
+                <textarea
+                    id="description"
+                    name="description"
+                    value={daoConfig?.description || ""}
+                    onChange={handleDescriptionChange} 
+                    className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+                    placeholder="Enter Description"
+                    rows={4}
+                    required
+                />
+                {errorMessage && (
+                    <p className="text-red-500 text-sm">{errorMessage}</p>
+                )}
+            </div>
+
+            <div className="mb-4">
+                <label htmlFor="daoName" className="mb-2 font-semibold text-xl">DAO Name</label>
+                <input
+                    id="NewdaoName"
+                    type="text"
+                    name="new_dao_name"
+                    value={daoConfig?.new_dao_name}
+                    onChange={handleDaoNameChange} 
+                    className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+                    placeholder="Enter DAO Name"
+                    required
+                />
+                {errors?.new_dao_name && (
+                    <p className="text-red-500 text-sm mt-1">{errors?.new_dao_name}</p>
+                )}
+            </div>
+
+            <div className="mb-4">
+                <label htmlFor="purpose" className="mb-2 font-semibold text-xl">DAO Purpose</label>
+                <input
+                    id="purpose"
+                    type="text"
+                    name="purpose"
+                    value={daoConfig?.purpose}
+                    onChange={handlePurposeChange} 
+                    className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
+                    placeholder="Enter Purpose"
+                    required
+                />
+                {errors?.purpose && (
+                    <p className="text-red-500 text-sm mt-1">{errors?.purpose}</p>
+                )}
+            </div>
+        </form>
+    );
+}
 
 export default DaoConfig;
