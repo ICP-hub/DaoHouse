@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import bg_image1 from "../../../assets/bg_image1.png";
-import { useAuth } from "../../Components/utils/useAuthClient";
 import Container from "../../Components/Container/Container";
 import nodata from "../../../assets/gif/nodata.svg";
 import LoginModal from "../../Components/Auth/LoginModal";
@@ -9,13 +8,13 @@ import ProposalsContent from "../../Components/DaoProfile/ProposalsContent";
 import SearchProposals from "../../Components/Proposals/SearchProposals";
 import ProposalLoaderSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/ProposalLoaderSkeleton";
 import Pagination from "../../Components/pagination/Pagination";
-import { useAuthClient } from "../../connect/useClient";
+import { useAuth } from "../../connect/useClient";
 
 
 
 const FeedPage = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const { isAuthenticated, login, signInNFID, backendActor, createDaoActor } = useAuthClient();
+  const { isAuthenticated, login, signInNFID, backendActor, createDaoActor } = useAuth();
   console.log("isauthe",isAuthenticated);
 console.log("createDaoActor",createDaoActor);
 console.log("backendactr",backendActor);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./Members.scss";
 import { useMediaQuery } from "@mui/material";
-import { useAuth } from "../utils/useAuthClient";
+import { useAuth } from "../../connect/useClient";
 import { Principal } from "@dfinity/principal";
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 import userImage from "../../../assets/Avatar.png";

@@ -67,8 +67,8 @@ const Step3 = ({ setData, setActiveStep }) => {
       return;
     }
     const invalidGroup = list
-      ?.slice(1)
-      ?.find((group) => group.members.length === 0);
+      .slice(1)
+      .find((group) => group.members.length === 0);
     if (invalidGroup) {
       toast.error(`Please add at least one member to ${invalidGroup.name}.`);
       return;
@@ -82,7 +82,7 @@ const Step3 = ({ setData, setActiveStep }) => {
     setData((prev) => ({
       ...prev,
       step3: {
-        groups: list?.slice(1) || [],
+        groups: list.slice(1) || [],
         council: council.members || [],
         members: uniqueMembers || [],
       },
@@ -131,70 +131,89 @@ const Step3 = ({ setData, setActiveStep }) => {
     }
     setShowMemberNameInput(true);
   };
-
+  
   const handleAddMember = async () => {
     if (memberName.trim() !== "") {
       setIsAdding(true);
       try {
         console.log("fnsdf",memberName);
         
-        const principal = Principal.fromText(memberName.trim());       
-        const principalId = principal.toText();
-        const council = list.find((group) => group.name === "Council");
-        if (council && council.members.includes(principalId)) {
-          toast.error("Principal ID already exists");
-          setMemberName(""); 
-          setIsAdding(false); 
-          return;
-        }
-        const response = await backendActor?.get_profile_by_id(principal);  
+        const principal = Principal.fromText(memberName.trim());
+        console.log("get ",principal);
+     
+        
+        const response = await backendActor.get_profile_by_id(principal);
+        console.log("resdasda",response);
+        
+         
         if (response.Ok) {
           const username = response.Ok.username;
-          setList((prevList) =>
-            prevList.map((item) => {
-              if (item.name === "Council") {
-                return {
-                  ...item,
-                  members: [...item.members, principalId],
-                };
+          const principalId = principal.toText();
+
+          // Check if the principalId already exists in the council's members before any change
+          setList((prevList) => {
+            let updated = false;
+
+            const newList = prevList.map((item) => {
+              if (
+                item.index === addMemberIndex ||
+                (addMemberIndex === "council" && item.name === "Council")
+              ) {
+                // Check if the member already exists in the list
+                if (item.members.includes(principalId)) {
+                  toast.error("Principal ID already exists");
+                  updated = true;
+                  return item;
+                } else {
+                  return { ...item, members: [...item.members, principalId] };
+                }
               }
               return item;
-            })
-          );
-  
-          setCouncilUsernames((prevUsernames) => [
-            ...prevUsernames,
-            `${username} (${principalId})`,
-          ]);
-  
+            });
+
+            // If no update occurred, return the unchanged list
+            return updated ? prevList : newList;
+          });
+
+          // If adding to the council, update the council usernames state
+          if (addMemberIndex === "council") {
+            setCouncilUsernames((prevUsernames) => [
+              ...prevUsernames,
+              `${username} (${principalId})`,
+            ]);
+          }
+
+          // Update member usernames state
           setMemberUsernames((prevUsernames) => ({
             ...prevUsernames,
             [principalId]: username,
           }));
-  
-          setMemberName(""); 
+
+          // Clear input and hide the input field
+          setMemberName("");
           setShowMemberNameInput(false);
         } else {
           toast.error("User does not exist");
         }
       } catch (error) {
-        console.log(error)
         toast.error("Invalid Principal ID or error fetching profile");
       } finally {
         setIsAdding(false);
       }
     }
   };
-  
+
   useEffect(() => {
     const fetchGroupUsernames = async () => {
       const groups = list.filter((group) => group.name !== "Council");
-      let updated = false;
+      let updated = false; // Track if we need to update state
       const newUsernames = { ...memberUsernames };
 
+      // Iterate through each group and its members
       for (const group of groups) {
         for (const member of group.members) {
           if (!newUsernames[member]) {
+            // Only fetch if not already fetched
             try {
               const principal = Principal.fromText(member);
               console.log("pri",principal);
@@ -325,6 +344,7 @@ const Step3 = ({ setData, setActiveStep }) => {
       // Update the state with the new list
       setList(updatedList);
 
+      // Save the updated list to localStorage
       localStorage.setItem("step3Data", JSON.stringify(updatedList));
     } else {
       // If no update was needed, ensure the list state is still set
@@ -441,7 +461,7 @@ const Step3 = ({ setData, setActiveStep }) => {
               ? skeletonLoader() // Show skeleton loader while data is being fetched
               : councilUsernames.map((fullName, index) => {
                   const [username, principalId] = fullName.split(" ("); // Split the string to separate username and principal ID
-                  const formattedPrincipalId = principalId?.slice(0, -1); // Remove the closing parenthesis
+                  const formattedPrincipalId = principalId.slice(0, -1); // Remove the closing parenthesis
 
                   return (
                     <section

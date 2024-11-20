@@ -1,4 +1,7 @@
-TEST=$(dfx canister call daohouse_backend create_profile "(
+
+
+
+ TEST=$(dfx canister call daohouse_backend create_profile "(
     record {
       email_id = \"pratapsinghbhanu@gmail.com\";
       name = \"bhanupra123\";

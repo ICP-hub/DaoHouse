@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, Navigate, useLocation,useNavigate } from "react-router-dom";
-// import { useAuth, useAuthClient } from "../utils/useAuthClient";
 import { LuChevronDown } from "react-icons/lu";
 import LoginModal from "../Auth/LoginModal";
 import { FaUser, FaSignOutAlt, FaSitemap, FaComments } from "react-icons/fa";

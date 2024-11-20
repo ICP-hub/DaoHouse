@@ -17,7 +17,7 @@ import BigCircleComponent from "../../Components/Circles/BigCircleComponent";
 import MediumCircleComponent from "../../Components/Circles/MediumCircleComponent";
 import SmallCircleComponent from "../../Components/Circles/SmallCircleComponent";
 import ProfileTitleDivider from "../../Components/ProfileTitleDivider/ProfileTitleDivider";
-import { useAuth } from "../../Components/utils/useAuthClient";
+import { useAuth } from "../../connect/useClient";
 import { useUserProfile } from "../../context/UserProfileContext";
 
 const Post = () => {
