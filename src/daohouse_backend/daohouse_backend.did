@@ -43,6 +43,7 @@ type DaoInput = record {
   token_supply : nat32;
   required_votes : nat32;
 };
+type Icrc28TrustedOriginsResponse = record { trusted_origins : vec text };
 type ImageData = record { content : blob; name : text; content_type : text };
 type InitialArgs = record {
   dao_canister_id : principal;
@@ -148,6 +149,7 @@ service : (InitialArgs) -> {
   get_profile_by_id : (principal) -> (Result_4);
   get_proposals : (Pagination) -> (vec ProposalValueStore) query;
   get_user_profile : () -> (Result_4) query;
+  icrc28_trusted_origins : () -> (Icrc28TrustedOriginsResponse);
   make_payment_and_create_dao : (DaoInput) -> (Result);
   proposal_to_mint_new_dao_tokens : (principal, nat64) -> (Result_5);
   remove_follow_dao : (principal, principal) -> (Result_1);
