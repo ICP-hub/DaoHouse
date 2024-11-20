@@ -4,7 +4,7 @@ import { HiPlus } from "react-icons/hi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import { Principal } from "@dfinity/principal";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { useAuth } from "../../Components/utils/useAuthClient";
 import Container from "../Container/Container";
 import EditPen from "../../../assets/edit_pen.png";
@@ -331,8 +331,7 @@ const Step3 = ({ setData, setActiveStep }) => {
 
       // Update the state with the new list
       setList(updatedList);
-
-      // Save the updated list to localStorage
+      
       localStorage.setItem("step3Data", JSON.stringify(updatedList));
     } else {
       // If no update was needed, ensure the list state is still set
@@ -385,7 +384,8 @@ const Step3 = ({ setData, setActiveStep }) => {
 
             <button
               onClick={handleGroupAdding}
-              className="bg-white  lg:mr-7 md:w-[200px] md:h-[50px] small_phone:gap-2 gap-1  small_phone:  mobile:px-5 p-2 small_phone:text-base text-sm shadow-xl flex items-center rounded-full hover:bg-[#ececec] hover:scale-105 transition"
+              disabled={isAdding || isLoading}
+              className={`bg-white  lg:mr-7 md:w-[200px] md:h-[50px] small_phone:gap-2 gap-1  small_phone:  mobile:px-5 p-2 small_phone:text-base text-sm shadow-xl flex items-center rounded-full hover:bg-[#ececec] hover:scale-105 transition ${isLoading || isAdding ? "cursor-not-allowed": "cursor-pointer"}`}
             >
               <span className="flex">
                 <HiPlus />
