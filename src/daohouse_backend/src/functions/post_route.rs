@@ -1,5 +1,5 @@
 // use std::collections::BTreeMap;
-use crate::{with_state, Analytics, DaoDetails, DaoInput, Pagination};
+use crate::{with_state, Analytics, DaoDetails, DaoInput, Pagination,Icrc28TrustedOriginsResponse};
 use candid::{Nat, Principal};
 use ic_cdk::{api::{self, call::CallResult}, call, update};
 use icrc_ledger_types::{
@@ -143,6 +143,7 @@ fn get_cycles() -> u64 {
     api::canister_balance()
 }
 
+#[update(guard = prevent_anonymous)]
 pub async fn icrc28_trusted_origins() -> Icrc28TrustedOriginsResponse {
     let trusted_origins = vec![
         String::from("https://2gcn4-liaaa-aaaap-aknpa-cai.icp0.io"),
