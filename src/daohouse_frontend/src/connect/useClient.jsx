@@ -228,21 +228,21 @@ const frontendCanisterId =
 
 
     //actor
-    // useEffect(() => {
-    //     if (agent) {
-    //         const initActor = async () => {
-    //             try {
-    //                 const actor = createActor(process.env.CANISTER_ID_DAOHOUSE_BACKEND, { agent });
+    useEffect(() => {
+        if (agent) {
+            const initActor = async () => {
+                try {
+                    const actor = createActor(process.env.CANISTER_ID_DAOHOUSE_BACKEND, { agent });
                     
                    
-    //                 console.log("Authenticated actor initialized.");
-    //             } catch (error) {
-    //                 console.error("Failed to create actor:", error);
-    //             }
-    //         };
-    //         initActor();
-    //     }
-    // }, [agent, ]);
+                    console.log("Authenticated actor initialized.");
+                } catch (error) {
+                    console.error("Failed to create actor:", error);
+                }
+            };
+            initActor();
+        }
+    }, [agent, ]);
 
   
 

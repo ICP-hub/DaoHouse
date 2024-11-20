@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, Navigate, useLocation } from "react-router-dom";
+import { Link, Navigate, useLocation,useNavigate } from "react-router-dom";
 // import { useAuth, useAuthClient } from "../utils/useAuthClient";
 import { LuChevronDown } from "react-icons/lu";
 import LoginModal from "../Auth/LoginModal";
@@ -10,6 +10,10 @@ import { useUserProfile } from "../../context/UserProfileContext";
 import toast from 'react-hot-toast';
 import Container from "../Container/Container";
 import UserDetailsModal from "./UserDetailsModal";
+import { useAuth } from "../../connect/useClient";
+import {
+  ConnectWallet,
+} from "@nfid/identitykit/react";
 
 
 export const ConnectBtn = ({ onClick }) => (

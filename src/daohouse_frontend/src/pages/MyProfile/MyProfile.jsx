@@ -108,10 +108,10 @@ const MyProfile = ({ childComponent }) => {
   const post = data?.submitted_proposals ? Number(data.submitted_proposals) : 0;
   const following = data?.join_dao ? Number(data.join_dao.length) : 0;
   const email = data?.email_id;
-  console.log("email",email);
+
   
   const name = data?.username;
-  console.log("name",name);
+ 
   
 
   const getData = async () => {
