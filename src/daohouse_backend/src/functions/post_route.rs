@@ -146,7 +146,7 @@ fn get_cycles() -> u64 {
 #[update(guard = prevent_anonymous)]
 pub async fn icrc28_trusted_origins() -> Icrc28TrustedOriginsResponse {
     let trusted_origins = vec![
-        String::from("https://2gcn4-liaaa-aaaap-aknpa-cai.icp0.io"),
+        String::from("https://zu5lz-3yaaa-aaaal-qr6zq-cai.icp0.io"),
         String::from("http://localhost:3000"),
         String::from("http://b77ix-eeaaa-aaaaa-qaada-cai.localhost:4943"),
         String::from("http://127.0.0.1:4943/?canisterId=b77ix-eeaaa-aaaaa-qaada-cai"),
