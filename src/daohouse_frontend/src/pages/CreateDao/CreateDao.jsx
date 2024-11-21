@@ -147,7 +147,7 @@ const CreateDao = () => {
     }));
 
     const membersArray = Array.from(data.members_permissions) || [];
-
+    const allDaoUsers = step3.members.map(member => Principal.fromText(member));
 
     const daoPayload = {
       dao_name: step1.DAOIdentifier || "my dao hai",
@@ -170,6 +170,7 @@ const CreateDao = () => {
       proposal_entry: proposalEntry,
       ask_to_join_dao: data.ask_to_join_dao,
       token_supply: Number(step2.TokenSupply) || 4,
+      all_dao_user: allDaoUsers
     };
 
     console.log("daoPayload", daoPayload);
