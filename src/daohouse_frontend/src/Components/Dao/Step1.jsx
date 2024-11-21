@@ -112,7 +112,7 @@ const Step1 = ({ setData, setActiveStep, data }) => {
 
         // Removed the localStorage.removeItem() line
         setActiveStep(1);
-        toast.success("Step 1 completed successfully!");
+        // toast.success("Step 1 completed successfully!");
       } catch (error) {
         console.error("Error saving data:", error);
         toast.error("An error occurred while saving. Please try again.");
