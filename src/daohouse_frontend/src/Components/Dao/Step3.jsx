@@ -4,7 +4,7 @@ import { HiPlus } from "react-icons/hi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import { Principal } from "@dfinity/principal";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { useAuth } from "../../Components/utils/useAuthClient";
 import Container from "../Container/Container";
 import EditPen from "../../../assets/edit_pen.png";
@@ -94,6 +94,7 @@ const Step3 = ({ setData, setActiveStep }) => {
   }
 
   const handleGroupAdding = () => {
+    setMemberName(""); 
     setList((prevList) => {
       const maxIndex = prevList.reduce(
         (max, group) => Math.max(max, group.index),
@@ -121,6 +122,7 @@ const Step3 = ({ setData, setActiveStep }) => {
     setList((prevList) => prevList.filter((item) => item.index !== index));
   };
   const handleMemberAdding = (index) => {
+    setMemberName(""); 
     if (index === null) {
       // Council case
       setAddMemberIndex("council");
@@ -138,11 +140,21 @@ const Step3 = ({ setData, setActiveStep }) => {
         const principal = Principal.fromText(memberName.trim());
         const principalId = principal.toText();
   
-        const council = list.find((group) => group.name === "Council");
-        if (council && council.members.includes(principalId)) {
+        const targetGroup =
+          addMemberIndex === "council"
+            ? list.find((group) => group.name === "Council")
+            : list.find((group) => group.index === addMemberIndex);
+  
+        if (!targetGroup) {
+          toast.error("Target group not found");
+          setIsAdding(false);
+          return;
+        }
+  
+        if (targetGroup.members.includes(principalId)) {
           toast.error("Principal ID already exists");
-          setMemberName(""); 
-          setIsAdding(false); 
+          setMemberName("");
+          setIsAdding(false);
           return;
         }
   
@@ -150,24 +162,25 @@ const Step3 = ({ setData, setActiveStep }) => {
   
         if (response.Ok) {
           const username = response.Ok.username;
-  
           setList((prevList) =>
-            prevList.map((item) => {
-              if (item.name === "Council") {
+            prevList.map((group) => {
+              if (group.index === addMemberIndex || (addMemberIndex === "council" && group.name === "Council")) {
                 return {
-                  ...item,
-                  members: [...item.members, principalId],
+                  ...group,
+                  members: [...group.members, principalId],
                 };
               }
-              return item;
+              return group;
             })
           );
-  
-          setCouncilUsernames((prevUsernames) => [
-            ...prevUsernames,
-            `${username} (${principalId})`,
-          ]);
-  
+
+          if (addMemberIndex === "council") {
+            setCouncilUsernames((prevUsernames) => [
+              ...prevUsernames,
+              `${username} (${principalId})`,
+            ]);
+          }
+
           setMemberUsernames((prevUsernames) => ({
             ...prevUsernames,
             [principalId]: username,
@@ -373,7 +386,7 @@ const Step3 = ({ setData, setActiveStep }) => {
 
             <button
               onClick={handleGroupAdding}
-              className="bg-white  lg:mr-7 md:w-[200px] md:h-[50px] small_phone:gap-2 gap-1  small_phone:  mobile:px-5 p-2 small_phone:text-base text-sm shadow-xl flex items-center rounded-full hover:bg-[#ececec] hover:scale-105 transition"
+              className={`bg-white  lg:mr-7 md:w-[200px] md:h-[50px] small_phone:gap-2 gap-1  small_phone:  mobile:px-5 p-2 small_phone:text-base text-sm shadow-xl flex items-center rounded-full hover:bg-[#ececec] hover:scale-105 transition ${isLoading || isAdding ? "cursor-not-allowed": "cursor-pointer"}`}
             >
               <span className="flex">
                 <HiPlus />
@@ -456,7 +469,7 @@ const Step3 = ({ setData, setActiveStep }) => {
                             handleRemoveMember("council", formattedPrincipalId)
                           }
                         >
-                          <MdOutlineDeleteOutline className="text-red-500 mobile:text-2xl text-lg" />
+                          <MdOutlineDeleteOutline className={`text-red-500 mobile:text-2xl text-lg ${isLoading || isAdding ? "cursor-not-allowed": "cursor-pointer "}`} />
                         </button>
                       </div>
                     </section>
@@ -510,7 +523,7 @@ const Step3 = ({ setData, setActiveStep }) => {
                       Add Member
                     </button>
                     <button onClick={() => deleteGroup(group.index)}>
-                      <MdOutlineDeleteOutline className="text-red-500 mobile:text-2xl text-lg" />
+                      <MdOutlineDeleteOutline className={`text-red-500 mobile:text-2xl text-lg ${isLoading || isAdding ? "cursor-not-allowed": "cursor-pointer "}`} />
                     </button>
                   </div>
                 </section>
@@ -561,7 +574,7 @@ const Step3 = ({ setData, setActiveStep }) => {
                           onClick={() => handleRemoveMember(group.index, member)}
                           className="ml-auto"
                         >
-                          <MdOutlineDeleteOutline className="text-red-500 text-xl sm:text-2xl md:text-2xl lg:text-2xl" />
+                          <MdOutlineDeleteOutline className={`text-red-500 mobile:text-2xl text-lg ${isLoading || isAdding ? "cursor-not-allowed": "cursor-pointer "}`} />
                         </button>
                       </div>
                     </div>
