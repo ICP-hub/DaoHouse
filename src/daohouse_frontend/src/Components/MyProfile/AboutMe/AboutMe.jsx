@@ -10,7 +10,7 @@ import { useAuth } from "../../../connect/useClient";
 const AboutMe = () => {
   const { backendActor, identity, principal } = useAuth();
 
-  console.log("sandlkansdlknasld 12", principal);
+
   const className = "AboutMe";
   const { userProfile } = useUserProfile() || {};
   const principalstring = userProfile?.user_id?.toString() || "";

@@ -19,7 +19,7 @@ import { useAuthClient } from "../../connect/useClient";
 
 const ProposalsDetails = () => {
    const className="DaoProfile"
-  const { backendActor, createDaoActor } = useAuthClient();
+  const { backendActor, createDaoActor1 } = useAuthClient();
   const [dao, setDao] = useState(null);
   const { proposalId, daoCanisterId } = useParams();
   const [voteApi, setVoteApi] = useState({});
@@ -65,8 +65,8 @@ const ProposalsDetails = () => {
   const { truncated, isTruncated } = truncateText(dao?.purpose || 'Dao Purpose', maxWords);
 
   const daoActor = useMemo(() => {
-    return daoCanisterId ? createDaoActor(daoCanisterId) : null;
-  }, [daoCanisterId, createDaoActor]);
+    return daoCanisterId ? createDaoActor1(daoCanisterId) : null;
+  }, [daoCanisterId, createDaoActor1]);
 
   // setVoteApi(daoActor)
 
@@ -171,7 +171,7 @@ const ProposalsDetails = () => {
     setFollowersCount(prevCount => newIsFollowing ? prevCount + 1 : prevCount - 1);
 
     try {
-      const daoActor = createDaoActor(daoCanisterId);
+      const daoActor = createDaoActor1(daoCanisterId);
       const response = isFollowing
         ? await daoActor.unfollow_dao()
         : await daoActor.follow_dao();

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import nodata from "../../../assets/nodata.png";
 import { useAuth } from "../../connect/useClient";
 const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, daoCanisterId }) => {
-  const { createDaoActor } = useAuth();
+  const { createDaoActor1} = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [fetchedProposals, setFetchedProposals] = useState([]);
   const allProposals = proposals && Array.isArray(proposals) ? proposals : [];
@@ -20,7 +20,7 @@ const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, da
     }
 
     try {
-      const daoActor = createDaoActor(daoCanisterId);
+      const daoActor = createDaoActor1(daoCanisterId);
       const response = await daoActor.search_proposal(searchTerm);
       setFetchedProposals(response);
     } catch (error) {
@@ -30,7 +30,7 @@ const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, da
 
   useEffect(() => {
     getproposal();
-  }, [searchTerm, createDaoActor, daoCanisterId]);
+  }, [searchTerm, createDaoActor1, daoCanisterId]);
 
   const displayedProposals =
     searchTerm.trim() === "" ? allProposals : fetchedProposals;

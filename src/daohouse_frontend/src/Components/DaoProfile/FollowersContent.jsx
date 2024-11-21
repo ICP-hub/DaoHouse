@@ -9,7 +9,7 @@ import FollowersSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSk
 import { Principal } from "@dfinity/principal";
 
 const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
-  const { backendActor, createDaoActor } = useAuth();
+  const { backendActor, createDaoActor1 } = useAuth();
   const [followerProfiles, setFollowerProfiles] = useState([]);
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
@@ -31,7 +31,7 @@ const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
     setLoading(true);
 
     try {
-      const daoActor = createDaoActor(daoCanisterId);
+      const daoActor = createDaoActor1(daoCanisterId);
 
       const response = await daoActor.search_follower(value);
 

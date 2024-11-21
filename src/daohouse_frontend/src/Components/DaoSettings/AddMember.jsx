@@ -7,7 +7,7 @@ import { Principal } from "@dfinity/principal";
 
 const AddMember = ({ setActiveStep, setActiveLink, data }) => {
     const { daoCanisterId } = useParams();
-    const { createDaoActor } = useAuth();
+    const { createDaoActor1 } = useAuth();
     const navigate = useNavigate();
     const [addMember, setAddMember] = useState({
         group_name: "",
@@ -47,7 +47,7 @@ const AddMember = ({ setActiveStep, setActiveLink, data }) => {
         };
 
         try {
-            const daoCanister = await createDaoActor(daoCanisterId);
+            const daoCanister = await createDaoActor1(daoCanisterId);
             const response = await daoCanister.proposal_to_add_member_to_group(formattedInputData);
             console.log("Response from  add member proposal:", response);
             if (response.Ok) {
@@ -75,7 +75,7 @@ const AddMember = ({ setActiveStep, setActiveLink, data }) => {
 
         const fetchGroupNames = async () => {
 
-            const daoCanister = await createDaoActor(daoCanisterId);
+            const daoCanister = await createDaoActor1(daoCanisterId);
             const daogroups = await daoCanister.get_dao_groups();
             const names = daogroups.map(group => group.group_name);
             setGropNames(names)

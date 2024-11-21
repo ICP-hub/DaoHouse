@@ -23,7 +23,7 @@ export default function Card({
   isSubmittedProposals,
   showComments,
 }) {
-  const { backendActor, createDaoActor, stringPrincipal, principal } = useAuth();
+  const { backendActor, createDaoActor1, stringPrincipal, principal } = useAuth();
   const [voteStatus, setVoteStatus] = useState("");
   const [approvedVotes, setApprovedVotes] = useState(
     Number(proposal?.proposal_approved_votes || 0n)
@@ -133,7 +133,7 @@ export default function Card({
         );
         const daoPrincipalText = daoPrincipal.toText();
 
-        const daoActor = await createDaoActor(daoPrincipalText);
+        const daoActor = await createDaoActor1(daoPrincipalText);
 
         if (!daoActor) {
           throw new Error("Failed to create DAO actor.");
@@ -152,7 +152,7 @@ export default function Card({
     };
 
     fetchDaoName();
-  }, [createDaoActor, proposal?.associated_dao_canister_id, daoId]);
+  }, [createDaoActor1, proposal?.associated_dao_canister_id, daoId]);
 
   const copyToClipboard = () => {
     const proposalUrl = `${window.location.origin}/social-feed/proposal/${proposal?.proposal_id}/dao/${daoId}`;

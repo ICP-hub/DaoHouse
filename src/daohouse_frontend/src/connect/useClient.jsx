@@ -219,7 +219,7 @@ const frontendCanisterId =
                 console.log("Actor and Agent initialized successfully.");
             } else {
                 setIsLoading(false);
-                console.error("Failed to initialize agent and actor:", error);
+                console.error("Failed to initialize agent and actor:");
             }
         };
      
@@ -342,7 +342,7 @@ const frontendCanisterId =
         logout: disconnect,
         principal,
         agent: agent || null,
-        createDaoActor: backendActor || null,
+        //  createDaoActor: backendActor || null,
         createDaoActor1,
         identity,
         orderPlacementLoad,

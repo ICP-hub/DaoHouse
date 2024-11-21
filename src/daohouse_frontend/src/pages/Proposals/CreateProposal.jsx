@@ -133,7 +133,7 @@ function CreateProposal() {
 
   const [groupNames, setGroupNames] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { createDaoActor, stringPrincipal, identity ,principal} = useAuth();
+  const { createDaoActor1, stringPrincipal, identity ,principal} = useAuth();
   const { daoCanisterId } = useParams();
 
    const [daoNameError, setDaoNameError] = useState("");
@@ -148,7 +148,7 @@ function CreateProposal() {
   const fetchDaoDetails = async () => {
     if (daoCanisterId && identity) {
       try {
-        const daoActor = await createDaoActor(daoCanisterId,{agentOptions: {identity,},});
+        const daoActor = await createDaoActor1(daoCanisterId,{agentOptions: {identity,},});
         if (daoActor) {
           const daoDetails = await daoActor.get_dao_detail();
           setDao(daoDetails);
@@ -541,7 +541,7 @@ function CreateProposal() {
 
   const submitBountyDone = async (bountyDone) => {
     try {
-      const daoCanister = await createDaoActor(daoCanisterId);
+      const daoCanister = await createDaoActor1(daoCanisterId);
    
 
       const response = await daoCanister.proposal_to_bounty_done(bountyDone);
@@ -560,7 +560,7 @@ function CreateProposal() {
 
   const submitGeneralPurp = async (generalPurp) => {
     try {
-      const daoCanister = await createDaoActor(daoCanisterId);
+      const daoCanister = await createDaoActor1(daoCanisterId);
       const response = await daoCanister.proposal_to_create_general_purpose(generalPurp);
       console.log("Response of General Purpose:", response);
 
@@ -578,7 +578,7 @@ function CreateProposal() {
 
   const submitDaoConfig = async (daoConfig) => {
     try {
-      const daoCanister = await createDaoActor(daoCanisterId);
+      const daoCanister = await createDaoActor1(daoCanisterId);
       const response = await daoCanister.proposal_to_change_dao_config(
         daoConfig
       );
@@ -601,7 +601,7 @@ function CreateProposal() {
     console.log("bounty raised",bountyRaised);
     
     try {
-      const daoCanister = await createDaoActor(daoCanisterId);
+      const daoCanister = await createDaoActor1(daoCanisterId);
       const response = await daoCanister.proposal_to_bounty_raised(bountyRaised);
       console.log("Response of Bounty Raised:", response);
       if(response.Ok){
@@ -618,7 +618,7 @@ function CreateProposal() {
 
   const submitAddMember = async (addMemberData) => {
     try {
-      const daoCanister = await createDaoActor(daoCanisterId);
+      const daoCanister = await createDaoActor1(daoCanisterId);
 
 
       const response = await daoCanister.proposal_to_add_member_to_group(addMemberData);
@@ -644,7 +644,7 @@ function CreateProposal() {
 
   const submitRemoveMember = async (removeMemberData) => {
     try {
-      const daoCanister = await createDaoActor(daoCanisterId);
+      const daoCanister = await createDaoActor1(daoCanisterId);
 
 
       const response = await daoCanister.proposal_to_remove_member_to_group(removeMemberData);
@@ -703,7 +703,7 @@ function CreateProposal() {
 
   const afterPaymentApprove = async (sendableAmount) => {
     try {      
-      const daoCanister = await createDaoActor(daoCanisterId);
+      const daoCanister = await createDaoActor1(daoCanisterId);
       const res =
       await daoCanister.make_payment(sendableAmount,Principal.fromText(stringPrincipal ? stringPrincipal : principal.toString()));
       if (res.Ok) {
@@ -714,7 +714,7 @@ function CreateProposal() {
           tokens: Number(tokenTransfer.tokens),
           proposal_entry: proposalEntry,
         };
-        const daoCanister = await createDaoActor(daoCanisterId);
+        const daoCanister = await createDaoActor1(daoCanisterId);
         const response = await daoCanister.proposal_to_transfer_token(tokenTransferPayload);
         return response;
       } else {
@@ -796,7 +796,7 @@ function CreateProposal() {
     console.log("chage dao policy payload",changePolicy);
     
     try {
-      const daoCanister = await createDaoActor(daoCanisterId);
+      const daoCanister = await createDaoActor1(daoCanisterId);
       const response = await daoCanister.proposal_to_change_dao_policy(changePolicy);
       if(response.Ok) {
         toast.success(response.Ok);
@@ -831,7 +831,7 @@ function CreateProposal() {
     }
   
     try {
-      const daoCanister = await createDaoActor(daoCanisterId);
+      const daoCanister = await createDaoActor1(daoCanisterId);
       console.log("Response of Poll Proposal:", poll);
       const response = await daoCanister.proposal_to_create_poll(poll);
       if (response.Ok) {
@@ -851,7 +851,7 @@ function CreateProposal() {
    
 
     try {
-      const daoCanister = await createDaoActor(daoCanisterId);
+      const daoCanister = await createDaoActor1(daoCanisterId);
       const response = await daoCanister.proposal_to_remove_member_to_dao(removeDaoMember);
       console.log("Response of Remove DAO Member:", response);
        if (response.Ok) {
@@ -868,7 +868,7 @@ function CreateProposal() {
 
   const submitMintNewTokens = async (mintNewTokensData) => {
     try {
-      const daoCanister = await createDaoActor(daoCanisterId);
+      const daoCanister = await createDaoActor1(daoCanisterId);
       const response = await daoCanister.proposal_to_mint_new_dao_tokens(mintNewTokensData);
       console.log("Response of Mint New Tokens:", response);
       if (response.Ok) {

@@ -33,7 +33,7 @@ import Pagination from "../../Components/pagination/Pagination";
 const DaoProfile = () => {
   const className = "DaoProfile";
   const [activeLink, setActiveLink] = useState("proposals");
-  const { backendActor, createDaoActor,identity } = useAuth();
+  const { backendActor, createDaoActor1,identity } = useAuth();
   const [dao, setDao] = useState(null);
   const [proposals, setProposals] = useState([]);
   const [loadingProfile, setLoadingProfile] = useState(false);
@@ -49,6 +49,7 @@ const DaoProfile = () => {
   const [daoMembers, setDaoMembers] = useState([]);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [daoActor, setDaoActor] = useState({});
+  console.log("daoActor",daoActor)
   const [loading, setLoading] = useState(false);
   const [daoGroups, setDaoGroups] = useState([]);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -115,7 +116,7 @@ const DaoProfile = () => {
       // setLoadingProfile(true);
       if (daoCanisterId) {
         try {
-          const daoActor = await createDaoActor(daoCanisterId);
+          const daoActor = await createDaoActor1(daoCanisterId);
           setDaoActor(daoActor);
           const daoDetails = await daoActor.get_dao_detail();
           setDao(daoDetails);
@@ -161,12 +162,15 @@ const DaoProfile = () => {
       setLoadingProposals(true);
       if (daoCanisterId) {
         try {
-          const daoActor = await createDaoActor(daoCanisterId);
+          const daoActor = await createDaoActor1(daoCanisterId);
+          
           const proposalPagination = {
             start: pagination.start,
             end: pagination.end + 1,
           };
           const proposals = await daoActor.get_all_proposals(proposalPagination);
+          console.log("proposals",proposals);
+          
           const hasMoreData = proposals.length > itemsPerPage;
           setHasMore(hasMoreData);
           const proposalsToDisplay = proposals.slice(0, itemsPerPage);
@@ -180,7 +184,7 @@ const DaoProfile = () => {
     };
     fetchDaoDetails();
     fetchProposals({ start: (currentPage - 1) * itemsPerPage, end: currentPage * itemsPerPage });
-  }, [backendActor, createDaoActor, daoCanisterId, currentPage]);
+  }, [backendActor, createDaoActor1, daoCanisterId, currentPage]);
 
   const handleJoinDao = async () => {
     if (joinStatus === "Joined") {
@@ -233,7 +237,7 @@ const DaoProfile = () => {
     );
 
     try {
-      const daoActor = createDaoActor(daoCanisterId);
+      const daoActor = createDaoActor1(daoCanisterId);
       const response = isFollowing
         ? await daoActor.unfollow_dao()
         : await daoActor.follow_dao();

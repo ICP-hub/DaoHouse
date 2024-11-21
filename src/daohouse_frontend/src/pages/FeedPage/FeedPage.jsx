@@ -14,9 +14,9 @@ import { useAuth } from "../../connect/useClient";
 
 const FeedPage = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const { isAuthenticated, login, signInNFID, backendActor, createDaoActor } = useAuth();
+  const { isAuthenticated, login, signInNFID, backendActor, createDaoActor1 } = useAuth();
   console.log("isauthe",isAuthenticated);
-console.log("createDaoActor",createDaoActor);
+console.log("createDaoActor",createDaoActor1);
 console.log("backendactr",backendActor);
 
 
@@ -71,7 +71,7 @@ console.log("backendactr",backendActor);
           end: pagination.end + 1,
         };
         try {
-          const daoActor = await createDaoActor(dao.dao_canister_id);
+          const daoActor = await createDaoActor1(dao.dao_canister_id);
           const daoProposals = await daoActor.get_all_proposals(proposalPagination);
           const proposalsWithDaoId = daoProposals.map((proposal) => ({
             ...proposal,
@@ -102,7 +102,7 @@ console.log("backendactr",backendActor);
     setShowLoginModal(false);
     fetchAllProposals({ start: (currentPage - 1) * itemsPerPage, end: currentPage * itemsPerPage });
 
-  }, [isAuthenticated, backendActor, createDaoActor, currentPage, searchTerm]);
+  }, [isAuthenticated, backendActor, createDaoActor1, currentPage, searchTerm]);
 
 
   const handleModalClose = () => {

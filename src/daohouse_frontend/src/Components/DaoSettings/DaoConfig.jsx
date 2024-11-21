@@ -8,7 +8,7 @@ import { Principal } from "@dfinity/principal";
 
 const DaoConfig = ({ setData, setActiveStep,setActiveLink, data }) => {
     const { daoCanisterId } = useParams();
-    const { createDaoActor } = useAuth();
+    const { createDaoActor1} = useAuth();
     const navigate = useNavigate();
     const [changeData, setChangeData] = useState({
         new_dao_name: "",
@@ -69,7 +69,7 @@ const DaoConfig = ({ setData, setActiveStep,setActiveLink, data }) => {
         };
 
         try {
-            const daoCanister = await createDaoActor(daoCanisterId);
+            const daoCanister = await createDaoActor1(daoCanisterId);
             console.log("daoCanister ID:", daoCanisterId);
 
             // Send the correctly formatted data

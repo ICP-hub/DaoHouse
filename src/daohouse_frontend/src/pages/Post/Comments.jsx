@@ -8,11 +8,11 @@ import CommentsSkeletonLoader from '../../Components/SkeletonLoaders/CommentsSke
 import CommentSkeletonLoader from '../../Components/SkeletonLoaders/CommentsSkeletonLoader/CommentSkeletonLoader';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Principal } from '@dfinity/principal';
-import { useAuthClient } from '../../connect/useClient';
+import { useAuth } from '../../connect/useClient';
 
 // Comment component
 const Comment = ({ comment, proposalId, daoId, commentCount, setCommentCount }) => {
-  const { createDaoActor, backendActor } = useAuthClient();
+  const { createDaoActor1, backendActor } = useAuth();
   const [showReplies, setShowReplies] = useState(false);
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [replyText, setReplyText] = useState("");
@@ -66,7 +66,7 @@ const Comment = ({ comment, proposalId, daoId, commentCount, setCommentCount }) 
         comment_id: comment.comment_id,
       };
   
-      const daoActor = await createDaoActor(daoId);
+      const daoActor = await createDaoActor1(daoId);
       const response = await daoActor.reply_comment(replyArgs);
   
       if (response.Ok) {
@@ -225,7 +225,7 @@ const Comments = ({ daoId, proposalId, commentCount, setCommentCount }) => {
   const [showMore, setShowMore] = useState(false);
   const [newComment, setNewComment] = useState("");
   const [daoActor, setDaoActor] = useState({});
-  const {createDaoActor} = useAuthClient()
+  const {createDaoActor1} = useAuth()
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
   
@@ -233,7 +233,7 @@ const Comments = ({ daoId, proposalId, commentCount, setCommentCount }) => {
     const fetchComments = async () => {
       try {
         // Fetch proposal details which include comments using get_proposal_by_id
-        const daoActor = await createDaoActor(daoId)
+        const daoActor = await createDaoActor1(daoId)
         setDaoActor(daoActor)
         const proposalDetails = await daoActor.get_proposal_by_id(proposalId);
         console.log("propDetailz", proposalDetails.proposal_id);
@@ -301,7 +301,7 @@ console.log("newComment:", typeof newComment, newComment);
 
 const detail = async() =>{
   try {
-    const daoActor = await createDaoActor(daoId);
+    const daoActor = await createDaoActor1(daoId);
     const Details = await daoActor.get_proposal_by_id(proposalId);
    console.log("detail",Details);
    

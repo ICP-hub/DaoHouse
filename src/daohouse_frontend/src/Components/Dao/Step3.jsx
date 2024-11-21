@@ -461,7 +461,7 @@ const Step3 = ({ setData, setActiveStep }) => {
               ? skeletonLoader() // Show skeleton loader while data is being fetched
               : councilUsernames.map((fullName, index) => {
                   const [username, principalId] = fullName.split(" ("); // Split the string to separate username and principal ID
-                  const formattedPrincipalId = principalId.slice(0, -1); // Remove the closing parenthesis
+                  const formattedPrincipalId = principalId?.slice(0, -1); // Remove the closing parenthesis
 
                   return (
                     <section

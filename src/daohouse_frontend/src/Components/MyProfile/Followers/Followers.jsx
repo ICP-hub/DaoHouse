@@ -9,7 +9,7 @@ import { useAuth } from "../../../connect/useClient";
 
 const Followers = () => {
   const className = "Followers";
-  const { backendActor, createDaoActor, stringPrincipal, principal} = useAuth();
+  const { backendActor, createDaoActor1, stringPrincipal, principal} = useAuth();
   console.log("stringPrincipal",principal);
   
   const [joinedDAO, setJoinedDAO] = useState([]);
@@ -30,7 +30,7 @@ const Followers = () => {
         joinedDaoPrincipals.map(async (daoPrincipal) => {
           try {
             const daoCanisterPrincipal = Principal.fromUint8Array(daoPrincipal._arr);
-            const daoCanister = await createDaoActor(daoCanisterPrincipal);
+            const daoCanister = await createDaoActor1(daoCanisterPrincipal);
             const daoDetails = await daoCanister.get_dao_detail();
             return { ...daoDetails, dao_canister_id: daoCanisterPrincipal.toText() };
           } catch (error) {
@@ -52,7 +52,7 @@ const Followers = () => {
     const allDaoDetails = await Promise.all(
       daoList.map(async (data) => {
         try {
-          const daoCanister = await createDaoActor(data.dao_canister_id);
+          const daoCanister = await createDaoActor1(data.dao_canister_id);
           const dao_details = await daoCanister.get_dao_detail();
           return { ...dao_details, dao_canister_id: data.dao_canister_id };
         } catch (err) {

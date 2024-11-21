@@ -11,7 +11,7 @@ import daoImage from "../../../assets/daoImage.png"
 const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, isJoinedDAO }) => {
 
   const navigate = useNavigate();
-  const { backendActor, stringPrincipal, createDaoActor,principal ,createDaoActor1} = useAuth();
+  const { backendActor, stringPrincipal,principal ,createDaoActor1} = useAuth();
   const canisterId = process.env.CANISTER_ID_IC_ASSET_HANDLER;
   const [isFollowing, setIsFollowing] = useState(false);
   const [daoActor, setDaoActor] = useState({})
