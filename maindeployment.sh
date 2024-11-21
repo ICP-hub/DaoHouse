@@ -132,8 +132,8 @@ DAOHOUSE_BACKEND_ID=$(dfx canister id daohouse_backend --ic)
 
 
 
-#  dfx deploy internet_identity
-#  dfx deploy daohouse_frontend --ic
+ dfx deploy internet_identity 
+ dfx deploy daohouse_frontend --ic
 
 # # dfx deploy
 
