@@ -472,14 +472,14 @@ import { useAuth } from "../../connect/useClient";
 import PaymentModal from "./PaymentModal";
 import coinsound from "../../../../daohouse_frontend/src/Sound/coinsound.mp3";
 
-const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, setLoadingNext }) => {
+const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, setLoadingNext, handleDaoClick }) => {
   const [file, setFile] = useState(null);
   const { identity, stringPrincipal, backendActor ,principal } = useAuth()
   const [fileURL, setFileURL] = useState(null);
   const [fileName, setFileName] = useState(null);
   const [shouldCreateDAO, setShouldCreateDAO] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loadingPayment, setLoadingPayment] = useState(false);
+  // const [loadingPayment, setLoadingPayment] = useState(false);
 
   const className = "DAO__Step6";
 
@@ -534,7 +534,7 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, s
     const { step1, step2, step3, step4, step5, step6 } = data;
 
     try {
-      setLoadingPayment(true)
+      // setLoadingPayment(true)
 
       const council = step4.voting?.Council;
       const councilArray = Object.entries(council)
@@ -588,12 +588,12 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, s
         token_supply: Number(step2.TokenSupply) || 4,
         all_dao_user: allDaoUsers
       };
-      const res = await backendActor.make_payment_and_create_dao(daoPayload);
+      const res = await backendActor.create_dao(daoPayload);
       console.log("this is backend res : ", res)
       if (res.Ok) {        
-        toast.success("Payment successful!");
-        setLoadingPayment(false)
-        setIsModalOpen(false);
+        // toast.success("Payment successful!");
+        // setLoadingPayment(false)
+        // setIsModalOpen(false);
         successAudio.play();
 
         toast.success("DAO created successfully");
@@ -675,8 +675,9 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, s
       // setLoadingPayment(false)
     }
   };
+
   async function paymentTest() {
-    console.log("owner principal is ", stringPrincipal);
+    console.log("owner principal is ", principal.toString());
     console.log("printing payment");
 
     const backendCanisterId = process.env.CANISTER_ID_DAOHOUSE_BACKEND;
@@ -727,7 +728,8 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, s
         },
       }));
 
-      setIsModalOpen(true);
+      // setIsModalOpen(true);
+      handleDaoClick()
 
     } catch (error) {
       toast.error("Error reading image content.");
@@ -743,12 +745,12 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, s
     setShouldCreateDAO(false);
   };
 
-  useEffect(() => {
-    if (loadingPayment) {
-      setIsModalOpen(true);
-      setLoadingPayment(true)
-    }
-  }, [loadingPayment]);
+  // useEffect(() => {
+  //   if (loadingPayment) {
+  //     setIsModalOpen(true);
+  //     setLoadingPayment(true)
+  //   }
+  // }, [loadingPayment]);
 
 
   const readFileContent = (file) => {
@@ -897,7 +899,7 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, s
 
         </div>
       </Container>
-      <PaymentModal
+      {/*<PaymentModal
         data={data}
         open={isModalOpen}
         onClose={handleCancel}
@@ -907,7 +909,7 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, s
         }}
         loading={loadingPayment}
         fileURL={fileURL}
-      />
+      />*/}
     </React.Fragment>
   );
 };
