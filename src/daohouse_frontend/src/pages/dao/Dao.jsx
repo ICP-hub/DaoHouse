@@ -433,7 +433,7 @@ const Dao = () => {
       console.log("backendActor in get joined daos",);
       
       const profile = await backendActor?.get_profile_by_id(principal);
-      console.log("progile api",profile);
+      console.log("progile api ",profile);
       
       const joinedDaoPrincipals = profile?.Ok?.join_dao || [];
 
