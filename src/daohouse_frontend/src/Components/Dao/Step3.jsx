@@ -4,7 +4,7 @@ import { HiPlus } from "react-icons/hi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import { Principal } from "@dfinity/principal";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { useAuth } from "../../Components/utils/useAuthClient";
 import Container from "../Container/Container";
 import EditPen from "../../../assets/edit_pen.png";
@@ -469,7 +469,7 @@ const Step3 = ({ setData, setActiveStep }) => {
                             handleRemoveMember("council", formattedPrincipalId)
                           }
                         >
-                          <MdOutlineDeleteOutline className="text-red-500 mobile:text-2xl text-lg" />
+                          <MdOutlineDeleteOutline className={`text-red-500 mobile:text-2xl text-lg ${isLoading || isAdding ? "cursor-not-allowed": "cursor-pointer "}`} />
                         </button>
                       </div>
                     </section>
@@ -523,7 +523,7 @@ const Step3 = ({ setData, setActiveStep }) => {
                       Add Member
                     </button>
                     <button onClick={() => deleteGroup(group.index)}>
-                      <MdOutlineDeleteOutline className="text-red-500 mobile:text-2xl text-lg" />
+                      <MdOutlineDeleteOutline className={`text-red-500 mobile:text-2xl text-lg ${isLoading || isAdding ? "cursor-not-allowed": "cursor-pointer "}`} />
                     </button>
                   </div>
                 </section>
@@ -574,7 +574,7 @@ const Step3 = ({ setData, setActiveStep }) => {
                           onClick={() => handleRemoveMember(group.index, member)}
                           className="ml-auto"
                         >
-                          <MdOutlineDeleteOutline className="text-red-500 text-xl sm:text-2xl md:text-2xl lg:text-2xl" />
+                          <MdOutlineDeleteOutline className={`text-red-500 mobile:text-2xl text-lg ${isLoading || isAdding ? "cursor-not-allowed": "cursor-pointer "}`} />
                         </button>
                       </div>
                     </div>
