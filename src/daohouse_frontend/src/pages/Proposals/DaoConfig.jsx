@@ -66,7 +66,7 @@ function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig, errorMe
             </div>
 
             <div className="mb-4">
-                <label htmlFor="daoName" className="mb-2 font-semibold text-xl">DAO Name</label>
+                <label htmlFor="daoName" className="mb-2 font-semibold text-xl">Update DAO Name</label>
                 <input
                     id="NewdaoName"
                     type="text"
@@ -83,7 +83,7 @@ function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig, errorMe
             </div>
 
             <div className="mb-4">
-                <label htmlFor="purpose" className="mb-2 font-semibold text-xl">DAO Purpose</label>
+                <label htmlFor="purpose" className="mb-2 font-semibold text-xl">Update DAO Purpose</label>
                 <input
                     id="purpose"
                     type="text"
