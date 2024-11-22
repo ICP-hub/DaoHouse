@@ -94,35 +94,35 @@ const Step3 = ({ setData, setActiveStep }) => {
   }
 
   const handleGroupAdding = () => {
-    setMemberName(""); 
+    setMemberName("");
     setList((prevList) => {
       const maxIndex = prevList.reduce(
         (max, group) => Math.max(max, group.index),
         0
       );
       const newGroupIndex = maxIndex + 1;
-  
+
       const newGroup = {
         name: `Group ${newGroupIndex}`,
         index: newGroupIndex,
         members: [],
       };
-  
+
       setAddMemberIndex(newGroupIndex);
       setShowMemberNameInput(true);
-  
+
       return [...prevList, newGroup];
     });
-  
+
     setCount((prevCount) => prevCount + 1);
   };
 
-  
+
   const deleteGroup = (index) => {
     setList((prevList) => prevList.filter((item) => item.index !== index));
   };
   const handleMemberAdding = (index) => {
-    setMemberName(""); 
+    setMemberName("");
     if (index === null) {
       // Council case
       setAddMemberIndex("council");
@@ -139,27 +139,27 @@ const Step3 = ({ setData, setActiveStep }) => {
       try {
         const principal = Principal.fromText(memberName.trim());
         const principalId = principal.toText();
-  
+
         const targetGroup =
           addMemberIndex === "council"
             ? list.find((group) => group.name === "Council")
             : list.find((group) => group.index === addMemberIndex);
-  
+
         if (!targetGroup) {
           toast.error("Target group not found");
           setIsAdding(false);
           return;
         }
-  
+
         if (targetGroup.members.includes(principalId)) {
           toast.error("Principal ID already exists");
           setMemberName("");
           setIsAdding(false);
           return;
         }
-  
+
         const response = await backendActor.get_profile_by_id(principal);
-  
+
         if (response.Ok) {
           const username = response.Ok.username;
           setList((prevList) =>
@@ -185,8 +185,8 @@ const Step3 = ({ setData, setActiveStep }) => {
             ...prevUsernames,
             [principalId]: username,
           }));
-  
-          setMemberName(""); 
+
+          setMemberName("");
           setShowMemberNameInput(false);
         } else {
           toast.error("User does not exist");
@@ -198,7 +198,7 @@ const Step3 = ({ setData, setActiveStep }) => {
       }
     }
   };
-  
+
   useEffect(() => {
     const fetchGroupUsernames = async () => {
       const groups = list.filter((group) => group.name !== "Council");
@@ -384,7 +384,7 @@ const Step3 = ({ setData, setActiveStep }) => {
               </p>
             </section>
 
-            <button
+            {/* <button
               onClick={handleGroupAdding}
               className={`bg-white  lg:mr-7 md:w-[200px] md:h-[50px] small_phone:gap-2 gap-1  small_phone:  mobile:px-5 p-2 small_phone:text-base text-sm shadow-xl flex items-center rounded-full hover:bg-[#ececec] hover:scale-105 transition ${isLoading || isAdding ? "cursor-not-allowed": "cursor-pointer"}`}
             >
@@ -396,7 +396,31 @@ const Step3 = ({ setData, setActiveStep }) => {
               </span>
               <span className=" hidden lg:flex">Create</span>
               <span className=""> Group</span>
-            </button>
+            </button> */}
+            <div className="relative group inline-block">
+              <button
+                onClick={handleGroupAdding}
+                className={`bg-white lg:mr-7 md:w-[200px] md:h-[50px] small_phone:gap-2 gap-1 mobile:px-5 p-2 small_phone:text-base text-sm shadow-xl flex items-center rounded-full hover:bg-[#ececec] hover:scale-105 transition ${isLoading || isAdding ? "cursor-not-allowed" : "cursor-pointer"}`}
+                disabled={isLoading || isAdding}
+              >
+                <span className="flex">
+                  <HiPlus />
+                </span>
+                <span className="flex lg:hidden items-center">
+                  <RiGroupFill />
+                </span>
+                <span className="hidden lg:flex">Create</span>
+                <span className=""> Group</span>
+              </button>
+
+              {/* Tooltip */}
+              <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 opacity-0 group-hover:opacity-100 bg-gray-700 text-white text-sm rounded-lg py-2 px-6 w-[250px]">
+                <div className="absolute left-1/2 transform -translate-x-1/2 bottom-[-6px] w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-t-gray-700 border-l-transparent border-r-transparent"></div>
+                Members in the same group share similar roles and actions
+                within the DAO
+              </div>
+            </div>
+
           </div>
 
           {/* Council */}
@@ -407,7 +431,7 @@ const Step3 = ({ setData, setActiveStep }) => {
               </h2>
               <button
                 onClick={() => handleMemberAdding(null)}
-                className={`flex flex-row items-center gap-1 text-[#229ED9] bg-white mobile:p-2 p-1 rounded-md ${isLoading || isAdding ? "cursor-not-allowed": "cursor-pointer"}`}
+                className={`flex flex-row items-center gap-1 text-[#229ED9] bg-white mobile:p-2 p-1 rounded-md ${isLoading || isAdding ? "cursor-not-allowed" : "cursor-pointer"}`}
                 disabled={isAdding || isLoading}
               >
                 Add Member
@@ -424,24 +448,24 @@ const Step3 = ({ setData, setActiveStep }) => {
                     onChange={(e) => setMemberName(e.target.value)}
                   />
                   <div className="flex flex-row gap-2">
-                  <button
-                    onClick={handleAddMember}
-                    className="w-[100px] flex justify-center items-center sm:w-auto lg:w-[155px] h-[48px] sm:h-[40px] md:h-[48px]  bg-black text-white p-2 rounded-md"
-                    disabled={isAdding}
-                  >
-                    {isAdding ? (
-                      <div className="w-4 h-4 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
-                    ) : (
-                      "Add"
-                    )}
-                  </button>
-                  <button
-                    onClick={closeInputField}
-                    className={`w-[100px] flex justify-center items-center sm:w-auto md:w-[100px] lg:w-[155px] h-[48px] sm:h-[40px] md:h-[48px] text-white p-2 rounded-md ${isLoading || isAdding ? "cursor-not-allowed bg-gray-700": "cursor-pointer bg-black"}`}
-                    disabled={isAdding}
-                  >
-                    Delete
-                  </button>
+                    <button
+                      onClick={handleAddMember}
+                      className="w-[100px] flex justify-center items-center sm:w-auto lg:w-[155px] h-[48px] sm:h-[40px] md:h-[48px]  bg-black text-white p-2 rounded-md"
+                      disabled={isAdding}
+                    >
+                      {isAdding ? (
+                        <div className="w-4 h-4 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+                      ) : (
+                        "Add"
+                      )}
+                    </button>
+                    <button
+                      onClick={closeInputField}
+                      className={`w-[100px] flex justify-center items-center sm:w-auto md:w-[100px] lg:w-[155px] h-[48px] sm:h-[40px] md:h-[48px] text-white p-2 rounded-md ${isLoading || isAdding ? "cursor-not-allowed bg-gray-700" : "cursor-pointer bg-black"}`}
+                      disabled={isAdding}
+                    >
+                      Delete
+                    </button>
                   </div>
                 </div>
               ) : null}
@@ -449,32 +473,32 @@ const Step3 = ({ setData, setActiveStep }) => {
             {isLoading
               ? skeletonLoader() // Show skeleton loader while data is being fetched
               : councilUsernames.map((fullName, index) => {
-                  const [username, principalId] = fullName.split(" ("); // Split the string to separate username and principal ID
-                  const formattedPrincipalId = principalId.slice(0, -1); // Remove the closing parenthesis
+                const [username, principalId] = fullName.split(" ("); // Split the string to separate username and principal ID
+                const formattedPrincipalId = principalId.slice(0, -1); // Remove the closing parenthesis
 
-                  return (
-                    <section
-                      key={index}
-                      className="w-full bg-white py-2 p-2 md:px-8 flex flex-col items-center justify-between  mb-4"
-                    >
-                      <div className="w-full flex  items-center justify-between mb-2">
-                        <div>
-                          <p className="font-semibold mobile:text-base text-sm border-black">
-                            {username}
-                          </p>
-                          <p className="text-sm">{formattedPrincipalId}</p>
-                        </div>
-                        <button
-                          onClick={() =>
-                            handleRemoveMember("council", formattedPrincipalId)
-                          }
-                        >
-                          <MdOutlineDeleteOutline className={`text-red-500 mobile:text-2xl text-lg ${isLoading || isAdding ? "cursor-not-allowed": "cursor-pointer "}`} />
-                        </button>
+                return (
+                  <section
+                    key={index}
+                    className="w-full bg-white py-2 p-2 md:px-8 flex flex-col items-center justify-between  mb-4"
+                  >
+                    <div className="w-full flex  items-center justify-between mb-2">
+                      <div>
+                        <p className="font-semibold mobile:text-base text-sm border-black">
+                          {username}
+                        </p>
+                        <p className="text-sm">{formattedPrincipalId}</p>
                       </div>
-                    </section>
-                  );
-                })}
+                      <button
+                        onClick={() =>
+                          handleRemoveMember("council", formattedPrincipalId)
+                        }
+                      >
+                        <MdOutlineDeleteOutline className={`text-red-500 mobile:text-2xl text-lg ${isLoading || isAdding ? "cursor-not-allowed" : "cursor-pointer "}`} />
+                      </button>
+                    </div>
+                  </section>
+                );
+              })}
           </div>
 
           {/* Groups */}
@@ -517,13 +541,13 @@ const Step3 = ({ setData, setActiveStep }) => {
                   <div className="flex flex-row small_phone:gap-4 gap-2">
                     <button
                       onClick={() => handleMemberAdding(group.index)}
-                      className={`flex flex-row items-center gap-1 text-[#229ED9] bg-white mobile:p-1 p-1 rounded-md ${isLoading || isAdding ? "cursor-not-allowed": "cursor-pointer"}`}
+                      className={`flex flex-row items-center gap-1 text-[#229ED9] bg-white mobile:p-1 p-1 rounded-md ${isLoading || isAdding ? "cursor-not-allowed" : "cursor-pointer"}`}
                       disabled={isAdding || isLoading}
                     >
                       Add Member
                     </button>
                     <button onClick={() => deleteGroup(group.index)}>
-                      <MdOutlineDeleteOutline className={`text-red-500 mobile:text-2xl text-lg ${isLoading || isAdding ? "cursor-not-allowed": "cursor-pointer "}`} />
+                      <MdOutlineDeleteOutline className={`text-red-500 mobile:text-2xl text-lg ${isLoading || isAdding ? "cursor-not-allowed" : "cursor-pointer "}`} />
                     </button>
                   </div>
                 </section>
@@ -552,7 +576,7 @@ const Step3 = ({ setData, setActiveStep }) => {
                         </button>
                         <button
                           onClick={closeInputField}
-                          className={`w-[100px] flex justify-center items-center sm:w-auto md:w-[100px] lg:w-[155px] h-[48px] sm:h-[40px] md:h-[48px]  text-white p-2 rounded-md ${isLoading || isAdding ? "cursor-not-allowed bg-gray-700": "cursor-pointer bg-black"}`}
+                          className={`w-[100px] flex justify-center items-center sm:w-auto md:w-[100px] lg:w-[155px] h-[48px] sm:h-[40px] md:h-[48px]  text-white p-2 rounded-md ${isLoading || isAdding ? "cursor-not-allowed bg-gray-700" : "cursor-pointer bg-black"}`}
                           disabled={isAdding}
                         >
                           Delete
@@ -561,25 +585,25 @@ const Step3 = ({ setData, setActiveStep }) => {
                     </div>
                   )}
 
-                {group.members.map((member, idx) => {
-                  const username = memberUsernames[member] || "Loading...";
-                  return (
-                    <div key={idx} className="w-full bg-white py-2 p-2 md:px-8 flex flex-col items-center justify-between mb-4">
-                      <div className="w-full flex flex-col mobile:items-start md:flex-row md:items-center justify-between mb-2">
-                        <div>
-                          <p className="font-semibold mobile:text-base text-sm">{username}</p>
-                          <p className="text-sm mobile:mt-1 md:mt-0">{member}</p>
+                  {group.members.map((member, idx) => {
+                    const username = memberUsernames[member] || "Loading...";
+                    return (
+                      <div key={idx} className="w-full bg-white py-2 p-2 md:px-8 flex flex-col items-center justify-between mb-4">
+                        <div className="w-full flex flex-col mobile:items-start md:flex-row md:items-center justify-between mb-2">
+                          <div>
+                            <p className="font-semibold mobile:text-base text-sm">{username}</p>
+                            <p className="text-sm mobile:mt-1 md:mt-0">{member}</p>
+                          </div>
+                          <button
+                            onClick={() => handleRemoveMember(group.index, member)}
+                            className="ml-auto"
+                          >
+                            <MdOutlineDeleteOutline className={`text-red-500 mobile:text-2xl text-lg ${isLoading || isAdding ? "cursor-not-allowed" : "cursor-pointer "}`} />
+                          </button>
                         </div>
-                        <button
-                          onClick={() => handleRemoveMember(group.index, member)}
-                          className="ml-auto"
-                        >
-                          <MdOutlineDeleteOutline className={`text-red-500 mobile:text-2xl text-lg ${isLoading || isAdding ? "cursor-not-allowed": "cursor-pointer "}`} />
-                        </button>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
                 </section>
               </div>
             ))}

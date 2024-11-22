@@ -4,6 +4,7 @@ import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import { getTruePermissions } from "./Getpermission";
 import Container from "../Container/Container";
 import { Principal } from "@dfinity/principal";
+import { FaInfoCircle } from "react-icons/fa";
 
 
 const Step4 = ({ data, setData, setActiveStep }) => {
@@ -354,8 +355,21 @@ const Step4 = ({ data, setData, setActiveStep }) => {
             </React.Fragment>
           )}
 
+
+
           <div className="flex justify-between items-center bg-white p-4 rounded-lg shadow-md">
-            <span className="text-gray-800">Make DAO Private</span>
+            <span className="flex flex-row text-gray-800 gap-3">
+              Make DAO Private
+              <span className="relative group">
+                <FaInfoCircle className="text-gray-500 cursor-pointer mt-1" />
+                {/* Tooltip */}
+                <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 opacity-0 group-hover:opacity-100 bg-gray-700 text-white text-sm rounded-lg py-2 px-6 w-[250px]">
+                  <div className="absolute left-1/2 transform -translate-x-1/2 bottom-[-6px] w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-t-gray-700 border-l-transparent border-r-transparent"></div>
+                  Please enter how many tokens you want to add to this dao
+                </div>
+              </span>
+            </span>
+
             <label className="flex items-center cursor-pointer">
               <input
                 type="checkbox"
@@ -372,6 +386,7 @@ const Step4 = ({ data, setData, setActiveStep }) => {
               </div>
             </label>
           </div>
+
 
 
           <div className={`${className}__submitButton w-full flex flex-row items-center mobile:justify-end justify-between`}>
@@ -392,6 +407,8 @@ const Step4 = ({ data, setData, setActiveStep }) => {
               Save & Next <FaArrowRightLong />
             </button>
           </div>
+
+
         </div>
 
       </Container>
