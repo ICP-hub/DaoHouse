@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { FaInfoCircle } from "react-icons/fa";
 const DaoPolicy = ({ changePolicy,setChangePolicy, handleInputDaoPolicy, dao, setShowModal, isPrivate, showModal, cancelMakePrivate, confirmMakePrivate, modalMessage, errorMessage, }) => {
   useEffect(()=>{
     setChangePolicy({
@@ -56,8 +57,18 @@ const DaoPolicy = ({ changePolicy,setChangePolicy, handleInputDaoPolicy, dao, se
                     )}
                 </div>
 
-                <div className="mb-4">
-                    <label htmlFor="coolDownPeriod" className="mb-2 font-semibold text-xl">Cool Down Period</label>
+                <div className="mb-4 ">
+           <div className="flex flex-row items-center space-x-2 ">
+                    <label htmlFor="coolDownPeriod" className="mb-2 font-semibold text-xl ">Cool Down Period</label>
+                    <div className="relative group">
+                <FaInfoCircle className="text-gray-500 cursor-pointer mb-1" />
+
+                <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 opacity-0 group-hover:opacity-100 bg-gray-700 text-white text-sm rounded-lg py-2 px-6 w-[250px]">
+                  <div className="absolute left-1/2 transform -translate-x-1/2 bottom-[-6px] w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-t-gray-700 border-l-transparent border-r-transparent"></div>
+                    Please enter how many days a proposal should remain for your dao
+                  </div>
+                </div>
+                </div>
                     <input
                         id="coolDownPeriod"
                         type="number"
@@ -72,7 +83,17 @@ const DaoPolicy = ({ changePolicy,setChangePolicy, handleInputDaoPolicy, dao, se
                 </div>
 
                 <div className="mb-4">
+                <div className="flex flex-row items-center space-x-2 ">
                     <label htmlFor="requiredVotes" className="mb-2 font-semibold text-xl">Required Votes</label>
+                    <div className="relative group">
+                <FaInfoCircle className="text-gray-500 cursor-pointer mb-1" />
+
+                <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 opacity-0 group-hover:opacity-100 bg-gray-700 text-white text-sm rounded-lg py-2 px-6 w-[250px]">
+                  <div className="absolute left-1/2 transform -translate-x-1/2 bottom-[-6px] w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-t-gray-700 border-l-transparent border-r-transparent"></div>
+                  number of votes required to approve your proposal.
+                  </div>
+                </div>
+                </div>
                     <input
                         id="requiredVotes"
                         type="number"
@@ -86,7 +107,16 @@ const DaoPolicy = ({ changePolicy,setChangePolicy, handleInputDaoPolicy, dao, se
                     />
                 </div>
                 <div className="flex justify-between items-center bg-white p-4 rounded-lg shadow-md">
-                    <span className="text-gray-800">Create DAO Private Proposal</span>
+                    <span className="text-gray-800 flex flex-row  gap-3" >Create DAO Private Proposal
+                    <span className="relative group">
+                <FaInfoCircle className="text-gray-500 cursor-pointer mt-1" />
+                {/* Tooltip */}
+                <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 opacity-0 group-hover:opacity-100 bg-gray-700 text-white text-sm rounded-lg py-2 px-6 w-[250px]">
+                  <div className="absolute left-1/2 transform -translate-x-1/2 bottom-[-6px] w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-t-gray-700 border-l-transparent border-r-transparent"></div>
+                  This action will make your DAO Public or Private. 
+                </div>
+              </span>
+                    </span>
                     <label className="flex items-center cursor-pointer">
                         <input
                             type="checkbox"
