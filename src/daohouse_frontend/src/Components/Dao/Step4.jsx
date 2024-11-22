@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./Step4.scss";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
+import { FaInfoCircle } from "react-icons/fa"; // Import from fa package
 import { getTruePermissions } from "./Getpermission";
 import Container from "../Container/Container";
 import { Principal } from "@dfinity/principal";
