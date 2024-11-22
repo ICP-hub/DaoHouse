@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import toast, { Toaster } from 'react-hot-toast';
 import Container from "../Container/Container";
+import { FaInfoCircle } from "react-icons/fa";
 
 const Step2 = ({ setData, setActiveStep, data }) => {
   const [inputData, setInputData] = useState({
@@ -203,12 +204,23 @@ const Step2 = ({ setData, setActiveStep, data }) => {
 
             {/* Token Supply */}
             <div className="w-full lg:w-1/5 flex flex-col gap-1">
-              <label
-                htmlFor="TokenSupply"
-                className="font-semibold mobile:text-base text-xs"
-              >
-                Token Supply <span className="text-red-500">*</span>
-              </label>
+              <div className="flex items-center space-x-2">
+                <label
+                  htmlFor="TokenSupply"
+                  className="font-semibold mobile:text-base text-xs"
+                >
+                  Token Supply <span className="text-red-500">*</span>
+                </label>
+                <div className="relative group">
+                  <FaInfoCircle className="text-gray-500 cursor-pointer" />
+
+                <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 opacity-0 group-hover:opacity-100 bg-gray-700 text-white text-sm rounded-lg py-2 px-6 w-[250px]">
+                  <div className="absolute left-1/2 transform -translate-x-1/2 bottom-[-6px] w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-t-gray-700 border-l-transparent border-r-transparent"></div>
+                    Please enter how many tokens you want to add to this dao
+                  </div>
+                </div>
+                </div>
+                
               <input
                 type="number"
                 id="TokenSupply"
@@ -227,12 +239,23 @@ const Step2 = ({ setData, setActiveStep, data }) => {
 
             {/* Votes Required */}
             <div className="w-full lg:w-1/5 flex flex-col gap-1">
-              <label
-                htmlFor="VotesRequired"
-                className="font-semibold mobile:text-base text-xs"
-              >
-                Votes Required <span className="text-red-500">*</span>
-              </label>
+              <div className="flex items-center space-x-2">
+                <label
+                  htmlFor="VotesRequired"
+                  className="font-semibold mobile:text-base text-xs"
+                >
+                  Votes Required <span className="text-red-500">*</span>
+                </label>
+                <div className="relative group">
+                <FaInfoCircle className="text-gray-500 cursor-pointer" />
+
+                <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 opacity-0 group-hover:opacity-100 bg-gray-700 text-white text-sm rounded-lg py-2 px-6 w-[250px]">
+                  <div className="absolute left-1/2 transform -translate-x-1/2 bottom-[-6px] w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-t-gray-700 border-l-transparent border-r-transparent"></div>
+                  Please enter how many votes are required to accept a proposal for this dao
+                  </div>
+                </div>
+              </div>
+            
               <input
                 type="number"
                 id="VotesRequired"
