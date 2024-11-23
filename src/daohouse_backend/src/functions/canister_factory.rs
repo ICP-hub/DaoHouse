@@ -17,7 +17,7 @@ pub async fn create_new_canister(
         settings: arg.settings,
         sender_canister_version: Some(canister_version()),
     };
-    let cycles: u128 = 100_000_000_000;
+    let cycles: u128 = 1_000_000_000_000;
     call_with_payment128(
         Principal::management_canister(),
         "create_canister",
@@ -41,7 +41,7 @@ pub async fn install_code_in_canister(
     arg: InstallCodeArgument,
     wasm_module: Vec<u8>,
 ) -> CallResult<()> {
-    let cycles: u128 = 100_000_000_000;
+    let cycles: u128 = 1_000_000_000_000;
 
     let extended_arg = InstallCodeArgumentExtended {
         mode: arg.mode,
