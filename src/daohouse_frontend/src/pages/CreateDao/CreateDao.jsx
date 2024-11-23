@@ -152,7 +152,6 @@ const CreateDao = () => {
     const membersArray = Array.from(data.members_permissions) || [];
     const allDaoUsers = step3.members.map(member => Principal.fromText(member));
 
-
     const daoPayload = {
       dao_name: step1.DAOIdentifier || "my dao hai",
       purpose: step1.Purpose || "my proposal hai",

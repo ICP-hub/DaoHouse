@@ -472,7 +472,7 @@ import { useAuth } from "../../connect/useClient";
 import PaymentModal from "./PaymentModal";
 import coinsound from "../../../../daohouse_frontend/src/Sound/coinsound.mp3";
 
-const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, setLoadingNext, handleDaoClick }) => {
+const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, setLoadingNext }) => {
   const [file, setFile] = useState(null);
   const { identity, stringPrincipal, backendActor ,principal } = useAuth()
   const [fileURL, setFileURL] = useState(null);
@@ -561,7 +561,7 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, s
         place_name: q.name,
         min_required_thredshold: BigInt(q.vote),
       }));
-
+      setIsModalOpen(true); setIsModalOpen(true);
       const membersArray = Array.from(data.members_permissions) || [];
       const successAudio = new Audio(coinsound)
       const allDaoUsers = step3.members.map(member => Principal.fromText(member));
@@ -728,8 +728,7 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, s
         },
       }));
 
-      // setIsModalOpen(true);
-      handleDaoClick()
+      setIsModalOpen(true);
 
     } catch (error) {
       toast.error("Error reading image content.");
@@ -899,7 +898,7 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, s
 
         </div>
       </Container>
-      {/*<PaymentModal
+      <PaymentModal
         data={data}
         open={isModalOpen}
         onClose={handleCancel}
@@ -909,7 +908,7 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext, clearLocalStorage, s
         }}
         loading={loadingPayment}
         fileURL={fileURL}
-      />*/}
+      />
     </React.Fragment>
   );
 };

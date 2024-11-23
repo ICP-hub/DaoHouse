@@ -86,6 +86,9 @@ DAOHOUSE_BACKEND_ID=$(dfx canister id daohouse_backend --ic)
 #     followers = vec {
 #         principal \"aaaaa-aa\";
 #     };
+#     all_dao_user = vec {
+#         principal \"aaaaa-aa\";
+#     };
 #     image_canister = principal \"aaaaa-aa\";
 #     members_permissions = vec {
 #         variant { AddMemberToGroupProposal };
@@ -132,8 +135,8 @@ dfx deploy daohouse_backend --argument "(record { payment_recipient = principal 
 
 
 
-#  dfx deploy internet_identity
-#  dfx deploy daohouse_frontend --ic
+ dfx deploy internet_identity
+ dfx deploy daohouse_frontend --ic
 
 # # dfx deploy
 

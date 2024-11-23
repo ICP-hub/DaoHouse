@@ -20,6 +20,7 @@ import { createActor } from "../../../../declarations/icp_ledger_canister";
 import TokenPaymentModal from "./TokenPaymentModal";
 import { useAuth } from "../../connect/useClient";
 import MintNewTokens from "./MintNewTokens";
+import { FaInfoCircle } from "react-icons/fa";
 
 function CreateProposal() {
   const navigate = useNavigate();
@@ -985,9 +986,22 @@ function CreateProposal() {
 
                   {/* Proposal Entry Select */}
                   <div className="mb-6 max-w-full relative overflow-x-hidden">
+                  <div className="flex items-center space-x-2">
                     <label className="block mb-2 font-semibold text-xl">
                       Proposal Entry
+                      
                     </label>
+                    <div className="relative group">
+  <FaInfoCircle className="text-gray-500 cursor-pointer mb-1" />
+  
+  <div className="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 opacity-0 group-hover:opacity-100 bg-gray-700 text-white text-sm rounded-lg py-2 px-4 w-max">
+    <div className="absolute left-[-6px] top-1/2 transform -translate-y-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-t-gray-700 border-l-transparent border-r-transparent"></div>
+    The creator of this proposal has provided valuable insights for the community.
+  </div>
+</div>
+
+                </div>
+
                     <select
                       value={proposalEntry}
                       onChange={(e) => setProposalEntry(e.target.value)}

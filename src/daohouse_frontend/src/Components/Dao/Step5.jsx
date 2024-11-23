@@ -81,8 +81,17 @@ const Step5 = ({ setData, setActiveStep, data }) => {
             </p>
 
             <p className="flex items-center gap-2 w-1/3 font-semibold">
-              <MdOutlineVerifiedUser /> Voting Policy <LuAlertCircle />
-            </p>
+  <MdOutlineVerifiedUser /> Voting Policy
+  <span className="relative group">
+    <LuAlertCircle className="text-gray-500 cursor-pointer" />
+    {/* Tooltip */}
+    <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 opacity-0 group-hover:opacity-100 bg-gray-700 text-white text-sm rounded-lg py-2 px-6 w-[250px]">
+                <div className="absolute left-1/2 transform -translate-x-1/2 bottom-[-6px] w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-t-gray-700 border-l-transparent border-r-transparent"></div>
+                Percentage of Votes required to approve a Proposal
+              </div>
+  </span>
+</p>
+
           </section>
 
           <section className="hidden md:flex bg-white rounded-2xl w-full p-4 gap-4 flex-col">
