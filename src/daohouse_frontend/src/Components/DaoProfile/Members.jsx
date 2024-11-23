@@ -81,7 +81,7 @@ const Members = ({ daoGroups, daoMembers }) => {
               className="cursor-pointer flex flex-row items-center justify-between bg-[#AAC8D6] p-3 rounded-lg"
             >
               <p className="font-semibold big_phone:text-lg text-sm">Council</p>
-              <p className="font-semibold big_phone:text-base text-sm">
+              <p className="font-semibold big_phone:text-base  items-center  text-sm">
                 {councilMembers.length ? councilMembers.length : "Loading..."}{" "}
                 {councilMembers.length
                   ? councilMembers.length === 1
@@ -119,7 +119,7 @@ const Members = ({ daoGroups, daoMembers }) => {
                 <p className="font-semibold big_phone:text-lg text-sm">
                   {group.group_name}
                 </p>
-                <p className="font-semibold big_phone:text-base text-sm">
+                <p className="font-semibold big_phone:text-base items-center translate-x-[-35px] text-sm">
                   {group.group_members.length}{" "}
                   {group.group_members.length === 1 ? "Member" : "Members"}
                 </p>

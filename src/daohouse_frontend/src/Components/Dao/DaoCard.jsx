@@ -207,7 +207,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
   </div>
   <div className="flex-1 mr-5">
     <p className="font-bold text-dark-green">{proposals}</p>
-    <p className="text-sm text-dark-green">Active Proposals</p>
+    <p className="text-sm text-dark-green"> Proposals</p>
   </div>
 </div>
 
