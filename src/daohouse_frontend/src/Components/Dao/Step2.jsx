@@ -204,7 +204,7 @@ const Step2 = ({ setData, setActiveStep, data }) => {
 
             {/* Token Supply */}
             <div className="w-full lg:w-1/5 flex flex-col gap-1">
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1">
                 <label
                   htmlFor="TokenSupply"
                   className="font-semibold mobile:text-base text-xs"
@@ -239,7 +239,7 @@ const Step2 = ({ setData, setActiveStep, data }) => {
 
             {/* Votes Required */}
             <div className="w-full lg:w-1/5 flex flex-col gap-1">
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1">
                 <label
                   htmlFor="VotesRequired"
                   className="font-semibold mobile:text-base text-xs"

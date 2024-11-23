@@ -840,8 +840,8 @@ async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
     )?;
     let daohouse_backend_id = with_state(|state| state.dao.daohouse_canister_id);
     with_state(|state| {
-        if state.dao.members.contains(&api::caller()) {
-            return Err(format!("Member already exist in this dao"));
+        if state.dao.all_dao_user.contains(&api::caller()) {
+            return Err(format!("you are already in this dao"));
         }
         Ok(())
     })?;
@@ -850,9 +850,15 @@ async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
     if !should_ask {
         with_state(|state| {
             state.dao.all_dao_user.push(api::caller());
-            state.dao.members.push(api::caller());
-            state.dao.members_count += 1;
-        });
+            let place_to_join: Option<DaoGroup> = state.dao_groups.get(&args.place_to_join);
+             match place_to_join.clone() {
+                Some(mut groupe_name) => groupe_name.group_members.push(api::caller()),
+                None => {
+                    ic_cdk::println!("Group Name not Found");
+                    return;
+                }
+            };
+           });
 
         let response: CallResult<(Result<(), String>,)> = ic_cdk::call(
             daohouse_backend_id,
@@ -905,7 +911,7 @@ async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
         proposal_description: String::from(crate::utils::REQUEST_JOIN_DAO),
         group_to_join: None,
         proposal_title: String::from(crate::utils::TITLE_ADD_MEMBER),
-        proposal_type: crate::ProposalType::AddMemberToDaoProposal,
+        proposal_type: crate::ProposalType::AddMemberToGroupProposal,
         principal_of_action: Some(api::caller()),
         new_dao_name: None,
         dao_purpose: None,
@@ -915,7 +921,6 @@ async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
         proposal_created_at: None,
         proposal_expired_at: None,
         bounty_task: None,
-        
         required_votes: None,
         cool_down_period: None,
         group_to_remove: None,
