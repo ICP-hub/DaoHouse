@@ -75,7 +75,7 @@ const Step3 = ({ setData, setActiveStep }) => {
     }
     const invalidGroup = list
       .slice(1)
-      .find((group) => group.members.length === 0);
+      .find((group) => group.name !== "General Members" &&  group.members.length === 0);
     if (invalidGroup) {
       toast.error(`Please add at least one member to ${invalidGroup.name}.`);
       return;
@@ -190,13 +190,12 @@ const Step3 = ({ setData, setActiveStep }) => {
           }
 
           if (addMemberIndex === -1) {
-            setGeneralMembersUsernames((prevUsernames) =>
-  prevUsernames.filter(
-    (username) => !username.includes(memberPrincipalId)
-  )
-);
-
-          }
+            setGeneralMembersUsernames((prevUsernames) => [
+                ...prevUsernames,
+                `${username} (${principalId})`,
+            ]);
+        }
+        
 
           setMemberUsernames((prevUsernames) => ({
             ...prevUsernames,
@@ -341,31 +340,33 @@ const Step3 = ({ setData, setActiveStep }) => {
 
   const generalMembers =
     list.find((group) => group.name === "General Members")?.members || [];
-  useEffect(() => {
-    const fetchGeneralMembersUsernames = async () => {
-      const fetchedUsernames = [];
-      for (const member of generalMembers) {
-        try {
-          const principal = Principal.fromText(member);
-          const response = await backendActor.get_profile_by_id(principal);
-          if (response.Ok) {
-            fetchedUsernames.push(
-              `${response.Ok.username} (${principal.toText()})`
-            );
-          } else {
-            fetchedUsernames.push(member);
+    useEffect(() => {
+      const fetchMissingGeneralUsernames = async () => {
+          const fetchedUsernames = [...generalMembersUsernames];
+          for (const member of generalMembers) {
+              if (!memberUsernames[member]) {
+                  try {
+                      const response = await backendActor.get_profile_by_id(
+                          Principal.fromText(member)
+                      );
+                      if (response.Ok) {
+                          fetchedUsernames.push(
+                              `${response.Ok.username} (${member})`
+                          );
+                      } else {
+                          fetchedUsernames.push(member);
+                      }
+                  } catch {
+                      fetchedUsernames.push(member);
+                  }
+              }
           }
-        } catch (error) {
-          fetchedUsernames.push(member);
-        }
-      }
-      setGeneralMembersUsernames(fetchedUsernames);
-    };
-
-    if (generalMembers.length > 0) {
-      fetchGeneralMembersUsernames();
-    }
-  }, [generalMembers, backendActor]);
+          setGeneralMembersUsernames(fetchedUsernames);
+      };
+  
+      fetchMissingGeneralUsernames();
+  }, [generalMembers, backendActor, memberUsernames]);
+  
 
   useEffect(() => {
     // Retrieve saved list from localStorage if available
@@ -439,6 +440,7 @@ const Step3 = ({ setData, setActiveStep }) => {
 
             <button
               onClick={handleGroupAdding}
+              disabled={isLoading || isAdding}
               className={`bg-white  lg:mr-7 md:w-[200px] md:h-[50px] small_phone:gap-2 gap-1  small_phone:  mobile:px-5 p-2 small_phone:text-base text-sm shadow-xl flex items-center rounded-full hover:bg-[#ececec] hover:scale-105 transition ${
                 isLoading || isAdding ? "cursor-not-allowed" : "cursor-pointer"
               }`}
@@ -545,7 +547,8 @@ const Step3 = ({ setData, setActiveStep }) => {
                   );
                 })}
           </div>
-
+          
+          {/*General Members*/}
           <div className="bg-[#E9EAEA] rounded-lg mt-4">
             <section className="w-full py-2 mobile:px-8 p-2 pl-4 flex flex-row items-center justify-between border-b-2 border-[#b4b4b4]">
               <h2 className="font-semibold mobile:text-base text-sm">
@@ -600,12 +603,15 @@ const Step3 = ({ setData, setActiveStep }) => {
                 </div>
               ) : null}
             </section>
-            {generalMembersUsernames.length === 0 ? (
+            {isLoading
+              ? skeletonLoader()
+              : generalMembersUsernames.length === 0 && (addMemberIndex !== -1) ? (
               <p className="text-center text-lg pb-2 text-gray-500">No members added yet.</p>
             ) : (
               generalMembersUsernames.map((fullName, index) => {
                 const [username, principalId] = fullName.split(" (");
                 const formattedPrincipalId = principalId.slice(0, -1);
+                const displayedUsername = memberUsernames[formattedPrincipalId] || "Loading...";
 
                 return (
                   <section
@@ -615,7 +621,7 @@ const Step3 = ({ setData, setActiveStep }) => {
                     <div className="w-full flex items-center justify-between mb-2">
                       <div>
                         <p className="font-semibold mobile:text-base text-sm">
-                          {username}
+                          {displayedUsername}
                         </p>
                         <p className="text-sm">{formattedPrincipalId}</p>
                       </div>

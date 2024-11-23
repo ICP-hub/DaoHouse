@@ -4,6 +4,7 @@ import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import { getTruePermissions } from "./Getpermission";
 import Container from "../Container/Container";
 import { Principal } from "@dfinity/principal";
+import { FaInfoCircle } from "react-icons/fa";
 
 
 const Step4 = ({ data, setData, setActiveStep }) => {
