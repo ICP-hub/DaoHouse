@@ -117,17 +117,20 @@ const Navbar = () => {
   const handleLogin = async () => {
     setIsConnecting(true);
     await login("ii").then(() => window.location.reload());
+    setIsModalOpen(false);
     navigate("/")
   };
 
   const handleNFIDLogin = async () => {
     setIsConnecting(true);
     await login("nfid").then(() => window.location.reload());
+    setIsModalOpen(false);
     navigate("/")
   };
   const handlePlugLogin = async () => {
     setIsConnecting(true);
     await login("plug").then(() => window.location.reload());
+    setIsModalOpen(false);
     navigate("/")
   };
   const handleLogout = async () => {

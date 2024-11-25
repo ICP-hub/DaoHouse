@@ -50,7 +50,7 @@
 //     }
 //     return null;
 //   };
-  
+
 
 //   const backendCanisterId =
 //     process.env.CANISTER_ID_DAOHOUSE_BACKEND ||
@@ -85,7 +85,7 @@
 //     const initializeAuth = async () => {
 //       const authClient = await AuthClient.create(options.createOptions);
 //       await clientInfo(authClient, authClient.getIdentity());
-      
+
 //       // if (window.ic?.plug) {
 //       //   const isPlugConnected = await window.ic.plug.isConnected();
 //       //   if (isPlugConnected) {
@@ -104,18 +104,18 @@
 //       //   } else {
 //       //     console.log("Plug wallet is not connected.");
 //       //   }
-        
+
 //       // }
-        
-      
+
+
 //     };
 
 //     initializeAuth();
 //   }, []);
 
 
-  
-  
+
+
 
 //   const login = async (val) => {
 //     return new Promise(async (resolve, reject) => {
@@ -157,18 +157,18 @@
 //   //     setIsAuthenticated(prev => ({ ...prev, plug: true }));
 //   //     setIdentity(identity);
 //   //     console.log(identity);
-      
+
 //   //     setPrincipal(principal);
 //   //     console.log(principal);
-      
-      
+
+
 
 //   //     // const userActor = await window.ic.plug.createActor({
 //   //     //   canisterId: frontendCanisterId,
 //   //     //   interfaceFactory: DaoFactory
 //   //     // });
 //   //     // console.log("userActor", userActor);
-      
+
 //   //     const backendActor = await window.ic.plug.createActor({
 //   //       canisterId: backendCanisterId,
 //   //       interfaceFactory: BackendidlFactory
@@ -176,7 +176,7 @@
 //   //     console.log("ExtActor", backendActor);
 //   //     setBackendActor(backendActor );
 //   //     console.log(backendActor);
-      
+
 //   //     return backendActor
 //   //     // return userActor
 //   //   } else {
@@ -239,23 +239,23 @@
 //       return;
 //     } else {
 //       console.log("nfid", nfid);
-      
+
 //     }
-  
+
 //     const canisterArray = [process.env.CANISTER_ID_DAOHOUSE_BACKEND];
-  
+
 //     try {
 //       const delegationResult = await nfid.getDelegation({ targets: canisterArray, maxTimeToLive: BigInt(8) * BigInt(3_600_000_000_000) });
-  
-      
+
+
 //       const isLogin = await nfid.getDelegationType();
 //       // const identity = delegationResult.getIdentity();
 //       const agent = new HttpAgent({ identity: delegationResult });
-  
+
 //       if (process.env.DFX_NETWORK !== 'ic') {
 //         await agent.fetchRootKey();
 //       }
-  
+
 //       const backendActor = Actor.createActor({
 //         canisterId: backendCanisterId,
 //         interfaceFactory: BackendidlFactory,
@@ -267,19 +267,19 @@
 //       setIsAuthenticated(true);
 //       setIdentity(identity);
 //       setPrincipal(theUserPrincipal);
-  
+
 //       await clientInfo({ 
 //         isAuthenticated: () => true, 
 //         getIdentity: () => ({ getPrincipal: () => theUserPrincipal })
 //       }, theUserPrincipal);
-  
+
 //     } catch (error) {
 //       console.error("Error during NFID authentication:", error);
 //       setError("Failed to authenticate with NFID. Please check the canister ID and network settings.");
 //     }
 //   };
-  
-  
+
+
 
 //   const createDaoActor = (canisterId) => {
 //     try {
@@ -347,459 +347,6 @@
 
 // export const useAuth = () => useContext(AuthContext);
 
-////***************correct one********** */
-
-// import React, { createContext, useContext, useEffect, useState } from "react";
-// import { AuthClient } from "@dfinity/auth-client";
-// import { AccountIdentifier } from "@dfinity/ledger-icp";
-// import { createActor, idlFactory as BackendidlFactory } from "../../../../declarations/daohouse_backend/index";
-
-// import { HttpAgent, Actor } from "@dfinity/agent";
-// import { NFID } from "@nfid/embed";
-
-// import { useSelector } from "react-redux";
-
-// const AuthContext = createContext();
-
-// const defaultOptions = {
-//   /**
-//    *  @type {import("@dfinity/auth-client").AuthClientCreateOptions}
-//    */
-//   createOptions: {
-//     idleOptions: {
-//       idleTimeout: 1000 * 60 * 30, // set to 30 minutes
-//       disableDefaultIdleCallback: true, // disable the default reload behavior
-//     },
-//   },
-//   /**
-//    * @type {import("@dfinity/auth-client").AuthClientLoginOptions}
-//    */
-//   loginOptionsii: {
-//     identityProvider:
-//       process.env.DFX_NETWORK === "ic"
-//         ? "https://identity.ic0.app/#authorize"
-//         : `http://${process.env.CANISTER_ID_INTERNET_IDENTITY}.localhost:4943`,
-//   },
-//   loginOptionsnfid: {
-//     identityProvider:
-//       process.env.DFX_NETWORK === "ic"
-//         ? `https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`
-//         : `https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`
-//   },
-
-//   loginOptionsbifinity: {
-//     // identityProvider: `https://bifinity.com/authenticate/?applicationName=my-ic-app#authorize`,
-//   },
-// };
-
-
-// export const useAuthClient = (options = defaultOptions) => {
-//   const [authClient, setAuthClient] = useState(null);
-//   const [isAuthenticated, setIsAuthenticated] = useState(false);
-//   const [identity, setIdentity] = useState(null);
-//   const [principal, setPrincipal] = useState(null);
-//   const [backendActor, setBackendActor] = useState(null);
-//   const [stringPrincipal, setStringPrincipal] = useState(null);
-//   const [nfid, setNfid] = useState(null);
-//   const [accountId, setAccountId] = useState(null);
-//   const [accountIdString, setAccountIdString] = useState("");
-//   const [error, setError] = useState(null);
-//   const { isWalletCreated, isWalletModalOpen, isSwitchingWallet, connectedWallet } = useSelector(state => state.utility)
-
-//   useEffect(() => {
-//     // On component mount, create an authentication client
-//     AuthClient.create(options.createOptions).then((client) => {
-//       setAuthClient(client);
-//     });
-//   }, []);
-
-//   useEffect(() => {
-//     if (authClient) {
-//       updateClient(authClient);
-//     }
-//   }, [authClient]);
-
-//   const toHexString = (byteArray) => {
-//     return Array.from(byteArray, (byte) => ("0" + (byte & 0xff).toString(16)).slice(-2)).join("");
-//   };
-
-//   const getPrincipalId = (principal) => {
-//     if (principal) {
-//       const principalIdArray = Array.from(principal?._arr || []);
-//       return Buffer.from(principalIdArray).toString("base64");
-//     }
-//     return null;
-//   };
-  
-
-//   const backendCanisterId =
-//     process.env.CANISTER_ID_DAOHOUSE_BACKEND ||
-//     process.env.BACKEND_CANISTER_CANISTER_ID;
-
-//   const frontendCanisterId =
-//     process.env.CANISTER_ID_DAOHOUSE_FRONTEND ||
-//     process.env.FRONTEND_CANISTER_CANISTER_ID;
-
-//   const clientInfo = async (client, identity) => {
-//     const isAuthenticated = await client.isAuthenticated();
-//     const principal = identity.getPrincipal();
-//     setAuthClient(client);
-//     setIsAuthenticated(isAuthenticated);
-//     setIdentity(identity);
-//     setPrincipal(principal);
-//     setStringPrincipal(principal.toString());
-//     console.log(principal.toString());
-    
-
-//     if (isAuthenticated && identity && principal && principal.isAnonymous() === false) {
-//       const backendActor = createActor(backendCanisterId, { agentOptions: { identity: identity } });
-//       setBackendActor(backendActor);
-//     }
-
-//     return true;
-//   };
-
-//   useEffect(() => {
-//     const initializeAuth = async () => {
-//       const authClient = await AuthClient.create(options.createOptions);
-//       await clientInfo(authClient, authClient.getIdentity());
-//       if (window.ic?.plug) {
-//         const isPlugConnected = await window.ic.plug.isConnected();
-//         if (isPlugConnected) {
-//           if (!window.ic.plug.agent) {
-//             await window.ic.plug.createAgent();
-//           }
-//           const principal = await window.ic.plug.agent.getPrincipal();
-//           const backendActor = await window.ic.plug.createActor({
-//             canisterId: backendCanisterId,
-//             interfaceFactory: BackendidlFactory,
-//           });
-//           setBackendActor(backendActor);
-//           setIdentity(window.ic.plug);
-//           setIsAuthenticated(true);
-//           setPrincipal(principal);
-//         } else {
-//           console.log("Plug wallet is not connected.");
-//         }
-        
-//       }
-        
-      
-//     };
-
-//     initializeAuth();
-//   }, []);
-
-
-  
-  
-
-//   const login = async (provider) => {
-//     return new Promise(async (resolve, reject) => {
-//       try {
-//         if (authClient.isAuthenticated() && !(await authClient.getIdentity().getPrincipal().isAnonymous())) {
-//           updateClient(authClient);
-//           resolve(authClient);
-//         } else {
-//           const opt = getLoginOptions(provider);
-//           authClient.login({
-//             ...opt,
-//             onError: (error) => reject(error),
-//             onSuccess: () => {
-//               updateClient(authClient);
-//               resolve(authClient);
-//             },
-//           });
-//         }
-//       } catch (error) {
-//         console.error('Login error:', error);
-//         reject(error);
-//       }
-//     });
-//   };
-
-//   const getLoginOptions = (provider) => {
-//     switch (provider) {
-//       case "ii":
-//         return options.loginOptionsii;
-//       case "nfid":
-//         return options.loginOptionsnfid;
-//       case "bifinity":
-//         return options.loginOptionsbifinity;
-//       default:
-//         throw new Error(`Unsupported provider: ${provider}`);
-//     }
-//   };
-
-//   const updateClient = async (client) => {
-//     try {
-//       const isAuthenticated = await client.isAuthenticated();
-//       setIsAuthenticated(isAuthenticated);
-
-//       const identity = client.getIdentity();
-//       setIdentity(identity);
-
-//       const principal = identity.getPrincipal();
-//       setPrincipal(principal.toString());
-//       // console.log('principal', principal.toString());
-
-//       const accountId = AccountIdentifier.fromPrincipal({ principal });
-//       setAccountId(toHexString(accountId.bytes));
-//       setAccountIdString(toHexString(accountId.bytes));
-
-//       const agent = new HttpAgent({ identity });
-
-//       const backendActor = createActor(process.env.CANISTER_ID_DFINANCE_BACKEND, { agent });
-//       setBackendActor(backendActor);
-
-//       // Ensure backendActor is initialized before making calls
-//     if (backendActor) {
-//       await checkUser(principal.toString());
-//     } else {
-//       console.error('Backend actor initialization failed.');
-//     }
-
-//     } catch (error) {
-//       console.error("Authentication update error:", error);
-//     }
-//   };
-
-//   const createLedgerActor = (canisterId, IdlFac) => {
-//     const agent = new HttpAgent({ identity });
-
-//     if (process.env.DFX_NETWORK !== 'production') {
-//       agent.fetchRootKey().catch(err => {
-//         console.warn('Unable to fetch root key. Check to ensure that your local replica is running');
-//         console.error(err);
-//       });
-//     }
-//     return Actor.createActor(IdlFac, { agent, canisterId });
-//   };
-
-//   // Function to refresh login without user interaction
-//   const reloadLogin = async () => {
-//     try {
-//       if (authClient.isAuthenticated() && !(await authClient.getIdentity().getPrincipal().isAnonymous())) {
-//         updateClient(authClient);
-//       }
-//     } catch (error) {
-//       console.error("Reload login error:", error);
-//     }
-//   };
-
-//   const checkUser = async (user) => {
-//     if (!backendActor) {
-//       throw new Error("Backend actor not initialized");
-//     }
-//     try {
-//       const result = await backendActor.check_user(user);
-//       return result;
-//     } catch (error) {
-//       console.error('Error checking user:', error);
-//       throw error;
-//     }
-//   };
-
-//   const signInPlug = async () => {
-//     if (!window.ic?.plug) {
-//       window.open("https://plugwallet.ooo", "_blank");
-//       return;
-//     }
-
-//     const whitelist = [frontendCanisterId, backendCanisterId];
-//     const hasAllowed = await window.ic.plug.requestConnect({ whitelist });
-
-//     if (!hasAllowed) {
-//       console.error("Connection was refused.");
-//       return;
-//     }
-//     try {
-//       const principal = await window.ic.plug.agent.getPrincipal();
-//       const backendActor = await window.ic.plug.createActor({
-//         canisterId: backendCanisterId,
-//         interfaceFactory: BackendidlFactory,
-//       });
-
-//       setBackendActor(backendActor);
-//       setIdentity(principal);
-//       setIsAuthenticated(true);
-//       setPrincipal(principal);
-
-//       await clientInfo({
-//         isAuthenticated: () => true,
-//         getIdentity: () => ({ getPrincipal: () => principal })
-//       }, principal);
-
-//       console.log("Integration actor initialized successfully.");
-//     } catch (e) {
-//       console.error("Failed to initialize the actor with Plug.", e);
-//     }
-//   };
-
-//   useEffect(() => {
-//     const initNFID = async () => {
-//       try {
-//         const nfIDInstance = await NFID.init({
-//           application: {
-//             name: "NFID Login",
-//             logo: "https://dev.nfid.one/static/media/id.300eb72f3335b50f5653a7d6ad5467b3.svg"
-//           }
-//         });
-//         setNfid(nfIDInstance);
-//       } catch (error) {
-//         console.error("Error initializing NFID:", error);
-//         setError("Failed to initialize NFID.");
-//       }
-//     };
-
-//     initNFID();
-//   }, []);
-
-//   // const signInNFID = async () => {
-//   //   if (!nfid) {
-//   //     console.error("NFID is not initialized.");
-//   //     return;
-//   //   }
-  
-//   //   const canisterArray = [process.env.CANISTER_ID_INTERNET_IDENTITY];
-    
-//   //   try {
-//   //     const delegationResult = await nfid.getDelegation({ targets: canisterArray });
-//   //     const theUserPrincipal = Principal.from(delegationResult.getPrincipal()).toText();
-//   //     console.log("The User principal", theUserPrincipal);
-  
-//   //     // Create an identity from the delegation result
-//   //     // const identity = delegationResult.getIdentity();
-//   //     const agent = new HttpAgent({ identity });
-  
-//   //     // Fetch root key if in development
-//   //     if (process.env.DFX_NETWORK !== 'ic') {
-//   //       await agent.fetchRootKey();
-//   //     }
-  
-//   //     // Create the backend actor
-//   //     const backendActor = Actor.createActor({
-//   //       canisterId: backendCanisterId,
-//   //       interfaceFactory: BackendidlFactory,
-//   //     });
-
-      
-  
-//   //     // Update state with authenticated user details
-//   //     setBackendActor(backendActor);
-//   //     setIdentity(theUserPrincipal);
-//   //     setIsAuthenticated(true);
-//   //     setPrincipal(theUserPrincipal);
-  
-//   //     // Optionally, call `clientInfo` to update authentication client state
-//   //     await clientInfo({ 
-//   //       isAuthenticated: () => true, 
-//   //       getIdentity: () => ({ getPrincipal: () => theUserPrincipal })
-//   //     }, theUserPrincipal);
-  
-//   //     console.log("NFID authentication successful.");
-//   //   } catch (error) {
-//   //     console.error("Error during NFID authentication:", error);
-//   //     setError("Failed to authenticate with NFID. Please check the canister ID and network settings.");
-//   //   }
-//   // };
-  
-
-//   const createDaoActor = (canisterId) => {
-//     try {
-//       const agent = new HttpAgent({ identity });
-
-//       if (process.env.DFX_NETWORK !== 'production') {
-//         agent.fetchRootKey().catch(err => {
-//           console.warn('Unable to fetch root key. Check to ensure that your local replica is running');
-//           console.error(err);
-//         });
-//       }
-
-//       return Actor.createActor(DaoFactory, { agent, canisterId });
-//     } catch (err) {
-//       console.error("Error creating DAO actor:", err);
-//     }
-//   };
-
-//   const disconnectPlug = async () => {
-//     if (window.ic?.plug) {
-//       try {
-//         await window.ic.plug.disconnect();
-//         setIsAuthenticated(false);
-//         setIdentity(null);
-//         setPrincipal(null);
-//         setBackendActor(null);
-//         console.log("Disconnected from Plug wallet.");
-//       } catch (error) {
-//         console.error("Failed to disconnect from Plug wallet:", error);
-//       }
-//     }
-//   };
-
-//   const logout = async () => {
-//     try {
-//       await authClient.logout();
-//       setIsAuthenticated(false);
-//       setIdentity(null);
-//       setPrincipal(null);
-//       setBackendActor(null);
-//       setAccountId(null);
-//       if(isSwitchingWallet == false){
-//         window.location.reload();
-//       }
-      
-//     } catch (error) {
-//       console.error("Logout error:", error);
-//     }
-//   };
-
-//   return {
-//     updateClient,
-//     authClient,
-//     principal,
-//     accountId,
-//     createLedgerActor,
-//     reloadLogin,
-//     accountIdString,
-//     // fetchReserveData, 
-//     checkUser,
-//     // getAllUsers,
-//     login,
-//     logout,
-//     authClient,
-//     signInPlug,
-//     // signInNFID,
-//     isAuthenticated,
-//     identity,
-//     principal,
-//     getPrincipalId,
-//     frontendCanisterId,
-//     backendCanisterId,
-//     backendActor,
-//     stringPrincipal,
-//     createDaoActor,
-//   };
-// };
-
-// export const AuthProvider = ({ children }) => {
-//   const auth = useAuthClient();
-
-//   if (!auth.authClient || !auth.backendActor) {
-//     return null; // Or render a loading indicator
-//   }
-
-//   return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
-// };
-
-// // Hook to access authentication context
-// export const useAuth = () => useContext(AuthContext);
-
-
-
-
-
-
 import { AuthClient } from "@dfinity/auth-client";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { HttpAgent, Actor } from "@dfinity/agent";
@@ -842,7 +389,7 @@ const defaultOptions = {
   },
   loginOptionsPlug: {
     whitelist: [process.env.CANISTER_ID_DAOHOUSE_BACKEND], // Whitelist the backend canister
-              
+
     host:
       process.env.DFX_NETWORK === "ic"
         ? "https://ic0.app"
@@ -854,12 +401,12 @@ const defaultOptions = {
 export const useAuthClient = (options = defaultOptions) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [accountIdString, setAccountIdString] = useState("");
-  
+  const [stringPrincipal, setStringPrincipal] = useState(null);
   const [authClient, setAuthClient] = useState(null);
   const [identity, setIdentity] = useState(null);
   const [principal, setPrincipal] = useState(null);
-  console.log("principal state",principal);
-  
+  console.log("principal state", principal);
+
   const [backendActor, setBackendActor] = useState(null);
   const [accountId, setAccountId] = useState(null);
   const [connected, setConnected] = useState(false);
@@ -875,28 +422,28 @@ export const useAuthClient = (options = defaultOptions) => {
       setAuthClient(client);
 
       const savedPrincipal = localStorage.getItem("plugPrincipal");
-console.log("saved",savedPrincipal);
+      console.log("saved", savedPrincipal);
 
       if (savedPrincipal) {
         try {
           // Check if Plug is already connected
           const isPlugConnected = await window.ic?.plug?.isConnected();
-          console.log("plug ",isPlugConnected);
-          
+          console.log("plug ", isPlugConnected);
+
           if (isPlugConnected) {
             // Reconnect to Plug and fetch the principal again
             const plugPrincipal = await window.ic.plug.agent.getPrincipal();
-            console.log("plug Principal",plugPrincipal);
-            
-            
+            console.log("plug Principal", plugPrincipal);
+
+
             setPrincipal(plugPrincipal.toString());
             setIsAuthenticated(true);
 
-  
+
             const accountId = AccountIdentifier.fromPrincipal({
               principal: plugPrincipal,
             });
-console.log("account id",accountId);
+            console.log("account id", accountId);
 
             // Update accountId and backendActor
             setAccountId(toHexString(accountId.bytes));
@@ -907,7 +454,7 @@ console.log("account id",accountId);
               interfaceFactory: idlFactory,
             });
             setBackendActor(backendActor);
-console.log("backendactir in useauth",backendActor);
+            console.log("backendactir in useauth", backendActor);
 
             console.log(
               "Reconnected to Plug. Principal:",
@@ -928,22 +475,22 @@ console.log("backendactir in useauth",backendActor);
     AuthClient.create(options.createOptions).then(async (client) => {
       setAuthClient(client);
       const savedPrincipal = localStorage.getItem("plugPrincipal");
-   console.log("ajjsdlkajsdlkjasldkjaslkdjlaksdj",savedPrincipal);
-   
-     
-       
-        if (savedPrincipal) {
-          console.log("in");
-          setIsAuthenticated(true);
-          setPrincipal(savedPrincipal);
-           // Set to true only if authenticated
-        } else {
-          // Clear stored principal if not authenticated
-          console.log("out");
-          
-          localStorage.removeItem("plugPrincipal");
-        }
-      
+      console.log("ajjsdlkajsdlkjasldkjaslkdjlaksdj", savedPrincipal);
+
+
+
+      if (savedPrincipal) {
+        console.log("in");
+        setIsAuthenticated(true);
+        setPrincipal(savedPrincipal);
+        // Set to true only if authenticated
+      } else {
+        // Clear stored principal if not authenticated
+        console.log("out");
+
+        localStorage.removeItem("plugPrincipal");
+      }
+
     });
   }, []);
 
@@ -959,9 +506,9 @@ console.log("backendactir in useauth",backendActor);
       ("0" + (byte & 0xff).toString(16)).slice(-2)
     ).join("");
   };
-    const createDaoActor = (canisterId) => {
+  const createDaoActor = (canisterId) => {
     try {
-      const agent = new HttpAgent({ identity });      
+      const agent = new HttpAgent({ identity });
 
       if (process.env.DFX_NETWORK !== 'production') {
         agent.fetchRootKey().catch(err => {
@@ -975,7 +522,7 @@ console.log("backendactir in useauth",backendActor);
       console.error("Error creating DAO actor:", err);
     }
   };
-  
+
   const login = async (provider) => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1000,7 +547,7 @@ console.log("backendactir in useauth",backendActor);
                   process.env.DFX_NETWORK === "ic"
                     ? "https://ic0.app"
                     : "http://localhost:3000",
-                     // Use correct host for local vs mainnet
+                // Use correct host for local vs mainnet
               });
               const connected = (async () => {
                 const result = await window.ic.plug.isConnected();
@@ -1010,8 +557,8 @@ console.log("backendactir in useauth",backendActor);
               if (connected) {
                 // Set up Plug agent
                 await window.ic.plug.createAgent({
-                  whitelist: [process.env.CANISTER_ID_DAOHOUSE_BACKEND,"dmalx-m4aaa-aaaaa-qaanq-cai","dxfxs-weaaa-aaaaa-qaapa-cai","gl6nx-5maaa-aaaaa-qaaqq-cai"], // Whitelist the backend canister
-                host:
+                  whitelist: [process.env.CANISTER_ID_DAOHOUSE_BACKEND, "dmalx-m4aaa-aaaaa-qaanq-cai", "dxfxs-weaaa-aaaaa-qaapa-cai", "gl6nx-5maaa-aaaaa-qaaqq-cai"], // Whitelist the backend canister
+                  host:
                     process.env.DFX_NETWORK === "ic"
                       ? "https://ic0.app"
                       : "http://localhost:3000"
@@ -1031,30 +578,30 @@ console.log("backendactir in useauth",backendActor);
                 localStorage.setItem("plugPrincipal", plugPrincipal.toString());
                 setAccountId(toHexString(accountId.bytes));
                 setAccountIdString(toHexString(accountId.bytes));
-    console.log("account Id",accountId);
+                console.log("account Id", accountId);
 
-    const storedPrincipal = localStorage.getItem("plugPrincipal");
-    if (storedPrincipal) {
-      setPrincipal(storedPrincipal);
-    } else {
-      console.warn("Plug Principal not found in localStorage.");
-    }
-    
+                const storedPrincipal = localStorage.getItem("plugPrincipal");
+                if (storedPrincipal) {
+                  setPrincipal(storedPrincipal);
+                } else {
+                  console.warn("Plug Principal not found in localStorage.");
+                }
 
-    
+
+
                 // Create the backend actor using the IDL factory
                 const backendActor = await window.ic.plug.createActor({
                   canisterId: process.env.CANISTER_ID_DAOHOUSE_BACKEND, // Backend canister ID
                   interfaceFactory: idlFactory, // IDL factory for backend canister
                 });
- 
+
                 setBackendActor(backendActor);
 
                 console.log("backendActor in plug function", backendActor);
                 setIsAuthenticated(true); // Manually set to true after successfully retrieving principal
                 if (backendActor) {
                   console.log("sssss");
-                  
+
                   await checkUser(plugPrincipal.toString());
                 }
                 // updateClient(authClient); // Update the client session
@@ -1131,6 +678,7 @@ console.log("backendactir in useauth",backendActor);
 
       const principal = identity.getPrincipal();
       setPrincipal(principal.toString());
+      setStringPrincipal(principal.toString());
 
       const accountId = AccountIdentifier.fromPrincipal({ principal });
       setAccountId(toHexString(accountId.bytes));
@@ -1226,8 +774,8 @@ console.log("backendactir in useauth",backendActor);
       throw new Error("Backend actor not initialized");
     }
     try {
-      console.log("backend actor in try",backendActor);
-      
+      console.log("backend actor in try", backendActor);
+
       const result = await backendActor?.check_user_existance(user);
       console.log("check_user result:", result);
       return result;
@@ -1237,11 +785,11 @@ console.log("backendactir in useauth",backendActor);
     }
   };
 
- 
+
   const frontendCanisterId =
     process.env.CANISTER_ID_DAOHOUSE_FRONTEND ||
     process.env.FRONTEND_CANISTER_CANISTER_ID || process.env.CANISTER_ID;
-  
+
 
   return {
     isAuthenticated,
@@ -1256,10 +804,11 @@ console.log("backendactir in useauth",backendActor);
     createLedgerActor,
     reloadLogin,
     accountIdString,
-  createDaoActor,
+    createDaoActor,
     checkUser,
     frontendCanisterId,
-   
+    stringPrincipal,
+
   };
 };
 
