@@ -110,7 +110,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
       }
   
       const daohouseBackendId = Principal.fromText(canisterIdString);
-      const place_to_join = "Council";
+      const place_to_join = "General Members";
   
       const joinDaoPayload = {
         place_to_join: place_to_join,
@@ -207,7 +207,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
   </div>
   <div className="flex-1 mr-5">
     <p className="font-bold text-dark-green">{proposals}</p>
-    <p className="text-sm text-dark-green">Active Proposals</p>
+    <p className="text-sm text-dark-green"> Proposals</p>
   </div>
 </div>
 

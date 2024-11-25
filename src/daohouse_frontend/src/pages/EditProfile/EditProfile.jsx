@@ -10,7 +10,7 @@ import EditTags from "../../Components/EditProfile/EditTags";
 import EditPersonalLinksAndContactInfo from "./EditPersonalLinksAndContactInfo";
 import BigCircleAnimation from "../../Components/Ellipse-Animation/BigCircle/BigCircleAnimation.json";
 import SmallCircleAnimation from "../../Components/Ellipse-Animation/SmallCircle/SmallCircleAnimation.json";
-import SuccessModal from "../../Components/EditProfile/SuccessModal";
+// import SuccessModal from "../../Components/EditProfile/SuccessModal";
 import BigCircleComponent from "../../Components/Ellipse-Animation/BigCircle/BigCircleComponent";
 import SmallCircleComponent from "../../Components/Ellipse-Animation/SmallCircle/SmallCircleComponent";
 import MediumCircleComponent from "../../Components/Ellipse-Animation/MediumCircle/MediumCircleComponent";
@@ -454,26 +454,27 @@ const EditProfile = () => {
                 >
                   Discard
                 </button>
+                <button
+                onClick={handleSaveChangesClick}
+                className="py-2 px-10 border border-[#0E3746] bg-[#0E3746] text-white  hover:border-[#0E37464D] rounded-[27px] transition duration-200 ease-in-out flex items-center justify-center gap-2"
+                disabled={loading || isSaveDisabled()} // Disable when loading
+                >
                 {loading ? (
-                  <CircularProgress />
+                <CircularProgress size={20} sx={{ color: 'white' }} />
                 ) : (
-                  <button
-                    onClick={handleSaveChangesClick}
-                    className="py-2 px-10 border border-[#0E3746] bg-[#0E3746] text-white hover:bg-[#0E37464D] hover:border-[#0E37464D] rounded-[27px] transition duration-200 ease-in-out"
-                    disabled={isSaveDisabled()}
-                 >
-                    Save 
-                  </button>
+                "Save"
                 )}
+               </button>
+
               </div>
             </div>
           </div>
         </div>
       </Container>
-      <SuccessModal isOpen={isModalOpen} onClose={closeModal} />
+      {/* <SuccessModal isOpen={isModalOpen} onClose={closeModal} />
       {isModalOpen && (
         <div className="fixed inset-0 bg-black opacity-40 z-40"></div>
-      )}
+      )} */}
     </div>
   );
 };

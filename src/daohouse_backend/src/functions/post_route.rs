@@ -1,7 +1,7 @@
 // use std::collections::BTreeMap;
 use crate::{with_state, Analytics, DaoDetails, DaoInput, Pagination};
 use candid::{Nat, Principal};
-use ic_cdk::{api::{self, call::CallResult}, call, update};
+use ic_cdk::{api, update};
 use icrc_ledger_types::{
     icrc1::{account::Account, transfer::BlockIndex},
     icrc2::transfer_from::{TransferFromArgs, TransferFromError},
@@ -61,7 +61,6 @@ fn get_analytics() -> Result<Analytics, String> {
 
 // ledger handlers
 async fn transfer(tokens: Nat, user_principal: Principal) -> Result<BlockIndex, String> {
-    // let payment_recipient = with_state(|state| state.borrow_mut().get_payment_recipient());
     let canister_meta_data = with_state(|state| state.canister_data.get(&0));
 
     let payment_recipient = match canister_meta_data {
@@ -97,34 +96,9 @@ async fn transfer(tokens: Nat, user_principal: Principal) -> Result<BlockIndex, 
     .map_err(|e| format!("ledger transfer error {:?}", e))
 }
 
-// make payment
 #[update(guard = prevent_anonymous)]
 async fn make_payment_and_create_dao(dao_details:DaoInput)->Result<String, String> {
-    
     let required_balance: Nat = Nat::from(10_000_000u64);
-    let account = Account {
-        owner: api::caller(),
-        subaccount: None,
-    };
-    let canister_id = Principal::from_text("ryjl3-tyaaa-aaaaa-aaaba-cai")
-        .expect("Could not decode the principal if ICP ledger.");
-    
-    let response: CallResult<(Nat,)> = call(canister_id, "icrc1_balance_of", (account,)).await;
-
-    ic_cdk::println!("response : {:?} ", response);
-
-    let (balance,) = match response {
-        Ok(balance_tuple) => balance_tuple,
-        Err(error) => return Err(format!("Failed to get balance: {:?}", error)),
-    };
-
-    ic_cdk::println!("balance : {} ", balance);
-
-    if balance < required_balance {
-      ic_cdk::println!("come 2");
-      return Err(String::from("You don't have .1 ICP for creating this Dao"));
-    }
-    
     let result: Result<Nat, String> = transfer(required_balance, api::caller()).await;
     match result {
         Err(error) => Err(error),
