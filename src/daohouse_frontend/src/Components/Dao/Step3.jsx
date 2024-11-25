@@ -21,7 +21,7 @@ const Step3 = ({ setData, setActiveStep }) => {
   const [memberUsernames, setMemberUsernames] = useState({});
   const [updatedGroupName, setUpdatedGroupName] = useState("");
   const [memberName, setMemberName] = useState("");
-  const { backendActor, stringPrincipal } = useAuth();
+  const { backendActor, stringPrincipal,principal } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
 
@@ -323,6 +323,7 @@ const Step3 = ({ setData, setActiveStep }) => {
     const council = initialList.find((group) => group.name === "Council");
 
     // Check if the current user is already in the council
+    let stringPrincipal = principal.toString();
     if (council && !council.members.includes(stringPrincipal)) {
       const updatedList = initialList.map((group) => {
         if (group.name === "Council") {

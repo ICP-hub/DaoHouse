@@ -28,7 +28,7 @@ const EditProfile = () => {
   const { userProfile, fetchUserProfile } = useUserProfile();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { backendActor, frontendCanisterId, identity, principal } = useAuth();
-  console.log('frontendCanisterId:', frontendCanisterId); // Debugging line
+ 
 
   const [loading, setLoading] = useState(false);
 
