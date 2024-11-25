@@ -35,7 +35,7 @@ DEFAULT_ACCOUNT_ID=$(dfx --identity default ledger account-id)
 
 # CANISTER IDS
 ASSET_CANISTER_ID=$(dfx canister id ic_asset_handler --ic)
-DAO_CANISTER_ID=$(dfx canister id dao_canister)
+DAO_CANISTER_ID=$(dfx canister id dao_canister --ic)
 
 
 
@@ -85,6 +85,9 @@ DAOHOUSE_BACKEND_ID=$(dfx canister id daohouse_backend --ic)
 #     followers = vec {
 #         principal \"aaaaa-aa\";
 #     };
+#     all_dao_user = vec {
+#         principal \"aaaaa-aa\";
+#     };
 #     image_canister = principal \"aaaaa-aa\";
 #     members_permissions = vec {
 #         variant { AddMemberToGroupProposal };
@@ -132,7 +135,7 @@ DAOHOUSE_BACKEND_ID=$(dfx canister id daohouse_backend --ic)
 
 
 
- dfx deploy internet_identity 
+ dfx deploy internet_identity
  dfx deploy daohouse_frontend --ic
 
 # # dfx deploy

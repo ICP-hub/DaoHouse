@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import SearchProposals from "../Proposals/SearchProposals";
-import { IoFilterSharp } from "react-icons/io5";
 import { LuSearch } from "react-icons/lu";
 import { useAuth } from "../utils/useAuthClient";
 import Avatar from "../../../assets/Avatar.png";
@@ -102,10 +101,7 @@ const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
                 className="border-2 border-[#AAC8D6] w-full max-w-lg"
               />
             </div>
-            <button className="bg-white text-[16px] text-[#05212C] gap-1 md:px-7 shadow-xl py-3 px-3 flex items-center space-x-4 rounded-2xl">
-              <IoFilterSharp />
-              <span className="hidden md:block">Filter</span>
-            </button>
+           
           </span>
         </div>
         <div className="w-full border-t border-[#0000004D] md:my-4 mb-3"></div>

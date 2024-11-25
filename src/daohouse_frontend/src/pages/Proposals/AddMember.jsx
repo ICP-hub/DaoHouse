@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Principal } from "@dfinity/principal";
+import { FaInfoCircle } from "react-icons/fa";
 
 const AddMember = ({ addMember, handleInputAddMember, groupNames }) => {
     const [principalError, setPrincipalError] = useState("");
@@ -23,7 +24,17 @@ const AddMember = ({ addMember, handleInputAddMember, groupNames }) => {
     return (
         <>
             <div className="mb-4">
-                <label className="block mb-2 font-semibold text-xl">Group Name</label>
+                <div className="flex items-center space-x-2  ">
+                    <label className="block mb-2 font-semibold text-xl">Group Name</label>
+                    <div className="relative group">
+                    <FaInfoCircle className="text-gray-500 cursor-pointer mb-1" />
+
+                    <div className="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 opacity-0 group-hover:opacity-100 bg-gray-700 text-white text-sm rounded-lg py-2 px-4 w-max">
+    <div className="absolute left-[-6px] top-1/2 transform -translate-y-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-t-gray-700 border-l-transparent border-r-transparent"></div>
+  Select a group to add Member
+  </div>
+  </div>
+                </div>
                 <select
                     name="group_name"
                     required
@@ -32,6 +43,7 @@ const AddMember = ({ addMember, handleInputAddMember, groupNames }) => {
                     onChange={handleInputAddMember}
                 >
                     <option value="" disabled>Select Group Name</option>
+
                     {groupNames.map((name, index) => (
                         <option key={index} value={name}>
                             {name}

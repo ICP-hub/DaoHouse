@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaArrowRightLong } from "react-icons/fa6";
 import toast from 'react-hot-toast';
 import Container from "../Container/Container";
+import { FaInfoCircle } from "react-icons/fa";
 
 const Step1 = ({ setData, setActiveStep, data }) => {
   const [inputData, setInputData] = useState({
@@ -186,25 +187,34 @@ const Step1 = ({ setData, setActiveStep, data }) => {
 
           {/* Setup Period */}
           <div className="flex flex-col">
-            <label
-              htmlFor="SetUpPeriod"
-              className="font-semibold mobile:text-base text-sm"
-            >
-              Setup Period (in days) <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="number"
-              id="SetUpPeriod"
-              name="SetUpPeriod"
-              value={inputData.SetUpPeriod}
-              placeholder="Enter setup period in days"
-              className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm ${errors.SetUpPeriod
-                ? "border border-red-500"
-                : "border border-gray-300"
-                }`}
-              onChange={(e) => changePeriod(e.target.value)}
-              min="1"
-            />
+            <div className="flex items-center space-x-2">
+              <label
+                htmlFor="SetUpPeriod"
+                className="font-semibold mobile:text-base text-sm"
+              >
+                Setup Period (in days) <span className="text-red-500">*</span>
+              </label>
+              <div className="relative group">
+                <FaInfoCircle className="text-gray-500 cursor-pointer" />
+
+                <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 opacity-0 group-hover:opacity-100 bg-gray-700 text-white text-sm rounded-lg py-2 px-6 w-[250px]">
+                  <div className="absolute left-1/2 transform -translate-x-1/2 bottom-[-6px] w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-t-gray-700 border-l-transparent border-r-transparent"></div>
+                    Please enter how many days a proposal should remain for your dao
+                  </div>
+                </div>
+            </div>
+            
+              <input
+                type="number"
+                id="SetUpPeriod"
+                name="SetUpPeriod"
+                value={inputData.SetUpPeriod}
+                placeholder="Enter setup period in days"
+                className={`rounded-lg mobile:p-3 p-2 mobile:text-base text-sm ${errors.SetUpPeriod ? "border border-red-500" : "border border-gray-300"}`}
+                onChange={(e) => changePeriod(e.target.value)}
+                min="1"
+              />
+
             {errors.SetUpPeriod && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.SetUpPeriod}
