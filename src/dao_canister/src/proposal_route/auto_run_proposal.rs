@@ -271,17 +271,13 @@ pub fn remove_member_from_dao(state: &mut State, proposal: &Proposals) {
 pub fn add_member_to_group(state: &mut State, proposal: &Proposals) {
     if let Some(group_to_join) = &proposal.group_to_join {
         if let Some(mut dao_group) = state.dao_groups.get(group_to_join) {
-            if !dao_group
-                .group_members
-                .contains(&proposal.principal_of_action)
+            if !dao_group.group_members.contains(&proposal.principal_of_action)
             {
                 if !state.dao.all_dao_user.contains(&proposal.principal_of_action){
                     state.dao.all_dao_user.push(proposal.principal_of_action.clone());
                 }
                 dao_group.group_members.push(proposal.principal_of_action);
-                state
-                    .dao_groups
-                    .insert(dao_group.group_name.clone(), dao_group);
+                state.dao_groups.insert(dao_group.group_name.clone(), dao_group);
             }
         }
     }
