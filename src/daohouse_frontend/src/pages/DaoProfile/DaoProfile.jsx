@@ -194,7 +194,7 @@ const DaoProfile = () => {
   const confirmJoinDao = async () => {
     setLoading(true);
     try {
-      const place_to_join = "Council";
+      const place_to_join = "General Members";
 
       const joinDaoPayload = {
         place_to_join: place_to_join,
