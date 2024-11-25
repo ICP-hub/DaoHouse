@@ -533,7 +533,7 @@ const DaoProfile = () => {
                     : "text-[#0E37464D]"
                 }`}
               >
-                Members
+                Members&Groups
               </button>
               <button
                 onClick={(e) => {
