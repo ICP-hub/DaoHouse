@@ -1,0 +1,12 @@
+for get the real icp on mainnet
+
+dfx ledger account-id --of-principal <principal>
+
+dfx ledger account-id --of-principal galj5-aqtvb-wu4oy-3ux2b-ryo7m-oivtq-qww3q-k6l4z-ehedb-ih7dr-5qe
+
+
+it will return new parse key  than paste it in 
+
+dfx ledger --network ic balance <here>
+
+dfx ledger --network ic balance 8f8347dc2ff806714494ff64adfb8e5e72d9f3703fd94af0a9add2cdf5d4629b

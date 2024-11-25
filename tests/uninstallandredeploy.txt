@@ -1,0 +1,8 @@
+uninstall mainnet code => 
+
+dfx canister uninstall-code <canister_id> --network ic
+
+
+send cycle to mainnet canister =>
+
+dfx cycles top-up 72zxz-aaaaa-aaaap-aknqq-cai 8000000000000 --network ic

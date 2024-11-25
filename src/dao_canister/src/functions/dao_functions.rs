@@ -836,9 +836,10 @@ async fn proposal_to_create_general_purpose(args: CreateGeneralPurpose) -> Resul
 async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
     crate::guards::guard_check_if_proposal_exists(
         api::caller(),
-        ProposalType::AddMemberToDaoProposal,
+        ProposalType::AddMemberToGroupProposal,
     )?;
     let daohouse_backend_id = with_state(|state| state.dao.daohouse_canister_id);
+
     with_state(|state| {
         if state.dao.all_dao_user.contains(&api::caller()) {
             return Err(format!("you are already in this dao"));
@@ -848,17 +849,21 @@ async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
 
     let should_ask = with_state(|state| state.dao.ask_to_join_dao);
     if !should_ask {
-        with_state(|state| {
-            state.dao.all_dao_user.push(api::caller());
-            let place_to_join: Option<DaoGroup> = state.dao_groups.get(&args.place_to_join);
-             match place_to_join.clone() {
-                Some(mut groupe_name) => groupe_name.group_members.push(api::caller()),
-                None => {
-                    ic_cdk::println!("Group Name not Found");
-                    return;
-                }
-            };
-           });
+        let data: Result<(), &str> = with_state(|state| {
+            if let Some(mut group) = state.dao_groups.get(&args.place_to_join) {
+                state.dao.all_dao_user.push(api::caller());
+                group.group_members.push(api::caller());
+                state.dao_groups.insert(args.place_to_join.clone(), group);
+            } else {
+                return Err("Group does'not exist in this Dao");
+            }
+            Ok(())
+        });
+
+        if let Err(err) = data {
+            return Err(err.to_string());
+        }
+        
 
         let response: CallResult<(Result<(), String>,)> = ic_cdk::call(
             daohouse_backend_id,
@@ -909,7 +914,7 @@ async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
 
     let proposal = ProposalInput {
         proposal_description: String::from(crate::utils::REQUEST_JOIN_DAO),
-        group_to_join: None,
+        group_to_join: Some(args.place_to_join),
         proposal_title: String::from(crate::utils::TITLE_ADD_MEMBER),
         proposal_type: crate::ProposalType::AddMemberToGroupProposal,
         principal_of_action: Some(api::caller()),
