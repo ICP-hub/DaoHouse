@@ -121,7 +121,7 @@ const Step1 = ({ setData, setActiveStep, data }) => {
         setIsSubmitting(false);
       }
     } else {
-      toast.error("Please fix the highlighted errors before proceeding.");
+      // toast.error("Please fix the highlighted errors before proceeding.");
     }
   }
 

@@ -13,7 +13,7 @@ import coinsound from "../../../../daohouse_frontend/src/Sound/coinsound.mp3";
 
 const Step6 = ({ data, setData, setActiveStep, loadingNext,  clearLocalStorage, setLoadingNext }) => {
   const [file, setFile] = useState(null);
-  const { identity, stringPrincipal, backendActor } = useAuth()
+  const { identity, stringPrincipal, backendActor ,principal} = useAuth()
   const [fileURL, setFileURL] = useState(null);
   const [fileName, setFileName] = useState(null);
   const [shouldCreateDAO, setShouldCreateDAO] = useState(false);

@@ -5,7 +5,7 @@ import II from '../../../assets/InternetIdentityIcon.png';
 import nfidlogo from '../../../assets/nfidlogo.png';
 import './global.scss'; // Ensure global styles are imported
 
-const LoginModal = ({ isOpen, onClose, onLogin, onLoginPlug, onLoginNFID }) => {
+const LoginModal = ({ isOpen, onClose, onLogin, onLoginPlug, onLoginNFID}) => {
   // added logic here for stop scrolling
   useEffect(() => {
     const bodyStyle = document.body.style;
@@ -48,14 +48,14 @@ const LoginModal = ({ isOpen, onClose, onLogin, onLoginPlug, onLoginNFID }) => {
       icon: II,
       label: 'Internet Identity'
     },
-    // {
-    //   onClick: onLoginPlug,
-    //   bgColor: 'bg-[#40E0D0]',
-    //   hoverColor: 'hover:bg-[#0E3746]',
-    //   textColor: 'text-white',
-    //   icon: plug,
-    //   label: 'Plug Wallet'
-    // },
+    {
+      onClick: onLoginPlug,
+      bgColor: 'bg-[#40E0D0]',
+      hoverColor: 'hover:bg-[#0E3746]',
+      textColor: 'text-white',
+      icon: plug,
+      label: 'Plug Wallet'
+    },
     {
       onClick: onLoginNFID,
       bgColor: 'bg-[#40E0D0]',

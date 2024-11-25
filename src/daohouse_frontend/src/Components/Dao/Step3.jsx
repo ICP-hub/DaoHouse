@@ -22,7 +22,7 @@ const Step3 = ({ setData, setActiveStep }) => {
   const [memberUsernames, setMemberUsernames] = useState({});
   const [updatedGroupName, setUpdatedGroupName] = useState("");
   const [memberName, setMemberName] = useState("");
-  const { backendActor, stringPrincipal } = useAuth();
+  const { backendActor, stringPrincipal,principal } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
 
@@ -377,6 +377,7 @@ const Step3 = ({ setData, setActiveStep }) => {
     const council = initialList.find((group) => group.name === "Council");
 
     // Check if the current user is already in the council
+    let stringPrincipal = principal.toString();
     if (council && !council.members.includes(stringPrincipal)) {
       const updatedList = initialList.map((group) => {
         if (group.name === "Council") {
@@ -438,7 +439,7 @@ const Step3 = ({ setData, setActiveStep }) => {
               </p>
             </section>
 
-            <button
+            {/* <button
               onClick={handleGroupAdding}
               disabled={isLoading || isAdding}
               className={`bg-white  lg:mr-7 md:w-[200px] md:h-[50px] small_phone:gap-2 gap-1  small_phone:  mobile:px-5 p-2 small_phone:text-base text-sm shadow-xl flex items-center rounded-full hover:bg-[#ececec] hover:scale-105 transition ${
@@ -453,7 +454,31 @@ const Step3 = ({ setData, setActiveStep }) => {
               </span>
               <span className=" hidden lg:flex">Create</span>
               <span className=""> Group</span>
-            </button>
+            </button> */}
+            <div className="relative group inline-block">
+              <button
+                onClick={handleGroupAdding}
+                className={`bg-white lg:mr-7 md:w-[200px] md:h-[50px] small_phone:gap-2 gap-1 mobile:px-5 p-2 small_phone:text-base text-sm shadow-xl flex items-center rounded-full hover:bg-[#ececec] hover:scale-105 transition ${isLoading || isAdding ? "cursor-not-allowed" : "cursor-pointer"}`}
+                disabled={isLoading || isAdding}
+              >
+                <span className="flex">
+                  <HiPlus />
+                </span>
+                <span className="flex lg:hidden items-center">
+                  <RiGroupFill />
+                </span>
+                <span className="hidden lg:flex">Create</span>
+                <span className=""> Group</span>
+              </button>
+
+              {/* Tooltip */}
+              <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 opacity-0 group-hover:opacity-100 bg-gray-700 text-white text-sm rounded-lg py-2 px-6 w-[250px]">
+                <div className="absolute left-1/2 transform -translate-x-1/2 bottom-[-6px] w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-t-gray-700 border-l-transparent border-r-transparent"></div>
+                Members in the same group share similar roles and actions
+                within the DAO
+              </div>
+            </div>
+
           </div>
 
           {/* Council */}
@@ -514,38 +539,32 @@ const Step3 = ({ setData, setActiveStep }) => {
             {isLoading
               ? skeletonLoader() // Show skeleton loader while data is being fetched
               : councilUsernames.map((fullName, index) => {
-                  const [username, principalId] = fullName.split(" ("); // Split the string to separate username and principal ID
-                  const formattedPrincipalId = principalId.slice(0, -1); // Remove the closing parenthesis
+                const [username, principalId] = fullName.split(" ("); // Split the string to separate username and principal ID
+                const formattedPrincipalId = principalId.slice(0, -1); // Remove the closing parenthesis
 
-                  return (
-                    <section
-                      key={index}
-                      className="w-full bg-white py-2 p-2 md:px-8 flex flex-col items-center justify-between  mb-4"
-                    >
-                      <div className="w-full flex  items-center justify-between mb-2">
-                        <div>
-                          <p className="font-semibold mobile:text-base text-sm border-black">
-                            {username}
-                          </p>
-                          <p className="text-sm">{formattedPrincipalId}</p>
-                        </div>
-                        <button
-                          onClick={() =>
-                            handleRemoveMember(0, formattedPrincipalId)
-                          }
-                        >
-                          <MdOutlineDeleteOutline
-                            className={`text-red-500 mobile:text-2xl text-lg ${
-                              isLoading || isAdding
-                                ? "cursor-not-allowed"
-                                : "cursor-pointer "
-                            }`}
-                          />
-                        </button>
+                return (
+                  <section
+                    key={index}
+                    className="w-full bg-white py-2 p-2 md:px-8 flex flex-col items-center justify-between  mb-4"
+                  >
+                    <div className="w-full flex  items-center justify-between mb-2">
+                      <div>
+                        <p className="font-semibold mobile:text-base text-sm border-black">
+                          {username}
+                        </p>
+                        <p className="text-sm">{formattedPrincipalId}</p>
                       </div>
-                    </section>
-                  );
-                })}
+                      <button
+                        onClick={() =>
+                          handleRemoveMember("council", formattedPrincipalId)
+                        }
+                      >
+                        <MdOutlineDeleteOutline className={`text-red-500 mobile:text-2xl text-lg ${isLoading || isAdding ? "cursor-not-allowed" : "cursor-pointer "}`} />
+                      </button>
+                    </div>
+                  </section>
+                );
+              })}
           </div>
           
           {/*General Members*/}
