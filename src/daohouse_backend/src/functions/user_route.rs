@@ -173,7 +173,7 @@ async fn delete_profile() -> Result<(), String> {
     with_state(|state| routes::delete_profile(state))
 }
 
-#[update]
+// #[update]
 pub async fn create_dao(dao_detail: DaoInput) -> Result<String, String> {
     let principal_id = ic_cdk::api::caller();
     let user_profile_detail = with_state(|state| state.user_profile.get(&principal_id).clone());
