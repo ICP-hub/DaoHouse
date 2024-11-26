@@ -6,7 +6,6 @@ import Container from "../Container/Container";
 import { Principal } from "@dfinity/principal";
 import { FaInfoCircle } from "react-icons/fa";
 
-
 const Step4 = ({ data, setData, setActiveStep }) => {
   const [activeStage, setActiveStage] = useState(0);
   const [groups, setGroups] = useState(() => {
@@ -355,6 +354,8 @@ const Step4 = ({ data, setData, setActiveStep }) => {
             </React.Fragment>
           )}
 
+
+
           <div className="flex justify-between items-center bg-white p-4 rounded-lg shadow-md">
             <span className="flex flex-row text-gray-800 gap-3">
               Make DAO Private
@@ -386,6 +387,7 @@ const Step4 = ({ data, setData, setActiveStep }) => {
           </div>
 
 
+
           <div className={`${className}__submitButton w-full flex flex-row items-center mobile:justify-end justify-between`}>
 
             <button
@@ -404,6 +406,8 @@ const Step4 = ({ data, setData, setActiveStep }) => {
               Save & Next <FaArrowRightLong />
             </button>
           </div>
+
+
         </div>
 
       </Container>

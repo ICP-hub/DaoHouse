@@ -48,12 +48,15 @@ const Navbar = () => {
   ];
 
   useEffect(() => {
+    console.log("backend Actor in navbar",backendActor);
+    
     if (!backendActor || userProfile) return;
 
     const createAndFetchUserProfile = async () => {
       try {
         const response = await backendActor?.check_user_existance();
-
+         console.log("resp of check in navbar",response);
+         
         if (response.Ok) {
           await fetchUserProfile();
         } else {
@@ -113,15 +116,20 @@ const Navbar = () => {
 
   const handleLogin = async () => {
     setIsConnecting(true);
-    await login("Icp").then(() => window.location.reload());
+    await login("ii").then(() => window.location.reload());
     navigate("/")
   };
 
   const handleNFIDLogin = async () => {
     setIsConnecting(true);
-    await signInNFID();
+    await login("nfid").then(() => window.location.reload());
+    navigate("/")
   };
-
+  const handlePlugLogin = async () => {
+    setIsConnecting(true);
+    await login("plug").then(() => window.location.reload());
+    navigate("/")
+  };
   const handleLogout = async () => {
     setIsLoading(true);
     try {
@@ -260,12 +268,15 @@ const Navbar = () => {
             </div>
           </div>
         </Container>
-        <LoginModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onLogin={handleLogin}
-          onLoginNFID={handleNFIDLogin}
-        />
+        {isModalOpen && !isAuthenticated && (
+          <LoginModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            onLogin={handleLogin}
+            onLoginNFID={handleNFIDLogin}
+            onLoginPlug={handlePlugLogin}
+          />
+        )}
         <UserDetailsModal
           isOpen={isDetailsModalOpen}
           onClose={() => setIsDetailsModalOpen(false)}
