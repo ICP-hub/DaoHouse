@@ -80,16 +80,21 @@ const Members = ({ daoGroups, daoMembers }) => {
               onClick={toggleCouncil}
               className="cursor-pointer flex flex-row items-center justify-between bg-[#AAC8D6] p-3 rounded-lg"
             >
-              <p className="font-semibold big_phone:text-lg text-sm">Council</p>
-              <p className="font-semibold big_phone:text-base  items-center  text-sm">
-                {councilMembers.length ? councilMembers.length : "Loading..."}{" "}
-                {councilMembers.length
-                  ? councilMembers.length === 1
-                    ? "Member"
-                    : "Members"
-                  : ""}
+              <p className="font-semibold big_phone:text-lg text-sm truncate flex-1 text-left">
+                Council
               </p>
-              {isCouncilOpen ? <IoIosArrowDown /> : <IoIosArrowUp />}
+
+              <p className="font-semibold big_phone:text-base text-sm text-center flex-1">
+                {councilMembers.length ? councilMembers.length : "Loading..."}{" "}
+                {councilMembers.length === 1 ? "Member" : "Members"}
+              </p>
+              <div className="flex flex-1 justify-end">
+                {isCouncilOpen ? (
+                  <IoIosArrowDown className="text-lg" />
+                ) : (
+                  <IoIosArrowUp className="text-lg" />
+                )}
+              </div>
             </header>
 
             {isCouncilOpen && (
@@ -116,20 +121,23 @@ const Members = ({ daoGroups, daoMembers }) => {
                 onClick={() => toggleOpenGroup(index)}
                 className="cursor-pointer flex flex-row items-center justify-between bg-[#AAC8D6] p-3 rounded-lg"
               >
-                <p className="font-semibold big_phone:text-lg text-sm">
+                <p className="font-semibold big_phone:text-lg text-sm truncate flex-1 text-left">
                   {group.group_name}
                 </p>
-                <p className="font-semibold big_phone:text-base items-center translate-x-[-35px] text-sm">
+
+                <p className="font-semibold big_phone:text-base text-sm text-center flex-1">
                   {group.group_members.length}{" "}
                   {group.group_members.length === 1 ? "Member" : "Members"}
                 </p>
-                {openedGroupIndex === index ? (
-                  <IoIosArrowDown className="font-bold big_phone:text-base text-sm" />
-                ) : (
-                  <IoIosArrowUp className="font-bold big_phone:text-base text-sm" />
-                )}
-              </header>
 
+                <div className="flex flex-1 justify-end">
+                  {openedGroupIndex === index ? (
+                    <IoIosArrowDown className="text-lg" />
+                  ) : (
+                    <IoIosArrowUp className="text-lg" />
+                  )}
+                </div>
+              </header>
               {openedGroupIndex === index && (
                 <div className="bg-white rounded-lg p-8">
                   {loading ? (
