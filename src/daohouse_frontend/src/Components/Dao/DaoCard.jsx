@@ -19,6 +19,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
   const [loading, setLoading] = useState(false);
   const [joinStatus, setJoinStatus] = useState("Join Dao");
   const [isMember, setIsMember] = useState(false);
+  const [isRequested, setIsRequested] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false); 
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
@@ -30,37 +31,61 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
       if (daoCanisterId) {
         setLoading(true);
         try {
+          // Fetch user profile
           const profileResponse = await backendActor.get_user_profile();
           if (profileResponse.Ok) {
             setUserProfile(profileResponse.Ok);
             const currentUserId = Principal.fromText(profileResponse.Ok.user_id.toString());
-            
+    
+            // Create DAO actor
             const daoActor = await createDaoActor(daoCanisterId);
-            setDaoActor(daoActor)
-
+            setDaoActor(daoActor);
+    
+            // Fetch followers and determine if the user is following
             const daoFollowers = await daoActor.get_dao_followers();
-            
-            
             setFollowersCount(daoFollowers.length);
-            const following = await daoFollowers.some(follower => follower.toString() === currentUserId.toString());
-            setIsFollowing(following)
-            
-
-            const daoMembers = await daoActor.get_dao_members();
-            const isCurrentUserMember = daoMembers.some(member => member.toString() === currentUserId.toString());
+            const isUserFollowing = daoFollowers.some(
+              (follower) => follower.toString() === currentUserId.toString()
+            );
+            setIsFollowing(isUserFollowing);
+    
+            // Fetch DAO details
+            const daoDetails = await daoActor.get_dao_detail();
+            console.log("daoD", daoDetails);
+    
+            // Check membership and request status
+            const daoMembers = daoDetails.all_dao_user;
+            const requestedToJoin = daoDetails.requested_dao_user;
+    
+            const isCurrentUserMember = daoMembers.some(
+              (member) => member.toString() === currentUserId.toString()
+            );
             setIsMember(isCurrentUserMember);
-
+    
+            const isUserRequested = requestedToJoin.some(
+              (member) => member.toString() === currentUserId.toString()
+            );
+            setIsRequested(isUserRequested);
+    
+            // Set join status based on user state
             if (isCurrentUserMember) {
-              setJoinStatus('Joined');
+              setJoinStatus("Joined");
+            } else if (isUserRequested) {
+              setJoinStatus("Requested");
+            } else {
+              setIsRequested(false);
+              setIsMember(false);
+              setJoinStatus("Join DAO");
             }
           }
         } catch (error) {
-          console.error('Error fetching DAO details:', error);
+          console.error("Error fetching DAO details:", error);
         } finally {
           setLoading(false);
         }
       }
     };
+    
 
     fetchDaoDetails();
   }, [daoCanisterId, backendActor]);
@@ -95,8 +120,10 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
     if (joinStatus === 'Joined') {
       toast.error(`You are already member of this dao`);
       return;
-    };
-    setShowConfirmModal(true);
+    }else if (joinStatus === 'Requested') {
+      toast.error(`Your have already sent a request to join this dao`);
+      return;
+    }
   }
     
   const confirmJoinDao = async () => {
