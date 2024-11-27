@@ -118,8 +118,16 @@ const DaoProfile = () => {
         try {
           const daoActor = await createDaoActor(daoCanisterId);
           setDaoActor(daoActor);
+          
           const daoDetails = await daoActor.get_dao_detail();
           console.log("daoD", daoDetails);
+          
+          // Check if daoDetails exists before setting state
+          if (!daoDetails) {
+            console.error("No DAO details returned");
+            setLoadingProfile(false);
+            return;
+          }
     
           setDao(daoDetails);
     
@@ -129,36 +137,29 @@ const DaoProfile = () => {
             const currentUserId = Principal.fromText(
               profileResponse.Ok.user_id.toString()
             );
-
-            // const daoFollowers = await daoActor.get_dao_followers();
-            // setDaoFollowers(daoFollowers);
-            // setFollowersCount(daoFollowers.length);
-            // setIsFollowing(
-            //   daoFollowers.some(
-            //     (follower) => follower.toString() === currentUserId.toString()
-            //   )
-            // );
-
-
+    
+            // Safely access daoDetails properties with optional chaining
             const daoGroups = await daoActor.get_dao_groups();
             setDaoGroups(daoGroups);
     
-            const daoMembers = daoDetails.all_dao_user;
-            const requestedToJoin = daoDetails.requested_dao_user;
+            const daoMembers = daoDetails?.all_dao_user || [];
+            const requestedToJoin = daoDetails?.requested_dao_user || [];
     
             console.log("daoMm", daoMembers);
             console.log("req", requestedToJoin);
     
             setDaoMembers(daoMembers);
     
-            const isUserRequested = requestedToJoin.some(
+            // Use optional chaining and null checks
+            const isUserRequested = Array.isArray(requestedToJoin) && requestedToJoin.some(
               (member) => member.toString() === currentUserId.toString()
             );
             setIsRequested(isUserRequested);
     
-            const isCurrentUserMember = daoMembers.some(
+            const isCurrentUserMember = Array.isArray(daoMembers) && daoMembers.some(
               (member) => member.toString() === currentUserId.toString()
             );
+    
             if (isCurrentUserMember) {
               setIsMember(true);
               setJoinStatus("Joined");
@@ -170,15 +171,14 @@ const DaoProfile = () => {
               setJoinStatus("Join DAO");
             }
           }
-    
-          setLoadingProfile(false);
         } catch (error) {
           console.error("Error fetching DAO details:", error);
+          toast.error("Failed to fetch DAO details");
+        } finally {
+          setLoadingProfile(false);
         }
       }
     };
-    
-
     const fetchProposals = async (pagination = {}) => {
       setLoadingProposals(true);
       if (daoCanisterId) {
@@ -607,9 +607,9 @@ const DaoProfile = () => {
             )}
              {activeLink === "dao_setting" && (
     <DaoSetting 
-      daoActor={daoActor}
-      daoDetails={dao}
-      isMember={isMember}
+      // daoActor={daoActor}
+      // daoDetails={dao}
+      // isMember={isMember}
     />
   )}
             

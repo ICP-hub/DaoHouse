@@ -178,12 +178,13 @@
 
 // export default FollowersContent;
 
+// working on this page .............
 
 import React from 'react';
 import NoDataComponent from '../Dao/NoDataComponent';
 
-const DaoSetting = ({ daoActor, daoDetails, isMember }) => {
-  console.log("DaoSetting rendered with:", { daoActor, daoDetails, isMember });
+const DaoSetting = ({ daoDetails  }) => {
+  console.log("DaoSetting rendered with:", { });
   
   return (
     <div className="mt-6">
