@@ -60,6 +60,7 @@ const DaoProfile = () => {
   const [userProfile, setUserProfile] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
+  const [sortOrder, setSortOrder] = useState("newest");
   let itemsPerPage = 4;
 
   const fetchMetadataAndBalance = async (tokenActor, ownerPrincipal) => {
@@ -482,8 +483,9 @@ const DaoProfile = () => {
                   {isFollowing ? "Unfollow" : "Follow"}
                 </button>
                 <button
+                 disabled={isMember || isRequested}
                   onClick={handleJoinDao}
-                  className="bg-white text-[16px] text-[#05212C] shadow-xl lg:py-4 lg:px-3 rounded-[27px] lg:w-[131px] lg:h-[40px] md:w-[112px] md:h-[38px] w-[98px] h-[35px] lg:flex items-center justify-center"
+                  className={`bg-white text-[16px] text-[#05212C] shadow-xl lg:py-4 lg:px-3 rounded-[27px] lg:w-[131px] lg:h-[40px] md:w-[112px] md:h-[38px] w-[98px] h-[35px] lg:flex items-center justify-center ${isRequested || isMember ? "cursor-not-allowed cursor" : "cursor-pointer"}`}
                   style={{
                     boxShadow:
                       "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
@@ -580,6 +582,8 @@ const DaoProfile = () => {
                   <ProposalLoaderSkeleton />
                 ) : (
                   <ProposalsContent
+                  sortOrder={sortOrder}
+                  setSortOrder={setSortOrder}
                     proposals={proposals}
                     isMember={isMember}
                     voteApi={daoActor}
