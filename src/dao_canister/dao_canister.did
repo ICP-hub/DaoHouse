@@ -70,8 +70,6 @@ type Dao = record {
   link_of_document : text;
   members_count : nat32;
   ask_to_join_dao : bool;
-  followers : vec principal;
-  followers_count : nat32;
   total_tokens : nat32;
   cool_down_period : nat32;
   proposal_entry : vec ProposalPlace;
@@ -87,7 +85,6 @@ type DaoGroup = record {
 type DaoInput = record {
   image_canister : principal;
   members : vec principal;
-  all_dao_user : vec principal;
   token_symbol : text;
   daohouse_canister_id : principal;
   linksandsocials : vec text;
@@ -98,7 +95,6 @@ type DaoInput = record {
   members_permissions : vec ProposalType;
   link_of_document : text;
   ask_to_join_dao : bool;
-  followers : vec principal;
   cool_down_period : nat32;
   proposal_entry : vec ProposalPlace;
   purpose : text;
@@ -134,7 +130,6 @@ type ProposalState = variant {
   Rejected;
   Succeeded;
   Accepted;
-  LateSubmission;
   Expired;
 };
 type ProposalType = variant {
@@ -227,12 +222,10 @@ service : (DaoInput) -> {
   add_ledger_canister_id : (LedgerCanisterId) -> (Result);
   ask_to_join_dao : (JoinDao) -> (Result_1);
   comment_on_proposal : (text, text) -> (Result_1);
-  follow_dao : () -> (Result_1);
   get_all_balances : (text) -> (ProposalStakes) query;
   get_all_groups : () -> (vec DaoGroup) query;
   get_all_proposals : (Pagination) -> (vec Proposals);
   get_dao_detail : () -> (Dao) query;
-  get_dao_followers : () -> (vec principal) query;
   get_dao_groups : () -> (vec DaoGroup) query;
   get_dao_members : () -> (vec principal) query;
   get_members_of_group : (text) -> (Result_2) query;
@@ -253,9 +246,7 @@ service : (DaoInput) -> {
   proposal_to_remove_member_to_group : (RemoveMemberArgs) -> (Result_1);
   proposal_to_transfer_token : (TokenTransferPolicy) -> (Result_1);
   reply_comment : (ReplyCommentArgs) -> (Result_1);
-  search_follower : (text) -> (vec principal) query;
   search_proposal : (text) -> (vec Proposals) query;
-  unfollow_dao : () -> (Result_1);
   vote : (text, VoteParam) -> (Result_1);
   vote_on_poll_options : (text, text) -> (Result_1);
 }

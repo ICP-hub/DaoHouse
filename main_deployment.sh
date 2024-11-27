@@ -63,9 +63,6 @@ dfx deploy dao_canister --argument '(record {
     required_votes = 100;
     image_id = "1";
     tokens_required_to_vote = 1;
-    followers = vec {
-        principal "aaaaa-aa";
-    };
     members_permissions = vec {
         "mai hi permission hai";
     };

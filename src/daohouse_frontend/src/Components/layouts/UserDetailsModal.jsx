@@ -81,7 +81,6 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
           image_content_type: profileImage.type,
         };
         const response = await backendActor.create_profile(MinimalProfileinput);
-        console.log("response", response);
         onClose();
         onSubmit();
       } catch (error) {

@@ -62,10 +62,6 @@ async fn create_profile(profile: MinimalProfileinput) -> Result<String, String> 
         dao_ids: Vec::new(),
         post_count: 0,
         post_id: Vec::new(),
-        followers_count: 0,
-        followers_list: Vec::new(),
-        followings_count: 0,
-        followings_list: Vec::new(),
         description: "".to_string(),
         tag_defines: Vec::new(),
         contact_number: "".to_string(),
@@ -73,7 +69,6 @@ async fn create_profile(profile: MinimalProfileinput) -> Result<String, String> 
         telegram: "".to_string(),
         website: "".to_string(),
         image_canister: asset_canister_id,
-        follow_dao : Vec::new(),
         join_dao :  Vec::new(),
         submitted_proposals : 0,
     };
@@ -266,8 +261,6 @@ pub async fn create_dao(dao_detail: DaoInput) -> Result<String, String> {
         if let Some(profile) = state.user_profile.get(&api::caller()) {
             let mut updated_profile = profile.clone();
             updated_profile.join_dao.push(dao_canister_id.clone());
-            updated_profile.follow_dao.push(dao_canister_id.clone());
-            updated_profile.followers_count += 1;
             state.user_profile.insert(principal_id, updated_profile);
         }
     });

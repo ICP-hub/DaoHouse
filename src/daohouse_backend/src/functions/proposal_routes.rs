@@ -9,46 +9,6 @@ use crate::{
     with_state, ProposalValueStore,
 };
 
-#[ic_cdk::update(guard = guard_child_canister_only)]
-pub async fn store_follow_dao(dao_id: Principal, principal_id: Principal) -> Result<(), String> {
-    with_state(|state| {
-        if let Some(profile) = state.user_profile.get(&principal_id) {
-            let mut updated_profile = profile.clone();
-            updated_profile.follow_dao.push(dao_id);
-            updated_profile.followers_count += 1;
-            state.user_profile.insert(principal_id, updated_profile);
-            Ok(())
-        } else {
-            Err(format!(
-                "User profile not found for principal: {}",
-                principal_id
-            ))
-        }
-    })
-}
-
-#[ic_cdk::update(guard = guard_child_canister_only)]
-pub async fn remove_follow_dao(dao_id: Principal, principal_id: Principal) -> Result<(), String> {
-    with_state(|state| {
-        if let Some(profile) = state.user_profile.get(&principal_id) {
-            let mut updated_profile = profile.clone();
-            if updated_profile.follow_dao.contains(&dao_id) {
-                updated_profile.follow_dao.retain(|id| id != &dao_id);
-                updated_profile.followers_count -= 1;
-                state.user_profile.insert(principal_id, updated_profile);
-
-                Ok(())
-            } else {
-                Err(format!("You haven't followed this DAO: {}", dao_id))
-            }
-        } else {
-            Err(format!(
-                "User profile not found for principal: {}",
-                principal_id
-            ))
-        }
-    })
-}
 
 #[ic_cdk::update(guard = guard_child_canister_only)]
 pub async fn remove_joined_dao(dao_id: Principal, principal_id: Principal) -> Result<(), String> {
@@ -60,7 +20,7 @@ pub async fn remove_joined_dao(dao_id: Principal, principal_id: Principal) -> Re
                 state.user_profile.insert(principal_id, updated_profile);
                 Ok(())
             } else {
-                Err(format!("You haven't followed this DAO: {}", dao_id))
+                Err(format!("You haven't join this DAO: {}", dao_id))
             }
         } else {
             Err(format!(

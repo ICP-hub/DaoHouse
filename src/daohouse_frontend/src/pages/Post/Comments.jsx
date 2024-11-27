@@ -52,8 +52,6 @@ const Comment = ({ comment, proposalId, daoId, commentCount, setCommentCount }) 
 
 
   const submitReply = async () => {
-    console.log("submitReply called");
-  
     if (!replyText.trim()) return;
     try {
       setIsSubmitLoading(true);
@@ -192,7 +190,6 @@ const Reply = ({ reply }) => {
         console.error("Error fetching reply author profile:", error);
       }
     };
-    console.log(profileImg);
     
 
     fetchProfile();
@@ -235,7 +232,6 @@ const Comments = ({ daoId, proposalId, commentCount, setCommentCount }) => {
         const daoActor = await createDaoActor(daoId)
         setDaoActor(daoActor)
         const proposalDetails = await daoActor.get_proposal_by_id(proposalId);
-        console.log("propDetailz", proposalDetails.proposal_id);
 
         // Extract and set comments if they exist
         if (proposalDetails && proposalDetails.comments_list) {
@@ -268,9 +264,6 @@ const Comments = ({ daoId, proposalId, commentCount, setCommentCount }) => {
       const response = await daoActor.comment_on_proposal( newComment,  proposalId);
 
       if (response.Ok) {
-        console.log("OK");
-        
-        // Add new comment to the list
         setComments(prevComments => [
           ...prevComments,
           {
@@ -294,22 +287,6 @@ const Comments = ({ daoId, proposalId, commentCount, setCommentCount }) => {
       setIsSubmitLoading(false)
     }
   };
-  console.log("daoId:", typeof daoId, daoId);
-console.log("proposalId:", typeof proposalId, proposalId);
-console.log("newComment:", typeof newComment, newComment);
-
-const detail = async() =>{
-  try {
-    const daoActor = await createDaoActor(daoId);
-    const Details = await daoActor.get_proposal_by_id(proposalId);
-   console.log("detail",Details);
-   
-  } catch (error) {
-    console.log("error",error);
-    
-  }
-}
-detail();
 
 
   return (

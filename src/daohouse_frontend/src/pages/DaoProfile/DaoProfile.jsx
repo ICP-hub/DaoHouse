@@ -117,9 +117,7 @@ const DaoProfile = () => {
         try {
           const daoActor = await createDaoActor(daoCanisterId);
           setDaoActor(daoActor);
-          const daoDetails = await daoActor.get_dao_detail();
-          console.log("daoD", daoDetails);
-    
+          const daoDetails = await daoActor.get_dao_detail();    
           setDao(daoDetails);
     
           const profileResponse = await backendActor.get_user_profile();
@@ -144,9 +142,6 @@ const DaoProfile = () => {
     
             const daoMembers = daoDetails.all_dao_user;
             const requestedToJoin = daoDetails.requested_dao_user;
-    
-            console.log("daoMm", daoMembers);
-            console.log("req", requestedToJoin);
     
             setDaoMembers(daoMembers);
     
@@ -226,7 +221,6 @@ const DaoProfile = () => {
       };
 
       const response = await daoActor.ask_to_join_dao(joinDaoPayload);
-      console.log("ask to join dao api response", response);
       const sound = new Audio(messagesound);
 
       if (response.Ok) {

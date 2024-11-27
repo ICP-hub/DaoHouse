@@ -50,9 +50,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
             setIsFollowing(isUserFollowing);
     
             // Fetch DAO details
-            const daoDetails = await daoActor.get_dao_detail();
-            console.log("daoD", daoDetails);
-    
+            const daoDetails = await daoActor.get_dao_detail();    
             // Check membership and request status
             const daoMembers = daoDetails.all_dao_user;
             const requestedToJoin = daoDetails.requested_dao_user;
@@ -102,9 +100,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
 
       if (response?.Ok) {
         const updatedFollowers = await daoActor.get_dao_followers();
-        setFollowersCount(updatedFollowers.length);
-        console.log(followersCount);
-        
+        setFollowersCount(updatedFollowers.length);        
         toast.success(isFollowing ? "Successfully unfollowed" : "Successfully followed");
       } else if (response?.Err) {
         setIsFollowing(!isFollowing);
@@ -144,7 +140,6 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
       };
   
       const response = await daoActor.ask_to_join_dao(joinDaoPayload);
-      console.log("response of ask to join dao api",response);
       const sound = new Audio(messagesound);
       if (response.Ok) {
         setJoinStatus("Requested");

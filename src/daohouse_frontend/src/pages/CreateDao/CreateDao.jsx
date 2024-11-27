@@ -118,15 +118,10 @@ const CreateDao = () => {
   const handleDaoClick = async () => {
     setLoadingNext(true);
     const { step1, step2, step3, step4, step5, step6 } = data;
-    console.log("Data", data);
-
     const council = step4.voting?.Council;
     const councilArray = Object.entries(council)
       .filter(([permission, hasPermission]) => hasPermission)
       .map(([permission]) => permission);
-
-    console.log("councilArray", councilArray);
-    console.log("council", council);
 
     const allMembers = new Set();
 
@@ -137,9 +132,6 @@ const CreateDao = () => {
     // Add members from each group
 
     const principalMembers = Array.from(allMembers).map(member => Principal.fromText(member));
-
-    console.log(step2);
-    console.log(data.dao_groups);
 
     const proposalEntry = step5.map(q => ({
       place_name: q.name,
@@ -173,14 +165,9 @@ const CreateDao = () => {
       all_dao_user: allDaoUsers
     };
 
-    console.log("daoPayload", daoPayload);
-
-
 
     try {
       const response = await backendActor.create_dao(daoPayload);
-      console.log("response", response);
-
       if (response.Err) {
         toast.error(`${response.Err}`);
         toast.error(`Failed to create Dao`);
