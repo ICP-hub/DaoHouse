@@ -152,7 +152,7 @@ const PostCard = ({ posts, handleGetLikePost }) => {
               className="rounded-[50%] w-10 h-10"
               onError={handleImageError}
             />
-            <div>
+            {/* <div>
               <p className="font-semibold ml-2 truncate w-36"> {posts.username || posts.principal_id.toString()}</p>
               {userProfile && userProfile.user_id.toString() !== posts.principal_id.toString() && (
                 <button
@@ -162,7 +162,7 @@ const PostCard = ({ posts, handleGetLikePost }) => {
                   {isFollowing ? 'Unfollow' : '+ Follow'}
                 </button>
               )}
-            </div>
+            </div> */}
           </section>
 
           <section className="postCard__time text-slate-500 mobile:text-base text-sm">

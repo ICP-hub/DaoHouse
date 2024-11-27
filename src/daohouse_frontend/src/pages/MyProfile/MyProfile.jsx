@@ -266,13 +266,13 @@ const MyProfile = ({ childComponent }) => {
                       {activeTab === 1 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
                     </p>
                   </Link>
-                  <Link to="/my-profile/followers" onClick={() => setActiveTab(2)}>
+                  {/* <Link to="/my-profile/followers" onClick={() => setActiveTab(2)}>
                     <p className={`${tabButtonsStyle} ${activeTab === 2 ? "text-white" : ""}`}>
                       <img src={contract} alt="Followed Dao List" className="inline mr-2 w-4 h-4" />
                       Followed Dao List
                       {activeTab === 2 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
                     </p>
-                  </Link>
+                  </Link> */}
                   <Link to="/my-profile/following" onClick={() => setActiveTab(3)}>
                     <p className={`${tabButtonsStyle} ${activeTab === 3 ? "text-white" : ""}`}>
                       <img src={contract_edit} alt="Dao Joined" className="inline mr-2 w-4 h-4" />
@@ -326,12 +326,12 @@ const MyProfile = ({ childComponent }) => {
                               Submitted Proposals
                             </span>
                           </span>
-                          <span className=" tablet:text-[32px] text-[24px] font-normal text-[#05212C] user-acc-info">
+                          {/* <span className=" tablet:text-[32px] text-[24px] font-normal text-[#05212C] user-acc-info">
                             {followers}
                             <span className="tablet:text-[16px] text-[14px] mx-1">
                               Followed Dao
                             </span>
-                          </span>
+                          </span> */}
                           <span className=" tablet:text-[32px] text-[24px] font-normal text-[#05212C] user-acc-info">
                             {following}
                             <span className="tablet:text-[16px] text-[14px] mx-1">
@@ -490,14 +490,14 @@ const MyProfile = ({ childComponent }) => {
     </div>
 
     {/* Followed DAO */}
-    <div className="flex flex-col items-center">
+    {/* <div className="flex flex-col items-center">
       <span className="text-[20px] font-mulish font-bold text-[#05212C]">
         {followers}
       </span>
       <span className="text-[10px] text-black whitespace-nowrap">
         Followed DAO
       </span>
-    </div>
+    </div> */}
 
     {/* Joined DAO */}
     <div className="flex flex-col items-center">
@@ -534,12 +534,12 @@ const MyProfile = ({ childComponent }) => {
 
 
 
-              <div className="absolute bottom-1 flex justify-center   w-[320px] h-[1px] bg-black  transition-all duration-300 hover:w-[20px]"></div>
+              <div className="absolute bottom-1 flex justify-center   w-[295px] h-[1px] bg-black  transition-all duration-300 hover:w-[20px]"></div>
 
 
               {/* My Profile Tab */}
               <div className="">
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-14">
                   {/* My Profile Tab */}
                   <Link to="/my-profile" onClick={() => setActiveTab(0)} className="flex-none text-center">
                     <p className={`${tabButtonsStyle} ${activeTab === 0 ? "text-black border-b-1 border-black " : ""}  relative pb-2 z-10 transition-all duration-300`}>
@@ -559,13 +559,13 @@ const MyProfile = ({ childComponent }) => {
                   </Link>
 
                   {/* Followed Dao Tab */}
-                  <Link to="/my-profile/followers" onClick={() => setActiveTab(2)} className="flex-none text-center">
+                  {/* <Link to="/my-profile/followers" onClick={() => setActiveTab(2)} className="flex-none text-center">
                     <p className={`${tabButtonsStyle} ${activeTab === 2 ? "text-black border-b-1 border-black" : ""} relative pb-2 z-10 transition-all duration-300`}>
                       Followed Dao
                       {activeTab === 2 ? <FaArrowRightLong className="md:inline hidden" /> : ""}
                       <span className={`${activeTab === 2 ? "absolute w-full h-[2px] bg-black left-0 bottom-0" : "hidden"}`}></span>
                     </p>
-                  </Link>
+                  </Link> */}
 
                   {/* Dao Joined Tab */}
                   <Link to="/my-profile/following" onClick={() => setActiveTab(3)} className="flex-none text-center">

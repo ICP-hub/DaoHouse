@@ -260,7 +260,7 @@ const ProposalsDetails = () => {
 
         {/* Right Side: Follow & Join Buttons */}
         <div className="flex justify-center gap-4 mt-4 md:mt-0  w-64 self-center md:self-start">
-          <button
+          {/* <button
             onClick={toggleFollow}
             className="bg-[#0E3746] text-[16px] text-white shadow-xl py-1 px-3 rounded-[27px] lg:w-[131px] lg:h-[40px] md:w-[112px] md:h-[38px] w-full flex items-center justify-center"
             style={{
@@ -269,7 +269,7 @@ const ProposalsDetails = () => {
             }}
           >
             {isFollowing ? 'Unfollow' : 'Follow'}
-          </button>
+          </button> */}
           <button
             onClick={handleJoinDao}
             className="bg-white text-[16px] text-[#05212C] shadow-xl px-3 rounded-[27px] lg:w-[131px] lg:h-[40px] md:w-[112px] md:h-[38px] w-full flex items-center justify-center"

@@ -14,7 +14,7 @@ import MyProfileRectangle from "../../../assets/MyProfileRectangle.png";
 import ProposalsContent from "../../Components/DaoProfile/ProposalsContent";
 import FeedsContent from "../../Components/DaoProfile/FeedsContent";
 import Members from "../../Components/DaoProfile/Members";
-import FollowersContent from "../../Components/DaoProfile/FollowersContent";
+// import FollowersContent from "../../Components/DaoProfile/FollowersContent";
 import FundsContent from "../../Components/DaoProfile/FundsContent";
 import Container from "../../Components/Container/Container";
 import { Principal } from "@dfinity/principal";
@@ -126,14 +126,14 @@ const DaoProfile = () => {
             const currentUserId = Principal.fromText(
               profileResponse.Ok.user_id.toString()
             );
-            const daoFollowers = await daoActor.get_dao_followers();
-            setDaoFollowers(daoFollowers);
-            setFollowersCount(daoFollowers.length);
-            setIsFollowing(
-              daoFollowers.some(
-                (follower) => follower.toString() === currentUserId.toString()
-              )
-            );
+            // const daoFollowers = await daoActor.get_dao_followers();
+            // setDaoFollowers(daoFollowers);
+            // setFollowersCount(daoFollowers.length);
+            // setIsFollowing(
+            //   daoFollowers.some(
+            //     (follower) => follower.toString() === currentUserId.toString()
+            //   )
+            // );
             const daoGroups = await daoActor.get_dao_groups();
             setDaoGroups(daoGroups);
 
@@ -225,43 +225,43 @@ const DaoProfile = () => {
     }
   };
 
-  const toggleFollow = async () => {
-    if (!userProfile) return;
+  // const toggleFollow = async () => {
+  //   if (!userProfile) return;
 
-    const newIsFollowing = !isFollowing;
-    setIsFollowing(newIsFollowing);
-    setFollowersCount((prevCount) =>
-      newIsFollowing ? prevCount + 1 : prevCount - 1
-    );
+  //   const newIsFollowing = !isFollowing;
+  //   setIsFollowing(newIsFollowing);
+  //   setFollowersCount((prevCount) =>
+  //     newIsFollowing ? prevCount + 1 : prevCount - 1
+  //   );
 
-    try {
-      const daoActor = createDaoActor(daoCanisterId);
-      const response = isFollowing
-        ? await daoActor.unfollow_dao()
-        : await daoActor.follow_dao();
+  //   try {
+  //     const daoActor = createDaoActor(daoCanisterId);
+  //     const response = isFollowing
+  //       ? await daoActor.unfollow_dao()
+  //       : await daoActor.follow_dao();
 
-      if (response?.Ok) {
-        toast.success(
-          newIsFollowing ? "Successfully followed" : "Successfully unfollowed"
-        );
-      } else if (response?.Err) {
-        // Revert the state if there's an error
-        setIsFollowing(!newIsFollowing);
-        setFollowersCount((prevCount) =>
-          newIsFollowing ? prevCount - 1 : prevCount + 1
-        );
-        toast.error(response.Err);
-      }
-    } catch (error) {
-      console.error("Error following/unfollowing DAO:", error);
-      // Revert the state if there's an error
-      setIsFollowing(!newIsFollowing);
-      setFollowersCount((prevCount) =>
-        newIsFollowing ? prevCount - 1 : prevCount + 1
-      );
-      toast.error(error);
-    }
-  };
+  //     if (response?.Ok) {
+  //       toast.success(
+  //         newIsFollowing ? "Successfully followed" : "Successfully unfollowed"
+  //       );
+  //     } else if (response?.Err) {
+  //       // Revert the state if there's an error
+  //       setIsFollowing(!newIsFollowing);
+  //       setFollowersCount((prevCount) =>
+  //         newIsFollowing ? prevCount - 1 : prevCount + 1
+  //       );
+  //       toast.error(response.Err);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error following/unfollowing DAO:", error);
+  //     // Revert the state if there's an error
+  //     setIsFollowing(!newIsFollowing);
+  //     setFollowersCount((prevCount) =>
+  //       newIsFollowing ? prevCount - 1 : prevCount + 1
+  //     );
+  //     toast.error(error);
+  //   }
+  // };
 
   const getImageUrl = (imageId) => {
     return `${protocol}://${canisterId}.${domain}/f/${imageId}`;
@@ -432,12 +432,12 @@ const DaoProfile = () => {
                         Proposals
                       </span>
                     </span>
-                    <span className="text-[18px] sm:text-[20px] md:text-[24px] lg:text-[32px] font-normal text-[#05212C] user-acc-info">
+                    {/* <span className="text-[18px] sm:text-[20px] md:text-[24px] lg:text-[32px] font-normal text-[#05212C] user-acc-info">
                       {followersCount}&nbsp;
                       <span className="text-[12px] sm:text-[14px] md:text-[16px] mx-1">
                         Followers
                       </span>
-                    </span>
+                    </span> */}
                     <span className="text-[18px] sm:text-[20px] md:text-[24px] lg:text-[32px] font-normal text-[#05212C] user-acc-info">
                       {Number(DaoBalance)}&nbsp;
                       <span className="text-[12px] sm:text-[14px] md:text-[16px] mx-1">
@@ -449,7 +449,7 @@ const DaoProfile = () => {
               </div>
 
               <div className="flex md:justify-end gap-4">
-                <button
+                {/* <button
                   onClick={toggleFollow}
                   className="bg-[#0E3746] text-[16px] text-white shadow-xl lg:py-4 lg:px-3 rounded-[27px] lg:w-[131px] lg:h-[40px] md:w-[112px] md:h-[38px] w-[98px] h-[35px] lg:flex items-center justify-center"
                   style={{
@@ -458,7 +458,7 @@ const DaoProfile = () => {
                   }}
                 >
                   {isFollowing ? "Unfollow" : "Follow"}
-                </button>
+                </button> */}
                 <button
                   onClick={handleJoinDao}
                   className="bg-white text-[16px] text-[#05212C] shadow-xl lg:py-4 lg:px-3 rounded-[27px] lg:w-[131px] lg:h-[40px] md:w-[112px] md:h-[38px] w-[98px] h-[35px] lg:flex items-center justify-center"
@@ -549,7 +549,7 @@ const DaoProfile = () => {
                     : "text-[#0E37464D]"
                 }`}
               >
-                Followers
+                Dao Setting
               </button>
             </div>
             {activeLink === "proposals" && (
@@ -571,12 +571,12 @@ const DaoProfile = () => {
             {activeLink === "member_policy" && (
               <Members daoGroups={daoGroups} daoMembers={daoMembers} />
             )}
-            {activeLink === "followers" && (
+            {/* {activeLink === "followers" && (
               <FollowersContent
                 daoFollowers={daoFollowers}
                 daoCanisterId={daoCanisterId}
               />
-            )}
+            )} */}
             {activeLink === "funds" && <FundsContent />}
           </Container>
         </div>

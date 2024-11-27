@@ -186,12 +186,12 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
       <h2 className="text-lg font-semibold truncate w-24 big_phone:w-36 text-center">{name}</h2>
 
  
-      <button
+      {/* <button
         onClick={toggleFollow}
         className="mt-2 text-blue-400 p-1 sm:text-sm md:text-lg text-center"
       >
         {isFollowing ? 'Unfollow' : '+ Follow'}
-      </button>
+      </button> */}
     </div>
       </div>
 
