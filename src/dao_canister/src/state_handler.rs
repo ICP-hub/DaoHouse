@@ -1,7 +1,7 @@
 use crate::types::{Dao, Proposals};
 use crate::{DaoGroup, LedgerCanisterId, Memory, ProposalStakes};
 use candid::Principal;
-use ic_stable_structures::StableBTreeMap;
+use ic_stable_structures::{vec, StableBTreeMap};
 // use std::collections::BTreeMap;
 
 pub struct State {
@@ -45,6 +45,7 @@ impl State {
                 proposal_entry : vec![],
                 ask_to_join_dao : true,
                 all_dao_user :  vec![],
+                requested_dao_user : vec![],
             },
 
             dao_groups: init_group_data(),

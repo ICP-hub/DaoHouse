@@ -64,6 +64,7 @@ async fn init(dao_input: DaoInput) {
         proposal_entry: proposal_entry,
         ask_to_join_dao : dao_input.ask_to_join_dao,
         all_dao_user : dao_input.all_dao_user,
+        requested_dao_user : Vec::new(),
     };
 
     with_state(|state| {
