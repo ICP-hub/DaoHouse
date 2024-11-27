@@ -276,6 +276,7 @@ pub fn add_member_to_group(state: &mut State, proposal: &Proposals) {
                 if !state.dao.all_dao_user.contains(&proposal.principal_of_action){
                     state.dao.all_dao_user.push(proposal.principal_of_action.clone());
                 }
+                state.dao.requested_dao_user.retain(|s|s != &proposal.principal_of_action.clone());
                 dao_group.group_members.push(proposal.principal_of_action);
                 state.dao_groups.insert(dao_group.group_name.clone(), dao_group);
             }

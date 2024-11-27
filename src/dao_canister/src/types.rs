@@ -219,6 +219,7 @@ pub struct Dao {
     pub proposal_entry : Vec<ProposalPlace>,
     pub ask_to_join_dao : bool,
     pub all_dao_user : Vec<Principal>,
+    pub requested_dao_user : Vec<Principal>,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]

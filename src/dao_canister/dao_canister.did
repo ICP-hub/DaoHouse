@@ -64,6 +64,7 @@ type Dao = record {
   dao_name : text;
   proposal_ids : vec text;
   image_id : text;
+  requested_dao_user : vec principal;
   groups_count : nat64;
   members_permissions : vec ProposalType;
   link_of_document : text;

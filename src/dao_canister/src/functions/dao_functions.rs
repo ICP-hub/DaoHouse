@@ -702,7 +702,7 @@ async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
     let mut required_thredshold = 0;
     // let proposal_expire_time =
     //     ic_cdk::api::time() + (args.proposal_expired_at as u64 * 86_400 * 1_000_000_000);
-    let proposal_expire_time_testing : u64 = 2 * 60 * 1_000_000_000 + ic_cdk::api::time();
+    let proposal_expire_time_testing : u64 = 3 * 60 * 1_000_000_000 + ic_cdk::api::time();
     let _ = with_state(|state| {
         match state
             .dao
@@ -937,6 +937,7 @@ async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
         poll_options: None,
         ask_to_join_dao : None,
     };
+    with_state(| state | state.dao.requested_dao_user.push(api::caller()));
     create_proposal_controller(daohouse_backend_id, proposal).await;
     Ok(String::from("Join DAO request sent successfully"))
 }

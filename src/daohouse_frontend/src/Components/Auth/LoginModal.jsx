@@ -49,14 +49,6 @@ const LoginModal = ({ isOpen, onClose, onLogin, onLoginPlug, onLoginNFID}) => {
       label: 'Internet Identity'
     },
     {
-      onClick: onLoginPlug,
-      bgColor: 'bg-[#40E0D0]',
-      hoverColor: 'hover:bg-[#0E3746]',
-      textColor: 'text-white',
-      icon: plug,
-      label: 'Plug Wallet'
-    },
-    {
       onClick: onLoginNFID,
       bgColor: 'bg-[#40E0D0]',
       hoverColor: 'hover:bg-[#0E3746]',
