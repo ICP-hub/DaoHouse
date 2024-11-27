@@ -452,10 +452,7 @@ const MyProfile = ({ childComponent }) => {
                   {email || "gmail@gmail.xyz"}{" "}
                 </p></div>
             </div>
-            </div>
-           
-
-            <div className="flex justify-end gap-4 tablet:mt-4 translate-x-[-40px] translate-y-[-50px] tablet:mr-4">
+            <div className="flex justify-end gap-4 translate-x-[-30px] translate-y-[30px] tablet:mr-4">
               {activeTab === 0 && (
                 <button
                   onClick={() => navigate("/edit-profile")}
@@ -475,9 +472,13 @@ const MyProfile = ({ childComponent }) => {
               )}
 
             </div>
+            </div>
+           
+
+            
 
             <div className="flex flex-col items-center justify-center ">
-  <div className="flex justify-center gap-12 mt-4">
+  <div className="flex justify-center gap-12 mt-8">
     {/* Submitted Proposal */}
     <div className="flex flex-col items-center">
       <span className="text-[20px] font-mulish font-bold text-[#05212C]">
