@@ -15,6 +15,7 @@ import ProposalsContent from "../../Components/DaoProfile/ProposalsContent";
 import FeedsContent from "../../Components/DaoProfile/FeedsContent";
 import Members from "../../Components/DaoProfile/Members";
 // import FollowersContent from "../../Components/DaoProfile/FollowersContent";
+import DaoSetting from "../../Components/DaoProfile/DaoSetting";
 import FundsContent from "../../Components/DaoProfile/FundsContent";
 import Container from "../../Components/Container/Container";
 import { Principal } from "@dfinity/principal";
@@ -290,8 +291,18 @@ const DaoProfile = () => {
   };
 
   const handleClick = (linkName) => {
+    console.log("Previous activeLink:", activeLink);
+    console.log("Changing to:", linkName);
     setActiveLink(linkName);
   };
+  
+  // Add this useEffect to track state changes
+  useEffect(() => {
+    console.log("activeLink changed to:", activeLink);
+    console.log("Current dao data:", dao);
+    console.log("Current daoActor:", daoActor);
+  }, [activeLink, dao, daoActor]);
+  
 
   if (!dao && !loadingProfile) {
     return (
@@ -561,18 +572,19 @@ const DaoProfile = () => {
                 Members&Groups
               </button>
               <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleClick("followers");
-                }}
-                className={`cursor-pointer text-nowrap ${
-                  activeLink === "followers"
-                    ? "underline text-[#0E3746]"
-                    : "text-[#0E37464D]"
-                }`}
-              >
-                Dao Setting
-              </button>
+  onClick={(e) => {
+    e.preventDefault();
+    handleClick("dao_setting"); // "dao_setting" is passed as linkName
+  }}
+  className={`cursor-pointer text-nowrap ${
+    activeLink === "dao_setting"
+      ? "underline text-[#0E3746]"
+      : "text-[#0E37464D]"
+  }`}
+>
+  Dao Setting
+</button>
+
             </div>
             {activeLink === "proposals" && (
               <div>
@@ -593,12 +605,21 @@ const DaoProfile = () => {
             {activeLink === "member_policy" && (
               <Members daoGroups={daoGroups} daoMembers={daoMembers} />
             )}
+             {activeLink === "dao_setting" && (
+    <DaoSetting 
+      daoActor={daoActor}
+      daoDetails={dao}
+      isMember={isMember}
+    />
+  )}
+            
             {/* {activeLink === "followers" && (
               <FollowersContent
                 daoFollowers={daoFollowers}
                 daoCanisterId={daoCanisterId}
               />
             )} */}
+             
             {activeLink === "funds" && <FundsContent />}
           </Container>
         </div>

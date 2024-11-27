@@ -179,25 +179,33 @@
 // export default FollowersContent;
 
 
-import React, { useState } from 'react';
-import { NoDataComponent } from '../../Components/Dao/NoDataComponent';
+import React from 'react';
+import NoDataComponent from '../Dao/NoDataComponent';
 
-function DaoSetting() {
-  const [hasData, setHasData] = useState(false); // Replace with actual data logic
-
+const DaoSetting = ({ daoActor, daoDetails, isMember }) => {
+  console.log("DaoSetting rendered with:", { daoActor, daoDetails, isMember });
+  
   return (
-    <div className="p-4">
-      {hasData ? (
-        <div>
-          {/* Replace with your actual data rendering logic */}
-          <p>DAO settings data will appear here.</p>
-        </div>
-      ) : (
-        <NoDataComponent />
-      )}
+    <div className="mt-6">
+      <div className="flex items-center justify-between">
+        <h1 className="lg:text-[24px] md:text-[18px] text-[16px] font-bold">DAO Settings</h1>
+      </div>
+      <div className="bg-[#F4F2EC] md:pt-3 pt-2 md:pb-8 pb-4 mt-4 md:mb-8 mb-4 rounded-[10px] p-4">
+        {daoDetails ? (
+          <div >
+            {/* <p>DAO Name: {daoDetails.dao_name}</p>
+            <p>Purpose: {daoDetails.purpose}</p> */}
+            {/* Add more DAO settings content here */}
+
+            <p> Data will apear soon ..........</p>
+          </div>
+        ) : (
+          <NoDataComponent />
+        )}
+      </div>
     </div>
   );
-}
+};
 
 export default DaoSetting;
 
