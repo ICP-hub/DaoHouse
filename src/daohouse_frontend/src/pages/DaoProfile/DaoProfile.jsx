@@ -117,6 +117,8 @@ const DaoProfile = () => {
           const daoActor = await createDaoActor(daoCanisterId);
           setDaoActor(daoActor);
           const daoDetails = await daoActor.get_dao_detail();
+          console.log("daoD", daoDetails);
+          
           setDao(daoDetails);
           const profileResponse = await backendActor.get_user_profile();
           if (profileResponse.Ok) {
@@ -135,8 +137,9 @@ const DaoProfile = () => {
             const daoGroups = await daoActor.get_dao_groups();
             setDaoGroups(daoGroups);
 
-            const daoMembers = await daoActor.get_dao_members();
-
+            const daoMembers = await daoDetails.all_dao_user;
+            console.log("daoMm", daoMembers);
+            
             setDaoMembers(daoMembers);
             const isCurrentUserMember = daoMembers.some(
               (member) => member.toString() === currentUserId.toString()
