@@ -44,6 +44,7 @@ const DaoProfile = () => {
   const { daoCanisterId } = useParams();
   const [joinStatus, setJoinStatus] = useState("Join DAO");
   const [isMember, setIsMember] = useState(false);
+  const [isRequested, setIsRequested] = useState(false);
   const [daoFollowers, setDaoFollowers] = useState([]);
   const [daoMembers, setDaoMembers] = useState([]);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -118,14 +119,17 @@ const DaoProfile = () => {
           setDaoActor(daoActor);
           const daoDetails = await daoActor.get_dao_detail();
           console.log("daoD", daoDetails);
-          
+    
           setDao(daoDetails);
+    
           const profileResponse = await backendActor.get_user_profile();
           if (profileResponse.Ok) {
             setUserProfile(profileResponse.Ok);
             const currentUserId = Principal.fromText(
               profileResponse.Ok.user_id.toString()
             );
+    
+            // Fetch followers
             const daoFollowers = await daoActor.get_dao_followers();
             setDaoFollowers(daoFollowers);
             setFollowersCount(daoFollowers.length);
@@ -134,30 +138,45 @@ const DaoProfile = () => {
                 (follower) => follower.toString() === currentUserId.toString()
               )
             );
+    
             const daoGroups = await daoActor.get_dao_groups();
             setDaoGroups(daoGroups);
-
-            const daoMembers = await daoDetails.all_dao_user;
+    
+            const daoMembers = daoDetails.all_dao_user;
+            const requestedToJoin = daoDetails.requested_dao_user;
+    
             console.log("daoMm", daoMembers);
-            
+            console.log("req", requestedToJoin);
+    
             setDaoMembers(daoMembers);
+    
+            const isUserRequested = requestedToJoin.some(
+              (member) => member.toString() === currentUserId.toString()
+            );
+            setIsRequested(isUserRequested);
+    
             const isCurrentUserMember = daoMembers.some(
               (member) => member.toString() === currentUserId.toString()
             );
             if (isCurrentUserMember) {
               setIsMember(true);
               setJoinStatus("Joined");
+            } else if (isUserRequested) {
+              setJoinStatus("Requested");
             } else {
+              setIsRequested(false);
               setIsMember(false);
               setJoinStatus("Join DAO");
             }
           }
+    
           setLoadingProfile(false);
         } catch (error) {
           console.error("Error fetching DAO details:", error);
         }
       }
     };
+    
 
     const fetchProposals = async (pagination = {}) => {
       setLoadingProposals(true);
@@ -189,7 +208,10 @@ const DaoProfile = () => {
       toast.error(`You are already member of this dao`);
 
       return;
-    }
+    } else if (joinStatus === 'Requested') {
+      toast.error(`Your have already sent a request to join this dao`);
+      return;
+  }
 
     setShowConfirmModal(true);
   };
