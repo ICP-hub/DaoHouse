@@ -135,10 +135,6 @@ const FeedPage = () => {
         >
           <p className="small_phone:text-4xl text-3xl big_phone:px-2 tablet:px-6 lg:px-[70px] desktop:px-6 flex flex-row items-center gap-4">
             Most Recent
-            {/* <div className="flex flex-col items-start">
-              <div className="xl:w-32 md:w-20 w-12 border-t-2 border-black"></div>
-              <div className="mobile:w-14 w-8 small_phone:mt-2 mt-1 border-t-2 border-black"></div>
-            </div> */}
           </p>
           <div className="hidden md:flex flex-grow justify-center mx-2">
             <SearchProposals
@@ -151,7 +147,7 @@ const FeedPage = () => {
             />
           </div>
           <button
-            className="bg-white text-[#05212C] flex items-center justify-between gap-3 lg:px-6 md:px-5 shadow-xl lg:py-3 py-2 px-4 rounded-full shadow-md hover:bg-[#f0f4f7] transition-all duration-300 relative"
+            className="bg-white text-[#05212C] flex items-center justify-between gap-3 lg:px-6 md:px-5 shadow-xl lg:py-3 py-2 px-4 rounded-full hover:bg-[#f0f4f7] transition-all duration-300 relative"
             onClick={() => setShowFilter((prev) => !prev)}
           >
             <div className="flex items-center">

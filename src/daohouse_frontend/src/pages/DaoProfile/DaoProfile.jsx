@@ -14,13 +14,12 @@ import MyProfileRectangle from "../../../assets/MyProfileRectangle.png";
 import ProposalsContent from "../../Components/DaoProfile/ProposalsContent";
 import FeedsContent from "../../Components/DaoProfile/FeedsContent";
 import Members from "../../Components/DaoProfile/Members";
-// import FollowersContent from "../../Components/DaoProfile/FollowersContent";
 import DaoSetting from "../../Components/DaoProfile/DaoSetting";
 import FundsContent from "../../Components/DaoProfile/FundsContent";
 import Container from "../../Components/Container/Container";
 import { Principal } from "@dfinity/principal";
 import { useAuth } from "../../Components/utils/useAuthClient";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 import ProposalLoaderSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/ProposalLoaderSkeleton";
 import DaoProfileLoaderSkeleton from "../../Components/SkeletonLoaders/DaoProfileLoaderSkeleton/DaoProfileLoaderSkeleton";
 import NoDataComponent from "../../Components/Dao/NoDataComponent";
@@ -33,7 +32,7 @@ import Pagination from "../../Components/pagination/Pagination";
 const DaoProfile = () => {
   const className = "DaoProfile";
   const [activeLink, setActiveLink] = useState("proposals");
-  const { backendActor, createDaoActor,identity } = useAuth();
+  const { backendActor, createDaoActor, identity } = useAuth();
   const [dao, setDao] = useState(null);
   const [proposals, setProposals] = useState([]);
   const [loadingProfile, setLoadingProfile] = useState(true);
@@ -46,7 +45,6 @@ const DaoProfile = () => {
   const [joinStatus, setJoinStatus] = useState("Join DAO");
   const [isMember, setIsMember] = useState(false);
   const [isRequested, setIsRequested] = useState(false);
-  const [daoFollowers, setDaoFollowers] = useState([]);
   const [daoMembers, setDaoMembers] = useState([]);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [daoActor, setDaoActor] = useState({});
@@ -56,9 +54,6 @@ const DaoProfile = () => {
   const maxWords = 120;
   const toggleExpanded = () => setIsExpanded(!isExpanded);
   const [DaoBalance, setDaoBalance] = useState(null);
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [followersCount, setFollowersCount] = useState(0);
-  const [userProfile, setUserProfile] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [sortOrder, setSortOrder] = useState("newest");
@@ -81,16 +76,17 @@ const DaoProfile = () => {
   };
 
   const createTokenActor = async () => {
-    const tokenActorrr = createActor(dao.token_ledger_id.id, { agentOptions: { identity } });
-    return tokenActorrr
-
+    const tokenActorrr = createActor(dao.token_ledger_id.id, {
+      agentOptions: { identity },
+    });
+    return tokenActorrr;
   };
 
-  const daoBalance = async () =>{
+  const daoBalance = async () => {
     const actor = await createTokenActor(dao.token_ledger_id.id);
     const balance = await fetchMetadataAndBalance(actor, dao.dao_id);
     setDaoBalance(balance.balance);
-  }
+  };
 
   const truncateText = (text, wordLimit) => {
     const words = text.split("");
@@ -119,45 +115,44 @@ const DaoProfile = () => {
         try {
           const daoActor = await createDaoActor(daoCanisterId);
           setDaoActor(daoActor);
-          
+
           const daoDetails = await daoActor.get_dao_detail();
-          console.log("daoD", daoDetails);
-          
-          // Check if daoDetails exists before setting state
           if (!daoDetails) {
-            console.error("No DAO details returned");
             setLoadingProfile(false);
             return;
           }
-    
+
           setDao(daoDetails);
-    
+
           const profileResponse = await backendActor.get_user_profile();
           if (profileResponse.Ok) {
-            setUserProfile(profileResponse.Ok);
             const currentUserId = Principal.fromText(
               profileResponse.Ok.user_id.toString()
             );
-    
+
             // Safely access daoDetails properties with optional chaining
             const daoGroups = await daoActor.get_dao_groups();
             setDaoGroups(daoGroups);
-    
+
             const daoMembers = daoDetails?.all_dao_user || [];
             const requestedToJoin = daoDetails?.requested_dao_user || [];
-    
+
             setDaoMembers(daoMembers);
-    
+
             // Use optional chaining and null checks
-            const isUserRequested = Array.isArray(requestedToJoin) && requestedToJoin.some(
-              (member) => member.toString() === currentUserId.toString()
-            );
+            const isUserRequested =
+              Array.isArray(requestedToJoin) &&
+              requestedToJoin.some(
+                (member) => member.toString() === currentUserId.toString()
+              );
             setIsRequested(isUserRequested);
-    
-            const isCurrentUserMember = Array.isArray(daoMembers) && daoMembers.some(
-              (member) => member.toString() === currentUserId.toString()
-            );
-    
+
+            const isCurrentUserMember =
+              Array.isArray(daoMembers) &&
+              daoMembers.some(
+                (member) => member.toString() === currentUserId.toString()
+              );
+
             if (isCurrentUserMember) {
               setIsMember(true);
               setJoinStatus("Joined");
@@ -186,7 +181,9 @@ const DaoProfile = () => {
             start: pagination.start,
             end: pagination.end + 1,
           };
-          const proposals = await daoActor.get_all_proposals(proposalPagination);
+          const proposals = await daoActor.get_all_proposals(
+            proposalPagination
+          );
           const hasMoreData = proposals.length > itemsPerPage;
           setHasMore(hasMoreData);
           const proposalsToDisplay = proposals.slice(0, itemsPerPage);
@@ -199,7 +196,10 @@ const DaoProfile = () => {
       }
     };
     fetchDaoDetails();
-    fetchProposals({ start: (currentPage - 1) * itemsPerPage, end: currentPage * itemsPerPage });
+    fetchProposals({
+      start: (currentPage - 1) * itemsPerPage,
+      end: currentPage * itemsPerPage,
+    });
   }, [backendActor, createDaoActor, daoCanisterId, currentPage]);
 
   const handleJoinDao = async () => {
@@ -207,10 +207,10 @@ const DaoProfile = () => {
       toast.error(`You are already member of this dao`);
 
       return;
-    } else if (joinStatus === 'Requested') {
+    } else if (joinStatus === "Requested") {
       toast.error(`Your have already sent a request to join this dao`);
       return;
-  }
+    }
 
     setShowConfirmModal(true);
   };
@@ -232,7 +232,6 @@ const DaoProfile = () => {
         toast.success(response.Ok);
         sound.play();
       } else {
-        console.error(response.Err);
         toast.error(response.Err);
       }
     } catch (error) {
@@ -245,61 +244,13 @@ const DaoProfile = () => {
     }
   };
 
-  // const toggleFollow = async () => {
-  //   if (!userProfile) return;
-
-  //   const newIsFollowing = !isFollowing;
-  //   setIsFollowing(newIsFollowing);
-  //   setFollowersCount((prevCount) =>
-  //     newIsFollowing ? prevCount + 1 : prevCount - 1
-  //   );
-
-  //   try {
-  //     const daoActor = createDaoActor(daoCanisterId);
-  //     const response = isFollowing
-  //       ? await daoActor.unfollow_dao()
-  //       : await daoActor.follow_dao();
-
-  //     if (response?.Ok) {
-  //       toast.success(
-  //         newIsFollowing ? "Successfully followed" : "Successfully unfollowed"
-  //       );
-  //     } else if (response?.Err) {
-  //       // Revert the state if there's an error
-  //       setIsFollowing(!newIsFollowing);
-  //       setFollowersCount((prevCount) =>
-  //         newIsFollowing ? prevCount - 1 : prevCount + 1
-  //       );
-  //       toast.error(response.Err);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error following/unfollowing DAO:", error);
-  //     // Revert the state if there's an error
-  //     setIsFollowing(!newIsFollowing);
-  //     setFollowersCount((prevCount) =>
-  //       newIsFollowing ? prevCount - 1 : prevCount + 1
-  //     );
-  //     toast.error(error);
-  //   }
-  // };
-
   const getImageUrl = (imageId) => {
     return `${protocol}://${canisterId}.${domain}/f/${imageId}`;
   };
 
   const handleClick = (linkName) => {
-    console.log("Previous activeLink:", activeLink);
-    console.log("Changing to:", linkName);
     setActiveLink(linkName);
   };
-  
-  // Add this useEffect to track state changes
-  useEffect(() => {
-    console.log("activeLink changed to:", activeLink);
-    console.log("Current dao data:", dao);
-    console.log("Current daoActor:", daoActor);
-  }, [activeLink, dao, daoActor]);
-  
 
   if (!dao && !loadingProfile) {
     return (
@@ -308,7 +259,6 @@ const DaoProfile = () => {
       </div>
     );
   }
-
 
   const defaultOptions = {
     loop: true,
@@ -341,11 +291,11 @@ const DaoProfile = () => {
     },
   };
 
-   useEffect(()=>{
-    if(dao?.token_ledger_id?.id){
+  useEffect(() => {
+    if (dao?.token_ledger_id?.id) {
       daoBalance();
     }
-  },[dao?.token_ledger_id?.id]) 
+  }, [dao?.token_ledger_id?.id]);
 
   return (
     <div className={className + " bg-zinc-200 w-full relative"}>
@@ -462,12 +412,6 @@ const DaoProfile = () => {
                         Proposals
                       </span>
                     </span>
-                    {/* <span className="text-[18px] sm:text-[20px] md:text-[24px] lg:text-[32px] font-normal text-[#05212C] user-acc-info">
-                      {followersCount}&nbsp;
-                      <span className="text-[12px] sm:text-[14px] md:text-[16px] mx-1">
-                        Followers
-                      </span>
-                    </span> */}
                     <span className="text-[18px] sm:text-[20px] md:text-[24px] lg:text-[32px] font-normal text-[#05212C] user-acc-info">
                       {Number(DaoBalance)}&nbsp;
                       <span className="text-[12px] sm:text-[14px] md:text-[16px] mx-1">
@@ -479,20 +423,14 @@ const DaoProfile = () => {
               </div>
 
               <div className="flex md:justify-end gap-4">
-                {/* <button
-                  onClick={toggleFollow}
-                  className="bg-[#0E3746] text-[16px] text-white shadow-xl lg:py-4 lg:px-3 rounded-[27px] lg:w-[131px] lg:h-[40px] md:w-[112px] md:h-[38px] w-[98px] h-[35px] lg:flex items-center justify-center"
-                  style={{
-                    boxShadow:
-                      "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
-                  }}
-                >
-                  {isFollowing ? "Unfollow" : "Follow"}
-                </button> */}
                 <button
-                 disabled={isMember || isRequested}
+                  disabled={isMember || isRequested}
                   onClick={handleJoinDao}
-                  className={`bg-white text-[16px] text-[#05212C] shadow-xl lg:py-4 lg:px-3 rounded-[27px] lg:w-[131px] lg:h-[40px] md:w-[112px] md:h-[38px] w-[98px] h-[35px] lg:flex items-center justify-center ${isRequested || isMember ? "cursor-not-allowed cursor" : "cursor-pointer"}`}
+                  className={`bg-white text-[16px] text-[#05212C] shadow-xl lg:py-4 lg:px-3 rounded-[27px] lg:w-[131px] lg:h-[40px] md:w-[112px] md:h-[38px] w-[98px] h-[35px] lg:flex items-center justify-center ${
+                    isRequested || isMember
+                      ? "cursor-not-allowed cursor"
+                      : "cursor-pointer"
+                  }`}
                   style={{
                     boxShadow:
                       "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
@@ -570,19 +508,18 @@ const DaoProfile = () => {
                 Members&Groups
               </button>
               <button
-  onClick={(e) => {
-    e.preventDefault();
-    handleClick("dao_setting"); // "dao_setting" is passed as linkName
-  }}
-  className={`cursor-pointer text-nowrap ${
-    activeLink === "dao_setting"
-      ? "underline text-[#0E3746]"
-      : "text-[#0E37464D]"
-  }`}
->
-  Dao Setting
-</button>
-
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleClick("dao_setting"); // "dao_setting" is passed as linkName
+                }}
+                className={`cursor-pointer text-nowrap ${
+                  activeLink === "dao_setting"
+                    ? "underline text-[#0E3746]"
+                    : "text-[#0E37464D]"
+                }`}
+              >
+                Dao Docs
+              </button>
             </div>
             {activeLink === "proposals" && (
               <div>
@@ -590,36 +527,27 @@ const DaoProfile = () => {
                   <ProposalLoaderSkeleton />
                 ) : (
                   <ProposalsContent
-                  sortOrder={sortOrder}
-                  setSortOrder={setSortOrder}
+                    sortOrder={sortOrder}
+                    setSortOrder={setSortOrder}
                     proposals={proposals}
                     isMember={isMember}
                     voteApi={daoActor}
                     daoCanisterId={daoCanisterId}
                   />
                 )}
-               <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} hasMore={hasMore}/>
+                <Pagination
+                  currentPage={currentPage}
+                  setCurrentPage={setCurrentPage}
+                  hasMore={hasMore}
+                />
               </div>
             )}
             {activeLink === "feeds" && <FeedsContent />}
             {activeLink === "member_policy" && (
               <Members daoGroups={daoGroups} daoMembers={daoMembers} />
             )}
-             {activeLink === "dao_setting" && (
-    <DaoSetting 
-      // daoActor={daoActor}
-      // daoDetails={dao}
-      // isMember={isMember}
-    />
-  )}
-            
-            {/* {activeLink === "followers" && (
-              <FollowersContent
-                daoFollowers={daoFollowers}
-                daoCanisterId={daoCanisterId}
-              />
-            )} */}
-             
+            {activeLink === "dao_setting" && <DaoSetting />}
+
             {activeLink === "funds" && <FundsContent />}
           </Container>
         </div>
