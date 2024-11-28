@@ -235,10 +235,10 @@ const ProposalsDetails = () => {
           </div>
 
           <div className="lg:ml-10 ml-4 md:mt-0 mt-4">
-            <h2 className="lg:text-[40px] md:text-[24px] text-[16px] tablet:font-normal font-medium md:text-left text-[#05212C] truncate ... w-[200px] mini_phone:w-[215px] iphone_SE:w-[225px] small_phone:w-[250px] md:w-[300px] lg:w-[300px] xl:w-[500px] text-center">
+            <h2 className="lg:text-[40px] md:text-[24px] text-[16px] tablet:font-normal font-medium  text-[#05212C] md:text-start text-center">
               {dao?.dao_name || 'Dao Name'}
             </h2>
-            <div className="relative w-[200px] mini_phone:w-[215px] iphone_SE:w-[225px] small_phone:w-[250px] md:w-[300px] lg:w-[300px] xl:w-[500px] desktop:w-[600px] mt-2">
+            <div className="relative w-full mt-2">
               <p className="text-[12px] tablet:text-[16px] font-normal md:text-left text-[#646464] break-words text-center">
                 {isExpanded ? dao?.purpose : truncated}
                 {isTruncated && (
@@ -259,7 +259,7 @@ const ProposalsDetails = () => {
         </div>
 
         {/* Right Side: Follow & Join Buttons */}
-        <div className="flex justify-center gap-4 mt-4 md:mt-0  w-64 self-center md:self-start">
+        <div className="flex justify-center gap-4 mt-4 md:mt-0  self-center md:self-start">
           {/* <button
             onClick={toggleFollow}
             className="bg-[#0E3746] text-[16px] text-white shadow-xl py-1 px-3 rounded-[27px] lg:w-[131px] lg:h-[40px] md:w-[112px] md:h-[38px] w-full flex items-center justify-center"
@@ -272,7 +272,7 @@ const ProposalsDetails = () => {
           </button> */}
           <button
             onClick={handleJoinDao}
-            className="bg-white text-[16px] text-[#05212C] shadow-xl px-3 rounded-[27px] lg:w-[131px] lg:h-[40px] md:w-[112px] md:h-[38px] w-full flex items-center justify-center"
+            className="bg-white text-[16px] text-[#05212C] shadow-xl px-8 py-1 rounded-[27px] lg:w-[131px] lg:h-[40px] md:w-[112px] md:h-[40px] w-full flex items-center justify-center"
             style={{
               boxShadow:
                 "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
