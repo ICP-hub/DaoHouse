@@ -50,9 +50,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
             setIsFollowing(isUserFollowing);
     
             // Fetch DAO details
-            const daoDetails = await daoActor.get_dao_detail();
-            console.log("daoD", daoDetails);
-    
+            const daoDetails = await daoActor.get_dao_detail();    
             // Check membership and request status
             const daoMembers = daoDetails.all_dao_user;
             const requestedToJoin = daoDetails.requested_dao_user;
@@ -91,30 +89,30 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
   }, [daoCanisterId, backendActor]);
 
 
-  const toggleFollow = async () => {
+  // const toggleFollow = async () => {
     
-    try {
-      if (!userProfile) return;
-      setIsFollowing(!isFollowing);
-      const response = isFollowing
-        ? await daoActor.unfollow_dao()
-        : await daoActor.follow_dao();
+  //   try {
+  //     if (!userProfile) return;
+  //     setIsFollowing(!isFollowing);
+  //     const response = isFollowing
+  //       ? await daoActor.unfollow_dao()
+  //       : await daoActor.follow_dao();
 
-      if (response?.Ok) {
-        const updatedFollowers = await daoActor.get_dao_followers();
-        setFollowersCount(updatedFollowers.length);
-        console.log(followersCount);
+  //     if (response?.Ok) {
+  //       const updatedFollowers = await daoActor.get_dao_followers();
+  //       setFollowersCount(updatedFollowers.length);
+  //       console.log(followersCount);
         
-        toast.success(isFollowing ? "Successfully unfollowed" : "Successfully followed");
-      } else if (response?.Err) {
-        setIsFollowing(!isFollowing);
-        toast.error(response.Err);
-      }
-    } catch (error) {
-      console.error('Error following/unfollowing DAO:', error);
-      toast.error(error);
-    }
-  };
+  //       toast.success(isFollowing ? "Successfully unfollowed" : "Successfully followed");
+  //     } else if (response?.Err) {
+  //       setIsFollowing(!isFollowing);
+  //       toast.error(response.Err);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error following/unfollowing DAO:', error);
+  //     toast.error(error);
+  //   }
+  // };
 
   const handleJoinDao = async () => {
     if (joinStatus === 'Joined') {
@@ -146,7 +144,6 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
       };
   
       const response = await daoActor.ask_to_join_dao(joinDaoPayload);
-      console.log("response of ask to join dao api",response);
       const sound = new Audio(messagesound);
       if (response.Ok) {
         setJoinStatus("Requested");
@@ -215,12 +212,12 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
       <h2 className="text-lg font-semibold truncate w-24 big_phone:w-36 text-center">{name}</h2>
 
  
-      <button
+      {/* <button
         onClick={toggleFollow}
         className="mt-2 text-blue-400 p-1 sm:text-sm md:text-lg text-center"
       >
         {isFollowing ? 'Unfollow' : '+ Follow'}
-      </button>
+      </button> */}
     </div>
       </div>
 

@@ -24,7 +24,6 @@ type DaoGroup = record {
 type DaoInput = record {
   members : vec principal;
   image_title : text;
-  all_dao_user : vec principal;
   token_symbol : text;
   linksandsocials : vec text;
   tokens_required_to_vote : nat32;
@@ -117,20 +116,15 @@ type UserProfile = record {
   join_dao : vec principal;
   twitter_id : text;
   description : text;
-  followers_list : vec principal;
   post_count : nat32;
-  followings_count : nat32;
   user_id : principal;
   website : text;
   contact_number : text;
   email_id : text;
-  followers_count : nat32;
-  follow_dao : vec principal;
   profile_img : text;
   telegram : text;
   submitted_proposals : nat64;
   tag_defines : vec text;
-  followings_list : vec principal;
 };
 service : (InitialArgs) -> {
   add_proposal : (ProposalValueStore) -> (Result);
@@ -150,10 +144,8 @@ service : (InitialArgs) -> {
   get_user_profile : () -> (Result_4) query;
   make_payment_and_create_dao : (DaoInput) -> (Result);
   proposal_to_mint_new_dao_tokens : (principal, nat64) -> (Result_5);
-  remove_follow_dao : (principal, principal) -> (Result_1);
   remove_joined_dao : (principal, principal) -> (Result_1);
   search_dao : (text) -> (vec DaoDetails) query;
-  store_follow_dao : (principal, principal) -> (Result_1);
   store_join_dao : (principal, principal) -> (Result_1);
   update_profile : (Profileinput) -> (Result_1);
   upload_image : (ImageData) -> (Result);

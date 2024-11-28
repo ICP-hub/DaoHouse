@@ -17,10 +17,6 @@ const Step6 = ({ data, setData }) => {
     }
   };
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
-
   function createDAO() {
     setData((prevData) => ({
       ...prevData,

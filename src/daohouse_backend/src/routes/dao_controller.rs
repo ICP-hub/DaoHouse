@@ -74,7 +74,6 @@ pub async fn create_dao_canister(dao_detail: crate::DaoInput) -> Result<Principa
         // tokenissuer: dao_detail.tokenissuer,
         linksandsocials: dao_detail.linksandsocials,
         required_votes: dao_detail.required_votes,
-        followers: vec![ic_cdk::api::caller()],
         image_id: id.clone(),
         members_permissions: dao_detail.members_permissions,
         dao_groups: dao_detail.dao_groups,
@@ -85,7 +84,7 @@ pub async fn create_dao_canister(dao_detail: crate::DaoInput) -> Result<Principa
         daohouse_canister_id: ic_cdk::api::id(),
         proposal_entry : proposal_entry,
         ask_to_join_dao: dao_detail.ask_to_join_dao,
-        all_dao_user : dao_detail.all_dao_user,
+        all_dao_user : vec![],
     };
 
     // encoding params that is to be passed to new canister

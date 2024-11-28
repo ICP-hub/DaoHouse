@@ -51,7 +51,6 @@ const Step3 = ({ setData, setActiveStep, Step4Ref, Step1Ref }) => {
     });
 
     setList(updatedGroups);
-    console.log(updatedGroups);
   };
 
   const handleMemberAdding = () => {

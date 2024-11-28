@@ -129,17 +129,11 @@ dfx deploy dao_canister --argument "(record {
     required_votes = 100;
     image_id = \"1\";
     tokens_required_to_vote = 1;
-    followers = vec {
-        principal \"aaaaa-aa\";
-    };
     image_canister = principal \"aaaaa-aa\";
     members_permissions = vec {
         variant { AddMemberToGroupProposal };
         variant { Polls };
         variant { TokenTransfer };
-    };
-    all_dao_user = vec { 
-      principal \"6ydm4-srext-xsaic-y3v2x-cticp-5n6pf-2meh7-j43r6-rghg7-pt5nd-bqe\";
     };
     proposal_entry = vec {
         record {
@@ -181,7 +175,7 @@ chmod 777 ./assets_upload.sh
 
 
  dfx deploy internet_identity
-#  dfx deploy daohouse_frontend
+ dfx deploy daohouse_frontend
 
 # dfx deploy
 

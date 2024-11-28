@@ -1,9 +1,6 @@
 import React, { useEffect } from "react";
 
 function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig, errorMessage, errors, setDescriptionError, setDaoNameError, setDaoPurposeError }) {
-    console.log("dao in dao config", dao);
-    console.log("dao name in dao config", daoConfig.new_dao_name);
-
     useEffect(() => {
         // Set initial daoConfig values if they're not already set
         setDaoConfig((prevConfig) => ({

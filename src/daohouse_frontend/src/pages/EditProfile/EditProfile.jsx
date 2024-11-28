@@ -60,7 +60,6 @@ const EditProfile = () => {
     const fetchData = async () => {
       try {
         const files = await assetManager.list();
-        console.log({ files });
       } catch (error) {
         console.error("Error fetching user profile:", error);
       }
