@@ -450,26 +450,24 @@ const MyProfile = ({ childComponent }) => {
                   {email || "gmail@gmail.xyz"}{" "}
                 </p></div>
             </div>
-            <div className="flex justify-end gap-4 translate-x-[-30px] translate-y-[30px] tablet:mr-4">
-              {activeTab === 0 && (
-                <button
-                  onClick={() => navigate("/edit-profile")}
-                  className="bg-white text-[10px] text-[#05212C] gap-1 shadow-2xl md:px-3 rounded-[27px] tablet:w-[190px] tablet:h-[40px] md:w-[10px] md:h-[35px] w-[2.8rem] h-[2.5rem] flex items-center justify-center space-x-4 rounded-2xl"
-                >
+            <div className="flex justify-end gap-4 w-full translate-x-[-62px] translate-y-[30px] tablet:mr-4">
+  {activeTab === 0 && (
+    <button
+      onClick={() => navigate("/edit-profile")}
+      className="bg-white text-[16px] text-[#05212C] gap-0 shadow-2xl md:px-3 rounded-[27px] 
+                 tablet:w-[190px] tablet:h-[40px] md:w-[50px] md:h-[35px] w-[4.4rem] h-[2.4rem] 
+                 flex items-center justify-center  rounded-2xl"
+    >
+      <img
+        src={EditPen}
+        alt="edit"
+        className="tablet:mr-2 h-5 w-5"
+      />
+      <span className="hidden sm:inline">Edit</span>
+    </button>
+  )}
+</div>
 
-                  <img
-                    src={EditPen}
-                    alt="edit"
-                    className="tablet:mr-2 h-4 w-4 edit-pen"
-                  />
-                  {/* <span className="md:inline whitespace- text-xs">
-                    Edit Profile
-                  </span> */}
-                </button>
-
-              )}
-
-            </div>
             </div>
            
 
@@ -532,12 +530,12 @@ const MyProfile = ({ childComponent }) => {
 
 
 
-              <div className="absolute bottom-1 flex justify-center   w-[295px] h-[1px] bg-black  transition-all duration-300 hover:w-[20px]"></div>
+              {/* <div className="absolute bottom-1 flex justify-center   w-[295px] h-[1px] bg-black  transition-all duration-300 hover:w-[20px]"></div> */}
 
 
               {/* My Profile Tab */}
-              <div className="">
-                <div className="flex items-center gap-14">
+              <div className="flex w-full mx-8 ">
+                <div className="flex items-center w-full justify-between ">
                   {/* My Profile Tab */}
                   <Link to="/my-profile" onClick={() => setActiveTab(0)} className="flex-none text-center">
                     <p className={`${tabButtonsStyle} ${activeTab === 0 ? "text-black border-b-1 border-black " : ""}  relative pb-2 z-10 transition-all duration-300`}>
