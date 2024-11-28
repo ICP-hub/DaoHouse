@@ -15,13 +15,13 @@ const FeedPage = () => {
   const { isAuthenticated, login, signInNFID, backendActor, createDaoActor } =
     useAuth();
   const navigate = useNavigate();
+  const [sortOrder, setSortOrder] = useState("newest");
   const [searchTerm, setSearchTerm] = useState("");
   const [proposals, setProposals] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
-  const [showFilter, setShowFilter] = useState(false); // State for the filter dropdown
-  const [sortOrder, setSortOrder] = useState("newest"); // State for sorting option
+  const [showFilter, setShowFilter] = useState(false);
   let itemsPerPage = 4;
   const className = "FeedPage";
 
@@ -57,7 +57,6 @@ const FeedPage = () => {
     try {
       setLoading(true);
       const allDaos = await backendActor.get_all_dao();
-      let allProposals = [];
       for (const dao of allDaos) {
         const proposalPagination = {
           start: pagination.start,
@@ -72,7 +71,10 @@ const FeedPage = () => {
             ...proposal,
             dao_canister_id: dao.dao_canister_id,
           }));
-          allProposals = [...allProposals, ...proposalsWithDaoId];
+          const hasMoreData = daoProposals.length > itemsPerPage;
+          setHasMore(hasMoreData);
+          const proposalsToDisplay = proposalsWithDaoId.slice(0, itemsPerPage);
+          setProposals(proposalsToDisplay);
         } catch (error) {
           console.error(
             `Error fetching proposals from DAO ${dao.dao_canister_id}:`,
@@ -145,13 +147,16 @@ const FeedPage = () => {
           <h1 className="mobile:text-5xl text-3xl p-4 small_phone:mx-[-24px] big_phone:mx-[-60px] lg:mx-2 text-white">
             Social Feed
           </h1>
+          <h1 className="mobile:text-5xl text-3xl p-4 small_phone:mx-[-24px] big_phone:mx-[-60px] lg:mx-2 text-white">
+            Social Feed
+          </h1>
         </Container>
       </div>
 
       {/* Filter Section */}
       <div className="bg-[#c8ced3]">
         <Container
-          classes={`__label small_phone:py-8 py-5 px-4 small_phone:px-8 desktop:px-20 flex flex-col gap-4`}
+          classes={`__label small_phone:py-8 py-5 px-4 small_phone:px-8 desktop:px-20 lg:pr-24 desktop:pr-24 flex justify-between items-center`}
         >
           <div className="flex justify-between items-center lg:mx-[70px] desktop:mx-6">
             <p className="small_phone:text-4xl text-3xl  flex flex-row items-center gap-4">
@@ -223,6 +228,9 @@ const FeedPage = () => {
       <div
         className={`${className}__postCards mobile:px-10 px-6 pb-10 bg-[#c8ced3] gap-8 flex flex-col`}
       >
+      <div
+        className={`${className}__postCards mobile:px-10 px-6 pb-10 bg-[#c8ced3] gap-8 flex flex-col`}
+      >
         {loading ? (
           <ProposalLoaderSkeleton />
         ) : proposals.length === 0 ? (
@@ -242,8 +250,15 @@ const FeedPage = () => {
                   proposals={proposals}
                   isMember={true}
                   showActions={false}
+                  sortOrder={sortOrder}
+                  setSortOrder={setSortOrder}
                 />
               </div>
+              <Pagination
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                hasMore={hasMore}
+              />
               <Pagination
                 currentPage={currentPage}
                 setCurrentPage={setCurrentPage}
@@ -263,6 +278,7 @@ const FeedPage = () => {
           onNFIDLogin={handleNFIDLogin}
         />
       )}
+    </div>
     </div>
   );
 };

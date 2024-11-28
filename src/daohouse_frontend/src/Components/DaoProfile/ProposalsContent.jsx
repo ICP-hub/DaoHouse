@@ -10,7 +10,6 @@ const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, da
   const [fetchedProposals, setFetchedProposals] = useState([]);
   const [showFilter, setShowFilter] = useState(false);
   const allProposals = proposals && Array.isArray(proposals) ? proposals : [];
-
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
