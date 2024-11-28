@@ -457,7 +457,7 @@ const MyProfile = ({ childComponent }) => {
                 {activeTab === 0 && (
                   <button
                     onClick={() => navigate("/edit-profile")}
-                    className="bg-white text-[16px] text-[#05212C] gap-0 shadow-2xl md:px-3 
+                    className="bg-white text-[16px] text-[#05212C] gap-0 shadow-2xl md:px-3  
                  tablet:w-[190px] tablet:h-[40px] md:w-[50px] md:h-[35px] w-[4.4rem] h-[2.4rem] 
                  flex items-center justify-center  rounded-2xl"
                   >
