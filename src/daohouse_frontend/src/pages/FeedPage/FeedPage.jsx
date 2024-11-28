@@ -12,7 +12,8 @@ import Pagination from "../../Components/pagination/Pagination";
 
 const FeedPage = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const { isAuthenticated, login, signInNFID, backendActor, createDaoActor } = useAuth();
+  const { isAuthenticated, login, signInNFID, backendActor, createDaoActor } =
+    useAuth();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [proposals, setProposals] = useState([]);
@@ -30,7 +31,7 @@ const FeedPage = () => {
       await login("Icp");
       window.location.reload();
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error("Login failed:", error);
     } finally {
       setLoading(false);
     }
@@ -42,7 +43,7 @@ const FeedPage = () => {
       await signInNFID();
       window.location.reload();
     } catch (error) {
-      console.error('NFID login failed:', error);
+      console.error("NFID login failed:", error);
     } finally {
       setLoading(false);
     }
@@ -64,41 +65,36 @@ const FeedPage = () => {
         };
         try {
           const daoActor = await createDaoActor(dao.dao_canister_id);
-          const daoProposals = await daoActor.get_all_proposals(proposalPagination);
+          const daoProposals = await daoActor.get_all_proposals(
+            proposalPagination
+          );
           const proposalsWithDaoId = daoProposals.map((proposal) => ({
             ...proposal,
             dao_canister_id: dao.dao_canister_id,
           }));
           allProposals = [...allProposals, ...proposalsWithDaoId];
         } catch (error) {
-          console.error(`Error fetching proposals from DAO ${dao.dao_canister_id}:`, error);
+          console.error(
+            `Error fetching proposals from DAO ${dao.dao_canister_id}:`,
+            error
+          );
         }
       }
-
-      // Apply sorting to the fetched proposals
-if (sortOrder === "newest") {
-  allProposals.sort((a, b) => {
-    const dateA = Number(a.proposal_submitted_at); // Convert BigInt to number
-    const dateB = Number(b.proposal_submitted_at); // Convert BigInt to number
-    return dateB - dateA; // Directly compare the numeric values
-  });
-} else if (sortOrder === "oldest") {
-  allProposals.sort((a, b) => {
-    const dateA = Number(a.proposal_submitted_at); // Convert BigInt to number
-    const dateB = Number(b.proposal_submitted_at); // Convert BigInt to number
-    return dateA - dateB; // Directly compare the numeric values
-  });
-}
-
-console.log(allProposals);
-console.log(sortOrder);
-
-
-
+      if (sortOrder === "newest") {
+        allProposals.sort((a, b) => {
+          const dateA = Number(a.proposal_submitted_at);
+          const dateB = Number(b.proposal_submitted_at);
+          return dateB - dateA; 
+        });
+      } else if (sortOrder === "oldest") {
+        allProposals.sort((a, b) => {
+          const dateA = Number(a.proposal_submitted_at);
+          const dateB = Number(b.proposal_submitted_at);
+          return dateA - dateB; 
+        });
+      }
       setHasMore(allProposals.length > itemsPerPage);
       setProposals(allProposals.slice(0, itemsPerPage));
-      console.log("proos", proposals);
-      
     } catch (error) {
       console.error("Error fetching DAOs and proposals:", error);
     } finally {
@@ -112,8 +108,18 @@ console.log(sortOrder);
       return;
     }
     setShowLoginModal(false);
-    fetchAllProposals({ start: (currentPage - 1) * itemsPerPage, end: currentPage * itemsPerPage });
-  }, [isAuthenticated, backendActor, createDaoActor, currentPage, searchTerm, sortOrder]); // Include sortOrder in dependency array
+    fetchAllProposals({
+      start: (currentPage - 1) * itemsPerPage,
+      end: currentPage * itemsPerPage,
+    });
+  }, [
+    isAuthenticated,
+    backendActor,
+    createDaoActor,
+    currentPage,
+    searchTerm,
+    sortOrder,
+  ]); // Include sortOrder in dependency array
 
   const handleModalClose = () => {
     setShowLoginModal(false);
@@ -121,10 +127,6 @@ console.log(sortOrder);
       navigate("/");
     }
   };
-
-  useEffect(() => {
-    console.log("Updated proposals:", proposals);
-  }, [proposals]);
 
   return (
     <div className={`${className} w-full`}>
@@ -140,7 +142,9 @@ console.log(sortOrder);
         <Container
           classes={`__filter w-100 desktop:h-[220px] h-[168px] top-[70px] big_phone:p-20 small_phone:p-10 py-4 flex flex-col items-start justify-center ${className}`}
         >
-          <h1 className="mobile:text-5xl text-3xl p-4 small_phone:mx-[-24px] big_phone:mx-[-60px] lg:mx-2 text-white">Social Feed</h1>
+          <h1 className="mobile:text-5xl text-3xl p-4 small_phone:mx-[-24px] big_phone:mx-[-60px] lg:mx-2 text-white">
+            Social Feed
+          </h1>
         </Container>
       </div>
 
@@ -158,7 +162,7 @@ console.log(sortOrder);
               </div>
             </p>
             <button
-              className="bg-white text-[#05212C] flex items-center justify-between gap-3 lg:px-6 md:px-5 shadow-xl lg:py-3 py-2 px-4 rounded-full shadow-md hover:bg-[#f0f4f7] transition-all duration-300 relative"
+              className="bg-white text-[#05212C] flex items-center justify-between gap-3 lg:px-6 md:px-5 shadow-xl lg:py-3 py-2 px-4 rounded-full hover:bg-[#f0f4f7] transition-all duration-300 relative"
               onClick={() => setShowFilter((prev) => !prev)}
             >
               <div className="flex items-center">
@@ -215,9 +219,10 @@ console.log(sortOrder);
         </Container>
       </div>
 
-
       {/* Post Section */}
-      <div className={`${className}__postCards mobile:px-10 px-6 pb-10 bg-[#c8ced3] gap-8 flex flex-col`}>
+      <div
+        className={`${className}__postCards mobile:px-10 px-6 pb-10 bg-[#c8ced3] gap-8 flex flex-col`}
+      >
         {loading ? (
           <ProposalLoaderSkeleton />
         ) : proposals.length === 0 ? (
@@ -239,7 +244,11 @@ console.log(sortOrder);
                   showActions={false}
                 />
               </div>
-              <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} hasMore={hasMore} />
+              <Pagination
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                hasMore={hasMore}
+              />
             </Container>
           </div>
         )}

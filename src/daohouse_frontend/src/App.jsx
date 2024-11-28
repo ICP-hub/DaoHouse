@@ -14,7 +14,6 @@ import EditProfile from "./pages/EditProfile/EditProfile";
 import CreateProposal from "./pages/Proposals/CreateProposal";
 import MyPosts from "./Components/MyProfile/MyPosts/MyPosts";
 import AboutMe from "./Components/MyProfile/AboutMe/AboutMe";
-import Followers from "./Components/MyProfile/Followers/Followers";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import DaoProfile from "./pages/DaoProfile/DaoProfile";
 import "react-toastify/dist/ReactToastify.css";
@@ -23,7 +22,7 @@ import MyProposals from "./pages/Proposals/myproposals/MyProposals";
 import SingleProposal from "./Components/Proposals/SingleProposal/SingleProposal";
 import Following from "./Components/MyProfile/Following/Following";
 
-import toast, { Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 import ScrollToTop from "./Components/utils/ScrollToTop";
 import ProposalsDetails from "./pages/FeedPage/ProposalDetails";
 
@@ -63,11 +62,7 @@ const App = () => {
             path="/my-profile/posts"
             element={<MyProfile childComponent={<MyPosts />} />}
           />
-          <Route
-            path="/my-profile/followers"
-            element={<MyProfile childComponent={<Followers />} />}
-          />
-          <Route
+             <Route
             path="/my-profile/following"
             element={<MyProfile childComponent={<Following />} />}
           />

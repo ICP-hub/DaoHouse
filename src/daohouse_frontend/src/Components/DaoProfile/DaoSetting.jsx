@@ -1,210 +1,130 @@
-// import React, { useEffect, useState } from "react";
-// import SearchProposals from "../Proposals/SearchProposals";
-// import { LuSearch } from "react-icons/lu";
-// import { useAuth } from "../utils/useAuthClient";
-// import Avatar from "../../../assets/Avatar.png";
-// import nodata from "../../../assets/nodata.png";
-// import FollowersSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/FollowersSkeleton";
-// import { Principal } from "@dfinity/principal";
-
-// const FollowersContent = ({ daoFollowers, daoCanisterId }) => {
-//   const { backendActor, createDaoActor } = useAuth();
-//   const [followerProfiles, setFollowerProfiles] = useState([]);
-//   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
-//   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
-//   const noDataContainerStyle = { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%" };
-
-//   const [fetchFollower, setFetchFollower] = useState([]);
-//   const [searchTerm, setSearchTerm] = useState("");
-//   const [loading, setLoading] = useState(false);
-
-//   const searchChange = async (event) => {
-//     const value = event.target.value.trim();
-//     setSearchTerm(value);
-
-//     if (value === "") {
-//       setFetchFollower([]);
-//       setLoading(false);
-//       return;
-//     }
-//     setLoading(true);
-
-//     try {
-//       const daoActor = createDaoActor(daoCanisterId);
-
-//       const response = await daoActor.search_follower(value);
-
-//       if (Array.isArray(response) && response.length > 0) {
-//         const principalIds = response.map((user) => Principal.fromUint8Array(user._arr));
-
-//         const userProfiles = await Promise.all(
-//           principalIds.map(async (principalId) => {
-//             const userProfile = await backendActor.get_profile_by_id(principalId);
-//             return userProfile?.Ok || null;
-//           })
-//         );
-
-//         const validProfiles = userProfiles.filter((profile) => profile !== null);
-//         setFetchFollower(validProfiles);
-//       } else {
-//         setFetchFollower([]);
-//       }
-//     } catch (error) {
-//       console.log("error is : ", error);
-//       setFetchFollower([]);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   useEffect(() => {
-//     async function fetchFollowerProfiles() {
-//       setLoading(true);
-
-//       try {
-//         if (Array.isArray(daoFollowers) && daoFollowers.length > 0) {
-//           const principalArray = daoFollowers.flat();
-//           const profiles = await Promise.all(
-//             principalArray.map((principal) => backendActor.get_profile_by_id(principal))
-//           );
-//           setFollowerProfiles(profiles);
-//         } else {
-//           setFollowerProfiles([]);
-//         }
-//       } catch (error) {
-//         console.error("Error fetching follower profiles:", error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     }
-
-//     fetchFollowerProfiles();
-//   }, [daoFollowers, backendActor]);
-
-//   return (
-//     <div className="mt-6">
-//       <div className="flex items-center justify-between">
-//         <h1 className="lg:text-[24px] md:text-[18px] text-[16px] font-bold">DaoSetting</h1>
-//       </div>
-//       <div className="bg-[#F4F2EC] md:pt-3 pt-2 md:pb-8 pb-4 mt-4 md:mb-8 mb-4 rounded-[10px]">
-//         <div className="flex justify-between items-center px-6 md:mb-3 mb-2">
-//           {/* <span className="lg:text-[20px] text-[#05212C] font-semibold">
-//             {daoFollowers.length} Followers
-//           </span> */}
-//           <span className="flex">
-//             {/* <div className="flex-grow md:flex justify-center px-6 mx-2 hidden md:h-12">
-//               <SearchProposals
-//                 onChange={searchChange}
-//                 width="100%"
-//                 bgColor="transparent"
-//                 placeholder="Search by principal id"
-//                 className="border-2 border-[#AAC8D6] w-full max-w-lg"
-//               />
-//             </div>
-//             */}
-//           </span>
-//         </div>
-//         <div className="w-full border-t border-[#0000004D] md:my-4 mb-3"></div>
-//         <div className="flex-grow flex justify-center m-2 md:hidden relative">
-//           <input
-//             type="search"
-//             name="groups"
-//             className="big_phone:w-[400px] w-full rounded-[2rem] py-2 pl-10 bg-[#F4F2EC] border border-[#AAC8D6]"
-//             placeholder="Search by principal id"
-//             onChange={searchChange}
-//           />
-//           <LuSearch className="ml-4 absolute left-0 bottom-3 text-slate-400" />
-//         </div>
-//         <div className="px-3">
-//           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-//             {loading ? (
-//               <FollowersSkeleton count={daoFollowers.length || 3} />
-//             ) : searchTerm.trim() === "" ? (
-//               followerProfiles.map((follower, index) => {
-//                 const profile = follower?.Ok;
-//                 return (
-//                   <div key={index} className="flex flex-row items-center  border border-[#97C3D3] rounded-lg big_phone:p-4 p-2 overflow-x-hidden">
-//                     <section className="flex flex-row items-center gap-6">
-//                       <img
-//                         src={profile?.profile_img ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${profile.profile_img}` : Avatar}
-//                         alt="User"
-//                         className="big_phone:w-12 w-9 big_phone:h-12 h-9 rounded-full object-cover shadow-lg"
-//                       />
-//                       <div className="flex flex-col items-start">
-//                         <p className="text-start font-semibold big_phone:text-1xl text-sm truncate w-40 lg:w-60">
-//                           {profile?.username || "Unknown User"}
-//                         </p>
-//                         <p className="text-center text-xs">{profile?.email_id || ""}</p>
-//                       </div>
-//                     </section>  
-//                   </div>
-//                 );
-//               })
-//             ) : fetchFollower.length > 0 ? (
-//               fetchFollower.map((profile, index) => {
-//                 return (
-//                   <div key={index} className="flex w-full flex-row items-center justify-between border border-[#97C3D3] rounded-lg big_phone:p-4 p-2">
-//                     <section className="flex flex-row items-center gap-2">
-//                       <img
-//                         src={profile?.profile_img ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${profile.profile_img}` : Avatar}
-//                         alt="User"
-//                         className="big_phone:w-12 w-9 big_phone:h-12 h-9 rounded-full object-cover"
-//                       />
-//                       <div className="flex flex-col  items-start">
-//                         <p className="text-start font-semibold big_phone:text-1xl text-sm truncate w-40 lg:w-60">
-//                           {profile?.username || "Unknown User"}
-//                         </p>
-//                         <p className="text-center text-xs">{profile?.email_id || ""}</p>
-//                       </div>
-//                     </section>
-//                     <section>
-//                       {/* <MdAddBox className="mx-1  text-[#97C3D3] big_phone:text-2xl text-lg" /> */}
-//                     </section>
-//                   </div>
-//                 );
-//               })
-//             ) : (
-//               <div style={noDataContainerStyle} className="col-span-5">
-//                 <img src={nodata} alt="nodata" />
-//                 <p className="text-xl mt-5">No Follower</p>
-//               </div>
-//             )}
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default FollowersContent;
-
-// working on this page .............
-
 import React from 'react';
-import NoDataComponent from '../Dao/NoDataComponent';
 
 const DaoSetting = ({ daoDetails  }) => {
-  console.log("DaoSetting rendered with:", { });
   
   return (
-    <div className="mt-6">
-      <div className="flex items-center justify-between">
-        <h1 className="lg:text-[24px] md:text-[18px] text-[16px] font-bold">DAO Settings</h1>
-      </div>
-      <div className="bg-[#F4F2EC] md:pt-3 pt-2 md:pb-8 pb-4 mt-4 md:mb-8 mb-4 rounded-[10px] p-4">
-        {daoDetails ? (
-          <div >
-            {/* <p>DAO Name: {daoDetails.dao_name}</p>
-            <p>Purpose: {daoDetails.purpose}</p> */}
-            {/* Add more DAO settings content here */}
+    <>
+    <div class="container mx-auto p-6">
+  <section class="mb-10">
+    <h1 class="text-3xl font-bold text-center sm:text-4xl mb-6">Documentation on DAOs and Proposals</h1>
 
-            <p> Data will apear soon ..........</p>
-          </div>
-        ) : (
-          <NoDataComponent />
-        )}
+    <div class="mb-8">
+      <h2 class="text-2xl font-semibold sm:text-3xl mb-4">DAO Section</h2>
+
+      <div class="mb-6">
+        <h3 class="text-xl font-bold mb-2 sm:text-2xl">What is a DAO?</h3>
+        <p class="text-base sm:text-lg text-gray-700">
+          A <strong>Decentralized Autonomous Organization (DAO)</strong> is a self-governing organization that operates
+          without centralized control. Decisions are made collectively by its members using blockchain-based smart
+          contracts. DAOs are designed for transparency, decentralization, and trustless collaboration.
+        </p>
+      </div>
+
+      <div class="mb-6">
+        <h3 class="text-xl font-bold mb-2 sm:text-2xl">Council</h3>
+        <p class="text-base sm:text-lg text-gray-700">
+          The <strong>Council</strong> is a governing body within the DAO, often consisting of experienced or elected
+          members tasked with overseeing operations, initiating critical proposals, and ensuring the DAO functions as
+          intended.
+        </p>
+        <ul class="list-disc pl-6 mt-2 text-base sm:text-lg">
+          <li>Proposing and voting on strategic decisions.</li>
+          <li>Managing DAO resources and treasury.</li>
+          <li>Overseeing compliance with the DAO's policies and goals.</li>
+        </ul>
+      </div>
+
+      <div class="mb-6">
+        <h3 class="text-xl font-bold mb-2 sm:text-2xl">Role of Groups</h3>
+        <p class="text-base sm:text-lg text-gray-700">
+          Groups are sub-divisions within the DAO that handle specific responsibilities or projects. They streamline
+          decision-making and ensure efficiency in task execution.
+        </p>
+        <ul class="list-disc pl-6 mt-2 text-base sm:text-lg">
+          <li>Managing specialized tasks or initiatives.</li>
+          <li>Providing expertise for specific projects.</li>
+          <li>Acting as sub-governance units for focused decision-making.</li>
+        </ul>
+      </div>
+
+      <div class="mb-6">
+        <h3 class="text-xl font-bold mb-2 sm:text-2xl">Setup Period</h3>
+        <p class="text-base sm:text-lg text-gray-700">
+          The <strong>Setup Period</strong> is the initial phase of a DAO's creation, where key configurations are
+          defined, such as:
+        </p>
+        <ul class="list-disc pl-6 mt-2 text-base sm:text-lg">
+          <li>Defining roles (Council, Groups, Members).</li>
+          <li>Establishing governance rules and thresholds.</li>
+          <li>Determining initial token distribution and voting rights.</li>
+        </ul>
+      </div>
+
+      <div class="mb-6">
+        <h3 class="text-xl font-bold mb-2 sm:text-2xl">Threshold</h3>
+        <p class="text-base sm:text-lg text-gray-700">
+          The <strong>Threshold</strong> is the minimum number of votes or approvals required for a proposal to pass.
+          It ensures that major decisions have broad consensus before being enacted.
+        </p>
+      </div>
+
+      <div class="mb-6">
+        <h3 class="text-xl font-bold mb-2 sm:text-2xl">Tokenization</h3>
+        <p class="text-base sm:text-lg text-gray-700">
+          Tokenization involves issuing tokens that represent membership, voting power, or ownership in the DAO. These
+          tokens can be used for:
+        </p>
+        <ul class="list-disc pl-6 mt-2 text-base sm:text-lg">
+          <li><strong>Governance:</strong> Voting on proposals.</li>
+          <li><strong>Rewards:</strong> Incentivizing contributions.</li>
+          <li><strong>Access:</strong> Granting permissions within the DAO ecosystem.</li>
+        </ul>
       </div>
     </div>
+  </section>
+
+  <section>
+    <h2 class="text-2xl font-semibold sm:text-3xl mb-6">Proposal Section</h2>
+
+    <div class="mb-6">
+      <h3 class="text-xl font-bold mb-2 sm:text-2xl">What is a Proposal?</h3>
+      <p class="text-base sm:text-lg text-gray-700">
+        A <strong>Proposal</strong> is a formal suggestion or plan submitted by a DAO member or the council for
+        consideration. Proposals are the foundation of DAO governance, enabling members to shape the DAO's direction.
+      </p>
+    </div>
+
+    <div class="mb-6">
+      <h3 class="text-xl font-bold mb-2 sm:text-2xl">Types of Proposals</h3>
+      <ul class="list-disc pl-6 mt-2 text-base sm:text-lg space-y-2">
+        <li><strong>RemoveMemberToDaoProposal:</strong> Removes a member from the DAO due to inactivity, misconduct, or other valid reasons.</li>
+        <li><strong>ChangeDaoConfig:</strong> Updates the DAO's configuration, such as governance rules or operational settings.</li>
+        <li><strong>BountyDone:</strong> Confirms the completion of a bounty task and authorizes rewards distribution.</li>
+        <li><strong>Polls:</strong> Allows DAO members to vote on general topics or decisions that may not require immediate action.</li>
+        <li><strong>ChangeDaoPolicy:</strong> Alters the policies governing the DAO's operations and decision-making processes.</li>
+        <li><strong>MintNewTokens:</strong> Issues new tokens to the DAO, either for treasury purposes or to reward contributors.</li>
+        <li><strong>TokenTransfer:</strong> Authorizes the transfer of tokens between members, groups, or external parties.</li>
+        <li><strong>AddMemberToDaoProposal:</strong> Adds a new member to the DAO, granting them voting rights and other privileges.</li>
+        <li><strong>RemoveMemberToGroupProposal:</strong> Removes a member from a specific group within the DAO.</li>
+        <li><strong>BountyRaised:</strong> Creates a bounty proposal for a specific task or project, outlining the reward and requirements.</li>
+        <li><strong>AddMemberToGroupProposal:</strong> Adds a new member to a specific group within the DAO.</li>
+        <li><strong>GeneralPurpose:</strong> A flexible proposal type for topics that do not fall into predefined categories.</li>
+      </ul>
+    </div>
+
+    <div>
+      <h3 class="text-xl font-bold mb-2 sm:text-2xl">How Proposals Work</h3>
+      <ol class="list-decimal pl-6 mt-2 text-base sm:text-lg space-y-2">
+        <li><strong>Creation:</strong> Any member or council initiates a proposal.</li>
+        <li><strong>Discussion:</strong> Members deliberate and provide feedback.</li>
+        <li><strong>Voting:</strong> Members vote to approve or reject the proposal.</li>
+        <li><strong>Execution:</strong> If approved, the proposal is implemented via smart contracts.</li>
+      </ol>
+    </div>
+  </section>
+</div>
+
+    </>
   );
 };
 

@@ -76,8 +76,6 @@ const Comment = ({ comment, proposalId, daoId, commentCount, setCommentCount }) 
         setCommentCount(commentCount+1)
         setShowReplies(true);
         setShowReplyInput(false);
-      } else {
-        console.error("Failed to add reply:", response.Err);
       }
     } catch (error) {
       console.error("Error adding reply:", error);
@@ -278,9 +276,7 @@ const Comments = ({ daoId, proposalId, commentCount, setCommentCount }) => {
         setNewComment("");
         setCommentCount(commentCount+1)
         fetchComments();
-      } else {
-        console.error("Failed to add comment:", response.Err);
-      }
+      } 
     } catch (error) {
       console.error("Error adding comment:", error);
     } finally {

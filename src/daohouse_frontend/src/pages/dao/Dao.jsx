@@ -233,8 +233,6 @@ const Dao = () => {
                   key={index}
                   {...{
                     name: daos.dao_name || "No Name",
-                    followers: daos.followers || "0",
-                    followers_count: daos.followers_count || "0",
                     members: daos.members_count ? Number(BigInt(daos.members_count)) : "0",
                     groups: daos.groups_count ? Number(BigInt(daos.groups_count)) : "0",
                     proposals: daos.proposals_count || "0",
@@ -259,8 +257,6 @@ const Dao = () => {
                 key={index}
                 {...{
                   name: daos.dao_name || "No Name",
-                  followers: daos.followers || "No Followers",
-                  followers_count: daos.followers_count || "0",
                   members: daos.members_count ? Number(BigInt(daos.members_count)) : "0",
                   groups: daos.groups_count ? Number(BigInt(daos.groups_count)) : "0",
                   proposals: daos.proposals_count || "0",

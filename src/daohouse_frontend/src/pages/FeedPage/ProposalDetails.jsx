@@ -1,15 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "../DaoProfile/DaoProfile.scss";
-import { useNavigate, useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 import Container from "../../Components/Container/Container";
 import { Principal } from '@dfinity/principal';
 import { useAuth } from "../../Components/utils/useAuthClient";
-import { useUserProfile } from "../../context/UserProfileContext";
 import toast from 'react-hot-toast';
-import MuiSkeleton from "../../Components/SkeletonLoaders/MuiSkeleton";
-import { CircularProgressBar } from "../../Components/Proposals/CircularProgressBar";
 import Card from "../../Components/Proposals/Card";
-import avatar from "../../../assets/avatar.png";
 import Comments from "../Post/Comments";
 import ProposalDetailsLoaderSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/ProposalDetailsLoaderSkeleton";
 import NoDataComponent from "../../Components/Dao/NoDataComponent";
@@ -21,29 +17,16 @@ const ProposalsDetails = () => {
   const { backendActor, createDaoActor } = useAuth();
   const [dao, setDao] = useState(null);
   const { proposalId, daoCanisterId } = useParams();
-  const [voteApi, setVoteApi] = useState({});
   const [proposal, setProposal] = useState([]);
   const [loading, setLoading] = useState(false);
   const [joinStatus, setJoinStatus] = useState("Join DAO");
-  const [isMember, setIsMember] = useState(false);
-  const [daoFollowers, setDaoFollowers] = useState([]);
-  const [daoMembers, setDaoMembers] = useState([]);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isFollowing, setIsFollowing] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [daoCanister, setDaoCanister] = useState({})
   const [loadingJoinedDAO, setLoadingJoinedDAO] = useState(false); 
-  const [followersCount, setFollowersCount] = useState(0);
-  const [userProfile, setUserProfile] = useState(null);
   const [isComment, setIsComment] = useState(true);
   const [commentCount, setCommentCount] = useState(0);  // State for comment count
-  const backendCanisterId = Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND)
 
   const maxWords = 90;
-
-  const principalString = proposal?.created_by
-    ? Principal.fromUint8Array(new Uint8Array(proposal.created_by)).toText()
-    : "Unknown";
 
   const toggleExpanded = () => setIsExpanded(!isExpanded);
 
@@ -67,14 +50,12 @@ const ProposalsDetails = () => {
     return daoCanisterId ? createDaoActor(daoCanisterId) : null;
   }, [daoCanisterId, createDaoActor]);
 
-  // setVoteApi(daoActor)
 
   useEffect(() => {
     const fetchDaoDetails = async () => {
       setLoading(true);
       if (daoCanisterId) {
         try {
-          setVoteApi(daoActor);
           const proposalDetails = await daoActor.get_proposal_by_id(proposalId);
           setProposal(proposalDetails);          
           setCommentCount(Number(BigInt(proposalDetails?.comments || 0)))
@@ -83,21 +64,12 @@ const ProposalsDetails = () => {
           setDao(daoDetails);
           const profileResponse = await backendActor.get_user_profile();
           if (profileResponse.Ok) {
-            setUserProfile(profileResponse.Ok);
-            const currentUserId = Principal.fromText(profileResponse.Ok.user_id.toString());
-            const daoFollowers = await daoActor.get_dao_followers();
-            setDaoFollowers(daoFollowers);
-            setFollowersCount(daoFollowers.length);
-            setIsFollowing(daoFollowers.some(follower => follower.toString() === currentUserId.toString()));
-          
+          const currentUserId = Principal.fromText(profileResponse.Ok.user_id.toString());
           const daoMembers = await daoActor.get_dao_members();          
-          setDaoMembers(daoMembers)
           const isCurrentUserMember = daoMembers.some(member => member.toString() === currentUserId.toString());
             if (isCurrentUserMember) {
-              setIsMember(true)
               setJoinStatus('Joined');
             } else {
-              setIsMember(false)
               setJoinStatus('Join DAO');
             }
           }
@@ -151,41 +123,6 @@ const ProposalsDetails = () => {
     }
   };
 
-
-  const toggleFollow = async () => {
-    if (!userProfile) return;
-
-    const newIsFollowing = !isFollowing;
-    setIsFollowing(newIsFollowing);
-    setFollowersCount(prevCount => newIsFollowing ? prevCount + 1 : prevCount - 1);
-
-    try {
-      const daoActor = createDaoActor(daoCanisterId);
-      const response = isFollowing
-        ? await daoActor.unfollow_dao()
-        : await daoActor.follow_dao();
-  
-        if (response?.Ok) {
-          toast.success(newIsFollowing ? "Successfully followed" : "Successfully unfollowed");
-        } else if (response?.Err) {
-          // Revert the state if there's an error
-          setIsFollowing(!newIsFollowing);
-          setFollowersCount(prevCount => newIsFollowing ? prevCount - 1 : prevCount + 1);
-          toast.error(response.Err);
-        }
-
-    } catch (error) {
-      console.error('Error following/unfollowing DAO:', error);
-      // Revert the state if there's an error
-      setIsFollowing(!newIsFollowing);
-      setFollowersCount(prevCount => newIsFollowing ? prevCount - 1 : prevCount + 1);
-      toast.error("An error occurred");
-    }
-  };
-
-  function toggleComment() {
-    setIsComment(!isComment);
-  }
 
   const getImageUrl = (imageId) => {
     return `${process.env.DFX_NETWORK === "ic" ? "https" : "http"}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943"}/f/${imageId}`;

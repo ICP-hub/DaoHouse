@@ -10,8 +10,6 @@ const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, da
   const [fetchedProposals, setFetchedProposals] = useState([]);
   const [showFilter, setShowFilter] = useState(false);
   const allProposals = proposals && Array.isArray(proposals) ? proposals : [];
-  console.log(proposals);
-  
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -39,10 +37,7 @@ const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, da
   const sortProposals = (proposalsToSort) => {
     return [...proposalsToSort].sort((a, b) => {
       const dateA = new Date(Number(a.proposal_submitted_at) / 1000000); 
-      const dateB = new Date(Number(b.proposal_submitted_at) / 1000000);
-      
-      console.log(dateA);
-  
+      const dateB = new Date(Number(b.proposal_submitted_at) / 1000000);  
       return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
     });
   };
@@ -88,7 +83,7 @@ const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, da
                 />
               </div>
               <button
-                className="bg-white text-[#05212C] flex items-center justify-between gap-3 lg:px-6 md:px-5 shadow-xl lg:py-3 py-2 px-4 rounded-full shadow-md hover:bg-[#f0f4f7] transition-all duration-300 relative"
+                className="bg-white text-[#05212C] flex items-center justify-between gap-3 lg:px-6 md:px-5 shadow-xl lg:py-3 py-2 px-4 rounded-full hover:bg-[#f0f4f7] transition-all duration-300 relative"
                 onClick={() => setShowFilter((prev) => !prev)}
               >
                 <div className="flex items-center">
