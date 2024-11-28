@@ -52,6 +52,9 @@ export default function Card({
     proposal?.poll_options ? proposal.poll_options[0] : []
   );
 
+  console.log("poll op", pollOptions);
+  
+
   const toggleExpanded = () => setIsExpanded(!isExpanded);
 
   const truncateText = (text, wordLimit) => {
@@ -72,6 +75,13 @@ export default function Card({
     proposal?.proposal_description || "Proposal Description",
     maxWords
   );
+
+  useEffect(() => {
+    if (proposal?.poll_options) {
+      setPollOptions(proposal.poll_options[0]); 
+    }
+  }, [proposal]); 
+  
 
   useEffect(() => {
     async function fetchUserProfile() {
