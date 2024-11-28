@@ -52,7 +52,6 @@ export default function Card({
     proposal?.poll_options ? proposal.poll_options[0] : []
   );
 
-  console.log("poll op", pollOptions);
   
 
   const toggleExpanded = () => setIsExpanded(!isExpanded);
