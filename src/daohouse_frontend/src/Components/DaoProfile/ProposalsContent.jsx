@@ -10,7 +10,6 @@ const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, da
   const [fetchedProposals, setFetchedProposals] = useState([]);
   const [showFilter, setShowFilter] = useState(false);
   const allProposals = proposals && Array.isArray(proposals) ? proposals : [];
-  console.log(proposals);
   
 
   const handleSearchChange = (event) => {
@@ -40,8 +39,6 @@ const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, da
     return [...proposalsToSort].sort((a, b) => {
       const dateA = new Date(Number(a.proposal_submitted_at) / 1000000); 
       const dateB = new Date(Number(b.proposal_submitted_at) / 1000000);
-      
-      console.log(dateA);
   
       return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
     });
