@@ -56,6 +56,11 @@ export default function Card({
 
   const toggleExpanded = () => setIsExpanded(!isExpanded);
 
+  const truncateUsername = (text, maxLength) => {
+    if (!text) return "Username.user";
+    return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
+  };
+
   const truncateText = (text, wordLimit) => {
     const words = text.split("");
     if (words.length > wordLimit) {
@@ -485,10 +490,10 @@ export default function Card({
               {isLoading ? (
                 <div className="w-24 h-6 md:w-36 md:h-8 bg-gray-400"></div>
               ) : (
-                <h4 className="text-white text-sm sm:text-base md:text-xl font-semibold">
-                  {userProfile?.username || "Username"}
-                </h4>
-              )}
+                <h2  className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-white"
+                title={userProfile?.username || "Username.user"} >
+                {truncateUsername(userProfile?.username, 9)}
+                </h2> )}
             </div>
 
             {/* Dates Section */}

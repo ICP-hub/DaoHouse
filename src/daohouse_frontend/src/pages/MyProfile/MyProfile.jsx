@@ -116,6 +116,12 @@ const MyProfile = ({ childComponent }) => {
     setActiveTab(tabIndex);
   }, [location.pathname]);
 
+  const truncateText = (text, maxLength) => {
+    if (!text) return "Username.user";
+    return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
+  };
+  
+
   return (
     <div className={`${className} bg-zinc-200 w-full relative `}>
       {/* Desktop View */}
@@ -295,9 +301,11 @@ const MyProfile = ({ childComponent }) => {
                       <div className="w-full">
                         <div className="flex justify-between">
                           <div>
-                            <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C]">
-                              {name || "Username.user"}{" "}
-                            </h2>
+                          <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C]" 
+                            title={name || "Username.user"} // Shows full name on hover
+                           >              
+                           {truncateText(name, 20)}
+                             </h2>
                             <p className="md:text-[14px] text-[10px] tablet:text-[16px] font-normal text-left text-[#646464]">
                               {email || "gmail@gmail.xyz"}{" "}
                             </p>
@@ -446,14 +454,16 @@ const MyProfile = ({ childComponent }) => {
               </div>
               <div className="flex justify-start gap-8 p-4 mx-6 md:hidden text-center text-[#05212C]">
               <div className="mr-20 translate-y-[10px] translate-x-[-10px]">
-                <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C]">
-                  {name || "Username.user"}{" "}
-                </h2>
+              <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C]" 
+                title={name || "Username.user"} // Shows full name on hover
+                     >
+                 {truncateText(name, 8)}
+                  </h2>
                 <p className="md:text-[14px] text-[10px] tablet:text-[16px] font-normal text-left text-[#646464]">
                   {email || "gmail@gmail.xyz"}{" "}
                 </p></div>
             </div>
-            <div className="flex justify-end gap-4 w-full translate-x-[-62px] translate-y-[30px] tablet:mr-4">
+            <div className="flex justify-end gap-4 w-full translate-x-[-70px] translate-y-[30px] tablet:mr-4">
   {activeTab === 0 && (
     <button
       onClick={() => navigate("/edit-profile")}
