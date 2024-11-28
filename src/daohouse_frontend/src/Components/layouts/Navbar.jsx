@@ -127,11 +127,6 @@ const Navbar = () => {
     await login("nfid").then(() => window.location.reload());
     navigate("/")
   };
-  const handlePlugLogin = async () => {
-    setIsConnecting(true);
-    await login("plug").then(() => window.location.reload());
-    navigate("/")
-  };
   const handleLogout = async () => {
     setIsLoading(true);
     try {
