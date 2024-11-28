@@ -56,7 +56,6 @@ const MyProfile = ({ childComponent }) => {
 
       setImageSrc(profileImageUrl);
     } else {
-      console.log("No profile image found. Using default.");
       setImageSrc(MyProfileImage);
     }
   }, [userProfile]);
@@ -113,7 +112,6 @@ const MyProfile = ({ childComponent }) => {
   const getData = async () => {
     try {
       const response = await backendActor.get_user_profile();
-      console.log("api response of get user profile", response);
       setData(response.Ok || {});
     } catch (error) {
       console.error("Error :", error);

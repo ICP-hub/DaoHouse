@@ -62,8 +62,6 @@ const Step3 = ({ setData, setActiveStep }) => {
       .forEach((group) => {
         group.members.forEach((member) => allMembers.add(member));
       });
-
-    console.log(Array.from(allMembers));
     return Array.from(allMembers);
   };
 
@@ -84,8 +82,6 @@ const Step3 = ({ setData, setActiveStep }) => {
     localStorage.setItem("step3Data", JSON.stringify(list));
 
     const uniqueMembers = getUniqueMembers();
-    console.log("Council--", council.members);
-
     setData((prev) => ({
       ...prev,
       step3: {
@@ -394,8 +390,6 @@ const Step3 = ({ setData, setActiveStep }) => {
       // If no update was needed, ensure the list state is still set
       setList(initialList);
     }
-
-    console.log("Current council members:", council?.members || []);
   }, [stringPrincipal]); // Only rerun if stringPrincipal changes
 
   const handleEditGroup = (index) => {

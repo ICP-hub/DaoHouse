@@ -39,8 +39,6 @@ const Dao = () => {
         try {
           const daoCanister = await createDaoActor(data.dao_canister_id);
           const dao_details = await daoCanister.get_dao_detail();
-          console.log("dao details", dao_details);
-
           return { ...dao_details, daoCanister, dao_canister_id: data.dao_canister_id };
         } catch (err) {
           console.error(`Error fetching details for DAO ${data.dao_canister_id}:`, err);
@@ -115,9 +113,6 @@ const Dao = () => {
           }
         })
       );
-
-      console.log("list of joined dao", joinedDaoDetails);
-
       setJoinedDAO(joinedDaoDetails.filter((dao) => dao !== null));
     } catch (error) {
       console.error("Error fetching joined DAOs:", error);
