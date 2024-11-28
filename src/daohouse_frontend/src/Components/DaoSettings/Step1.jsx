@@ -27,8 +27,6 @@ const Step1 = ({ setData, setActiveStep }) => {
       ...inputData,
       [e.target.name]: e.target.value,
     });
-
-    // console.log(inputData);
   }
 
   return (

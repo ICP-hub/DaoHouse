@@ -50,9 +50,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
             setIsFollowing(isUserFollowing);
     
             // Fetch DAO details
-            const daoDetails = await daoActor.get_dao_detail();
-            console.log("daoD", daoDetails);
-    
+            const daoDetails = await daoActor.get_dao_detail();    
             // Check membership and request status
             const daoMembers = daoDetails.all_dao_user;
             const requestedToJoin = daoDetails.requested_dao_user;
@@ -120,10 +118,12 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
     if (joinStatus === 'Joined') {
       toast.error(`You are already member of this dao`);
       return;
-    }else if (joinStatus === 'Requested') {
+    } else if (joinStatus === 'Requested') {
       toast.error(`Your have already sent a request to join this dao`);
       return;
     }
+
+    setShowConfirmModal(true);
   }
     
   const confirmJoinDao = async () => {
@@ -144,7 +144,6 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
       };
   
       const response = await daoActor.ask_to_join_dao(joinDaoPayload);
-      console.log("response of ask to join dao api",response);
       const sound = new Audio(messagesound);
       if (response.Ok) {
         setJoinStatus("Requested");
@@ -264,8 +263,9 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
           View Profile
         </button>
         <button
+          disabled={isMember || isRequested}
           onClick={!isJoinedDAO ? handleJoinDao : null}
-          className="flex-1 bg-dark-green border-2 border-dark-green text-white p-2 rounded-[3rem] small_phone:text-base text-sm"
+          className={`flex-1 bg-dark-green border-2 border-dark-green text-white p-2 rounded-[3rem] small_phone:text-base text-sm ${isRequested || isMember ? "cursor-not-allowed" : "cursor-pointer"}`}
         >
           {isJoinedDAO ? "Joined" : joinStatus }
         </button>

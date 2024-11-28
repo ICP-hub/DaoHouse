@@ -211,22 +211,6 @@ fn search_proposal(proposal_id: String) -> Vec<Proposals> {
     })
 }
 
-#[query(guard = prevent_anonymous)]
-fn search_follower(dao_follower: String) -> Vec<Principal> {
-    let mut daos_follower: Vec<Principal> = Vec::new();
-
-    with_state(|state| {
-        for follower in state.dao.followers.iter() {
-            let follower_str = follower.to_text();
-            if follower_str.contains(&dao_follower) {
-                daos_follower.push(follower.clone());
-            }
-        }
-    });
-
-    daos_follower
-}
-
 fn execute_add_proposals(id: &String) {
     with_state(|state| match state.proposals.get(&id) {
         Some(val) => {

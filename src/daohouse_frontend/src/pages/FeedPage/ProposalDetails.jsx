@@ -76,18 +76,11 @@ const ProposalsDetails = () => {
         try {
           setVoteApi(daoActor);
           const proposalDetails = await daoActor.get_proposal_by_id(proposalId);
-          setProposal(proposalDetails);
-          console.log("propos",proposalDetails);
-          
-
+          setProposal(proposalDetails);          
           setCommentCount(Number(BigInt(proposalDetails?.comments || 0)))
 
           const daoDetails = await daoActor.get_dao_detail();
           setDao(daoDetails);
-          console.log("daoDetails", daoDetails);
-          
-
-          // Fetch user profile
           const profileResponse = await backendActor.get_user_profile();
           if (profileResponse.Ok) {
             setUserProfile(profileResponse.Ok);
@@ -97,9 +90,7 @@ const ProposalsDetails = () => {
             setFollowersCount(daoFollowers.length);
             setIsFollowing(daoFollowers.some(follower => follower.toString() === currentUserId.toString()));
           
-          const daoMembers = await daoActor.get_dao_members();
-          console.log(daoMembers);
-          
+          const daoMembers = await daoActor.get_dao_members();          
           setDaoMembers(daoMembers)
           const isCurrentUserMember = daoMembers.some(member => member.toString() === currentUserId.toString());
             if (isCurrentUserMember) {
@@ -141,7 +132,6 @@ const ProposalsDetails = () => {
       };
       
       const response = await daoActor.ask_to_join_dao(joinDaoPayload);
-      console.log(response);
       const sound = new Audio(messagesound)
       if (response.Ok) {
         setJoinStatus("Requested");

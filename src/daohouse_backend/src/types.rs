@@ -526,17 +526,12 @@ pub struct UserProfile {
     pub dao_ids: Vec<Principal>,
     pub post_count: u32,
     pub post_id: Vec<String>,
-    pub followers_count: u32,
-    pub followers_list: Vec<Principal>,
-    pub followings_count: u32,
-    pub followings_list: Vec<Principal>,
     pub description: String,
     pub tag_defines: Vec<String>,
     pub contact_number: String,
     pub twitter_id: String,
     pub telegram: String,
     pub website: String,
-    pub follow_dao : Vec<Principal>,
     pub join_dao :  Vec<Principal>,
     pub submitted_proposals : u64,
 }
@@ -648,7 +643,6 @@ pub struct DaoInput {
     pub members_permissions: Vec<ProposalType>,
     pub proposal_entry : Vec<ProposalPlace>,
     pub ask_to_join_dao : bool,
-    pub all_dao_user : Vec<Principal>,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
@@ -663,7 +657,6 @@ pub struct DaoCanisterInput {
     pub required_votes: u32,
     pub token_symbol: String,
     pub token_supply: u32,
-    pub followers: Vec<Principal>,
     pub image_id: String,
     pub members_permissions: Vec<ProposalType>,
     pub dao_groups: Vec<DaoGroup>,

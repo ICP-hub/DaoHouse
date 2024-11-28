@@ -54,7 +54,7 @@ const [imageSrc, setImageSrc] = useState(
   }, [userProfile?.profile_img])
 
   const handleImageUpload = () => {
-    console.log("Image upload triggered");
+   
   };
 
   return (

@@ -338,8 +338,6 @@ export default function Card({
         proposal.proposal_id,
         selectedOption
       );
-      console.log("vote on poll", result);
-
       if (result?.Ok) {
         toast.success("Vote submitted successfully");
 
@@ -1076,11 +1074,6 @@ export default function Card({
                       className="px-2 py-2 font-mulish"
                       onClick={() => {
                         if (proposal.link_of_task) {
-                          console.log(
-                            "link aa gyea oye",
-                            proposal.link_of_task
-                          );
-
                           window.location.href = proposal.link_of_task;
                         } else {
                           console.error("Invalid task link");

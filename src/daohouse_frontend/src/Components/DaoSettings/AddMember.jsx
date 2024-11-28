@@ -49,7 +49,6 @@ const AddMember = ({ setActiveStep, setActiveLink, data }) => {
         try {
             const daoCanister = await createDaoActor(daoCanisterId);
             const response = await daoCanister.proposal_to_add_member_to_group(formattedInputData);
-            console.log("Response from  add member proposal:", response);
             if (response.Ok) {
                 toast.success("Add member proposal created successfully");
                 movetodao();
