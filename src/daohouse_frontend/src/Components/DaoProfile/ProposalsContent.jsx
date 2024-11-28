@@ -5,6 +5,7 @@ import { useAuth } from "../../Components/utils/useAuthClient";
 import nodata from "../../../assets/nodata.png";
 
 const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, daoCanisterId, sortOrder="newest", setSortOrder }) => {
+  
   const { createDaoActor } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [fetchedProposals, setFetchedProposals] = useState([]);
