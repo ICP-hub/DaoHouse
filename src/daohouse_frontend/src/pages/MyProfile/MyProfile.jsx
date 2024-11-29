@@ -456,7 +456,7 @@ const MyProfile = ({ childComponent }) => {
               <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-[#05212C]" 
                 title={name || "Username.user"} // Shows full name on hover
                      >
-                 {truncateText(name, 8)}
+                 {truncateText(name, 15)}
                   </h2>
                 <p className="md:text-[14px] text-[10px] tablet:text-[16px] font-normal text-left text-[#646464]">
                   {email || "gmail@gmail.xyz"}{" "}

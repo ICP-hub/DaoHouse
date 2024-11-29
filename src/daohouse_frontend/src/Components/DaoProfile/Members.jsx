@@ -6,7 +6,7 @@ import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 import userImage from "../../../assets/Avatar.png";
 import MemberSkeleton from "../SkeletonLoaders/MemberSkeleton";
 
-const Members = ({ daoGroups, daoMembers }) => {
+const Members = ({ daoGroups, daoCouncil }) => {
   const { backendActor } = useAuth();
   const [councilMembers, setCouncilMembers] = useState([]);
   const [groupMembers, setGroupMembers] = useState({});
@@ -17,10 +17,10 @@ const Members = ({ daoGroups, daoMembers }) => {
 
   useEffect(() => {
     async function fetchCouncilProfiles() {
-      if (daoMembers) {
+      if (daoCouncil) {
         setLoadingCouncil(true);
         const profiles = await Promise.all(
-          daoMembers.map((member) =>
+          daoCouncil.map((member) =>
             backendActor.get_profile_by_id(Principal.fromUint8Array(member._arr))
           )
         );
@@ -30,7 +30,7 @@ const Members = ({ daoGroups, daoMembers }) => {
     }
 
     fetchCouncilProfiles();
-  }, [daoMembers, backendActor]);
+  }, [daoCouncil, backendActor]);
 
   useEffect(() => {
     async function fetchAllGroupMembers() {
@@ -192,9 +192,9 @@ const ListView = ({ member }) => {
           alt="Profile"
           className="w-12 h-12 rounded-full object-cover shadow-lg"
         />
-        <section className="details flex flex-col items-start ml-2">
+        <section className="details flex flex-col items-start items-center mt-2 ml-2">
           <p className="font-semibold text-base">{member?.Ok?.username}</p>
-          <p className="text-sm">{member?.Ok?.email_id}</p>
+          {/* <p className="text-sm">{member?.Ok?.email_id}</p> */}
         </section>
       </section>
     </div>
