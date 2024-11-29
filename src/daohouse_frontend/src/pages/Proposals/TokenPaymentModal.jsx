@@ -2,10 +2,10 @@ import { useEffect } from 'react';
 import { CircularProgress } from '@mui/material';
 
 const TokenPaymentModal = ({ tokenTransfer, isOpen, onClose, onConfirm, loadingPayment }) => {
-  // Return null if the modal is not open
+
   if (!isOpen) return null;
 
-  // Prevent background scrolling when modal is open
+
   useEffect(() => {
     if (isOpen) {
       document.body.classList.add('overflow-hidden');
@@ -18,7 +18,7 @@ const TokenPaymentModal = ({ tokenTransfer, isOpen, onClose, onConfirm, loadingP
     };
   }, [isOpen]);
 
-  // Add custom style for body overflow
+
   useEffect(() => {
     const style = document.createElement('style');
     style.textContent = `

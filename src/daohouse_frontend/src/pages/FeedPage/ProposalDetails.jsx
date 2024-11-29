@@ -24,7 +24,7 @@ const ProposalsDetails = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [loadingJoinedDAO, setLoadingJoinedDAO] = useState(false); 
   const [isComment, setIsComment] = useState(true);
-  const [commentCount, setCommentCount] = useState(0);  // State for comment count
+  const [commentCount, setCommentCount] = useState(0); 
   const [isRequested, setIsRequested] = useState(false);
 
   const maxWords = 90;
@@ -76,13 +76,13 @@ const ProposalsDetails = () => {
             setIsRequested(isUserRequested);        
           const isCurrentUserMember = daoMembers.some(member => member.toString() === currentUserId.toString());
           if (isCurrentUserMember) {
-            // setIsMember(true);
+       
             setJoinStatus("Joined");
           } else if (isUserRequested) {
             setJoinStatus("Requested");
           } else {
             setIsRequested(false);
-            // setIsMember(false);
+        
             setJoinStatus("Join DAO");
           }
           }
@@ -210,24 +210,13 @@ const ProposalsDetails = () => {
               </p>
             </div>
 
-            {/* <p className="mt-2 text-gray-500 text-xs md:text-sm text-center md:text-start">
-              Creation Date: March 1, 2023
-            </p> */}
+           
           </div>
         </div>
 
         {/* Right Side: Follow & Join Buttons */}
         <div className="flex justify-center gap-4 mt-4 md:mt-0  self-center md:self-start">
-          {/* <button
-            onClick={toggleFollow}
-            className="bg-[#0E3746] text-[16px] text-white shadow-xl py-1 px-3 rounded-[27px] lg:w-[131px] lg:h-[40px] md:w-[112px] md:h-[38px] w-full flex items-center justify-center"
-            style={{
-              boxShadow:
-                "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
-            }}
-          >
-            {isFollowing ? 'Unfollow' : 'Follow'}
-          </button> */}
+        
 
         
 

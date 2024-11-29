@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 
 function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig, errorMessage, errors, setDescriptionError, setDaoNameError, setDaoPurposeError }) {
     useEffect(() => {
-        // Set initial daoConfig values if they're not already set
+       
         setDaoConfig((prevConfig) => ({
             ...prevConfig,
             new_dao_name: prevConfig.new_dao_name || dao.dao_name || "",
@@ -33,14 +33,14 @@ function DaoConfig({ daoConfig, handleInputDaoConfig, dao, setDaoConfig, errorMe
     };
 
     const handlePurposeChange = (e) => {
-        const value = e.target.value; // Get the input value
-        if (value.trim() === "") { // Check if the trimmed value is empty
-            setDaoPurposeError("DAO Purpose cannot be empty or just spaces."); // Set error if empty
-            e.target.value = ""; // Clear the input field
+        const value = e.target.value; 
+        if (value.trim() === "") {
+            setDaoPurposeError("DAO Purpose cannot be empty or just spaces."); 
+            e.target.value = ""; 
         } else {
-            setDaoPurposeError(""); // Clear the error message
+            setDaoPurposeError(""); 
         }
-        handleInputDaoConfig(e); // Update the state
+        handleInputDaoConfig(e); 
     };
 
     return (

@@ -981,7 +981,7 @@ export default function Card({
                 proposal.proposal_type.BountyDone !== undefined && (
                   <div className="w-full">
                     <div className="whitespace-normal break-words mt-2">
-                      <span className="font-bold border border-black">
+                      <span className="font-bold ">
                         {" "}
                         Associated Proposal ID
                       </span>
