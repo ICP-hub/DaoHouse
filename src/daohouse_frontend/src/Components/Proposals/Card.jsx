@@ -27,6 +27,7 @@ export default function Card({
   commentCount,
   isSubmittedProposals,
   showComments,
+  isMember
 }) {
   const { backendActor, createDaoActor, stringPrincipal } = useAuth();
   const [voteStatus, setVoteStatus] = useState("");
@@ -576,6 +577,11 @@ export default function Card({
               )}
             </div>
           </div>
+          {!isMember && (
+                <div className="text-center w-full bg-red-100 rounded-full mt-4 py-1">
+                You are not allowed to vote on this proposal
+              </div>
+              )}
 
           {/* Bottom Section */}
           <div
@@ -584,6 +590,7 @@ export default function Card({
                 : "w-full px-4 lg:px-12 py-4 md:py-8"
               }`}
           >
+            
             <div
               className={`${isSubmittedProposals
                   ? "flex flex-wrap lg:gap-4 justify-between"

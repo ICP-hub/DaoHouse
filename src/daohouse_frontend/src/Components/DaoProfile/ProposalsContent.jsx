@@ -132,7 +132,7 @@ const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, da
             ) : (
               displayedProposals.map((proposal, index) => (
                 <div className="desktop:mx-[-24px]" key={index}>
-                  <Card key={index} proposal={proposal} voteApi={voteApi} />
+                  <Card key={index} proposal={proposal} voteApi={voteApi} isMember={isMember} />
                 </div>
               ))
             )}
