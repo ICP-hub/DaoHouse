@@ -192,9 +192,9 @@ const ListView = ({ member }) => {
           alt="Profile"
           className="w-12 h-12 rounded-full object-cover shadow-lg"
         />
-        <section className="details flex flex-col items-start ml-2">
+        <section className="details flex flex-col items-start items-center mt-2 ml-2">
           <p className="font-semibold text-base">{member?.Ok?.username}</p>
-          <p className="text-sm">{member?.Ok?.email_id}</p>
+          {/* <p className="text-sm">{member?.Ok?.email_id}</p> */}
         </section>
       </section>
     </div>
