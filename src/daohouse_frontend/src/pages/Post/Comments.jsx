@@ -52,8 +52,6 @@ const Comment = ({ comment, proposalId, daoId, commentCount, setCommentCount }) 
 
 
   const submitReply = async () => {
-    console.log("submitReply called");
-  
     if (!replyText.trim()) return;
     try {
       setIsSubmitLoading(true);
@@ -78,8 +76,6 @@ const Comment = ({ comment, proposalId, daoId, commentCount, setCommentCount }) 
         setCommentCount(commentCount+1)
         setShowReplies(true);
         setShowReplyInput(false);
-      } else {
-        console.error("Failed to add reply:", response.Err);
       }
     } catch (error) {
       console.error("Error adding reply:", error);
@@ -192,7 +188,6 @@ const Reply = ({ reply }) => {
         console.error("Error fetching reply author profile:", error);
       }
     };
-    console.log(profileImg);
     
 
     fetchProfile();
@@ -235,7 +230,6 @@ const Comments = ({ daoId, proposalId, commentCount, setCommentCount }) => {
         const daoActor = await createDaoActor(daoId)
         setDaoActor(daoActor)
         const proposalDetails = await daoActor.get_proposal_by_id(proposalId);
-        console.log("propDetailz", proposalDetails.proposal_id);
 
         // Extract and set comments if they exist
         if (proposalDetails && proposalDetails.comments_list) {
@@ -268,9 +262,6 @@ const Comments = ({ daoId, proposalId, commentCount, setCommentCount }) => {
       const response = await daoActor.comment_on_proposal( newComment,  proposalId);
 
       if (response.Ok) {
-        console.log("OK");
-        
-        // Add new comment to the list
         setComments(prevComments => [
           ...prevComments,
           {
@@ -285,31 +276,13 @@ const Comments = ({ daoId, proposalId, commentCount, setCommentCount }) => {
         setNewComment("");
         setCommentCount(commentCount+1)
         fetchComments();
-      } else {
-        console.error("Failed to add comment:", response.Err);
-      }
+      } 
     } catch (error) {
       console.error("Error adding comment:", error);
     } finally {
       setIsSubmitLoading(false)
     }
   };
-  console.log("daoId:", typeof daoId, daoId);
-console.log("proposalId:", typeof proposalId, proposalId);
-console.log("newComment:", typeof newComment, newComment);
-
-const detail = async() =>{
-  try {
-    const daoActor = await createDaoActor(daoId);
-    const Details = await daoActor.get_proposal_by_id(proposalId);
-   console.log("detail",Details);
-   
-  } catch (error) {
-    console.log("error",error);
-    
-  }
-}
-detail();
 
 
   return (

@@ -70,11 +70,7 @@ const DaoConfig = ({ setData, setActiveStep,setActiveLink, data }) => {
 
         try {
             const daoCanister = await createDaoActor(daoCanisterId);
-            console.log("daoCanister ID:", daoCanisterId);
-
-            // Send the correctly formatted data
             const response = await daoCanister.proposal_to_chnage_dao_config(formattedInputData);
-            console.log("Response from proposal:", response);
             toast.success("DAO configuration proposal created successfully");
             movetodao();
             setActiveLink("proposals");

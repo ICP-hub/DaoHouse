@@ -51,7 +51,6 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext,  clearLocalStorage, 
   };
 
   const fetchMetadataAndBalance = async (tokenActor, ownerPrincipal) => {
-    console.log(tokenActor, ownerPrincipal.toText());
     try {
       const [metadata, balance] = await Promise.all([
         tokenActor.icrc1_metadata(),
@@ -60,7 +59,6 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext,  clearLocalStorage, 
           subaccount: [],
         }),
       ]);
-      console.log("Fetched metadata:", metadata);
       return { metadata, balance };
     } catch (err) {
       console.error("Error fetching metadata and balance:", err);
@@ -74,28 +72,10 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext,  clearLocalStorage, 
 
     try {
       setLoadingPayment(true)
-
-      const council = step4.voting?.Council;
-      const councilArray = Object.entries(council)
-        .filter(([permission, hasPermission]) => hasPermission)
-        .map(([permission]) => permission);
-
-      console.log("councilArray", councilArray);
-      console.log("council", council);
-
       const allMembers = new Set();
-
-
       const councilMembers = step3.council || [];
       councilMembers.forEach(member => allMembers.add(Principal.fromText(member).toText()));
-
-
-
       const principalMembers = Array.from(allMembers).map(member => Principal.fromText(member));
-
-      console.log(step2);
-      console.log(data.dao_groups);
-
       const proposalEntry = step5.map(q => ({
         place_name: q.name,
         min_required_thredshold: BigInt(q.vote),
@@ -103,7 +83,6 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext,  clearLocalStorage, 
       setIsModalOpen(true); setIsModalOpen(true);
       const membersArray = Array.from(data.members_permissions) || [];
       const successAudio = new Audio(coinsound)
-      const allDaoUsers = step3.members.map(member => Principal.fromText(member));
       const daoPayload = {
         dao_name: step1.DAOIdentifier || "my dao hai",
         purpose: step1.Purpose || "my proposal hai",
@@ -125,10 +104,8 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext,  clearLocalStorage, 
         proposal_entry: proposalEntry,
         ask_to_join_dao: data.ask_to_join_dao,
         token_supply: Number(step2.TokenSupply) || 4,
-        all_dao_user: allDaoUsers
       };
       const res = await backendActor.make_payment_and_create_dao(daoPayload);
-      console.log("this is backend res : ", res)
       if (res.Ok) {        
         toast.success("Payment successful!");
         setLoadingPayment(false)
@@ -143,10 +120,7 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext,  clearLocalStorage, 
         setLoadingNext(false);
       } else {
           toast.error(`${res.Err}`);
-          // toast.error(`Failed to create Dao`);
           setLoadingNext(false)
-          console.log(res,"dffsdfsd");
-          // toast.error(res.Err);
       }
     } catch (error) {
       console.log("error : ", error)
@@ -175,9 +149,6 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext,  clearLocalStorage, 
   ) => {
     try {
       const sendableAmount = parseInt(0.1 * Math.pow(10,8));
-      // const sendableAmount = 1;
-      console.log("sendable amount ",sendableAmount);
-      console.log("current balance ", currentBalance);
 
       const backendCanisterId = process.env.CANISTER_ID_DAOHOUSE_BACKEND;
       let transaction = {
@@ -199,7 +170,6 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext,  clearLocalStorage, 
    
       if (approveRes.Err) {
         const errorMessage = `Insufficient funds. Balance: ${approveRes.Err.InsufficientFunds.balance}`;
-        console.log("Err", approveRes)
         toast.error(errorMessage);
         setLoadingPayment(false)
         return;
@@ -210,30 +180,17 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext,  clearLocalStorage, 
       console.error("Error in transfer approve", err);
       toast.error(err);
       setLoadingPayment(false)
-    } finally {
-      // setLoadingPayment(false)
     }
   };
   async function paymentTest() {
-    console.log("owner principal is ", stringPrincipal);
-    console.log("printing payment");
-
-    const backendCanisterId = process.env.CANISTER_ID_DAOHOUSE_BACKEND;
     try {
       setLoadingPayment(true);
       const actor = await createTokenActor(LEDGER_CANISTER_ID);
-
-      console.log("backend canister id: ", backendCanisterId);
-      console.log("actor is ", actor);
-
       const name = await actor.icrc1_name();
-      console.log("balance is ", name);
-
       const { metadata, balance } = await fetchMetadataAndBalance(actor, Principal.fromText(stringPrincipal));
 
       const formattedMetadata = formatTokenMetaData(metadata);
       const parsedBalance = parseInt(balance, 10);
-      console.log("Balance:", parsedBalance);
       await transferApprove(parsedBalance, formattedMetadata, actor);
     } catch (err) {
       toast.error("Payment failed. Please try again.");
@@ -313,8 +270,6 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext,  clearLocalStorage, 
       setShouldCreateDAO(false);
     }
   }, [data, shouldCreateDAO]);
-
-  console.log("data of all steps: ", data)
 
 
   useEffect(() => {

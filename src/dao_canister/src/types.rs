@@ -12,7 +12,6 @@ pub enum ProposalState {
     Succeeded,
     Expired,
     Unreachable,
-    LateSubmission
 }
 
 #[derive(Clone, Debug, CandidType, Deserialize, PartialEq)]
@@ -206,9 +205,7 @@ pub struct Dao {
     pub image_id: String,
     pub members: Vec<Principal>,
     pub members_count: u32,
-    pub followers: Vec<Principal>,
     pub members_permissions: Vec<ProposalType>,
-    pub followers_count: u32,
     pub proposals_count: u32,
     pub proposal_ids: Vec<String>,
     pub token_ledger_id: LedgerCanisterId,
@@ -219,6 +216,7 @@ pub struct Dao {
     pub proposal_entry : Vec<ProposalPlace>,
     pub ask_to_join_dao : bool,
     pub all_dao_user : Vec<Principal>,
+    pub requested_dao_user : Vec<Principal>,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
@@ -259,7 +257,6 @@ pub struct DaoInput {
     pub dao_groups: Vec<DaoGroup>,
     pub image_canister: Principal,
     pub image_id: String,
-    pub followers: Vec<Principal>,
     pub members_permissions: Vec<ProposalType>,
     pub tokens_required_to_vote: u32,
     pub token_symbol: String,
@@ -267,7 +264,6 @@ pub struct DaoInput {
     pub daohouse_canister_id: Principal,
     pub proposal_entry : Vec<ProposalPlace>,
     pub ask_to_join_dao : bool,
-    pub all_dao_user : Vec<Principal>,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]

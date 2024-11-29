@@ -29,9 +29,7 @@ impl State {
                 members: Vec::new(),
                 image_id: "1".to_string(),
                 members_count: 0,
-                followers: Vec::new(),
                 members_permissions: Vec::new(),
-                followers_count: 0,
                 proposals_count: 0,
                 proposal_ids: Vec::new(),
                 token_ledger_id: LedgerCanisterId {
@@ -45,6 +43,7 @@ impl State {
                 proposal_entry : vec![],
                 ask_to_join_dao : true,
                 all_dao_user :  vec![],
+                requested_dao_user : vec![],
             },
 
             dao_groups: init_group_data(),

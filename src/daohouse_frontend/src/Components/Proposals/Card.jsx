@@ -57,6 +57,11 @@ export default function Card({
 
   const toggleExpanded = () => setIsExpanded(!isExpanded);
 
+  const truncateUsername = (text, maxLength) => {
+    if (!text) return "Username.user";
+    return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
+  };
+
   const truncateText = (text, wordLimit) => {
     const words = text.split("");
     if (words.length > wordLimit) {
@@ -81,7 +86,7 @@ export default function Card({
       setPollOptions(proposal.poll_options[0]); 
     }
   }, [proposal]); 
-  
+ 
 
   useEffect(() => {
     async function fetchUserProfile() {
@@ -289,14 +294,14 @@ export default function Card({
     }
   }, [proposal?.proposal_id]);
 
-  const handleVoteSubmit = async (e) => {
-    e.preventDefault();
+  const handleVoteSubmit = async (voteStatus) => {
     if (!voteStatus) return;
 
     try {
       setIsVoteLoading(true);
-      const voteParam =
-        voteStatus === "In Favor" ? { Yes: null } : { No: null };
+
+      const voteParam = voteStatus === "In Favor" ? { Yes: null } : { No: null };
+
       const result = await voteApi?.vote(proposal?.proposal_id, voteParam);
 
       if (result?.Ok) {
@@ -486,10 +491,10 @@ export default function Card({
               {isLoading ? (
                 <div className="w-24 h-6 md:w-36 md:h-8 bg-gray-400"></div>
               ) : (
-                <h4 className="text-white text-sm sm:text-base md:text-xl font-semibold">
-                  {userProfile?.username || "Username"}
-                </h4>
-              )}
+                <h2  className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-white"
+                title={userProfile?.username || "Username.user"} >
+                {truncateUsername(userProfile?.username, 9)}
+                </h2> )}
             </div>
 
             {/* Dates Section */}
@@ -708,7 +713,7 @@ export default function Card({
                     <span className="font-bold text-xs mobile:text-sm lg:text-lg text-gray-900 flex">
                       Votes Required <span className="hidden lg:flex">:</span>
                     </span>
-                    <span className=" lg:ml-3 text-start text-[10px]  mobile:text-sm lg:text-lg">
+                    <span className=" lg:ml-3 text-start text-[10px] small_phone:text-xs md:text-sm lg:text-lg">
                       {requiredVotes}
                     </span>
                   </div>
@@ -716,7 +721,7 @@ export default function Card({
               )}
             </div>
 
-            <div className="flex flex-wrap gap-4 flex-col md:flex-row md:justify-between items-start md:items-center space-y-4 md:space-y-0">
+            <div className="flex gap-4 flex-col items-start ">
               {!isSubmittedProposals &&
                 proposal.proposal_type.ChangeDaoConfig !== undefined && (
                   <div className="w-full">
@@ -922,7 +927,6 @@ export default function Card({
                 proposal.proposal_type.RemoveMemberToDaoProposal !==
                   undefined && (
                   <div className="w-full">
-                    
                     <div className="whitespace-normal break-words mt-2">
                       <span className="font-bold">Principal ID</span>:{" "}
                       {Principal.fromUint8Array(
@@ -1068,50 +1072,88 @@ export default function Card({
                     </button>
                   </div>
                 )}
-                {/* Cast Vote Section  */}
-                {showActions && proposal?.proposal_title !== "poll" && (
-                  <div className="bg-sky-200 w-full md:w-96 p-4 rounded-md mt-6">
-                    <h1 className="text-lg font-semibold mb-2">Cast Vote</h1>
-                    <form
-                      className="flex flex-row flex-wrap gap-2 small_phone:gap-4 mobile:gap-6 items-start md:items-center"
-                      onSubmit={handleVoteSubmit}
-                    >
-                      <div className="flex items-center space-x-4 mr-0 md:mr-4 mb-4 md:mb-0">
-                        <label className="text-md text-[#0E3746] flex items-center">
-                          <input
-                            type="radio"
-                            name="vote"
-                            value="In Favor"
-                            className="mr-2"
-                            onChange={() => setVoteStatus("In Favor")}
-                          />
-                          In Favor
-                        </label>
-                        <label className="text-md text-[#0E3746] flex-col items-center">
-                          <input
-                            type="radio"
-                            name="vote"
-                            value="Against"
-                            className="mr-2"
-                            onChange={() => setVoteStatus("Against")}
-                          />
-                          Against
-                        </label>
-                      </div>
-                      <button
-                        type="submit"
-                        className={`bg-[#0E3746] w-[100px] h-[30px] flex justify-center items-center text-white rounded-2xl p-2 mobile:text-base text-sm transition hover:bg-[#123b50]`}
-                      >
-                        {isVoteLoading ? (
-                          <div className="w-4 h-4 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
-                        ) : (
-                          "Submit"
-                        )}
-                      </button>
-                    </form>
-                  </div>
-                )}
               </div>
+
+              {/* Cast Vote Section  */}
+              {showActions && proposal?.proposal_title !== "poll" && (
+                <div className="w-full p-4 rounded-md mt-6 border border-black">
+                  <h1 className="text-lg font-semibold mb-2">Cast Vote</h1>
+                  <div className="mt-4">
+
+                    {(() => {
+                      const totalVotes = approvedVotes + rejectedVotes;
+
+                      const inFavorPercentage =
+                        totalVotes > 0 ? (approvedVotes / totalVotes) * 100 : 0;
+                      const againstPercentage =
+                        totalVotes > 0 ? (rejectedVotes / totalVotes) * 100 : 0;
+
+                      return (
+                        <form className="whitespace-normal break-words mt-2">
+                          {/* In Favor */}
+                          <div
+                            className="relative mt-4 cursor-pointer"
+                            onClick={() => handleVoteSubmit("In Favor")}
+                          >
+                            <div
+                              className={`relative rounded-lg h-10 flex items-center ${
+                                isVoteLoading && voteStatus === "In Favor"
+                                  ? "sliding-lines"
+                                  : ""
+                              }`}
+                            >
+                              <div
+                                className="absolute top-0 left-0 h-10 bg-green-200 rounded-lg transition-all"
+                                style={{ width: `${inFavorPercentage}%` }}
+                              ></div>
+                              <span className="relative z-10 px-4 text-gray-800 font-semibold">
+                                In Favor
+                              </span>
+                              <span className="relative z-10 ml-auto pr-4 text-gray-700 font-semibold">
+                                {inFavorPercentage.toFixed(0)}%
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Against */}
+                          <div
+                            className="relative mt-4 cursor-pointer"
+                            onClick={() => handleVoteSubmit("Against")}
+                          >
+                            <div
+                              className={`relative rounded-lg h-10 flex items-center ${
+                                isVoteLoading && voteStatus === "Against"
+                                  ? "sliding-lines"
+                                  : ""
+                              }`}
+                            >
+                              <div
+                                className="absolute top-0 left-0 h-10 bg-red-200 rounded-lg transition-all"
+                                style={{ width: `${againstPercentage}%` }}
+                              ></div>
+                              <span className="relative z-10 px-4 text-gray-800 font-semibold">
+                                Against
+                              </span>
+                              <span className="relative z-10 ml-auto pr-4 text-gray-700 font-semibold">
+                                {againstPercentage.toFixed(0)}%
+                              </span>
+                            </div>
+                          </div>
+                        </form>
+                      );
+                    })()}
+                    <div className="flex gap-4 ">
+                      <div className="mt-2 text-lg text-gray-800">
+                      { approvedVotes + rejectedVotes} votes
+                      </div>
+                      <span className="flex self-center">•</span>
+                      <div className="mt-2 text-lg text-gray-500">
+                      { daysAgo} {daysAgo === 1 ? "day ago" : "days ago"}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
             {!showActions && (
               <div className="flex gap-2">

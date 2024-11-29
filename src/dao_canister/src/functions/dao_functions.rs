@@ -702,7 +702,7 @@ async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
     let mut required_thredshold = 0;
     // let proposal_expire_time =
     //     ic_cdk::api::time() + (args.proposal_expired_at as u64 * 86_400 * 1_000_000_000);
-    let proposal_expire_time_testing : u64 = 2 * 60 * 1_000_000_000 + ic_cdk::api::time();
+    let proposal_expire_time_testing : u64 = 3 * 60 * 1_000_000_000 + ic_cdk::api::time();
     let _ = with_state(|state| {
         match state
             .dao
@@ -937,6 +937,7 @@ async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
         poll_options: None,
         ask_to_join_dao : None,
     };
+    with_state(| state | state.dao.requested_dao_user.push(api::caller()));
     create_proposal_controller(daohouse_backend_id, proposal).await;
     Ok(String::from("Join DAO request sent successfully"))
 }
@@ -944,100 +945,6 @@ async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
 #[query(guard = prevent_anonymous)]
 fn get_dao_members() -> Vec<Principal> {
     with_state(|state| state.dao.members.clone())
-}
-
-#[query(guard = prevent_anonymous)]
-fn get_dao_followers() -> Vec<Principal> {
-    with_state(|state| state.dao.followers.clone())
-}
-
-#[update(guard=prevent_anonymous)]
-pub async fn follow_dao() -> Result<String, String> {
-    let dao_id = ic_cdk::api::id();
-    let daohouse_backend_id = with_state(|state| state.dao.daohouse_canister_id);
-    let already_following = with_state(|state| {
-        let dao = &state.dao;
-        dao.followers.contains(&api::caller())
-    });
-
-    if already_following {
-        return Err(String::from(crate::utils::WARNING_ALREADY_FOLLOW_DAO));
-    }
-    let response: CallResult<(Result<(), String>,)> = ic_cdk::call(
-        daohouse_backend_id,
-        "store_follow_dao",
-        (dao_id,api::caller(),),
-    ).await;
-
-    match response {
-        Ok((Ok(()),)) => (),
-        Ok((Err(err),)) => return Err(err),
-        Err((code, message)) => {
-            let err_msg = match code {
-                RejectionCode::NoError => "NoError".to_string(),
-                RejectionCode::SysFatal => "SysFatal".to_string(),
-                RejectionCode::SysTransient => "SysTransient".to_string(),
-                RejectionCode::DestinationInvalid => "DestinationInvalid".to_string(),
-                RejectionCode::CanisterReject => "CanisterReject".to_string(),
-                _ => format!("Unknown rejection code: {:?}: {}", code, message),
-            };
-            return Err(err_msg);
-        }
-    };
-
-    with_state(|state| {
-        let dao = &mut state.dao;
-        dao.followers.push(api::caller());
-        dao.followers_count += 1;
-    });
-
-    Ok(String::from(crate::utils::SUCCESS_FOLLOW_DAO))
-}
-
-#[update(guard=prevent_anonymous)]
-pub async fn unfollow_dao() -> Result<String, String> {
-    let daohouse_backend_id = with_state(|state| state.dao.daohouse_canister_id);
-
-    let principal_id = api::caller();
-    let dao_id = ic_cdk::api::id();
-
-    let is_follow = with_state(|state| {
-        let dao = &mut state.dao;
-        if dao.followers.contains(&principal_id) {
-            dao.followers.retain(|s| s != &principal_id);
-            state.dao.followers_count -= 1;
-            true
-        } else {
-            false
-        }
-    });
-
-    if is_follow {
-        let response: CallResult<(Result<(), String>,)> = ic_cdk::call(
-            daohouse_backend_id,
-            "remove_follow_dao",
-            (dao_id, principal_id),
-        )
-        .await;
-
-        match response {
-            Ok((Ok(()),)) => Ok(crate::utils::SUCCESS_UNFOLLOW_DAO.to_string()),
-            Ok((Err(err),)) => Err(err),
-            Err((code, message)) => {
-                let err_msg = match code {
-                    RejectionCode::NoError => "NoError".to_string(),
-                    RejectionCode::SysFatal => "SysFatal".to_string(),
-                    RejectionCode::SysTransient => "SysTransient".to_string(),
-                    RejectionCode::DestinationInvalid => "DestinationInvalid".to_string(),
-                    RejectionCode::CanisterReject => "CanisterReject".to_string(),
-                    _ => format!("Unknown rejection code: {:?}: {}", code, message),
-                };
-                Err(err_msg)
-            }
-        }
-    } else {
-        Err(crate::utils::WARNING_DONT_FOLLOW.to_string())
-    }
 }
 
 #[update(guard=guard_daohouse_exclusive_method)]

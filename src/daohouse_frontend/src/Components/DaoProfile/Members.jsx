@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "./Members.scss";
-import { useMediaQuery } from "@mui/material";
 import { useAuth } from "../utils/useAuthClient";
 import { Principal } from "@dfinity/principal";
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
@@ -12,29 +11,30 @@ const Members = ({ daoGroups, daoMembers }) => {
   const [councilMembers, setCouncilMembers] = useState([]);
   const [groupMembers, setGroupMembers] = useState({});
   const [openedGroupIndex, setOpenedGroupIndex] = useState(null);
-  const [isCouncilOpen, setIsCouncilOpen] = useState(false); 
-  const [loading, setLoading] = useState(true); 
+  const [isCouncilOpen, setIsCouncilOpen] = useState(false);
+  const [loadingCouncil, setLoadingCouncil] = useState(true);
+  const [loadingGroups, setLoadingGroups] = useState(true);
 
   useEffect(() => {
     async function fetchCouncilProfiles() {
       if (daoMembers) {
-        setLoading(true);
+        setLoadingCouncil(true);
         const profiles = await Promise.all(
           daoMembers.map((member) =>
             backendActor.get_profile_by_id(Principal.fromUint8Array(member._arr))
           )
         );
         setCouncilMembers(profiles);
-        setLoading(false); 
+        setLoadingCouncil(false);
       }
     }
 
     fetchCouncilProfiles();
   }, [daoMembers, backendActor]);
 
-
   useEffect(() => {
     async function fetchAllGroupMembers() {
+      setLoadingGroups(true);
       const groupProfiles = {};
       for (const group of daoGroups) {
         const profiles = await Promise.all(
@@ -45,6 +45,7 @@ const Members = ({ daoGroups, daoMembers }) => {
         groupProfiles[group.group_name] = profiles;
       }
       setGroupMembers(groupProfiles);
+      setLoadingGroups(false);
     }
 
     if (daoGroups) {
@@ -66,42 +67,51 @@ const Members = ({ daoGroups, daoMembers }) => {
 
   return (
     <div className="Member_and_policy mt-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="mobile:text-2xl text-lg font-bold py-1">Members</h1>
       </div>
 
-      {/* Members Section */}
       <div className="bg-[#F4F2EC] rounded-[10px] mt-4">
-        {/* Council Members */}
         <div className="mobile:p-4 p-2 bg-[#F4F2EC] rounded-lg flex flex-col gap-4">
+          {/* Council Members Section */}
           <div className="bg-white">
             <header
               onClick={toggleCouncil}
               className="cursor-pointer flex flex-row items-center justify-between bg-[#AAC8D6] p-3 rounded-lg"
             >
-              <p className="font-semibold big_phone:text-lg text-sm">Council</p>
-              <p className="font-semibold big_phone:text-base  items-center  text-sm">
-                {councilMembers.length ? councilMembers.length : "Loading..."}{" "}
-                {councilMembers.length
-                  ? councilMembers.length === 1
-                    ? "Member"
-                    : "Members"
-                  : ""}
+              <p className="font-semibold big_phone:text-lg text-sm truncate flex-1 text-left">
+                Council
               </p>
-              {isCouncilOpen ? <IoIosArrowDown /> : <IoIosArrowUp />}
+              <p className="font-semibold big_phone:text-base text-sm text-center flex-1">
+                {loadingCouncil
+                  ? "Loading..."
+                  : `${councilMembers.length} ${
+                      councilMembers.length === 1 ? "Member" : "Members"
+                    }`}
+              </p>
+              <div className="flex flex-1 justify-end">
+                {isCouncilOpen ? (
+                  <IoIosArrowDown className="text-lg" />
+                ) : (
+                  <IoIosArrowUp className="text-lg" />
+                )}
+              </div>
             </header>
 
             {isCouncilOpen && (
               <div className="bg-white rounded-lg p-8">
-                {loading ? ( 
-                  <MemberSkeleton/>
+                {loadingCouncil ? (
+                   <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4">
+                   {Array(1)
+                     .fill(0)
+                     .map((_, idx) => (
+                       <MemberSkeleton key={idx} />
+                     ))}
+                 </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {councilMembers.map((member, index) => (
-                      <React.Fragment key={index}>
-                          <ListView member={member} />
-                      </React.Fragment>
+                      <ListView member={member} key={index} />
                     ))}
                   </div>
                 )}
@@ -116,31 +126,41 @@ const Members = ({ daoGroups, daoMembers }) => {
                 onClick={() => toggleOpenGroup(index)}
                 className="cursor-pointer flex flex-row items-center justify-between bg-[#AAC8D6] p-3 rounded-lg"
               >
-                <p className="font-semibold big_phone:text-lg text-sm">
+                <p className="font-semibold big_phone:text-lg text-sm truncate flex-1 text-left">
                   {group.group_name}
                 </p>
-                <p className="font-semibold big_phone:text-base items-center translate-x-[-35px] text-sm">
-                  {group.group_members.length}{" "}
-                  {group.group_members.length === 1 ? "Member" : "Members"}
+                <p className="font-semibold big_phone:text-base text-sm text-center flex-1">
+                  {loadingGroups
+                    ? "Loading..."
+                    : `${group.group_members.length} ${
+                        group.group_members.length === 1 ? "Member" : "Members"
+                      }`}
                 </p>
-                {openedGroupIndex === index ? (
-                  <IoIosArrowDown className="font-bold big_phone:text-base text-sm" />
-                ) : (
-                  <IoIosArrowUp className="font-bold big_phone:text-base text-sm" />
-                )}
+                <div className="flex flex-1 justify-end">
+                  {openedGroupIndex === index ? (
+                    <IoIosArrowDown className="text-lg" />
+                  ) : (
+                    <IoIosArrowUp className="text-lg" />
+                  )}
+                </div>
               </header>
-
               {openedGroupIndex === index && (
                 <div className="bg-white rounded-lg p-8">
-                  {loading ? (
-                    <MemberSkeleton /> 
+                  {loadingGroups ? (
+                    <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4">
+                      {Array(1)
+                        .fill(0)
+                        .map((_, idx) => (
+                          <MemberSkeleton key={idx} />
+                        ))}
+                    </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {groupMembers[group.group_name]?.map((member, memberIndex) => (
-                        <React.Fragment key={memberIndex}>
-                     <ListView member={member} />
-                        </React.Fragment>
-                      ))}
+                      {groupMembers[group.group_name]?.map(
+                        (member, memberIndex) => (
+                          <ListView member={member} key={memberIndex} />
+                        )
+                      )}
                     </div>
                   )}
                 </div>
@@ -157,7 +177,9 @@ export default Members;
 
 const ListView = ({ member }) => {
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
-  const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
+  const domain = process.env.DFX_NETWORK === "ic"
+    ? "raw.icp0.io"
+    : "localhost:4943";
   const profileImgSrc = member?.Ok?.profile_img
     ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${member?.Ok?.profile_img}`
     : userImage;
@@ -167,14 +189,13 @@ const ListView = ({ member }) => {
       <section className="top flex flex-row items-start gap-3">
         <img
           src={profileImgSrc}
-          alt="Image"
-          className="w-12 h-12 rounded-full object-cover shadow-lg" 
+          alt="Profile"
+          className="w-12 h-12 rounded-full object-cover shadow-lg"
         />
         <section className="details flex flex-col items-start ml-2">
           <p className="font-semibold text-base">{member?.Ok?.username}</p>
           <p className="text-sm">{member?.Ok?.email_id}</p>
         </section>
-     
       </section>
     </div>
   );

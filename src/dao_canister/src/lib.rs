@@ -1,7 +1,7 @@
 mod types;
 use functions::icrc_get_balance;
 use ic_cdk::{export_candid, init};
-use std::cell::RefCell;
+use std::{cell::RefCell, collections::HashSet};
 pub mod proposal_route;
 mod state_handler;
 use state_handler::State;
@@ -36,6 +36,20 @@ async fn init(dao_input: DaoInput) {
         })
         .collect();
 
+    let mut unique_members: HashSet<Principal> = HashSet::new();
+    
+    for member in dao_input.members.iter() {
+        unique_members.insert(*member);
+    }
+
+    for group in dao_input.dao_groups.iter() {
+        for group_member in group.group_members.iter() {
+            unique_members.insert(*group_member);
+        }
+    }
+
+    let all_dao_user: Vec<Principal> = unique_members.into_iter().collect();
+    
     let new_dao = Dao {
         dao_id: ic_cdk::api::id(),
         dao_name: dao_input.dao_name,
@@ -49,9 +63,7 @@ async fn init(dao_input: DaoInput) {
         members: dao_input.members.clone(),
         image_id: dao_input.image_id,
         members_count: dao_input.members.len() as u32,
-        followers: dao_input.followers.clone(),
         members_permissions: dao_input.members_permissions,
-        followers_count: dao_input.followers.len() as u32,
         proposals_count: 0,
         proposal_ids: Vec::new(),
         token_ledger_id: LedgerCanisterId {
@@ -63,7 +75,8 @@ async fn init(dao_input: DaoInput) {
         token_symbol: dao_input.token_symbol,
         proposal_entry: proposal_entry,
         ask_to_join_dao : dao_input.ask_to_join_dao,
-        all_dao_user : dao_input.all_dao_user,
+        all_dao_user : all_dao_user,
+        requested_dao_user : Vec::new(),
     };
 
     with_state(|state| {

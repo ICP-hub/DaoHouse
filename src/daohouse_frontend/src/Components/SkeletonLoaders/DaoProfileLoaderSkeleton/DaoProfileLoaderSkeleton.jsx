@@ -19,7 +19,6 @@ const DaoProfileLoaderSkeleton = () => {
           <div className="bg-gray-300 h-4 w-[65vw] lg:w-[50vw] rounded-md animate-pulse"></div>
         </div>
       </div>
-      {/* Proposals and Followers Count Placeholder */}
       <div className="flex justify-between mt-4">
         <div className="bg-gray-300 h-4 w-20 rounded-md animate-pulse"></div>
         <div className="bg-gray-300 h-4 w-20 rounded-md animate-pulse"></div>

@@ -26,7 +26,6 @@ const convertTimestampToDateString = (timestamp) => {
 const PostCard = ({ posts, handleGetLikePost }) => {
   const [formattedDate, setFormattedDate] = useState('');
   const { backendActor } = useAuth();
-  const [isFollowing, setIsFollowing] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
   const [localLikeStatus, setLocalLikeStatus] = useState(posts.is_liked);
   const [localLikeCount, setLocalLikeCount] = useState(posts.like_count);
@@ -72,47 +71,13 @@ const PostCard = ({ posts, handleGetLikePost }) => {
         setLocalLikeCount(localLikeCount);
       }
     } catch (error) {
-      console.error("Error liking post:", error);
       toast.error("An error occurred while liking the post");
-      // Revert the UI update if there's an error
       setLocalLikeStatus(localLikeStatus);
       setLocalLikeCount(localLikeCount);
     } finally {
       setIsLiking(false);
     }
     handleGetLikePost({ ...posts, is_liked: newLikeStatus, like_count: newLikeCount });
-  };
-
-  const toggleFollow = async () => {
-    try {
-      if (!userProfile) return;
-      const principal = Principal.fromText(posts.principal_id.toString());
-      const currentlyFollowing = userProfile.followings_list.some(following => following.toString() === principal.toString());
-      setIsFollowing(!currentlyFollowing);
-
-      const response = currentlyFollowing
-        ? await backendActor.unfollow_user(principal)
-        : await backendActor.follow_user(principal);
-
-      if (response?.Ok) {
-        const updatedProfile = { ...userProfile };
-        if (currentlyFollowing) {
-          updatedProfile.followings_list = updatedProfile.followings_list.filter(following => following.toString() !== principal.toString());
-          updatedProfile.followings_count--;
-        } else {
-          updatedProfile.followings_list.push(principal);
-          updatedProfile.followings_count++;
-        }
-        setUserProfile(updatedProfile);
-        toast.success(currentlyFollowing ? "Successfully unfollowed" : "Successfully followed");
-      } else if (response?.Err) {
-        setIsFollowing(!currentlyFollowing);
-        toast.error(response.Err);
-      }
-    } catch (error) {
-      console.error("Error following/unfollowing user:", error);
-      toast.error("An error occurred");
-    }
   };
 
   useEffect(() => {
@@ -125,11 +90,7 @@ const PostCard = ({ posts, handleGetLikePost }) => {
 
         const profileResponse = await backendActor.get_user_profile();
         if (profileResponse.Ok) {
-          const userId = profileResponse.Ok.user_id;
           setUserProfile(profileResponse.Ok);
-          const principal = Principal.fromText(posts.principal_id.toString());
-          const isFollowingList = profileResponse.Ok.followings_list;
-          setIsFollowing(isFollowingList.some(following => following.toString() === principal.toString()));
         }
       } catch (error) {
         console.error("Error fetching profile data:", error);
@@ -152,17 +113,7 @@ const PostCard = ({ posts, handleGetLikePost }) => {
               className="rounded-[50%] w-10 h-10"
               onError={handleImageError}
             />
-            <div>
-              <p className="font-semibold ml-2 truncate w-36"> {posts.username || posts.principal_id.toString()}</p>
-              {userProfile && userProfile.user_id.toString() !== posts.principal_id.toString() && (
-                <button
-                  onClick={toggleFollow}
-                  className={`flex-1 mt-0 text-blue-400 p-1 sm:text-sm md:text-lg`}
-                >
-                  {isFollowing ? 'Unfollow' : '+ Follow'}
-                </button>
-              )}
-            </div>
+
           </section>
 
           <section className="postCard__time text-slate-500 mobile:text-base text-sm">

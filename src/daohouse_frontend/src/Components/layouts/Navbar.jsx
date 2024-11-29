@@ -49,16 +49,12 @@ const Navbar = () => {
     { label: "DAOs", route: "/dao" },
   ];
 
-  useEffect(() => {
-    console.log("backend Actor in navbar",backendActor);
-    
+  useEffect(() => {    
     if (!backendActor || userProfile) return;
 
     const createAndFetchUserProfile = async () => {
       try {
-        const response = await backendActor?.check_user_existance();
-         console.log("resp of check in navbar",response);
-         
+        const response = await backendActor?.check_user_existance();         
         if (response.Ok) {
           await fetchUserProfile();
         } else {

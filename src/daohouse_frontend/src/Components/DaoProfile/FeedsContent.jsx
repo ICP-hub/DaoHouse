@@ -54,7 +54,7 @@ const [imageSrc, setImageSrc] = useState(
   }, [userProfile?.profile_img])
 
   const handleImageUpload = () => {
-    console.log("Image upload triggered");
+   
   };
 
   return (
@@ -67,7 +67,7 @@ const [imageSrc, setImageSrc] = useState(
           onClick={() => {
             Navigate("/create-proposal");
           }}
-          className="flex justify-center items-center text-[16px] relative w-[220px] h-[50px] bg-white rounded-full  hidden lg:block"
+          className="flex justify-center items-center text-[16px] relative w-[220px] h-[50px] bg-white rounded-full lg:block"
           style={{
             boxShadow:
               "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",

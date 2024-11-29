@@ -39,8 +39,6 @@ const Dao = () => {
         try {
           const daoCanister = await createDaoActor(data.dao_canister_id);
           const dao_details = await daoCanister.get_dao_detail();
-          console.log("dao details", dao_details);
-
           return { ...dao_details, daoCanister, dao_canister_id: data.dao_canister_id };
         } catch (err) {
           console.error(`Error fetching details for DAO ${data.dao_canister_id}:`, err);
@@ -115,9 +113,6 @@ const Dao = () => {
           }
         })
       );
-
-      console.log("list of joined dao", joinedDaoDetails);
-
       setJoinedDAO(joinedDaoDetails.filter((dao) => dao !== null));
     } catch (error) {
       console.error("Error fetching joined DAOs:", error);
@@ -238,8 +233,6 @@ const Dao = () => {
                   key={index}
                   {...{
                     name: daos.dao_name || "No Name",
-                    followers: daos.followers || "0",
-                    followers_count: daos.followers_count || "0",
                     members: daos.members_count ? Number(BigInt(daos.members_count)) : "0",
                     groups: daos.groups_count ? Number(BigInt(daos.groups_count)) : "0",
                     proposals: daos.proposals_count || "0",
@@ -264,8 +257,6 @@ const Dao = () => {
                 key={index}
                 {...{
                   name: daos.dao_name || "No Name",
-                  followers: daos.followers || "No Followers",
-                  followers_count: daos.followers_count || "0",
                   members: daos.members_count ? Number(BigInt(daos.members_count)) : "0",
                   groups: daos.groups_count ? Number(BigInt(daos.groups_count)) : "0",
                   proposals: daos.proposals_count || "0",

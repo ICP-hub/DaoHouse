@@ -37,8 +37,6 @@ const Post = () => {
   const [data, setdata] = useState({});
   const name = data?.username;
 
-  console.log("selected post", selectedPost);
-
   // Animation options for the big circle
   const defaultOptions = {
     loop: true,
