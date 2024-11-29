@@ -9,6 +9,7 @@ import ProposalsContent from "../../Components/DaoProfile/ProposalsContent";
 import SearchProposals from "../../Components/Proposals/SearchProposals";
 import ProposalLoaderSkeleton from "../../Components/SkeletonLoaders/ProposalLoaderSkeleton/ProposalLoaderSkeleton";
 import Pagination from "../../Components/pagination/Pagination";
+import { Principal } from "@dfinity/principal";
 
 const FeedPage = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -19,6 +20,7 @@ const FeedPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [proposals, setProposals] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isMember, setIsMember] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
@@ -71,6 +73,23 @@ const FeedPage = () => {
             ...proposal,
             dao_canister_id: dao.dao_canister_id,
           }));
+          const profileResponse = await backendActor.get_user_profile();
+          if (profileResponse.Ok) {
+            const currentUserId = Principal.fromText(
+              profileResponse.Ok.user_id.toString()
+            );
+          const daoDetails = await daoActor.get_dao_detail();
+          const daoMembers = daoDetails?.all_dao_user || [];
+          const isCurrentUserMember =
+              Array.isArray(daoMembers) &&
+              daoMembers.some(
+                (member) => member.toString() === currentUserId.toString()
+              );
+            if (isCurrentUserMember) {
+              setIsMember(true);
+            }
+          }
+          
           const hasMoreData = daoProposals.length > itemsPerPage;
           setHasMore(hasMoreData);
           const proposalsToDisplay = proposalsWithDaoId.slice(0, itemsPerPage);
@@ -207,7 +226,7 @@ const FeedPage = () => {
               <div className="desktop:mx-12">
                 <ProposalsContent
                   proposals={proposals}
-                  isMember={true}
+                  isMember={isMember}
                   showActions={false}
                   sortOrder={sortOrder}
                   setSortOrder={setSortOrder}
