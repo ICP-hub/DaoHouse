@@ -1,4 +1,4 @@
-import React, { useEffect,  useState } from "react";
+import React, { useEffect, useState } from "react";
 import Lottie from "react-lottie";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaArrowRightLong } from "react-icons/fa6";
@@ -107,7 +107,6 @@ const MyProfile = ({ childComponent }) => {
   useEffect(() => {
     getData();
   }, [backendActor]);
-
 
   useEffect(() => {
     const currentPath = location.pathname;
@@ -468,21 +467,20 @@ const MyProfile = ({ childComponent }) => {
     <button
       onClick={() => navigate("/edit-profile")}
       className="bg-white text-[16px] text-[#05212C] gap-0 shadow-2xl md:px-3 rounded-[27px] 
+
                  tablet:w-[190px] tablet:h-[40px] md:w-[50px] md:h-[35px] w-[4.4rem] h-[2.4rem] 
                  flex items-center justify-center  rounded-2xl"
-    >
-      <img
-        src={EditPen}
-        alt="edit"
-        className="tablet:mr-2 h-5 w-5"
-      />
-      <span className="hidden sm:inline">Edit</span>
-    </button>
-  )}
-</div>
-
+                  >
+                    <img
+                      src={EditPen}
+                      alt="edit"
+                      className="tablet:mr-2 h-5 w-5"
+                    />
+                    <span className="hidden sm:inline">Edit</span>
+                  </button>
+                )}
+              </div>
             </div>
-
 
             <div className="flex flex-col items-center justify-center ">
               <div className="flex justify-center gap-12 mt-8">
@@ -524,12 +522,8 @@ const MyProfile = ({ childComponent }) => {
                 text-nowrap 
                 font-mulish font-bold text-[10px]  text-left 
                 relative
-              ">
-
-                
-
-
-
+              "
+            >
               {/* <div className="absolute bottom-1 flex justify-center   w-[295px] h-[1px] bg-black  transition-all duration-300 hover:w-[20px]"></div> */}
 
               {/* My Profile Tab */}
