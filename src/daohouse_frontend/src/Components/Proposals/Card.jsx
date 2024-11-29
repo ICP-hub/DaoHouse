@@ -11,7 +11,8 @@ import userImage from "../../../assets/avatar.png";
 import ShareModal from "./ShareModal";
 import coin from "../../../assets/coin.jpg";
 import Avatar from "../../../assets/Avatar.png";
-
+import { FaCheckCircle } from "react-icons/fa";
+import { RxCross2 } from "react-icons/rx";
 export default function Card({
   proposal,
   voteApi,
@@ -52,6 +53,8 @@ export default function Card({
     proposal?.poll_options ? proposal.poll_options[0] : []
   );
 
+  
+
   const toggleExpanded = () => setIsExpanded(!isExpanded);
 
   const truncateUsername = (text, maxLength) => {
@@ -80,9 +83,10 @@ export default function Card({
 
   useEffect(() => {
     if (proposal?.poll_options) {
-      setPollOptions(proposal.poll_options[0]);
+      setPollOptions(proposal.poll_options[0]); 
     }
-  }, [proposal]);
+  }, [proposal]); 
+ 
 
   useEffect(() => {
     async function fetchUserProfile() {
@@ -607,7 +611,7 @@ export default function Card({
                 >
                   {timeRemaining}
                 </span>
-                {!isSubmittedProposals && (
+                {/* {!isSubmittedProposals && (
                   <span
                     className={`px-1 mini_phone:px-2 md:px-4 py-1 rounded-full text-white font-semibold text-sm big_phone:text-base  ${
                       status === "Approved"
@@ -619,7 +623,45 @@ export default function Card({
                   >
                     {status}
                   </span>
-                )}
+                )} */}
+{!isSubmittedProposals && (
+  <>
+    {status === "Approved" ? (
+      <span
+        className="flex items-center px-4 py-2 bg-green-500 text-white rounded-full font-semibold text-sm big_phone:text-base"
+      >
+        <FaCheckCircle style={{ marginRight: "5px", fontSize: "16px" }} />
+        Approved
+      </span>
+    ) : status === "Executing" ? (
+      <span className="flex items-center px-4 py-2 bg-yellow-300 text-black rounded-full font-semibold text-sm big_phone:text-base">
+      <svg className="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle className="opacity-55" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" strokeDasharray="50"></circle>
+      </svg>
+      In Progress
+    </span>
+    
+    ) :  status === "Rejected" ? (
+      <span className="flex items-center px-4 py-2 bg-black text-white rounded-full font-semibold text-sm big_phone:text-base">
+     <RxCross2 style={{ marginRight: "5px", fontSize: "16px" }} />
+     Rejected
+    </span>
+    
+    ): (
+      <span
+        className={`px-1 mini_phone:px-2 md:px-4 py-1 rounded-full text-white font-semibold text-sm big_phone:text-base ${
+          status === "Rejected"
+            ? "bg-red-500"
+            : "bg-[#4993B0]"
+        } self-center`}
+      >
+        {status}
+      </span>
+    )}
+  </>
+)}
+
+
               </div>
             </div>
 
