@@ -494,9 +494,9 @@ export default function Card({
               {isLoading ? (
                 <div className="w-24 h-6 md:w-36 md:h-8 bg-gray-400"></div>
               ) : (
-                <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-white"
+                <h2 className="tablet:text-[32px] md:text-[24px] text-[14px] tablet:font-normal font-medium text-left text-white"
                   title={userProfile?.username || "Username.user"} >
-                  {truncateUsername(userProfile?.username, 9)}
+                  {truncateUsername(userProfile?.username, 15)}
                 </h2>)}
             </div>
 
