@@ -17,6 +17,195 @@ pub fn start_proposal_checker(expird_at : u64) {
     });
 }
 
+pub fn execute_proposal_on_required_vote(state : &mut State, proposal_id : String){
+    ic_cdk::println!("come it {} ", proposal_id);
+    let timestamp = time();
+    let proposal_ids : Vec<String> = vec![proposal_id];
+    for proposal_id in proposal_ids {
+        ic_cdk::println!("come it secound time {} ", proposal_id);
+        if let Some(mut proposal) = state.proposals.get(&proposal_id) {
+            proposal.has_been_processed = true;
+
+            let proposal_approved_votes = proposal.proposal_approved_votes as f64;
+            let proposal_rejected_votes = proposal.proposal_rejected_votes as f64;
+            let total_votes: f64 = proposal_approved_votes + proposal_rejected_votes;
+            let total_percentage = if total_votes > 0.0 {
+                (proposal_approved_votes / total_votes) * 100.0
+            } else {
+                0.0
+            };
+            let time_diff = timestamp.saturating_sub(proposal.proposal_submitted_at);
+            let min_require_vote = state.dao.required_votes as f64;
+            let min_threshold = proposal.minimum_threadsold as f64;
+
+            if total_votes >= min_require_vote {
+                ic_cdk::println!("come it thired time {:?} ", proposal_id);
+                if total_percentage >= min_threshold {
+                    proposal.proposal_status = ProposalState::Accepted;
+                    let clone_proposal = proposal.clone();
+                    state.proposals.insert(proposal_id.clone(), clone_proposal);
+                } else if total_percentage > 0.0 {
+                    proposal.proposal_status = ProposalState::Rejected;
+                    let clone_proposal = proposal.clone();
+                    state.proposals.insert(proposal_id.clone(), clone_proposal);
+                } else {
+                    proposal.proposal_status = ProposalState::Expired;
+                    let clone_proposal = proposal.clone();
+                    state.proposals.insert(proposal_id.clone(), clone_proposal);
+                }
+            } else {
+                ic_cdk::println!("come it fourth time {:?} ", proposal);
+                proposal.proposal_status = ProposalState::Unreachable;
+                let clone_proposal = proposal.clone();
+                state.proposals.insert(proposal_id.clone(), clone_proposal);
+            }
+
+            
+            if proposal.proposal_status == ProposalState::Accepted
+                && !proposal.has_been_processed_second
+            {
+                ic_cdk::println!("status : {:?} ", proposal.proposal_status);
+                let proposal_clone = proposal.clone();
+                match proposal.proposal_type {
+                    ProposalType::MintNewTokens => {
+                        if !proposal.has_been_processed_second {
+                            ic_cdk::println!(" Mint new tokens ");
+                            mint_new_tokens(state, &proposal);
+                            proposal.has_been_processed_second = true;
+                            state.proposals.insert(proposal_id.clone(), proposal);
+                        }
+                    }
+                    ProposalType::AddMemberToDaoProposal => {
+                        if !proposal.has_been_processed_second {
+                            ic_cdk::println!(" add_member_to_dao ");
+                            let _ = add_member_to_dao(state, &proposal);
+                            proposal.has_been_processed_second = true;
+                            state.proposals.insert(proposal_id.clone(), proposal);
+                        }
+                    }
+                    ProposalType::AddMemberToGroupProposal => {
+                        if !proposal.has_been_processed_second {
+                            ic_cdk::println!(" AddMemberToGroupProposal ");
+                            add_member_to_group(state, &proposal);
+                            proposal.has_been_processed_second = true;
+                            state.proposals.insert(proposal_id.clone(), proposal);
+                        }
+                    }
+                    ProposalType::RemoveMemberToDaoProposal => {
+                        if !proposal.has_been_processed_second {
+                            ic_cdk::println!(" RemoveMemberToDaoProposal ");
+                            let _ = remove_member_from_dao(state, &proposal);
+                            proposal.has_been_processed_second = true;
+                            state.proposals.insert(proposal_id.clone(), proposal);
+                        }
+                    }
+                    ProposalType::RemoveMemberToGroupProposal => {
+                        if !proposal.has_been_processed_second {
+                            ic_cdk::println!(" RemoveMemberToGroupProposal ");
+                            remove_member_to_group(state, &proposal);
+                            proposal.has_been_processed_second = true;
+                            state.proposals.insert(proposal_id.clone(), proposal);
+                        }
+                    }
+                    ProposalType::ChangeDaoConfig => {
+                        if !proposal.has_been_processed_second {
+                            ic_cdk::println!(" ChangeDaoConfig ");
+                            change_dao_config(state, &proposal);
+                            proposal.has_been_processed_second = true;
+                            state.proposals.insert(proposal_id.clone(), proposal);
+                        }
+                    }
+                    ProposalType::ChangeDaoPolicy => {
+                        if !proposal.has_been_processed_second {
+                            ic_cdk::println!(" ChangeDaoPolicy ");
+                            change_dao_policy(state, &proposal);
+                            proposal.has_been_processed_second = true;
+                            state.proposals.insert(proposal_id.clone(), proposal);
+                        }
+                    }
+                    ProposalType::TokenTransfer => {
+                        if !proposal.has_been_processed_second {
+                            ic_cdk::println!(" TokenTransfer ");
+                            let token_ledger_id: Principal = state.dao.token_ledger_id.id;
+                            ic_cdk::spawn(async move {
+                                transfer_tokens_to_user(token_ledger_id, &proposal_clone).await;
+                            });
+                            proposal.has_been_processed_second = true;
+                            state.proposals.insert(proposal_id.clone(), proposal);
+                        }
+                    }
+                    ProposalType::BountyRaised => {
+                        if !proposal.has_been_processed_second {
+                            ic_cdk::println!(" BountyRaised ");
+                            let token_ledger_id: Principal = state.dao.token_ledger_id.id;
+                            ic_cdk::spawn(async move {
+                                transfer_tokens_to_user(token_ledger_id, &proposal_clone).await;
+                            });
+
+                            if let Some(associate_proposal_id) =
+                                proposal.associated_proposal_id.clone()
+                            {
+                                if let Some(mut data) =
+                                    state.proposals.get(&associate_proposal_id)
+                                {
+                                    data.proposal_status = ProposalState::Succeeded;
+
+                                    state.proposals.insert(associate_proposal_id.clone(), data);
+                                }
+                            }
+
+                            proposal.has_been_processed_second = true;
+                            state.proposals.insert(proposal_id.clone(), proposal);
+                        }
+                    }
+                    ProposalType::BountyDone => {
+                        if !proposal.has_been_processed_second {
+                            ic_cdk::println!(" BountyDone ");
+                            let token_ledger_id: Principal = state.dao.token_ledger_id.id;
+                            ic_cdk::spawn(async move {
+                                transfer_tokens_to_user(token_ledger_id, &proposal_clone).await;
+                            });
+
+                            if let Some(associate_proposal_id) =
+                                proposal.associated_proposal_id.clone()
+                            {
+                                if let Some(mut data) =
+                                    state.proposals.get(&associate_proposal_id)
+                                {
+                                    data.proposal_status = ProposalState::Succeeded;
+
+                                    state.proposals.insert(associate_proposal_id.clone(), data);
+                                }
+                            }
+
+                            proposal.has_been_processed_second = true;
+                            state.proposals.insert(proposal_id.clone(), proposal);
+                        }
+                    }
+                    _ => {}
+                }
+            } else if !proposal.has_been_processed_second && time_diff >= (proposal.proposal_expired_at - proposal.proposal_submitted_at) {
+                ic_cdk::println!("proposal status : {:?} ", proposal.proposal_status);
+                let proposal_clone = proposal.clone();
+                match proposal.proposal_type {
+                    ProposalType::TokenTransfer => {
+                        if !proposal.has_been_processed_second {
+                            ic_cdk::println!(" TokenTransfer unsucess ");
+                            let token_ledger_id: Principal = state.dao.token_ledger_id.id;
+                            ic_cdk::spawn(async move {
+                                return_token_to_user(token_ledger_id, &proposal_clone).await;
+                            });
+                            proposal.has_been_processed_second = true;
+                            state.proposals.insert(proposal_id.clone(), proposal);
+                        }
+                    }
+                    _ => {}
+                }
+            }
+        }
+    }
+}
+
 pub fn check_proposals() {
     with_state(|state: &mut State| {
         let timestamp = time();
