@@ -119,7 +119,6 @@ const ProposalsDetails = () => {
       
       const response = await daoActor.ask_to_join_dao(joinDaoPayload);
       const daoDetails = await daoActor.get_dao_detail();
-      console.log(response);
       const profileResponse = await backendActor.get_user_profile();
           if (profileResponse.Ok) {
           const currentUserId = Principal.fromText(profileResponse.Ok.user_id.toString());
