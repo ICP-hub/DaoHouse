@@ -13,6 +13,10 @@ import coin from "../../../assets/coin.jpg";
 import Avatar from "../../../assets/Avatar.png";
 import { FaCheckCircle } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
+import { GoBlocked } from "react-icons/go";
+import { SiTicktick } from "react-icons/si";
+import { MdOutlineTimerOff } from "react-icons/md";
+import { ImCross } from "react-icons/im";
 export default function Card({
   proposal,
   voteApi,
@@ -53,7 +57,7 @@ export default function Card({
     proposal?.poll_options ? proposal.poll_options[0] : []
   );
 
-  
+
 
   const toggleExpanded = () => setIsExpanded(!isExpanded);
 
@@ -83,10 +87,10 @@ export default function Card({
 
   useEffect(() => {
     if (proposal?.poll_options) {
-      setPollOptions(proposal.poll_options[0]); 
+      setPollOptions(proposal.poll_options[0]);
     }
-  }, [proposal]); 
- 
+  }, [proposal]);
+
 
   useEffect(() => {
     async function fetchUserProfile() {
@@ -200,7 +204,7 @@ export default function Card({
     setRejectedVotes(proposal?.rejected_votes_list?.length || 0);
     setVoteCount(
       (proposal?.approved_votes_list?.length || 0) +
-        (proposal?.rejected_votes_list?.length || 0)
+      (proposal?.rejected_votes_list?.length || 0)
     );
   }, [proposal]);
 
@@ -361,10 +365,10 @@ export default function Card({
           prevOptions.map((option) =>
             option.id === selectedOption
               ? {
-                  ...option,
-                  poll_approved_votes: option.poll_approved_votes + 1n,
-                  approved_users: [...option.approved_users, stringPrincipal], // Add current user to approved users list
-                }
+                ...option,
+                poll_approved_votes: option.poll_approved_votes + 1n,
+                approved_users: [...option.approved_users, stringPrincipal], // Add current user to approved users list
+              }
               : option
           )
         );
@@ -458,24 +462,21 @@ export default function Card({
   {
     return (
       <div
-        className={`bg-white font-mulish ${
-          isProposalDetails
+        className={`bg-white font-mulish ${isProposalDetails
             ? "rounded-t-xl tablet:mx-16"
             : `rounded-xl ${isSubmittedProposals ? "" : "desktop:mx-20"}`
-        } shadow-md ${
-          isSubmittedProposals
+          } shadow-md ${isSubmittedProposals
             ? "flex flex-col  big_phone:flex-row desktop:mx-0"
             : "flex flex-col md:flex-col"
-        }`}
+          }`}
       >
         <>
           {/* Top Section */}
           <div
-            className={`${
-              isSubmittedProposals
+            className={`${isSubmittedProposals
                 ? "big_phone:rounded-l-lg big_phone:rounded-r-none rounded-t-lg rounded-b-none flex justify-between big_phone:flex-col big_phone:space-y-8 bg-[#0E3746] px-4 sm:px-6 lg:px-12 py-6"
                 : "w-full flex justify-between items-center bg-[#0E3746] px-4 sm:px-6 lg:px-12 py-6 rounded-t-lg rounded-b-none"
-            }`}
+              }`}
           >
             {/* User Info Section */}
             <div className="flex gap-2 lg:gap-4 justify-center items-center">
@@ -491,10 +492,10 @@ export default function Card({
               {isLoading ? (
                 <div className="w-24 h-6 md:w-36 md:h-8 bg-gray-400"></div>
               ) : (
-                <h2  className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-white"
-                title={userProfile?.username || "Username.user"} >
-                {truncateUsername(userProfile?.username, 9)}
-                </h2> )}
+                <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-white"
+                  title={userProfile?.username || "Username.user"} >
+                  {truncateUsername(userProfile?.username, 9)}
+                </h2>)}
             </div>
 
             {/* Dates Section */}
@@ -534,14 +535,14 @@ export default function Card({
                   percentage={
                     proposal?.proposal_type.Polls !== undefined
                       ? Math.floor(
-                          (pollOptions?.reduce(
-                            (acc, curr) =>
-                              acc + Number(curr.poll_approved_votes),
-                            0
-                          ) /
-                            requiredVotes) *
-                            100
-                        )
+                        (pollOptions?.reduce(
+                          (acc, curr) =>
+                            acc + Number(curr.poll_approved_votes),
+                          0
+                        ) /
+                          requiredVotes) *
+                        100
+                      )
                       : Math.floor((approvedVotes / requiredVotes) * 100)
                   }
                   color="#4CAF50"
@@ -549,9 +550,9 @@ export default function Card({
                 <span className="text-white mt-2 text-center text-xs sm:text-sm md:text-base">
                   {proposal?.proposal_type.Polls !== undefined
                     ? pollOptions?.reduce(
-                        (acc, curr) => acc + Number(curr.poll_approved_votes),
-                        0
-                      )
+                      (acc, curr) => acc + Number(curr.poll_approved_votes),
+                      0
+                    )
                     : approvedVotes}{" "}
                   votes
                 </span>
@@ -576,26 +577,23 @@ export default function Card({
 
           {/* Bottom Section */}
           <div
-            className={`${
-              isSubmittedProposals
+            className={`${isSubmittedProposals
                 ? "w-full px-4 desktop:px-12 py-4 md:py-8"
                 : "w-full px-4 lg:px-12 py-4 md:py-8"
-            }`}
+              }`}
           >
             <div
-              className={`${
-                isSubmittedProposals
+              className={`${isSubmittedProposals
                   ? "flex flex-wrap lg:gap-4 justify-between"
                   : "flex flex-col xl:flex-row justify-between items-start xl:items-center mb-4 gap-0"
-              }`}
+                }`}
             >
               <div className="max-w-full lg:max-w-full">
                 <h4 className="text-xl font-bold text-[#0E3746] overflow-hidden break-words whitespace-normal">
                   {proposal.proposal_title || proposal.propsal_title} |{" "}
                   <span
-                    className={`md:text-[1rem] text-[1rem] block ${
-                      isSubmittedProposals ? " truncate w-60" : ""
-                    }`}
+                    className={`md:text-[1rem] text-[1rem] block ${isSubmittedProposals ? " truncate w-60" : ""
+                      }`}
                   >
                     {" "}
                     Proposal ID: #{proposal?.proposal_id}
@@ -609,55 +607,86 @@ export default function Card({
                 >
                   {timeRemaining}
                 </span>
-                {/* {!isSubmittedProposals && (
-                  <span
-                    className={`px-1 mini_phone:px-2 md:px-4 py-1 rounded-full text-white font-semibold text-sm big_phone:text-base  ${
-                      status === "Approved"
-                        ? "bg-[#4CAF50]"
-                        : status === "Rejected"
-                        ? "bg-red-500"
-                        : "bg-[#4993B0]"
-                    } self-center `}
-                  >
-                    {status}
-                  </span>
-                )} */}
-{!isSubmittedProposals && (
-  <>
-    {status === "Approved" ? (
-      <span
-        className="flex items-center px-4 py-2 bg-green-500 text-white rounded-full font-semibold text-sm big_phone:text-base"
-      >
-        <FaCheckCircle style={{ marginRight: "5px", fontSize: "16px" }} />
-        Approved
-      </span>
-    ) : status === "Executing" ? (
-      <span className="flex items-center px-4 py-2 bg-yellow-300 text-black rounded-full font-semibold text-sm big_phone:text-base">
-      <svg className="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-        <circle className="opacity-55" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" strokeDasharray="50"></circle>
-      </svg>
-      In Progress
-    </span>
-    
-    ) :  status === "Rejected" ? (
-      <span className="flex items-center px-4 py-2 bg-black text-white rounded-full font-semibold text-sm big_phone:text-base">
-     <RxCross2 style={{ marginRight: "5px", fontSize: "16px" }} />
-     Rejected
-    </span>
-    
-    ): (
-      <span
-        className={`px-1 mini_phone:px-2 md:px-4 py-1 rounded-full text-white font-semibold text-sm big_phone:text-base ${
-          status === "Rejected"
-            ? "bg-red-500"
-            : "bg-[#4993B0]"
-        } self-center`}
-      >
-        {status}
-      </span>
-    )}
-  </>
-)}
+
+                {!isSubmittedProposals && (
+                  <>
+                    {status === "Approved" && (
+                      <span className="flex items-center px-4 py-1 bg-green-500 text-white rounded-full font-semibold text-sm big_phone:text-base">
+                        <FaCheckCircle style={{ marginRight: "5px", fontSize: "16px" }} />
+                        Approved
+                      </span>
+                    )}
+                    {status === "Executing" && (
+                      <span className="flex items-center px-4 py-1 bg-yellow-300 text-black rounded-full font-semibold text-sm big_phone:text-base">
+                        <svg
+                          className="animate-spin h-5 w-5 mr-2"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-55"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                            strokeDasharray="50"
+                          ></circle>
+                        </svg>
+                        In Progress
+                      </span>
+                    )}
+                    {status === "Rejected" && (
+                      <span className="flex items-center px-4 py-1 bg-red-700 text-white rounded-full font-semibold text-sm big_phone:text-base">
+                        <RxCross2 style={{ marginRight: "5px", fontSize: "16px" }} />
+                        Rejected
+                      </span>
+                    )}
+                    {status === "Open" && (
+                      <span className="flex items-center px-4 py-1 bg-yellow-300 text-black rounded-full font-semibold text-sm big_phone:text-base">
+                        <svg
+                          className="animate-spin h-5 w-5 mr-2"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-55"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                            strokeDasharray="50"
+                          ></circle>
+                        </svg>
+                        Open
+                      </span>
+                    )}
+                    {status === "Unreachable" && (
+                      <span className="flex items-center px-4 py-1 bg-slate-700 text-white rounded-full font-semibold text-sm big_phone:text-base">
+                        <GoBlocked style={{ marginRight: "5px", fontSize: "16px" }} />
+                        Unreachable
+                      </span>
+                    )}
+                    {status === "Succeeded" && (
+                      <span className="flex items-center px-4 py-1 bg-green-700 text-white rounded-full font-semibold text-sm big_phone:text-base">
+                        <SiTicktick style={{ marginRight: "5px", fontSize: "16px" }} />
+                        Succeeded
+                      </span>
+                    )}
+                    {status === "Expired" && (
+                      <span className="flex items-center px-4 py-1 bg-black text-white rounded-full font-semibold text-sm big_phone:text-base">
+                        <MdOutlineTimerOff style={{ marginRight: "5px", fontSize: "16px" }} />
+                        Expired
+                      </span>
+                    )}
+                  </>
+                )}
+
+
+
 
 
               </div>
@@ -781,8 +810,8 @@ export default function Card({
                             const votePercentage =
                               totalVotes > 0
                                 ? (Number(option.poll_approved_votes) /
-                                    totalVotes) *
-                                  100
+                                  totalVotes) *
+                                100
                                 : 0;
 
                             return (
@@ -793,12 +822,11 @@ export default function Card({
                               >
                                 {/* Option container with less rounded corners */}
                                 <div
-                                  className={`relative  rounded-lg h-10 flex items-center ${
-                                    loadingOptionId === option.id &&
-                                    isPollVoteLoading
+                                  className={`relative  rounded-lg h-10 flex items-center ${loadingOptionId === option.id &&
+                                      isPollVoteLoading
                                       ? "sliding-lines"
                                       : ""
-                                  }`}
+                                    }`}
                                 >
                                   <div
                                     className="absolute top-0 left-0 h-10 bg-gray-200  rounded-lg transition-all"
@@ -876,7 +904,7 @@ export default function Card({
 
               {!isSubmittedProposals &&
                 proposal.proposal_type.AddMemberToGroupProposal !==
-                  undefined && (
+                undefined && (
                   <div className="w-full">
                     <div className="flex">
                       <span className="font-bold">Group Name</span>:{" "}
@@ -892,7 +920,7 @@ export default function Card({
                 )}
               {!isSubmittedProposals &&
                 proposal.proposal_type.RemoveMemberToGroupProposal !==
-                  undefined && (
+                undefined && (
                   <div className="w-full">
                     <div className="flex">
                       <span className="font-bold">Group Name</span>:{" "}
@@ -925,7 +953,7 @@ export default function Card({
 
               {!isSubmittedProposals &&
                 proposal.proposal_type.RemoveMemberToDaoProposal !==
-                  undefined && (
+                undefined && (
                   <div className="w-full">
                     <div className="whitespace-normal break-words mt-2">
                       <span className="font-bold">Principal ID</span>:{" "}
@@ -1008,11 +1036,10 @@ export default function Card({
                         />
                       </svg>
                       <span
-                        className={`text-sm mobile:text-base ${
-                          isComment
+                        className={`text-sm mobile:text-base ${isComment
                             ? "bg-gray-200 text-black rounded-lg p-2"
                             : "text-gray-600 bg-none"
-                        }`}
+                          }`}
                       >
                         {commentCount || 0} Comments
                       </span>
@@ -1096,11 +1123,10 @@ export default function Card({
                             onClick={() => handleVoteSubmit("In Favor")}
                           >
                             <div
-                              className={`relative rounded-lg h-10 flex items-center ${
-                                isVoteLoading && voteStatus === "In Favor"
+                              className={`relative rounded-lg h-10 flex items-center ${isVoteLoading && voteStatus === "In Favor"
                                   ? "sliding-lines"
                                   : ""
-                              }`}
+                                }`}
                             >
                               <div
                                 className="absolute top-0 left-0 h-10 bg-green-200 rounded-lg transition-all"
@@ -1121,11 +1147,10 @@ export default function Card({
                             onClick={() => handleVoteSubmit("Against")}
                           >
                             <div
-                              className={`relative rounded-lg h-10 flex items-center ${
-                                isVoteLoading && voteStatus === "Against"
+                              className={`relative rounded-lg h-10 flex items-center ${isVoteLoading && voteStatus === "Against"
                                   ? "sliding-lines"
                                   : ""
-                              }`}
+                                }`}
                             >
                               <div
                                 className="absolute top-0 left-0 h-10 bg-red-200 rounded-lg transition-all"
@@ -1144,11 +1169,11 @@ export default function Card({
                     })()}
                     <div className="flex gap-4 ">
                       <div className="mt-2 text-lg text-gray-800">
-                      { approvedVotes + rejectedVotes} votes
+                        {approvedVotes + rejectedVotes} votes
                       </div>
                       <span className="flex self-center">•</span>
                       <div className="mt-2 text-lg text-gray-500">
-                      { daysAgo} {daysAgo === 1 ? "day ago" : "days ago"}
+                        {daysAgo} {daysAgo === 1 ? "day ago" : "days ago"}
                       </div>
                     </div>
                   </div>
@@ -1159,22 +1184,22 @@ export default function Card({
               <div className="flex gap-2">
                 {(proposal?.proposal_title === "Bounty claim" ||
                   proposal.propsal_title === "Bounty claim") && (
-                  <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
-                    <button
-                      className="px-2 py-2 font-mulish"
-                      onClick={() => {
-                        if (proposal.link_of_task) {
-                          window.location.href = proposal.link_of_task;
-                        } else {
-                          console.error("Invalid task link");
-                        }
-                      }}
-                    >
-                      {" "}
-                      Task Link claim
-                    </button>
-                  </div>
-                )}
+                    <div className="mt-4 xl:mt-8 bg-[#CDEFFE] w-32 rounded-xl cursor-pointer ">
+                      <button
+                        className="px-2 py-2 font-mulish"
+                        onClick={() => {
+                          if (proposal.link_of_task) {
+                            window.location.href = proposal.link_of_task;
+                          } else {
+                            console.error("Invalid task link");
+                          }
+                        }}
+                      >
+                        {" "}
+                        Task Link claim
+                      </button>
+                    </div>
+                  )}
               </div>
             )}
           </div>
