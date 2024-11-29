@@ -297,6 +297,8 @@ export default function Card({
   const handleVoteSubmit = async (voteStatus) => {
     if (!voteStatus) return;
 
+    setVoteStatus(voteStatus)
+
     try {
       setIsVoteLoading(true);
 
@@ -1096,7 +1098,7 @@ export default function Card({
                             onClick={() => handleVoteSubmit("In Favor")}
                           >
                             <div
-                              className={`relative rounded-lg h-10 flex items-center ${
+                              className={`relative rounded-lg h-10 flex items-center bg-gray-100 ${
                                 isVoteLoading && voteStatus === "In Favor"
                                   ? "sliding-lines"
                                   : ""
@@ -1121,7 +1123,7 @@ export default function Card({
                             onClick={() => handleVoteSubmit("Against")}
                           >
                             <div
-                              className={`relative rounded-lg h-10 flex items-center ${
+                              className={`relative rounded-lg h-10 flex items-center bg-gray-100 ${
                                 isVoteLoading && voteStatus === "Against"
                                   ? "sliding-lines"
                                   : ""
