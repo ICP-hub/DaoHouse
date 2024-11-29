@@ -159,9 +159,9 @@ const ProposalsDetails = () => {
     <div className="w-full md:gap-2 gap-10 z-10 relative md:pl-4 tablet:px-12 lg:px-16 mt-10">
       <div className="flex flex-col md:flex-row md:justify-between md:pl-1">
         {/* Left Side: Proposal Details */}
-        <div className="flex flex-col md:flex-row items-center flex-grow">
+        <div className="flex flex-col mobile:flex-row items-center gap-4 flex-grow">
           <div
-            className="w-full md:w-[145px] h-[200px] lg:w-[207px] lg:h-[120px] bg-[#C2C2C2] md:h-[84px] rounded overflow-hidden flex-shrink-0 self-start"
+            className="w-full mobile:w-[145px] h-[200px] lg:w-[207px] lg:h-[120px] bg-[#C2C2C2] mobile:h-[84px] rounded overflow-hidden flex-shrink-0 self-start"
             style={{
               boxShadow:
                 "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
@@ -174,12 +174,25 @@ const ProposalsDetails = () => {
             />
           </div>
 
-          <div className="lg:ml-10 ml-4 md:mt-0 mt-4">
-            <h2 className="lg:text-[40px] md:text-[24px] text-[16px] tablet:font-normal font-medium  text-[#05212C] md:text-start text-center">
-              {dao?.dao_name || 'Dao Name'}
+          <div className=" md:mt-0 mt-4 w-full">
+            
+            <div className='flex items-center justify-between w-full'>
+            <h2 className="lg:text-[40px] md:text-[24px] text-[16px] tablet:font-normal font-medium  text-[#05212C] mobile:text-start text-start">
+            {dao?.dao_name || 'Dao Name'}
             </h2>
+            <button
+            onClick={handleJoinDao}
+            className="bg-white text-[16px] text-[#05212C] shadow-xl px-5 py-1 rounded-[27px]  lg:h-[40px]  md:h-[40px]  flex items-center justify-center"
+            style={{
+              boxShadow:
+                "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
+            }}
+          >
+            {joinStatus}
+          </button>
+            </div>
             <div className="relative w-full mt-2">
-              <p className="text-[12px] tablet:text-[16px] font-normal md:text-left text-[#646464] break-words text-center">
+              <p className="text-[12px] tablet:text-[16px] font-normal md:text-left text-[#646464] break-words text-start">
                 {isExpanded ? dao?.purpose : truncated}
                 {isTruncated && (
                   <button
@@ -210,6 +223,7 @@ const ProposalsDetails = () => {
           >
             {isFollowing ? 'Unfollow' : 'Follow'}
           </button> */}
+
           <button
             onClick={handleJoinDao}
             disabled={joinStatus=="Joined" || isRequested}
@@ -225,6 +239,7 @@ const ProposalsDetails = () => {
           >
             {joinStatus}
           </button>
+
           {showConfirmModal && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
               <div className="bg-white p-6 rounded-lg shadow-lg md:w-[800px] mx-auto text-center">
