@@ -13,8 +13,6 @@ pub async fn create_proposal_controller(
 ) -> String {
     let uuids = raw_rand().await.unwrap().0;
     let proposal_id = format!("{:x}", Sha256::digest(&uuids));
-
-    let proposal_expire_time_testing: u64 = 1 * 60 * 1_000_000_000 + ic_cdk::api::time();
     let mut proposal_expire_time: u64 = 0;
     let mut required_votes = 0;
     let mut dao_members: Vec<Principal> = Vec::new();
@@ -34,7 +32,7 @@ pub async fn create_proposal_controller(
         proposal_submitted_at: ic_cdk::api::time(),
         proposal_expired_at: proposal
             .proposal_expired_at
-            .unwrap_or(proposal_expire_time_testing.clone()),
+            .unwrap_or(proposal_expire_time.clone()),
         proposal_approved_votes: 0,
         approved_votes_list: Vec::new(),
         proposal_rejected_votes: 0,
