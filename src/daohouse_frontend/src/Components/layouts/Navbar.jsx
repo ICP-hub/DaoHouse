@@ -267,7 +267,7 @@ const Navbar = () => {
             onClose={() => setIsModalOpen(false)}
             onLogin={handleLogin}
             onLoginNFID={handleNFIDLogin}
-            onLoginPlug={handlePlugLogin}
+           
           />
         )}
         <UserDetailsModal
