@@ -700,9 +700,8 @@ async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
     guard_check_proposal_creation(proposal_data)?;
 
     let mut required_thredshold = 0;
-    // let proposal_expire_time =
-    //     ic_cdk::api::time() + (args.proposal_expired_at as u64 * 86_400 * 1_000_000_000);
-    let proposal_expire_time_testing : u64 = 3 * 60 * 1_000_000_000 + ic_cdk::api::time();
+    let proposal_expire_time =
+        ic_cdk::api::time() + (args.proposal_expired_at as u64 * 86_400 * 1_000_000_000);
     let _ = with_state(|state| {
         match state
             .dao
@@ -755,7 +754,7 @@ async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
         token_from: None,
         token_to: None,
         proposal_created_at: None,
-        proposal_expired_at: Some(proposal_expire_time_testing),
+        proposal_expired_at: Some(proposal_expire_time),
         bounty_task: None,
         required_votes: None,
         cool_down_period: None,

@@ -6,7 +6,7 @@ import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 import userImage from "../../../assets/Avatar.png";
 import MemberSkeleton from "../SkeletonLoaders/MemberSkeleton";
 
-const Members = ({ daoGroups, daoMembers }) => {
+const Members = ({ daoGroups, daoCouncil }) => {
   const { backendActor } = useAuth();
   const [councilMembers, setCouncilMembers] = useState([]);
   const [groupMembers, setGroupMembers] = useState({});
@@ -17,11 +17,13 @@ const Members = ({ daoGroups, daoMembers }) => {
 
   useEffect(() => {
     async function fetchCouncilProfiles() {
-      if (daoMembers) {
+      if (daoCouncil) {
         setLoadingCouncil(true);
         const profiles = await Promise.all(
-          daoMembers.map((member) =>
-            backendActor.get_profile_by_id(Principal.fromUint8Array(member._arr))
+          daoCouncil.map((member) =>
+            backendActor.get_profile_by_id(
+              Principal.fromUint8Array(member._arr)
+            )
           )
         );
         setCouncilMembers(profiles);
@@ -30,7 +32,7 @@ const Members = ({ daoGroups, daoMembers }) => {
     }
 
     fetchCouncilProfiles();
-  }, [daoMembers, backendActor]);
+  }, [daoCouncil, backendActor]);
 
   useEffect(() => {
     async function fetchAllGroupMembers() {
@@ -39,7 +41,9 @@ const Members = ({ daoGroups, daoMembers }) => {
       for (const group of daoGroups) {
         const profiles = await Promise.all(
           group.group_members.map((member) =>
-            backendActor.get_profile_by_id(Principal.fromUint8Array(member._arr))
+            backendActor.get_profile_by_id(
+              Principal.fromUint8Array(member._arr)
+            )
           )
         );
         groupProfiles[group.group_name] = profiles;
@@ -101,13 +105,13 @@ const Members = ({ daoGroups, daoMembers }) => {
             {isCouncilOpen && (
               <div className="bg-white rounded-lg p-8">
                 {loadingCouncil ? (
-                   <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4">
-                   {Array(1)
-                     .fill(0)
-                     .map((_, idx) => (
-                       <MemberSkeleton key={idx} />
-                     ))}
-                 </div>
+                  <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4">
+                    {Array(1)
+                      .fill(0)
+                      .map((_, idx) => (
+                        <MemberSkeleton key={idx} />
+                      ))}
+                  </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {councilMembers.map((member, index) => (
@@ -154,14 +158,16 @@ const Members = ({ daoGroups, daoMembers }) => {
                           <MemberSkeleton key={idx} />
                         ))}
                     </div>
-                  ) : (
+                  ) : groupMembers[group.group_name]?.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {groupMembers[group.group_name]?.map(
+                      {groupMembers[group.group_name].map(
                         (member, memberIndex) => (
                           <ListView member={member} key={memberIndex} />
                         )
                       )}
                     </div>
+                  ) : (
+                    <p className="text-center text-gray-500">No members yet</p>
                   )}
                 </div>
               )}
@@ -177,9 +183,8 @@ export default Members;
 
 const ListView = ({ member }) => {
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
-  const domain = process.env.DFX_NETWORK === "ic"
-    ? "raw.icp0.io"
-    : "localhost:4943";
+  const domain =
+    process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
   const profileImgSrc = member?.Ok?.profile_img
     ? `${protocol}://${process.env.CANISTER_ID_IC_ASSET_HANDLER}.${domain}/f/${member?.Ok?.profile_img}`
     : userImage;
@@ -192,7 +197,7 @@ const ListView = ({ member }) => {
           alt="Profile"
           className="w-12 h-12 rounded-full object-cover shadow-lg"
         />
-        <section className="details flex flex-col items-start items-center mt-2 ml-2">
+        <section className="details flex flex-col  items-center mt-2 ml-2">
           <p className="font-semibold text-base">{member?.Ok?.username}</p>
           
         </section>

@@ -166,7 +166,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
 
     <div className="flex flex-col items-center justify-center mt-4 big_phone:mt-0">
 
-      <h2 className="text-lg font-semibold truncate w-24 big_phone:w-36 text-center">{name}</h2>
+      <h2 className="text-lg font-semibold truncate w-40 big_phone:w-36 text-center">{name}</h2>
     </div>
       </div>
 

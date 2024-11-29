@@ -27,6 +27,7 @@ export default function Card({
   commentCount,
   isSubmittedProposals,
   showComments,
+  isMember
 }) {
   const { backendActor, createDaoActor, stringPrincipal } = useAuth();
   const [voteStatus, setVoteStatus] = useState("");
@@ -494,9 +495,11 @@ export default function Card({
               {isLoading ? (
                 <div className="w-24 h-6 md:w-36 md:h-8 bg-gray-400"></div>
               ) : (
-                <h2 className="tablet:text-[32px] md:text-[24px] text-[16px] tablet:font-normal font-medium text-left text-white"
+
+                <h2 className="tablet:text-[32px] md:text-[24px] text-[14px] tablet:font-normal font-medium text-left text-white"
                   title={userProfile?.username || "Username.user"} >
-                  {truncateUsername(userProfile?.username, 9)}
+                  {truncateUsername(userProfile?.username, 15)}
+
                 </h2>)}
             </div>
 
@@ -576,6 +579,11 @@ export default function Card({
               )}
             </div>
           </div>
+          {!isMember && (
+                <div className="text-center w-full bg-red-100 rounded-full mt-4 py-1">
+                You are not allowed to vote on this proposal
+              </div>
+              )}
 
           {/* Bottom Section */}
           <div
@@ -584,6 +592,7 @@ export default function Card({
                 : "w-full px-4 lg:px-12 py-4 md:py-8"
               }`}
           >
+            
             <div
               className={`${isSubmittedProposals
                   ? "flex flex-wrap lg:gap-4 justify-between"
@@ -1125,8 +1134,10 @@ export default function Card({
                             onClick={() => handleVoteSubmit("In Favor")}
                           >
                             <div
+
                               className={`relative rounded-lg h-10 flex items-center bg-gray-100 ${
                                 isVoteLoading && voteStatus === "In Favor"
+
                                   ? "sliding-lines"
                                   : ""
                                 }`}
@@ -1150,8 +1161,10 @@ export default function Card({
                             onClick={() => handleVoteSubmit("Against")}
                           >
                             <div
+
                               className={`relative rounded-lg h-10 flex items-center bg-gray-100 ${
                                 isVoteLoading && voteStatus === "Against"
+
                                   ? "sliding-lines"
                                   : ""
                                 }`}

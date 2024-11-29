@@ -46,6 +46,7 @@ const DaoProfile = () => {
   const [isMember, setIsMember] = useState(false);
   const [isRequested, setIsRequested] = useState(false);
   const [daoMembers, setDaoMembers] = useState([]);
+  const [daoCouncil, setDaoCouncil] = useState([]);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [daoActor, setDaoActor] = useState({});
   const [loading, setLoading] = useState(false);
@@ -135,8 +136,10 @@ const DaoProfile = () => {
             setDaoGroups(daoGroups);
 
             const daoMembers = daoDetails?.all_dao_user || [];
+            
             const requestedToJoin = daoDetails?.requested_dao_user || [];
-
+            const daoCouncil = daoDetails?.members
+            setDaoCouncil(daoCouncil);
             setDaoMembers(daoMembers);
 
             // Use optional chaining and null checks
@@ -544,7 +547,7 @@ const DaoProfile = () => {
             )}
             {activeLink === "feeds" && <FeedsContent />}
             {activeLink === "member_policy" && (
-              <Members daoGroups={daoGroups} daoMembers={daoMembers} />
+              <Members daoGroups={daoGroups} daoCouncil={daoCouncil} />
             )}
             {activeLink === "dao_setting" && <DaoSetting />}
 

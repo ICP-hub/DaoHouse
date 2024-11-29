@@ -26,6 +26,7 @@ const ProposalsDetails = () => {
   const [isComment, setIsComment] = useState(true);
   const [commentCount, setCommentCount] = useState(0); 
   const [isRequested, setIsRequested] = useState(false);
+  const [isMember, setIsMember] = useState(false);
 
   const maxWords = 90;
 
@@ -76,7 +77,9 @@ const ProposalsDetails = () => {
             setIsRequested(isUserRequested);        
           const isCurrentUserMember = daoMembers.some(member => member.toString() === currentUserId.toString());
           if (isCurrentUserMember) {
-       
+
+            setIsMember(true);
+
             setJoinStatus("Joined");
           } else if (isUserRequested) {
             setJoinStatus("Requested");
@@ -265,6 +268,7 @@ const ProposalsDetails = () => {
         setIsComment={setIsComment}
         commentCount={commentCount}
         showComments={true}
+        isMember={isMember}
       />
       </div>
       {isComment && (
