@@ -17,6 +17,8 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  console.log("isModalOpen",isModalOpen);
+  
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -119,11 +121,6 @@ const Navbar = () => {
   const handleNFIDLogin = async () => {
     setIsConnecting(true);
     await login("nfid").then(() => window.location.reload());
-    navigate("/")
-  };
-  const handlePlugLogin = async () => {
-    setIsConnecting(true);
-    await login("plug").then(() => window.location.reload());
     navigate("/")
   };
   const handleLogout = async () => {
