@@ -25,6 +25,7 @@ const ProposalsDetails = () => {
   const [loadingJoinedDAO, setLoadingJoinedDAO] = useState(false); 
   const [isComment, setIsComment] = useState(true);
   const [commentCount, setCommentCount] = useState(0);  // State for comment count
+  const [isRequested, setIsRequested] = useState(false);
 
   const maxWords = 90;
 
@@ -65,13 +66,25 @@ const ProposalsDetails = () => {
           const profileResponse = await backendActor.get_user_profile();
           if (profileResponse.Ok) {
           const currentUserId = Principal.fromText(profileResponse.Ok.user_id.toString());
-          const daoMembers = await daoActor.get_dao_members();          
+          const daoMembers = daoDetails?.all_dao_user || [];
+          const requestedToJoin = daoDetails?.requested_dao_user || []; 
+          const isUserRequested =
+              Array.isArray(requestedToJoin) &&
+              requestedToJoin.some(
+                (member) => member.toString() === currentUserId.toString()
+              );
+            setIsRequested(isUserRequested);        
           const isCurrentUserMember = daoMembers.some(member => member.toString() === currentUserId.toString());
-            if (isCurrentUserMember) {
-              setJoinStatus('Joined');
-            } else {
-              setJoinStatus('Join DAO');
-            }
+          if (isCurrentUserMember) {
+            // setIsMember(true);
+            setJoinStatus("Joined");
+          } else if (isUserRequested) {
+            setJoinStatus("Requested");
+          } else {
+            setIsRequested(false);
+            // setIsMember(false);
+            setJoinStatus("Join DAO");
+          }
           }
           setLoading(false)
         } catch (error) {
@@ -210,7 +223,21 @@ const ProposalsDetails = () => {
           >
             {isFollowing ? 'Unfollow' : 'Follow'}
           </button> */}
-          
+          <button
+            onClick={handleJoinDao}
+            disabled={joinStatus=="Joined" || isRequested}
+            className={`bg-white text-[16px] text-[#05212C] shadow-xl px-8 py-1 rounded-[27px] lg:w-[131px] lg:h-[40px] md:w-[112px] md:h-[40px] w-full flex items-center justify-center ${joinStatus=="Joined" || isRequested
+              ? "cursor-not-allowed cursor"
+              : "cursor-pointer"}`}
+            
+            style={{
+              whiteSpace: "nowrap",
+              boxShadow:
+                "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
+            }}
+          >
+            {joinStatus}
+          </button>
           {showConfirmModal && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
               <div className="bg-white p-6 rounded-lg shadow-lg md:w-[800px] mx-auto text-center">
