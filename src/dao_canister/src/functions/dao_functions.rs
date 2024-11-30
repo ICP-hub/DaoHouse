@@ -727,6 +727,7 @@ async fn vote_on_poll_options(proposal_id: String, option_id: String) -> Result<
     with_state(|state| match &mut state.proposals.get(&proposal_id) {
         Some(proposal_data) => {
             if proposal_data.proposal_type == ProposalType::Polls {
+                if proposal_data.required_votes >= (proposal_data.proposal_rejected_votes as u32 + proposal_data.proposal_approved_votes as u32) {
                 if proposal_data.proposal_status == ProposalState::Open {
                     if let Some(option) = proposal_data.poll_options.iter_mut()
                         .flat_map(|options| options.iter_mut())
@@ -752,6 +753,9 @@ async fn vote_on_poll_options(proposal_id: String, option_id: String) -> Result<
                 } else {
                     Err(format!("Proposal has been {:?} ", proposal_data.proposal_status))
                 }
+            }
+            else { Err(format!("The proposal received the maximum required votes"))}
+                
             } else {
                 Err("This is not a Poll type proposal".to_string())
             }
