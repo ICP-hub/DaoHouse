@@ -166,22 +166,22 @@ async fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> 
         Some(pro) => {
             if pro.created_by != api::caller() || pro.principal_of_action != api::caller(){
                 if pro.proposal_status == ProposalState::Open {
-                    if (pro.proposal_rejected_votes as u32 + pro.proposal_approved_votes as u32) < pro.required_votes {
+                    if (pro.proposal_rejected_votes as u32 + pro.proposal_approved_votes as u32) <= pro.required_votes {
                         if voting == VoteParam::Yes {
                             pro.approved_votes_list.push(principal_id);
                             pro.proposal_approved_votes += 1;
                             state.proposals.insert(proposal_id, pro.to_owned());
                             if (pro.proposal_rejected_votes as u32 + pro.proposal_approved_votes as u32) == pro.required_votes {
-                                let success_percentage = (pro.proposal_approved_votes as f32 / pro.required_votes as f32) * 100.0;
-                                if success_percentage >= pro.minimum_threadsold as f32 {
                                     execute_proposal_on_required_vote(state, pro.proposal_id.clone());
-                                }
                             }
                             Ok(String::from("Successfully voted in favour of Proposal."))
                         } else {
                             pro.rejected_votes_list.push(principal_id);
                             pro.proposal_rejected_votes += 1;
                             state.proposals.insert(proposal_id, pro.to_owned());
+                            if (pro.proposal_rejected_votes as u32 + pro.proposal_approved_votes as u32) == pro.required_votes {
+                                    execute_proposal_on_required_vote(state, pro.proposal_id.clone());
+                            }
                             Ok(String::from("Successfully voted against the proposal."))
                         }
                     }else{
