@@ -260,7 +260,7 @@ export default function Card({
     const now = new Date();
     const timeDiff = expiryDate - now;
 
-    if (timeDiff <= 0) return "00d 00h 00m 00s left";
+    if (timeDiff <= 0 || status !== "Open") return "00d 00h 00m 00s left";
 
     const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
     const hours = Math.floor(
@@ -300,7 +300,7 @@ export default function Card({
   }, [proposal?.proposal_id]);
 
   const handleVoteSubmit = async (voteStatus) => {
-    if (!voteStatus) return;
+    if (!voteStatus || !isMember) return;
 
     setVoteStatus(voteStatus)
 
@@ -345,7 +345,7 @@ export default function Card({
   };
 
   const handlePollVoteSubmit = async (selectedOption) => {
-    if (!selectedOption) return;
+    if (!selectedOption || !isMember) return;
 
     // Check if the proposal is reachable
     if (proposal.proposal_expired_at <= Date.now() * 1_000_000) {
@@ -389,11 +389,13 @@ export default function Card({
         setSelectedOption(null);
       } else {
         console.error("Error voting:", result.Err);
-        toast.error(result.Err);
+        toast.error(result?.Err);
       }
     } catch (error) {
       console.error("Error submitting vote:", error);
-      toast.error("Error submitting vote: " + error.message);
+      const rejectTextMatch = error.message.match(/Reject text: (.+)/);
+      const rejectText = rejectTextMatch ? rejectTextMatch[1] : "An error occurred"
+      toast.error(rejectText);
     } finally {
       setIsPollVoteLoading(false);
       setLoadingOptionId(null);
@@ -828,8 +830,9 @@ export default function Card({
                             return (
                               <div
                                 key={option.id}
-                                className="relative mt-4 cursor-pointer"
+                                className={`relative mt-4 bg-gray-100 rounded-xl ${!isMember ? "cursor-not-allowed" : "cursor-pointer"}`}
                                 onClick={() => handlePollVoteSubmit(option.id)}
+                                disabled={!isMember}
                               >
                                 {/* Option container with less rounded corners */}
                                 <div

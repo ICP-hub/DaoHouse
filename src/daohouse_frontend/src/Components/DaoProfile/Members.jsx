@@ -113,7 +113,7 @@ const Members = ({ daoGroups, daoCouncil }) => {
                       ))}
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 mobile:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {councilMembers.map((member, index) => (
                       <ListView member={member} key={index} />
                     ))}
@@ -159,7 +159,7 @@ const Members = ({ daoGroups, daoCouncil }) => {
                         ))}
                     </div>
                   ) : groupMembers[group.group_name]?.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 mobile:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                       {groupMembers[group.group_name].map(
                         (member, memberIndex) => (
                           <ListView member={member} key={memberIndex} />
