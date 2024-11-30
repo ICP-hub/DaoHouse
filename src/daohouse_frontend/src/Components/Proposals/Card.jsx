@@ -27,7 +27,7 @@ export default function Card({
   commentCount,
   isSubmittedProposals,
   showComments,
-  isMember
+  isMember,
 }) {
   const { backendActor, createDaoActor, stringPrincipal } = useAuth();
   const [voteStatus, setVoteStatus] = useState("");
@@ -578,7 +578,7 @@ export default function Card({
             </div>
           </div>
           {!isMember && (
-                <div className="text-center w-full bg-red-100 rounded-full mt-4 py-1">
+                <div className="text-center w-full bg-red-200 rounded-full mt-4 py-1">
                 You are not allowed to vote on this proposal
               </div>
               )}
@@ -619,10 +619,10 @@ export default function Card({
 
                 {!isSubmittedProposals && (
                   <>
-                    {status === "Approved" && (
+                    {status === "Accepted" && (
                       <span className="flex items-center px-4 py-1 bg-green-500 text-white rounded-full font-semibold text-sm big_phone:text-base">
                         <FaCheckCircle style={{ marginRight: "5px", fontSize: "16px" }} />
-                        Approved
+                        Accepted
                       </span>
                     )}
                     {status === "Executing" && (
@@ -1128,12 +1128,13 @@ export default function Card({
                         <form className="whitespace-normal break-words mt-2">
                           {/* In Favor */}
                           <div
-                            className="relative mt-4 cursor-pointer"
+                            className={`relative mt-4 ${!isMember ? "cursor-not-allowed" : "cursor-pointer"}`}
                             onClick={() => handleVoteSubmit("In Favor")}
+                            disabled={!isMember}
                           >
                             <div
 
-                              className={`relative rounded-lg h-10 flex items-center bg-gray-100 ${
+                              className={`relative rounded-lg h-10 flex items-center bg-gray-100 ${!isMember ? "cursor-not-allowed" : "cursor-pointer"} ${
                                 isVoteLoading && voteStatus === "In Favor"
 
                                   ? "sliding-lines"
@@ -1141,7 +1142,7 @@ export default function Card({
                                 }`}
                             >
                               <div
-                                className="absolute top-0 left-0 h-10 bg-green-200 rounded-lg transition-all"
+                                className="absolute top-0 left-0 h-10 bg-gray-300 rounded-lg transition-all"
                                 style={{ width: `${inFavorPercentage}%` }}
                               ></div>
                               <span className="relative z-10 px-4 text-gray-800 font-semibold">
@@ -1155,12 +1156,13 @@ export default function Card({
 
                           {/* Against */}
                           <div
-                            className="relative mt-4 cursor-pointer"
+                            className={`relative mt-4 ${!isMember ? "cursor-not-allowed" : "cursor-pointer"}`}
                             onClick={() => handleVoteSubmit("Against")}
+                            disabled={!isMember}
                           >
                             <div
 
-                              className={`relative rounded-lg h-10 flex items-center bg-gray-100 ${
+                              className={`relative rounded-lg h-10 flex items-center bg-gray-100  ${
                                 isVoteLoading && voteStatus === "Against"
 
                                   ? "sliding-lines"
@@ -1168,7 +1170,7 @@ export default function Card({
                                 }`}
                             >
                               <div
-                                className="absolute top-0 left-0 h-10 bg-red-200 rounded-lg transition-all"
+                                className="absolute top-0 left-0 h-10 bg-gray-300 rounded-lg transition-all"
                                 style={{ width: `${againstPercentage}%` }}
                               ></div>
                               <span className="relative z-10 px-4 text-gray-800 font-semibold">
