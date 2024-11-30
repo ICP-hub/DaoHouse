@@ -29,7 +29,6 @@ for ((i = 1; i <= COUNT; i++)); do
         principal "6ydm4-srext-xsaic-y3v2x-cticp-5n6pf-2meh7-j43r6-rghg7-pt5nd-bqe";
         principal "6iopj-he533-kf3kn-v5pds-ovr3y-h5cyc-3v7zy-455tb-sh3of-6yyyj-kqe";
       };
-      tokens_required_to_vote = 1;
       tokenissuer = "sample";
       linksandsocials = vec{
         "https://twitter.com/sampledao";

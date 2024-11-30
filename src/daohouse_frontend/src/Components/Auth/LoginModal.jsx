@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { FaTimes } from 'react-icons/fa';
-import plug from '../../../assets/plugicon.png';
+
 import II from '../../../assets/InternetIdentityIcon.png';
 import nfidlogo from '../../../assets/nfidlogo.png';
-import './global.scss'; // Ensure global styles are imported
+import './global.scss' 
 
-const LoginModal = ({ isOpen, onClose, onLogin, onLoginPlug, onLoginNFID}) => {
-  // added logic here for stop scrolling
+const LoginModal = ({ isOpen, onClose, onLogin,  onLoginNFID}) => {
+ 
   useEffect(() => {
     const bodyStyle = document.body.style;
 

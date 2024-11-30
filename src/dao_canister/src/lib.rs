@@ -69,7 +69,6 @@ async fn init(dao_input: DaoInput) {
         token_ledger_id: LedgerCanisterId {
             id: Principal::anonymous(),
         },
-        tokens_required_to_vote: dao_input.tokens_required_to_vote,
         total_tokens: dao_input.token_supply,
         daohouse_canister_id: dao_input.daohouse_canister_id,
         token_symbol: dao_input.token_symbol,

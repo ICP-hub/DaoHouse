@@ -27,7 +27,7 @@ export default function Card({
   commentCount,
   isSubmittedProposals,
   showComments,
-  isMember
+  isMember,
 }) {
   const { backendActor, createDaoActor, stringPrincipal } = useAuth();
   const [voteStatus, setVoteStatus] = useState("");
@@ -495,9 +495,11 @@ export default function Card({
               {isLoading ? (
                 <div className="w-24 h-6 md:w-36 md:h-8 bg-gray-400"></div>
               ) : (
+
                 <h2 className="tablet:text-[32px] md:text-[24px] text-[14px] tablet:font-normal font-medium text-left text-white"
                   title={userProfile?.username || "Username.user"} >
                   {truncateUsername(userProfile?.username, 15)}
+
                 </h2>)}
             </div>
 
@@ -578,7 +580,7 @@ export default function Card({
             </div>
           </div>
           {!isMember && (
-                <div className="text-center w-full bg-red-100 rounded-full mt-4 py-1">
+                <div className="text-center w-full bg-red-200 rounded-full mt-4 py-1">
                 You are not allowed to vote on this proposal
               </div>
               )}
@@ -619,10 +621,10 @@ export default function Card({
 
                 {!isSubmittedProposals && (
                   <>
-                    {status === "Approved" && (
+                    {status === "Accepted" && (
                       <span className="flex items-center px-4 py-1 bg-green-500 text-white rounded-full font-semibold text-sm big_phone:text-base">
                         <FaCheckCircle style={{ marginRight: "5px", fontSize: "16px" }} />
-                        Approved
+                        Accepted
                       </span>
                     )}
                     {status === "Executing" && (
@@ -988,7 +990,7 @@ export default function Card({
                 proposal.proposal_type.BountyDone !== undefined && (
                   <div className="w-full">
                     <div className="whitespace-normal break-words mt-2">
-                      <span className="font-bold border border-black">
+                      <span className="font-bold ">
                         {" "}
                         Associated Proposal ID
                       </span>
@@ -1128,12 +1130,13 @@ export default function Card({
                         <form className="whitespace-normal break-words mt-2">
                           {/* In Favor */}
                           <div
-                            className="relative mt-4 cursor-pointer"
+                            className={`relative mt-4 ${!isMember ? "cursor-not-allowed" : "cursor-pointer"}`}
                             onClick={() => handleVoteSubmit("In Favor")}
+                            disabled={!isMember}
                           >
                             <div
 
-                              className={`relative rounded-lg h-10 flex items-center bg-gray-100 ${
+                              className={`relative rounded-lg h-10 flex items-center bg-gray-100 ${!isMember ? "cursor-not-allowed" : "cursor-pointer"} ${
                                 isVoteLoading && voteStatus === "In Favor"
 
                                   ? "sliding-lines"
@@ -1141,7 +1144,7 @@ export default function Card({
                                 }`}
                             >
                               <div
-                                className="absolute top-0 left-0 h-10 bg-green-200 rounded-lg transition-all"
+                                className="absolute top-0 left-0 h-10 bg-gray-300 rounded-lg transition-all"
                                 style={{ width: `${inFavorPercentage}%` }}
                               ></div>
                               <span className="relative z-10 px-4 text-gray-800 font-semibold">
@@ -1155,12 +1158,13 @@ export default function Card({
 
                           {/* Against */}
                           <div
-                            className="relative mt-4 cursor-pointer"
+                            className={`relative mt-4 ${!isMember ? "cursor-not-allowed" : "cursor-pointer"}`}
                             onClick={() => handleVoteSubmit("Against")}
+                            disabled={!isMember}
                           >
                             <div
 
-                              className={`relative rounded-lg h-10 flex items-center bg-gray-100 ${
+                              className={`relative rounded-lg h-10 flex items-center bg-gray-100  ${
                                 isVoteLoading && voteStatus === "Against"
 
                                   ? "sliding-lines"
@@ -1168,7 +1172,7 @@ export default function Card({
                                 }`}
                             >
                               <div
-                                className="absolute top-0 left-0 h-10 bg-red-200 rounded-lg transition-all"
+                                className="absolute top-0 left-0 h-10 bg-gray-300 rounded-lg transition-all"
                                 style={{ width: `${againstPercentage}%` }}
                               ></div>
                               <span className="relative z-10 px-4 text-gray-800 font-semibold">

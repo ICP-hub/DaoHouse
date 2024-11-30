@@ -6,7 +6,7 @@ const MintNewTokens = ({ mintTokenData, handleInputMintToken }) => (
       <label className="mb-2 font-semibold text-xl">Total Amount</label>
       <input
         type="number"
-        name="total_amount" // Ensure this matches your state key for consistency
+        name="total_amount"
         value={mintTokenData.total_amount}
         onChange={handleInputMintToken}
         className="w-full px-4 py-3 border-opacity-30 border border-[#aba9a5] rounded-xl bg-transparent"
@@ -27,7 +27,7 @@ const MintNewTokens = ({ mintTokenData, handleInputMintToken }) => (
         required
       />
     </div>
-    {/* Additional fields can be added here if needed */}
+
   </>
 );
 

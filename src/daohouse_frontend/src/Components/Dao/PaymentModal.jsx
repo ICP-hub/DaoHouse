@@ -2,7 +2,7 @@ import React from 'react';
 import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import { CircularProgress } from '@mui/material';
-import defaultImage from "../../../assets/defaultImage.png"; // Import your default image
+import defaultImage from "../../../assets/defaultImage.png"; 
 
 
 const PaymentModal = ({ open, onClose, onPay, loading, data,fileURL }) => {
@@ -13,8 +13,8 @@ const PaymentModal = ({ open, onClose, onPay, loading, data,fileURL }) => {
       onClose={onClose}
       BackdropProps={{
         style: {
-          backdropFilter: 'blur(8px)', // Apply blur effect to background
-          backgroundColor: 'rgba(0, 0, 0, 0.5)', // Add semi-transparent dark overlay
+          backdropFilter: 'blur(8px)', 
+          backgroundColor: 'rgba(0, 0, 0, 0.5)', 
         },
       }}
     >
@@ -23,13 +23,13 @@ const PaymentModal = ({ open, onClose, onPay, loading, data,fileURL }) => {
           <h2 className="text-lg font-bold mb-4">Verify your order details</h2>
           <div className="flex items-center mb-4">
             <img
-              src={fileURL || defaultImage} // Show default image if imageUrl is not provided
+              src={fileURL || defaultImage} 
               alt="Product"
               className="w-16 h-16 rounded mr-4"
             />
             <div>
-              <p className="font-bold lg:truncate lg:w-96 ... truncate w-48 ... small_phone:truncate small_phone:w-64 ...">{data?.step1?.DAOIdentifier || "Product Name"}</p> {/* Show "Product Name" if DAOIdentifier is not available */}
-              <p className='lg:truncate lg:w-96 ... truncate w-48 ... small_phone:truncate small_phone:w-64 ...'>{data?.step1?.Purpose || "Purpose not specified"}</p> {/* Default text if Purpose is not available */}
+              <p className="font-bold lg:truncate lg:w-96 ... truncate w-48 ... small_phone:truncate small_phone:w-64 ...">{data?.step1?.DAOIdentifier || "Product Name"}</p> 
+              <p className='lg:truncate lg:w-96 ... truncate w-48 ... small_phone:truncate small_phone:w-64 ...'>{data?.step1?.Purpose || "Purpose not specified"}</p> 
             </div>
           </div>
           <div className="border-t border-gray-300 mb-4"></div>

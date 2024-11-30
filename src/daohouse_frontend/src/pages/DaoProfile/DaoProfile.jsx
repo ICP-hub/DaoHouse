@@ -136,7 +136,6 @@ const DaoProfile = () => {
             setDaoGroups(daoGroups);
 
             const daoMembers = daoDetails?.all_dao_user || [];
-            console.log(daoDetails);
             
             const requestedToJoin = daoDetails?.requested_dao_user || [];
             const daoCouncil = daoDetails?.members
