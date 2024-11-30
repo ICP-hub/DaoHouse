@@ -81,7 +81,6 @@ DAOHOUSE_BACKEND_ID=$(dfx canister id daohouse_backend --ic)
 #     };
 #     required_votes = 100;
 #     image_id = \"1\";
-#     tokens_required_to_vote = 1;
 #     all_dao_user = vec {
 #         principal \"aaaaa-aa\";
 #     };

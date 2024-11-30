@@ -128,7 +128,6 @@ dfx deploy dao_canister --argument "(record {
     };
     required_votes = 100;
     image_id = \"1\";
-    tokens_required_to_vote = 1;
     image_canister = principal \"aaaaa-aa\";
     members_permissions = vec {
         variant { AddMemberToGroupProposal };

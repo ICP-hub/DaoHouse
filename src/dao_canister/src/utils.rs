@@ -4,6 +4,7 @@
 
 // General responses / errors / warninigs
 pub const TITLE_ADD_MEMBER: &str = "Add new memeber";
+pub const TITLE_ADD_MEMBER_TO_COUNCIL: &str = "Add new memeber to Council";
 pub const TITLE_REMOVE_MEMBER: &str = "Remove dao memeber";
 pub const TITLE_REMOVE_MEMBER_FROM_GROUP : &str = "Remove member from Group";
 pub const TITLE_CHANGE_DAO_CONFIG : &str = "Change dao config";

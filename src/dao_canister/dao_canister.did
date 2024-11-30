@@ -5,6 +5,11 @@ type AddMemberArgs = record {
   new_member : principal;
   proposal_entry : text;
 };
+type AddMemberToDaoArgs = record {
+  description : text;
+  new_member : principal;
+  proposal_entry : text;
+};
 type BountyDone = record {
   associated_proposal_id : text;
   description : text;
@@ -60,7 +65,6 @@ type Dao = record {
   token_symbol : text;
   daohouse_canister_id : principal;
   linksandsocials : vec text;
-  tokens_required_to_vote : nat32;
   dao_name : text;
   proposal_ids : vec text;
   image_id : text;
@@ -88,7 +92,6 @@ type DaoInput = record {
   token_symbol : text;
   daohouse_canister_id : principal;
   linksandsocials : vec text;
-  tokens_required_to_vote : nat32;
   dao_groups : vec DaoGroup;
   dao_name : text;
   image_id : text;
@@ -234,6 +237,7 @@ service : (DaoInput) -> {
   icrc_transfer : (principal, TokenTransferArgs) -> (Result_4);
   make_payment : (nat64, principal) -> (Result_4);
   proposal_refresh : () -> (Result_1);
+  proposal_to_add_member_to_council : (AddMemberToDaoArgs) -> (Result_1);
   proposal_to_add_member_to_group : (AddMemberArgs) -> (Result_1);
   proposal_to_bounty_done : (BountyDone) -> (Result_1);
   proposal_to_bounty_raised : (BountyRaised) -> (Result_1);
