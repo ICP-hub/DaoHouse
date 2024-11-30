@@ -1,5 +1,4 @@
 import React from 'react'
-// import daobg from "../../../assets/daobg.png";
 import daobg1 from "../../../assets/daobg1.png";
 import Container from '../Container/Container';
 

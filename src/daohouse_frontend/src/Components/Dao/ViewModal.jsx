@@ -14,7 +14,7 @@ function ViewModal({ open, onClose, users = [], approvedVotesList = [], rejected
   const [voteProfiles, setVoteProfiles] = useState({ approved: [], rejected: [] });
   const [loading, setLoading] = useState(false);
   const [principal, setPrincipal] = useState("");
-  const [activeTab, setActiveTab] = useState("approved"); // State for active tab
+  const [activeTab, setActiveTab] = useState("approved"); 
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
 
@@ -93,7 +93,7 @@ useEffect(() => {
         })
       );
 
-      // Set profiles for the respective vote type
+
       setVoteProfiles((prev) => ({
         ...prev,
         [type]: fetchedVoteProfiles,
@@ -101,10 +101,10 @@ useEffect(() => {
     }
 
     async function fetchData() {
-    //   setLoading(true); // Start loading when fetching begins
+    
       if (approvedVotesList.length > 0) await fetchVoteProfiles(approvedVotesList, "approved");
       if (rejectedVotesList.length > 0) await fetchVoteProfiles(rejectedVotesList, "rejected");
-    //   setLoading(false); // End loading after all data is fetched
+
     }
 
     fetchData();
@@ -119,7 +119,7 @@ useEffect(() => {
       closeAfterTransition
     >
     <Box className="relative p-4 bg-white rounded-lg shadow-4xl  max-w-2xl h- w-full mx-4 font-mulish">
-        {/* Close button positioned in the top-right corner */}
+   
         <div style={{
           position: 'absolute',
           top: '8px',
@@ -165,14 +165,14 @@ useEffect(() => {
             </div>
           )}
 
-          {/* Show loader while data is being fetched */}
+   
           {loading ? (
             <div className='p-4'>
                 <MemberSkeletonLoader />
             </div>
           ) : showVotes ? (
             <div className="mt-4 overflow-y-auto  max-h-96">
-              {/* Display the approved or rejected votes based on the active tab */}
+         
               {activeTab === "approved" ? (
                 voteProfiles.approved.length > 0 ? (
                   voteProfiles.approved.map((vote, index) => (

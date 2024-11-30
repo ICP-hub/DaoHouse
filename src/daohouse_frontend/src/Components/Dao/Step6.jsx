@@ -5,7 +5,7 @@ import { FaArrowLeftLong } from "react-icons/fa6";
 import { FiUpload } from "react-icons/fi";
 import daoImage from "../../../assets/daoImage.png"
 import CircularProgress from '@mui/material/CircularProgress';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import Container from "../Container/Container";
 import { useAuth } from "../utils/useAuthClient";
 import PaymentModal from "./PaymentModal";

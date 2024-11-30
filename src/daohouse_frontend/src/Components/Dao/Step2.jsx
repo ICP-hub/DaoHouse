@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import Container from "../Container/Container";
 import { FaInfoCircle } from "react-icons/fa";
 
@@ -121,7 +121,7 @@ const Step2 = ({ setData, setActiveStep, data }) => {
         localStorage.removeItem("step2Data");
 
         setActiveStep(2);
-        // toast.success("Step 2 completed successfully!");
+     
       } catch (error) {
         console.error("Error saving data:", error);
         toast.error("An error occurred while saving. Please try again.");
@@ -129,7 +129,7 @@ const Step2 = ({ setData, setActiveStep, data }) => {
         setIsSubmitting(false);
       }
     } else {
-      // toast.error("Please fix the highlighted errors before proceeding.");
+      
     }
   };
 

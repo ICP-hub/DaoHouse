@@ -199,7 +199,7 @@ const ListView = ({ member }) => {
         />
         <section className="details flex flex-col  items-center mt-2 ml-2">
           <p className="font-semibold text-base">{member?.Ok?.username}</p>
-          {/* <p className="text-sm">{member?.Ok?.email_id}</p> */}
+          
         </section>
       </section>
     </div>

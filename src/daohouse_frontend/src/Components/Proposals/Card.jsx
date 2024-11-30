@@ -495,9 +495,11 @@ export default function Card({
               {isLoading ? (
                 <div className="w-24 h-6 md:w-36 md:h-8 bg-gray-400"></div>
               ) : (
+
                 <h2 className="tablet:text-[32px] md:text-[24px] text-[14px] tablet:font-normal font-medium text-left text-white"
                   title={userProfile?.username || "Username.user"} >
                   {truncateUsername(userProfile?.username, 15)}
+
                 </h2>)}
             </div>
 
@@ -988,7 +990,7 @@ export default function Card({
                 proposal.proposal_type.BountyDone !== undefined && (
                   <div className="w-full">
                     <div className="whitespace-normal break-words mt-2">
-                      <span className="font-bold border border-black">
+                      <span className="font-bold ">
                         {" "}
                         Associated Proposal ID
                       </span>

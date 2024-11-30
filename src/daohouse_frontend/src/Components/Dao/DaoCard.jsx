@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Principal } from "@dfinity/principal";
 import { useAuth } from "../utils/useAuthClient";
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { CircularProgress } from "@mui/material";
 import messagesound from "../../Sound/messagesound.mp3";
 import daoImage from "../../../assets/daoImage.png"
@@ -27,12 +27,12 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
       if (daoCanisterId) {
         setLoading(true);
         try {
-          // Fetch user profile
+        
           const profileResponse = await backendActor.get_user_profile();
           if (profileResponse.Ok) {
             const currentUserId = Principal.fromText(profileResponse.Ok.user_id.toString());
     
-            // Create DAO actor
+         
             const daoActor = await createDaoActor(daoCanisterId);
             setDaoActor(daoActor);
             const daoDetails = await daoActor.get_dao_detail();    

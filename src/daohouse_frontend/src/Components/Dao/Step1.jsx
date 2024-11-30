@@ -8,7 +8,7 @@ const Step1 = ({ setData, setActiveStep, data }) => {
   const [inputData, setInputData] = useState({
     DAOIdentifier: "",
     Purpose: "",
-    SetUpPeriod: 1, // Default value for SetUpPeriod
+    SetUpPeriod: 1, 
   });
 
   const [errors, setErrors] = useState({});
@@ -16,7 +16,7 @@ const Step1 = ({ setData, setActiveStep, data }) => {
 
   const className = "DAO__Step1";
 
-  // Load saved data from localStorage
+ 
   useEffect(() => {
     const savedData = localStorage.getItem("step1Data");
     if (savedData) {
@@ -25,13 +25,13 @@ const Step1 = ({ setData, setActiveStep, data }) => {
       setInputData({
         DAOIdentifier: data.DAOIdentifier || "",
         Purpose: data.Purpose || "",
-        SetUpPeriod: data.step1?.SetUpPeriod || 1, // Ensure SetUpPeriod comes from data
+        SetUpPeriod: data.step1?.SetUpPeriod || 1, 
       });
     }
   }, [data]);
 
   useEffect(() => {
-    // Store data in localStorage whenever inputData changes
+
     localStorage.setItem("step1Data", JSON.stringify(inputData));
   }, [inputData]);
 
@@ -111,18 +111,16 @@ const Step1 = ({ setData, setActiveStep, data }) => {
 
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        // Removed the localStorage.removeItem() line
+  
         setActiveStep(1);
-        // toast.success("Step 1 completed successfully!");
+     
       } catch (error) {
         console.error("Error saving data:", error);
         toast.error("An error occurred while saving. Please try again.");
       } finally {
         setIsSubmitting(false);
       }
-    } else {
-      // toast.error("Please fix the highlighted errors before proceeding.");
-    }
+    } 
   }
 
   return (
