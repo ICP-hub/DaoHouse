@@ -167,7 +167,7 @@ async fn proposal_to_add_member_to_council(args: AddMemberToDaoArgs) -> Result<S
     };
 
     with_state(|state: &mut crate::state_handler::State| {
-            if state.dao.members.contains(&api::caller()) {
+            if state.dao.members.contains(&args.new_member) {
                 return Err(format!("Member already exist in this group"));
             }
         Ok(())

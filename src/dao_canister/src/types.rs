@@ -274,7 +274,6 @@ pub struct AddMemberArgs {
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct AddMemberToDaoArgs {
-    pub place_name: String,
     pub new_member: Principal,
     pub description: String,
     pub proposal_entry : String,

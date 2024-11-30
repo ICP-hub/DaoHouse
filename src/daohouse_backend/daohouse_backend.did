@@ -26,7 +26,6 @@ type DaoInput = record {
   image_title : text;
   token_symbol : text;
   linksandsocials : vec text;
-  tokens_required_to_vote : nat32;
   image_content : blob;
   dao_groups : vec DaoGroup;
   dao_name : text;
