@@ -1,6 +1,6 @@
 use crate::proposal_route::create_proposal_controller;
 use crate::{
-    guards::*, AddMemberArgs, BountyDone, BountyRaised, ChangeDaoConfigArg, ChangeDaoPolicy, CreateGeneralPurpose, CreatePoll, DaoGroup, JoinDao, LedgerCanisterId, MintTokenArgs, PollOptions, ProposalCreation, ProposalInput, ProposalState, RemoveDaoMemberArgs, RemoveMemberArgs, TokenTransferPolicy
+    guards::*, AddMemberArgs, AddMemberToDaoArgs, BountyDone, BountyRaised, ChangeDaoConfigArg, ChangeDaoPolicy, CreateGeneralPurpose, CreatePoll, DaoGroup, JoinDao, LedgerCanisterId, MintTokenArgs, PollOptions, ProposalCreation, ProposalInput, ProposalState, RemoveDaoMemberArgs, RemoveMemberArgs, TokenTransferPolicy
 };
 use crate::icrc_get_balance;
 use crate::{with_state, ProposalType};
@@ -109,6 +109,75 @@ async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, 
 
     Ok(String::from(crate::utils::REQUEST_ADD_MEMBER))
 }
+
+
+#[update(guard = prevent_anonymous)]
+async fn proposal_to_add_member_to_council(args: AddMemberToDaoArgs) -> Result<String, String> {
+    let proposal_data = ProposalCreation {
+        entry: args.proposal_entry.clone(),
+        proposal_type: ProposalType::AddMemberToDaoProposal,
+    };
+    guard_check_proposal_creation(proposal_data)?;
+    let mut required_thredshold = 0;
+
+    let _ = with_state(|state| {
+        match state
+            .dao
+            .proposal_entry
+            .iter()
+            .find(|place| place.place_name == args.proposal_entry)
+        {
+            Some(val) => {
+                required_thredshold = val.min_required_thredshold;
+                Ok(())
+            }
+            None => {
+                return Err(format!(
+                    "No place Found with the name of {:?}",
+                    args.proposal_entry
+                ));
+            }
+        }
+    });
+
+    let proposal = ProposalInput {
+        principal_of_action: Some(args.new_member),
+        proposal_description: args.description,
+        proposal_title: String::from(crate::utils::TITLE_ADD_MEMBER_TO_COUNCIL),
+        proposal_type: ProposalType::AddMemberToDaoProposal,
+        group_to_join: None,
+        new_dao_name: None,
+        dao_purpose: None,
+        tokens: None,
+        token_from: None,
+        token_to: None,
+        proposal_created_at: None,
+        proposal_expired_at: None,
+        bounty_task: None,
+        required_votes: None,
+        cool_down_period: None,
+        group_to_remove: None,
+        minimum_threadsold: required_thredshold,
+        link_of_task: None,
+        associated_proposal_id: None,
+        new_required_votes: None,
+        poll_query: None,
+        poll_options: None,
+        ask_to_join_dao : None,
+    };
+
+    with_state(|state: &mut crate::state_handler::State| {
+            if state.dao.members.contains(&api::caller()) {
+                return Err(format!("Member already exist in this group"));
+            }
+        Ok(())
+    })?;
+
+    create_proposal_controller(with_state(|state| state.dao.daohouse_canister_id), proposal).await;
+
+    Ok(String::from(crate::utils::REQUEST_ADD_MEMBER))
+}
+
 
 #[update(guard = prevent_anonymous)]
 async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<String, String> {

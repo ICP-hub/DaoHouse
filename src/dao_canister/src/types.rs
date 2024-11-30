@@ -211,7 +211,6 @@ pub struct Dao {
     pub token_ledger_id: LedgerCanisterId,
     pub total_tokens: u32,
     pub token_symbol: String,
-    pub tokens_required_to_vote: u32, 
     pub daohouse_canister_id: Principal,
     pub proposal_entry : Vec<ProposalPlace>,
     pub ask_to_join_dao : bool,
@@ -258,7 +257,6 @@ pub struct DaoInput {
     pub image_canister: Principal,
     pub image_id: String,
     pub members_permissions: Vec<ProposalType>,
-    pub tokens_required_to_vote: u32,
     pub token_symbol: String,
     pub token_supply: u32,
     pub daohouse_canister_id: Principal,
@@ -269,6 +267,14 @@ pub struct DaoInput {
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct AddMemberArgs {
     pub group_name: String,
+    pub new_member: Principal,
+    pub description: String,
+    pub proposal_entry : String,
+}
+
+#[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
+pub struct AddMemberToDaoArgs {
+    pub place_name: String,
     pub new_member: Principal,
     pub description: String,
     pub proposal_entry : String,

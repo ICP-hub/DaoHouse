@@ -635,7 +635,6 @@ pub struct DaoInput {
     pub token_name: String,
     pub token_symbol: String,
     pub token_supply: u32,
-    pub tokens_required_to_vote: u32,
     pub image_id: String,
     pub image_content: ByteBuf,
     pub image_title: String,
@@ -659,13 +658,12 @@ pub struct DaoCanisterInput {
     pub token_supply: u32,
     pub image_id: String,
     pub members_permissions: Vec<ProposalType>,
-    pub dao_groups: Vec<DaoGroup>,
-    pub tokens_required_to_vote: u32,
     pub image_canister: Principal,
     pub daohouse_canister_id: Principal,
     pub proposal_entry : Vec<ProposalPlace>,
     pub ask_to_join_dao : bool,
     pub all_dao_user : Vec<Principal>,
+    pub(crate) dao_groups: Vec<DaoGroup>,
 }
 
 #[derive(Clone, CandidType, Serialize, Deserialize)]
