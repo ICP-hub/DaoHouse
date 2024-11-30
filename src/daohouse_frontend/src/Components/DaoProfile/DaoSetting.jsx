@@ -133,6 +133,7 @@ const DaoSetting = () => {
                   </li>
                   <li>
                     <strong>Rewards:</strong> Distributing tokens as incentives for contributions.
+                    Determining the total supply is a crucial step in DAO creation as it directly impacts token distribution, scarcity, and the overall tokenomics of the organization.
                   </li>
                 </ul>
               </div>
