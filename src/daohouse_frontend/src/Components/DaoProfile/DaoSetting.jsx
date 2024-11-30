@@ -1,9 +1,11 @@
 import React from "react";
 import { FaUsers, FaGavel } from "react-icons/fa";
+import Container from "../Container/Container"
 
 const DaoSetting = () => {
   return (
-    <div className="bg-[#F4F2EC] rounded-xl px-4 sm:px-6 md:px-8 lg:px-20 py-8 sm:py-10 md:py-12 lg:py-16 text-white">
+    <Container>
+      <div className="bg-[#F4F2EC] rounded-xl px-4 sm:px-6 md:px-8 lg:px-20 py-8 sm:py-10 md:py-12 lg:py-16 text-white">
       {/* Header Section */}
       <header className="text-center mb-8 sm:mb-10 lg:mb-16">
         <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold font-mulish text-black">
@@ -181,6 +183,7 @@ const DaoSetting = () => {
         </div>
       </div>
     </div>
+    </Container>
   );
 };
 
