@@ -14,7 +14,7 @@ fn get_all_proposals(page_data: Pagination) -> Vec<Proposals> {
     with_state(|state| {
         let mut proposals: Vec<Proposals> = Vec::with_capacity(state.proposals.len() as usize);
         let all_proposals = &state.proposals;
-
+        proposals.sort_by(|a, b| b.proposal_submitted_at.cmp(&a.proposal_submitted_at));
         for (_, v) in all_proposals.iter() {
             proposals.push(v.clone());
         }
@@ -166,7 +166,7 @@ async fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> 
         Some(pro) => {
             if pro.created_by != api::caller() || pro.principal_of_action != api::caller(){
                 if pro.proposal_status == ProposalState::Open {
-                    if (pro.proposal_rejected_votes as u32 + pro.proposal_approved_votes as u32) <= pro.required_votes {
+                    if (pro.proposal_rejected_votes as u32 + pro.proposal_approved_votes as u32) < pro.required_votes {
                         if voting == VoteParam::Yes {
                             pro.approved_votes_list.push(principal_id);
                             pro.proposal_approved_votes += 1;

@@ -1,4 +1,4 @@
-use crate::proposal_route::create_proposal_controller;
+use crate::proposal_route::{create_proposal_controller, execute_proposal_on_required_vote};
 use crate::{
     guards::*, AddMemberArgs, AddMemberToDaoArgs, BountyDone, BountyRaised, ChangeDaoConfigArg, ChangeDaoPolicy, CreateGeneralPurpose, CreatePoll, DaoGroup, JoinDao, LedgerCanisterId, MintTokenArgs, PollOptions, ProposalCreation, ProposalInput, ProposalState, RemoveDaoMemberArgs, RemoveMemberArgs, TokenTransferPolicy
 };
@@ -236,7 +236,6 @@ async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<St
         proposal_created_at: None,
         proposal_expired_at: None,
         bounty_task: None,
-        
         required_votes: None,
         cool_down_period: None,
         minimum_threadsold: required_thredshold,
@@ -727,7 +726,7 @@ async fn vote_on_poll_options(proposal_id: String, option_id: String) -> Result<
     with_state(|state| match &mut state.proposals.get(&proposal_id) {
         Some(proposal_data) => {
             if proposal_data.proposal_type == ProposalType::Polls {
-                if proposal_data.required_votes >= (proposal_data.proposal_rejected_votes as u32 + proposal_data.proposal_approved_votes as u32) {
+                if proposal_data.required_votes > (proposal_data.proposal_rejected_votes as u32 + proposal_data.proposal_approved_votes as u32) {
                 if proposal_data.proposal_status == ProposalState::Open {
                     if let Some(option) = proposal_data.poll_options.iter_mut()
                         .flat_map(|options| options.iter_mut())
@@ -744,6 +743,9 @@ async fn vote_on_poll_options(proposal_id: String, option_id: String) -> Result<
                             option.approved_users.push(api::caller());
                             proposal_data.approved_votes_list.push(api::caller());
                             proposal_data.proposal_approved_votes += 1;
+                            if (proposal_data.proposal_rejected_votes as u32 + proposal_data.proposal_approved_votes as u32) == proposal_data.required_votes {
+                                execute_proposal_on_required_vote(state, proposal_data.proposal_id.clone());
+                            }
                             state.proposals.insert(proposal_id, proposal_data.to_owned());
                             Ok("Vote submitted successfully.".to_string())
                         }
