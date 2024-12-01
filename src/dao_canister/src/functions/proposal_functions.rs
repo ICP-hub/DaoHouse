@@ -164,7 +164,9 @@ async fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> 
     let principal_id = api::caller();
     with_state(|state| match &mut state.proposals.get(&proposal_id) {
         Some(pro) => {
-            if pro.created_by != api::caller() || pro.principal_of_action != api::caller(){
+            if pro.created_by != api::caller() {
+              if pro.principal_of_action != api::caller()  {
+                if  pro.token_to.map_or(true, |token_to| token_to != api::caller()) {
                 if pro.proposal_status == ProposalState::Open {
                     if (pro.proposal_rejected_votes as u32 + pro.proposal_approved_votes as u32) < pro.required_votes {
                         if voting == VoteParam::Yes {
@@ -190,6 +192,12 @@ async fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> 
                 } else {
                     Err(format!("Proposal has been {:?} ", pro.proposal_status))
                 }
+            }  else {
+                    Err(String::from("Voting is restricted since this proposal belongs to you."))
+                }
+            } else {
+                Err(String::from("Voting is restricted since this proposal belongs to you."))
+            }
             }
             else{
                 Err(String::from("you can't vote on your proposals"))
