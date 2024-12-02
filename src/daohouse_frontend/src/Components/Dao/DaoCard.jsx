@@ -18,6 +18,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
   const [isMember, setIsMember] = useState(false);
   const [isRequested, setIsRequested] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false); 
+  const [currentUserId, setCurrentUserId] = useState(null)
   const protocol = process.env.DFX_NETWORK === "ic" ? "https" : "http";
   const domain = process.env.DFX_NETWORK === "ic" ? "raw.icp0.io" : "localhost:4943";
   const imageUrl = `${protocol}://${canisterId}.${domain}/f/${image_id}`;
@@ -32,11 +33,11 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
           if (profileResponse.Ok) {
             const currentUserId = Principal.fromText(profileResponse.Ok.user_id.toString());
     
-         
+            setCurrentUserId(currentUserId)
             const daoActor = await createDaoActor(daoCanisterId);
             setDaoActor(daoActor);
             const daoDetails = await daoActor.get_dao_detail();    
-              const daoMembers = daoDetails.all_dao_user;
+            const daoMembers = daoDetails.all_dao_user;
             const requestedToJoin = daoDetails.requested_dao_user;
     
             const isCurrentUserMember = daoMembers.some(
@@ -104,9 +105,29 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
       const response = await daoActor.ask_to_join_dao(joinDaoPayload);
       const sound = new Audio(messagesound);
       if (response.Ok) {
-        setJoinStatus("Requested");
         sound.play();
         toast.success(response.Ok);
+        const daoDetails = await daoActor.get_dao_detail();    
+            const daoMembers = daoDetails.all_dao_user;
+            const requestedToJoin = daoDetails.requested_dao_user;
+    
+            const isCurrentUserMember = daoMembers.some(
+              (member) => member.toString() === currentUserId.toString()
+            );
+            const isUserRequested = requestedToJoin.some(
+              (member) => member.toString() === currentUserId.toString()
+            );
+            setIsRequested(isUserRequested);
+        setIsMember(isCurrentUserMember);
+        if (isCurrentUserMember) {
+          setJoinStatus("Joined");
+        } else if (isUserRequested) {
+          setJoinStatus("Requested");
+        } else {
+          setIsRequested(false);
+          setIsMember(false);
+          setJoinStatus("Join DAO");
+        }
       } else {
         toast.error(response.Err);
       }
