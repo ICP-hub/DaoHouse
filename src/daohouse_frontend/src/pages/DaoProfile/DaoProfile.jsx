@@ -507,10 +507,11 @@ const DaoProfile = () => {
             </div>
 
             <div
-              className={
-                className +
-                "__navs w-full overflow-auto flex flex-row justify-between mt-8 gap-12 lg:text-[16px] text-[14px] pb-2"
-              }
+        
+                className=
+                "flex flex-row justify-between mt-8   w-full mx-1  gap-1 lg:text-[16px] text-[14px] pb-2"
+ 
+              
             >
               <button
                 onClick={(e) => {

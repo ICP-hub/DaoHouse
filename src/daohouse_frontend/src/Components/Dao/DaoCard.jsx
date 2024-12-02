@@ -260,7 +260,7 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
           className="px-6 md:px-8 py-3 text-center text-[12px] lg:text-[16px] bg-[#0E3746] text-white rounded-full shadow-xl hover:bg-[#0d2933] hover:text-white"
         >
           {loading ? (
-              <CircularProgress size={24} />
+               <CircularProgress size={24} sx={{ color: 'white' }} />
             ) : (
               "Join DAO"
             )}
