@@ -3,9 +3,9 @@
 // Essential members 
 
 // General responses / errors / warninigs
-pub const TITLE_ADD_MEMBER: &str = "Add new memeber";
-pub const TITLE_ADD_MEMBER_TO_COUNCIL: &str = "Add new memeber to Council";
-pub const TITLE_REMOVE_MEMBER: &str = "Remove dao memeber";
+pub const TITLE_ADD_MEMBER: &str = "Add new member";
+pub const TITLE_ADD_MEMBER_TO_COUNCIL: &str = "Add new member to Council";
+pub const TITLE_REMOVE_MEMBER: &str = "Remove dao member";
 pub const TITLE_REMOVE_MEMBER_FROM_GROUP : &str = "Remove member from Group";
 pub const TITLE_CHANGE_DAO_CONFIG : &str = "Change dao config";
 pub const TITLE_CHANGE_DAO_POLICY : &str = "Change dao policy";
