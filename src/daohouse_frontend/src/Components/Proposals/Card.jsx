@@ -37,6 +37,9 @@ export default function Card({
   const [rejectedVotes, setRejectedVotes] = useState(
     Number(proposal?.proposal_rejected_votes || 0n)
   );
+  const [status, setStatus] = useState(proposal?.proposal_status
+    ? Object.keys(proposal?.proposal_status)[0] || "No Status"
+    : "No Status")
   const [voteCount, setVoteCount] = useState(approvedVotes + rejectedVotes);
   const [votersList, setVotersList] = useState(null);
   const [userProfile, setUserProfile] = useState({});
@@ -195,9 +198,9 @@ export default function Card({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
-  const status = proposal?.proposal_status
-    ? Object.keys(proposal?.proposal_status)[0] || "No Status"
-    : "No Status";
+  // const status = proposal?.proposal_status
+  //   ? Object.keys(proposal?.proposal_status)[0] || "No Status"
+  //   : "No Status";
 
   const requiredVotes = Number(BigInt(proposal?.required_votes || 0));
   useEffect(() => {
@@ -328,6 +331,9 @@ export default function Card({
           approvedVotes: updatedProposal?.approved_votes_list || [],
           rejectedVotes: updatedProposal?.rejected_votes_list || [],
         });
+        setStatus(Object.keys(updatedProposal?.proposal_status)[0])
+        console.log(status);
+        
       } else {
         console.error("Error voting:", result.Err);
         toast.error(result.Err);
