@@ -55,10 +55,11 @@ const FeedPage = () => {
     setSearchTerm(event.target.value);
   };
 
-  const fetchAllProposals = async (pagination = {}) => {
+  const fetchAllProposals = async (pagination = {}, searchTerm = "") => {
     try {
       setLoading(true);
       const allDaos = await backendActor.get_all_dao();
+      let allProposals = [];
       for (const dao of allDaos) {
         const proposalPagination = {
           start: pagination.start,
@@ -89,10 +90,19 @@ const FeedPage = () => {
               setIsMember(true);
             }
           }
+
+          if (searchTerm) {
+            const filteredProposals = proposalsWithDaoId.filter((proposal) =>
+              proposal.proposal_id.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            allProposals = [...allProposals, ...filteredProposals];
+          } else {
+            allProposals = [...allProposals, ...proposalsWithDaoId];
+          }
           
-          const hasMoreData = daoProposals.length > itemsPerPage;
+          const hasMoreData = searchTerm ? allProposals.length > itemsPerPage : daoProposals.length > itemsPerPage;
           setHasMore(hasMoreData);
-          const proposalsToDisplay = proposalsWithDaoId.slice(0, itemsPerPage);
+          const proposalsToDisplay = searchTerm ? allProposals.slice(0, itemsPerPage) : proposalsWithDaoId.slice(0, itemsPerPage);
           setProposals(proposalsToDisplay);
         } catch (error) {
           console.error(
@@ -117,7 +127,8 @@ const FeedPage = () => {
     fetchAllProposals({
       start: (currentPage - 1) * itemsPerPage,
       end: currentPage * itemsPerPage,
-    });
+    },
+    searchTerm);
   }, [isAuthenticated, backendActor, createDaoActor, currentPage, searchTerm]);
 
   const handleModalClose = () => {

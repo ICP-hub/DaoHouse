@@ -408,22 +408,22 @@ const DaoProfile = () => {
                     </p>
                   </div>
 
-                  <div className="flex flex-wrap justify-start mt-2 gap-4">
+                  <div className="flex flex-wrap justify-start mt-2 gap-1 md:gap-4">
                     <span className="text-[18px] sm:text-[20px] md:text-[24px] lg:text-[32px] font-normal text-[#05212C] user-acc-info">
                       {dao?.proposals_count || 0}&nbsp;
-                      <span className="text-[12px] sm:text-[14px] md:text-[16px] mx-1">
+                      <span className="text-[12px] sm:text-[14px] md:text-[16px] small_phone:mx-1">
                         Proposals
                       </span>
                     </span>
                     <span className="text-[18px] sm:text-[20px] md:text-[24px] lg:text-[32px] font-normal text-[#05212C] user-acc-info">
                       {Number(DaoBalance)}&nbsp;
-                      <span className="text-[12px] sm:text-[14px] md:text-[16px] mx-1">
+                      <span className="text-[12px] sm:text-[14px] md:text-[16px] small_phone:mx-1">
                         Tokens
                       </span>
                     </span>
                     <span className="text-[18px] sm:text-[20px] md:text-[24px] lg:text-[32px] font-normal text-[#05212C] user-acc-info">
                       {dao?.all_dao_user?.length}&nbsp;
-                      <span className="text-[12px] sm:text-[14px] md:text-[16px] mx-1">
+                      <span className="text-[12px] sm:text-[14px] md:text-[16px] small_phone:mx-1">
                         Members
                       </span>
                     </span>
