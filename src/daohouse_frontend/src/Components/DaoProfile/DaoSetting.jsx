@@ -142,17 +142,17 @@ const DaoSetting = () => {
 
 
        {/* Proposal Section */}
-<div className="p-4 sm:p-6 lg:p-8 bg-white rounded-3xl shadow-lg transform transition duration-500 hover:shadow-2xl">
-  <div className="flex items-center mb-4 sm:mb-6">
-    <FaGavel className="text-3xl sm:text-4xl lg:text-5xl text-black bg-green-300 p-2 sm:p-3 rounded-full shadow-md animate-bounce" />
-    <h2 className="text-lg sm:text-xl lg:text-2xl font-bold font-mulish ml-3 text-black">
-      Proposal Section
-    </h2>
-  </div>
-  <div className="space-y-3 sm:space-y-4 text-black">
-    {/* What is a Proposal */}
-    <div>
-      <h3 className="text-md sm:text-lg font-semibold font-mulish">
+          <div className="p-4 sm:p-6 lg:p-8 bg-white rounded-3xl shadow-lg transform transition duration-500 hover:shadow-2xl">
+         <div className="flex items-center mb-4 sm:mb-6">
+        <FaGavel className="text-3xl sm:text-4xl lg:text-5xl text-black bg-green-300 p-2 sm:p-3 rounded-full shadow-md animate-bounce" />
+         <h2 className="text-lg sm:text-xl lg:text-2xl font-bold font-mulish ml-3 text-black">
+                  Proposal Section
+          </h2>
+         </div>
+          <div className="space-y-3 sm:space-y-4 text-black">
+          {/* What is a Proposal */}
+         <div>
+          <h3 className="text-md sm:text-lg font-semibold font-mulish">
         What is a Proposal?
       </h3>
       <p className="mt-1 sm:mt-2 text-sm sm:text-base leading-relaxed font-mulish">
@@ -165,7 +165,7 @@ const DaoSetting = () => {
       <h3 className="text-md sm:text-lg font-semibold font-mulish">
         Types of Proposals
       </h3>
-      <ul className="list-disc pl-6 mt-2 sm:mt-4 space-y-2 text-sm sm:text-base font-mulish">
+      <ul className="list-disc pl-6 mt-2 sm:mt-4 space-y-7 text-sm sm:text-base font-mulish">
         <li>
           <strong>Remove Member To Dao Proposal:</strong> The RemoveMemberToDaoProposal is a formal process within the DAO that allows members to propose the removal of an individual from the organization. This proposal type is used to maintain the integrity, efficiency, and alignment of the DAO by addressing specific issues with a member.
         </li>
