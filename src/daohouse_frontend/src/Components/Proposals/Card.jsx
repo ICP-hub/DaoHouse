@@ -332,7 +332,6 @@ export default function Card({
           rejectedVotes: updatedProposal?.rejected_votes_list || [],
         });
         setStatus(Object.keys(updatedProposal?.proposal_status)[0])
-        console.log(status);
         
       } else {
         console.error("Error voting:", result.Err);
@@ -385,6 +384,7 @@ export default function Card({
         const updatedProposal = await voteApi?.get_proposal_by_id(
           proposal?.proposal_id
         );
+        setStatus(Object.keys(updatedProposal?.proposal_status)[0])
         setVoteCount((prev) => prev + 1);
         setVotersList({
           approvedVotes: updatedProposal?.approved_votes_list || [],
