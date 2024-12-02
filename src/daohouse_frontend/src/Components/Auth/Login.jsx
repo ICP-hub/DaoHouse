@@ -4,21 +4,21 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import icp from "../../../assets/icp.png";
 
-// Login component
+
 const Login = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { login, isAuthenticated } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
-  // Function to handle login
+ 
   const handleLogin = async () => {
     setIsLoading(true);
     await login().then(() => window.location.reload());
   };
 
   useEffect(() => {
-    // navigate to claim seat if user already authenticated
+   
     if (isAuthenticated) navigate('/dashboard');
   }, []);
 

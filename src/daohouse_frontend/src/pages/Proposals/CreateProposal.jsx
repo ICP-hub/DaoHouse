@@ -20,6 +20,7 @@ import { createActor } from "../../../../declarations/icp_ledger_canister";
 import TokenPaymentModal from "./TokenPaymentModal";
 import MintNewTokens from "./MintNewTokens";
 import { FaInfoCircle } from "react-icons/fa";
+import AddMemberToCouncil from "./AddMemberToCouncil";
 
 function CreateProposal() {
   const navigate = useNavigate();
@@ -57,6 +58,11 @@ function CreateProposal() {
 
   const [addMember, setAddMember] = useState({
     group_name: "",
+    description: "",
+    new_member: "",
+  });
+
+  const [addMemberToCouncil, setAddMemberToCouncil] = useState({
     description: "",
     new_member: "",
   });
@@ -235,6 +241,13 @@ function CreateProposal() {
   const handleInputAddMember = (e) => {
     setAddMember({
       ...addMember,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleInputAddMemberToCouncil = (e) => {
+    setAddMemberToCouncil({
+      ...addMemberToCouncil,
       [e.target.name]: e.target.value,
     });
   };
@@ -450,6 +463,14 @@ function CreateProposal() {
           });
           break;
 
+        case "AddMemberToCouncil":
+        await submitAddMemberToCouncil({
+          proposal_entry: proposalEntry,
+          description: addMemberToCouncil.description,
+          new_member: Principal.fromText(addMemberToCouncil.new_member),
+        });
+        break;
+
         case "AddMember":
           await submitAddMember({
             proposal_entry: proposalEntry,
@@ -567,7 +588,7 @@ function CreateProposal() {
       }
     } catch (error) {
       console.error("Error submitting General Purpose proposal:", error);
-      toast.error("Failed to create General Purpose proposal");
+      toast.error(error.message);
     }
   };
 
@@ -586,7 +607,7 @@ function CreateProposal() {
       }
     } catch (error) {
       console.error("Error during DAO Config proposal submission:", error);
-      toast.error("Failed to create DAO configuration proposal");
+      toast.error(error.message);
     }
   };
 
@@ -603,6 +624,30 @@ function CreateProposal() {
       }
     } catch (error) {
       console.error("Error submitting Bounty Raised proposal:", error);
+      toast.error(error.message);
+    }
+  };
+
+  const submitAddMemberToCouncil = async (addMemberToCouncilData) => {
+    try {
+      const daoCanister = await createDaoActor(daoCanisterId);
+
+
+      const response = await daoCanister.proposal_to_add_member_to_council(addMemberToCouncilData);
+
+      if (response.Ok) {
+        toast.success(response.Ok);
+        movetodao();
+     
+        setAddMemberToCouncil({
+          description: "",
+          new_member: "",
+        });
+      } else {
+        toast.error(response.Err);
+      }
+    } catch (error) {
+      console.error("Error during Add Member proposal submission:", error);
       toast.error(error.message);
     }
   };
@@ -949,6 +994,7 @@ function CreateProposal() {
                       <option value="tokenTransfer">Token Transfer</option>
                       <option value="GeneralPurp">General Purpose</option>
                       <option value="DaoConfig">Dao Config</option>
+                      <option value="AddMemberToCouncil">Add Member To Council</option>
                       <option value="AddMember">Add Member in Group</option>
                       <option value="RemoveMember">
                         Remove Member from Group
@@ -957,7 +1003,7 @@ function CreateProposal() {
                       <option value="ChangePolicy">Change Dao Policy</option>
                       <option value="Poll">Polls</option>
                       <option value="RemoveDaoMember">
-                        Remove Member From Dao
+                        Remove Member From Council
                       </option>
                       <option value="MintNewTokens">
                         Mint New Tokens
@@ -967,21 +1013,21 @@ function CreateProposal() {
 
                   {/* Proposal Entry Select */}
                   <div className="mb-6 max-w-full relative overflow-x-hidden">
-                  <div className="flex items-center space-x-2">
-                    <label className="block mb-2 font-semibold text-xl">
-                      Proposal Entry
-                      
-                    </label>
+                    <div className="flex items-center space-x-2">
+                      <label className="block mb-2 font-semibold text-xl">
+                        Proposal Entry
+                        
+                      </label>
                     <div className="relative group">
-  <FaInfoCircle className="text-gray-500 cursor-pointer mb-1" />
-  
-  <div className="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 opacity-0 group-hover:opacity-100 bg-gray-700 text-white text-sm rounded-lg py-2 px-4 w-max">
-    <div className="absolute left-[-6px] top-1/2 transform -translate-y-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-t-gray-700 border-l-transparent border-r-transparent"></div>
-    The creator of this proposal has provided valuable insights for the community.
-  </div>
-</div>
+                      <FaInfoCircle className="text-gray-500 cursor-pointer mb-1" />
+                      
+                      <div className="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 opacity-0 group-hover:opacity-100 bg-gray-700 text-white text-sm rounded-lg py-2 px-4 w-max">
+                        <div className="absolute left-[-6px] top-1/2 transform -translate-y-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-t-gray-700 border-l-transparent border-r-transparent"></div>
+                        The creator of this proposal has provided valuable insights for the community.
+                      </div>
+                    </div>
 
-                </div>
+                  </div>
 
                     <select
                       value={proposalEntry}
@@ -1041,6 +1087,13 @@ function CreateProposal() {
                      setDaoNameError={setDaoNameError} // Pass the function to clear the DAO Name error
                      setDaoPurposeError={setDaoPurposeError} // Pass the function to clear the DAO Purpose error
                    />
+                  )}
+
+                  {proposalType === "AddMemberToCouncil" && (
+                    <AddMemberToCouncil
+                      addMemberToCouncil={addMemberToCouncil}
+                      handleInputAddMemberToCouncil={handleInputAddMemberToCouncil}
+                    />
                   )}
 
                   {proposalType === "AddMember" && (

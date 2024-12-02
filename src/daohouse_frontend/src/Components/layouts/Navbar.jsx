@@ -17,7 +17,6 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  console.log("isModalOpen",isModalOpen);
   
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false);

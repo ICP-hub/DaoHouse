@@ -1,4 +1,4 @@
-use crate::proposal_route::check_proposal_state;
+use crate::proposal_route::{check_proposal_state, execute_proposal_on_required_vote};
 use crate::types::{Dao, Proposals};
 use crate::{guards::*, Comment, DaoGroup, Pagination, ProposalStakes, ReplayComment, ReplyCommentArgs};
 use crate::{with_state, ProposalState, VoteParam};
@@ -14,7 +14,7 @@ fn get_all_proposals(page_data: Pagination) -> Vec<Proposals> {
     with_state(|state| {
         let mut proposals: Vec<Proposals> = Vec::with_capacity(state.proposals.len() as usize);
         let all_proposals = &state.proposals;
-
+        proposals.sort_by(|a, b| b.proposal_submitted_at.cmp(&a.proposal_submitted_at));
         for (_, v) in all_proposals.iter() {
             proposals.push(v.clone());
         }
@@ -146,9 +146,6 @@ fn proposal_refresh() -> Result<String, String> {
     let mut ids: Vec<String> = Vec::new();
 
     with_state(|state| {
-        // ic_cdk::println!("loop ke aandar");
-
-        //    let abc: Vec<String> = state.dao.proposal_ids.iter().collect();
         ids = state.dao.proposal_ids.clone();
     });
 
@@ -167,18 +164,26 @@ async fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> 
     let principal_id = api::caller();
     with_state(|state| match &mut state.proposals.get(&proposal_id) {
         Some(pro) => {
-            if pro.created_by != api::caller() || pro.principal_of_action != api::caller(){
+            if pro.created_by != api::caller() {
+              if pro.principal_of_action != api::caller()  {
+                if  pro.token_to.map_or(true, |token_to| token_to != api::caller()) {
                 if pro.proposal_status == ProposalState::Open {
                     if (pro.proposal_rejected_votes as u32 + pro.proposal_approved_votes as u32) < pro.required_votes {
                         if voting == VoteParam::Yes {
                             pro.approved_votes_list.push(principal_id);
                             pro.proposal_approved_votes += 1;
                             state.proposals.insert(proposal_id, pro.to_owned());
+                            if (pro.proposal_rejected_votes as u32 + pro.proposal_approved_votes as u32) == pro.required_votes {
+                                    execute_proposal_on_required_vote(state, pro.proposal_id.clone());
+                            }
                             Ok(String::from("Successfully voted in favour of Proposal."))
                         } else {
                             pro.rejected_votes_list.push(principal_id);
                             pro.proposal_rejected_votes += 1;
                             state.proposals.insert(proposal_id, pro.to_owned());
+                            if (pro.proposal_rejected_votes as u32 + pro.proposal_approved_votes as u32) == pro.required_votes {
+                                    execute_proposal_on_required_vote(state, pro.proposal_id.clone());
+                            }
                             Ok(String::from("Successfully voted against the proposal."))
                         }
                     }else{
@@ -187,6 +192,12 @@ async fn vote(proposal_id: String, voting: VoteParam) -> Result<String, String> 
                 } else {
                     Err(format!("Proposal has been {:?} ", pro.proposal_status))
                 }
+            }  else {
+                    Err(String::from("Voting is restricted since this proposal belongs to you."))
+                }
+            } else {
+                Err(String::from("Voting is restricted since this proposal belongs to you."))
+            }
             }
             else{
                 Err(String::from("you can't vote on your proposals"))

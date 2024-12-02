@@ -150,7 +150,6 @@ const CreateDao = () => {
       members_permissions: membersArray || ["just", "pesmi"],
       token_name: step2.TokenName || "GOLD Token",
       token_symbol: step2.TokenSymbol || "TKN",
-      tokens_required_to_vote: 12,
       linksandsocials: ["just send f"],
       required_votes: parseInt(step2.VotesRequired, 10) || 3,
       image_content: step6.image_content ? Array.from(new Uint8Array(step6.image_content)) :

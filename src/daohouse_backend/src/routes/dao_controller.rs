@@ -77,7 +77,6 @@ pub async fn create_dao_canister(dao_detail: crate::DaoInput) -> Result<Principa
         image_id: id.clone(),
         members_permissions: dao_detail.members_permissions,
         dao_groups: dao_detail.dao_groups,
-        tokens_required_to_vote: dao_detail.tokens_required_to_vote,
         image_canister: asset_canister_id,
         token_symbol: dao_detail.token_symbol,
         token_supply: dao_detail.token_supply,

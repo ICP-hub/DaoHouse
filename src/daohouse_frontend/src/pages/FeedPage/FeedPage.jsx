@@ -186,7 +186,7 @@ const FeedPage = () => {
             <span className="text-[16px] ml-2 hidden mobile:flex">Filter</span>
 
             {showFilter && (
-              <div className="absolute bg-white border border-[#AAC8D6] rounded-lg shadow-lg mt-2 w-32 z-10 top-full md:left-0 left-[-48px]">
+              <div className="absolute font-mulish bg-white border border-[#AAC8D6] rounded-lg shadow-lg w-40 z-10 top-full right-0">
                 <div
                   className="cursor-pointer p-2 text-sm hover:bg-[#f0f4f7] rounded-t-lg"
                   onClick={() => setSortOrder("newest")}

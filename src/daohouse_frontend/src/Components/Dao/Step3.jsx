@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-// import { FaPlus } from "react-icons/fa6";
 import { HiPlus } from "react-icons/hi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
@@ -9,13 +8,11 @@ import { useAuth } from "../../Components/utils/useAuthClient";
 import Container from "../Container/Container";
 import EditPen from "../../../assets/edit_pen.png";
 import { RiGroupFill } from "react-icons/ri";
-import { CircularProgress } from "@mui/material";
 
 const Step3 = ({ setData, setActiveStep }) => {
   const [count, setCount] = useState(1);
   const [councilUsernames, setCouncilUsernames] = useState([]);
   const [generalMembersUsernames, setGeneralMembersUsernames] = useState([]);
-  const [username, setUsername] = useState("");
   const [showMemberNameInput, setShowMemberNameInput] = useState(false);
   const [addMemberIndex, setAddMemberIndex] = useState(null);
   const [groupNameInputIndex, setGroupNameInputIndex] = useState(null);
@@ -34,7 +31,6 @@ const Step3 = ({ setData, setActiveStep }) => {
   const className = "DAO__Step3";
 
   useEffect(() => {
-    // Retrieve data from local storage
     const savedData = localStorage.getItem("step3Data");
     if (savedData) {
       setList(JSON.parse(savedData));
@@ -233,12 +229,12 @@ const Step3 = ({ setData, setActiveStep }) => {
             } catch {
               newUsernames[member] = "Error fetching username";
             }
-            updated = true; // Mark that we need to update state
+            updated = true; 
           }
         }
       }
 
-      // Update state only if there are changes
+ 
       if (updated) {
         setMemberUsernames(newUsernames);
       }
@@ -261,7 +257,7 @@ const Step3 = ({ setData, setActiveStep }) => {
             (user) => user !== memberPrincipalId
           );
 
-          // Update the councilUsernames state
+          
           if (item.name === "Council") {
             setCouncilUsernames((prevUsernames) =>
               prevUsernames.filter(
@@ -300,7 +296,7 @@ const Step3 = ({ setData, setActiveStep }) => {
       })
     );
     setGroupNameInputIndex(-1);
-    setUpdatedGroupName(""); // Clear the input state
+    setUpdatedGroupName(""); 
   };
 
   const councilMembers =
@@ -365,14 +361,14 @@ const Step3 = ({ setData, setActiveStep }) => {
   
 
   useEffect(() => {
-    // Retrieve saved list from localStorage if available
+ 
     const savedList = localStorage.getItem("step3Data");
-    const initialList = savedList ? JSON.parse(savedList) : list; // Use saved list or the default list
+    const initialList = savedList ? JSON.parse(savedList) : list; 
 
-    // Find the Council group in the list
+ 
     const council = initialList.find((group) => group.name === "Council");
 
-    // Check if the current user is already in the council
+    
     let stringPrincipal = principal.toString();
     if (council && !council.members.includes(stringPrincipal)) {
       const updatedList = initialList.map((group) => {
@@ -382,37 +378,37 @@ const Step3 = ({ setData, setActiveStep }) => {
         return group;
       });
 
-      // Update the state with the new list
+     
       setList(updatedList);
 
       localStorage.setItem("step3Data", JSON.stringify(updatedList));
     } else {
-      // If no update was needed, ensure the list state is still set
+
       setList(initialList);
     }
-  }, [stringPrincipal]); // Only rerun if stringPrincipal changes
+  }, [stringPrincipal]); 
 
   const handleEditGroup = (index) => {
     setGroupNameInputIndex(index);
     const groupName = list.find((item) => item.index === index)?.name || "";
-    setUpdatedGroupName(groupName); // Set the current name to the input state
+    setUpdatedGroupName(groupName); 
   };
 
   const closeInputField = () => {
     setShowMemberNameInput(false);
-    setMemberName(""); // Clear the input when closed
+    setMemberName(""); 
   };
 
   const skeletonLoader = () => {
     return (
       <div className="w-full flex bg-gray-100 py-2 px-2 md:px-8 items-center justify-between mb-2 animate-pulse">
-        {/* Simulated Username */}
+     
         <div className="flex-col space-y-1">
           <p className="font-semibold mobile:text-base text-sm bg-gray-300 h-6 w-20 rounded-md"></p>
-          {/* Simulated Principal ID */}
+        
           <p className="text-sm bg-gray-300 h-6 w-40 md:w-96 rounded-md"></p>
         </div>
-        {/* Simulated Delete Button */}
+   
         <button className="w-6 h-6 bg-gray-300 rounded-full"></button>
       </div>
     );
@@ -433,22 +429,7 @@ const Step3 = ({ setData, setActiveStep }) => {
               </p>
             </section>
 
-            {/* <button
-              onClick={handleGroupAdding}
-              disabled={isLoading || isAdding}
-              className={`bg-white  lg:mr-7 md:w-[200px] md:h-[50px] small_phone:gap-2 gap-1  small_phone:  mobile:px-5 p-2 small_phone:text-base text-sm shadow-xl flex items-center rounded-full hover:bg-[#ececec] hover:scale-105 transition ${
-                isLoading || isAdding ? "cursor-not-allowed" : "cursor-pointer"
-              }`}
-            >
-              <span className="flex">
-                <HiPlus />
-              </span>
-              <span className="flex lg:hidden items-center">
-                <RiGroupFill />
-              </span>
-              <span className=" hidden lg:flex">Create</span>
-              <span className=""> Group</span>
-            </button> */}
+           
             <div className="relative group inline-block">
               <button
                 onClick={handleGroupAdding}
@@ -530,10 +511,10 @@ const Step3 = ({ setData, setActiveStep }) => {
               ) : null}
             </section>
             {isLoading
-              ? skeletonLoader() // Show skeleton loader while data is being fetched
+              ? skeletonLoader() 
               : councilUsernames.map((fullName, index) => {
-                const [username, principalId] = fullName.split(" ("); // Split the string to separate username and principal ID
-                const formattedPrincipalId = principalId.slice(0, -1); // Remove the closing parenthesis
+                const [username, principalId] = fullName.split(" ("); 
+                const formattedPrincipalId = principalId.slice(0, -1); 
 
                 return (
                   <section

@@ -136,7 +136,6 @@ const DaoProfile = () => {
             setDaoGroups(daoGroups);
 
             const daoMembers = daoDetails?.all_dao_user || [];
-            console.log(daoDetails);
             
             const requestedToJoin = daoDetails?.requested_dao_user || [];
             const daoCouncil = daoDetails?.members
@@ -420,6 +419,12 @@ const DaoProfile = () => {
                       {Number(DaoBalance)}&nbsp;
                       <span className="text-[12px] sm:text-[14px] md:text-[16px] mx-1">
                         Tokens
+                      </span>
+                    </span>
+                    <span className="text-[18px] sm:text-[20px] md:text-[24px] lg:text-[32px] font-normal text-[#05212C] user-acc-info">
+                      {dao?.all_dao_user?.length}&nbsp;
+                      <span className="text-[12px] sm:text-[14px] md:text-[16px] mx-1">
+                        Members
                       </span>
                     </span>
                   </div>

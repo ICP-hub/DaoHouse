@@ -5,7 +5,7 @@ import { FaArrowLeftLong } from "react-icons/fa6";
 import { FiUpload } from "react-icons/fi";
 import daoImage from "../../../assets/daoImage.png"
 import CircularProgress from '@mui/material/CircularProgress';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import Container from "../Container/Container";
 import { useAuth } from "../utils/useAuthClient";
 import PaymentModal from "./PaymentModal";
@@ -92,7 +92,6 @@ const Step6 = ({ data, setData, setActiveStep, loadingNext,  clearLocalStorage, 
         members_permissions: membersArray || ["just", "pesmi"],
         token_name: step2.TokenName || "GOLD Token",
         token_symbol: step2.TokenSymbol || "TKN",
-        tokens_required_to_vote: 12,
         linksandsocials: ["just send f"],
         required_votes: parseInt(step2.VotesRequired, 10) || 3,
         image_content: step6.image_content ? Array.from(new Uint8Array(step6.image_content)) :
