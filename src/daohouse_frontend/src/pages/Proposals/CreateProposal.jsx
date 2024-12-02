@@ -1003,7 +1003,7 @@ function CreateProposal() {
                       <option value="ChangePolicy">Change Dao Policy</option>
                       <option value="Poll">Polls</option>
                       <option value="RemoveDaoMember">
-                        Remove Member From Dao
+                        Remove Member From Council
                       </option>
                       <option value="MintNewTokens">
                         Mint New Tokens
