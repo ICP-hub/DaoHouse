@@ -17,6 +17,7 @@ pub const TITLE_CREATE_POLL : &str = "poll";
 pub const TITLE_CREATE_GENERAL_PURPOSE : &str = "general purpose";
 
 pub const REQUEST_CREATE_PROPOSAL: &str = "proposal successfully created !.";
+pub const REQUEST_ADD_COUNCIL: &str = "Add Member to Counil proposal created successfully";
 pub const REQUEST_ADD_MEMBER: &str = "Add Member to group proposal created successfully";
 pub const NOTFOUND_GROUP: &str = "No groups found with the given name";
 pub const REQUEST_JOIN_DAO: &str = "Request to join DAO";

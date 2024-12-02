@@ -175,7 +175,7 @@ async fn proposal_to_add_member_to_council(args: AddMemberToDaoArgs) -> Result<S
 
     create_proposal_controller(with_state(|state| state.dao.daohouse_canister_id), proposal).await;
 
-    Ok(String::from(crate::utils::REQUEST_ADD_MEMBER))
+    Ok(String::from(crate::utils::REQUEST_ADD_COUNCIL))
 }
 
 
@@ -743,10 +743,10 @@ async fn vote_on_poll_options(proposal_id: String, option_id: String) -> Result<
                             option.approved_users.push(api::caller());
                             proposal_data.approved_votes_list.push(api::caller());
                             proposal_data.proposal_approved_votes += 1;
-                            if (proposal_data.proposal_rejected_votes as u32 + proposal_data.proposal_approved_votes as u32) == proposal_data.required_votes {
+                            if option.poll_approved_votes as u32 == proposal_data.required_votes {
+                                state.proposals.insert(proposal_id, proposal_data.to_owned());
                                 execute_proposal_on_required_vote(state, proposal_data.proposal_id.clone());
                             }
-                            state.proposals.insert(proposal_id, proposal_data.to_owned());
                             Ok("Vote submitted successfully.".to_string())
                         }
                     } else {
