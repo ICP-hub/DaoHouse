@@ -48,7 +48,7 @@ pub fn execute_proposal_on_required_vote(state : &mut State, proposal_id : Strin
                     proposal.proposal_status = ProposalState::Accepted;
                     let clone_proposal = proposal.clone();
                     state.proposals.insert(proposal_id.clone(), clone_proposal);
-                } else if total_percentage_reject > min_threshold {
+                } else if total_percentage_reject > 0.0  {
                     ic_cdk::println!("testing Rejected");
                     proposal.proposal_status = ProposalState::Rejected;
                     let clone_proposal = proposal.clone();
@@ -60,7 +60,7 @@ pub fn execute_proposal_on_required_vote(state : &mut State, proposal_id : Strin
                     state.proposals.insert(proposal_id.clone(), clone_proposal);
                 }
             } else {
-                ic_cdk::println!("come it fourth time {:?} ", proposal);
+                ic_cdk::println!("come it fourth time Unreachable  ");
                 proposal.proposal_status = ProposalState::Unreachable;
                 let clone_proposal = proposal.clone();
                 state.proposals.insert(proposal_id.clone(), clone_proposal);

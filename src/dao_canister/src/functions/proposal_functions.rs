@@ -2,7 +2,6 @@ use crate::proposal_route::{check_proposal_state, execute_proposal_on_required_v
 use crate::types::{Dao, Proposals};
 use crate::{guards::*, Comment, DaoGroup, Pagination, ProposalStakes, ReplayComment, ReplyCommentArgs};
 use crate::{with_state, ProposalState, VoteParam};
-use candid::Principal;
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::api::{self};
 use ic_cdk::{query, update};
@@ -12,12 +11,14 @@ use std::collections::HashSet;
 #[update(guard = prevent_anonymous)]
 fn get_all_proposals(page_data: Pagination) -> Vec<Proposals> {
     with_state(|state| {
-        let mut proposals: Vec<Proposals> = Vec::with_capacity(state.proposals.len() as usize);
-        let all_proposals = &state.proposals;
+        let mut proposals: Vec<Proposals> = state
+            .proposals
+            .iter()
+            .map(|(_, v)| v.clone()) 
+            .collect();
+
         proposals.sort_by(|a, b| b.proposal_submitted_at.cmp(&a.proposal_submitted_at));
-        for (_, v) in all_proposals.iter() {
-            proposals.push(v.clone());
-        }
+
         let ending = proposals.len();
 
         if ending == 0 {
@@ -31,9 +32,10 @@ fn get_all_proposals(page_data: Pagination) -> Vec<Proposals> {
             return proposals[start..end].to_vec();
         }
 
-        Vec::new()
+        Vec::new() 
     })
 }
+
 
 #[query(guard=prevent_anonymous)]
 fn get_my_proposal() -> Result<Vec<Proposals>, String> {
