@@ -257,7 +257,7 @@ const Dao = () => {
                 key={index}
                 {...{
                   name: daos.dao_name || "No Name",
-                  members: daos.all_dao_users.length ? Number(BigInt(daos.all_dao_users.length)) : "0",
+                  members: daos.all_dao_user?.length ? Number(BigInt(daos.all_dao_user?.length)) : "0",
                   groups: daos.groups_count ? Number(BigInt(daos.groups_count)) : "0",
                   proposals: daos.proposals_count || "0",
                   image_id: daos.image_id || "No Image",
