@@ -7,6 +7,7 @@ import avatar from "../../../assets/Avatar.png";
 import { useAuth } from '../utils/useAuthClient';
 import { Principal } from '@dfinity/principal';
 import MemberSkeletonLoader from '../SkeletonLoaders/MemberSkeletonLoader/MemberSkeletonLoader';
+import Container from "../Container/Container"
 
 function ViewModal({ open, onClose, users = [], approvedVotesList = [], rejectedVotesList = [], showVotes = false }) {
   const { backendActor } = useAuth();
@@ -111,7 +112,8 @@ useEffect(() => {
   }, [approvedVotesList, rejectedVotesList, backendActor]);
 
   return (
-    <Modal
+   <Container>
+     <Modal
       open={open}
       onClose={onClose}
       aria-labelledby="user-modal-title"
@@ -235,6 +237,7 @@ useEffect(() => {
         </div>
       </Box>
     </Modal>
+   </Container>
   );
 }
 
