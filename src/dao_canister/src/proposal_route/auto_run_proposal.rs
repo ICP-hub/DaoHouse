@@ -22,15 +22,19 @@ pub fn execute_proposal_on_required_vote(state : &mut State, proposal_id : Strin
     let timestamp = time();
     let proposal_ids : Vec<String> = vec![proposal_id];
     for proposal_id in proposal_ids {
-        ic_cdk::println!("come it secound time {} ", proposal_id);
         if let Some(mut proposal) = state.proposals.get(&proposal_id) {
             proposal.has_been_processed = true;
 
             let proposal_approved_votes = proposal.proposal_approved_votes as f64;
             let proposal_rejected_votes = proposal.proposal_rejected_votes as f64;
             let total_votes: f64 = proposal_approved_votes + proposal_rejected_votes;
-            let total_percentage = if total_votes > 0.0 {
+            let total_percentage_approved = if total_votes > 0.0 {
                 (proposal_approved_votes / total_votes) * 100.0
+            } else {
+                0.0
+            };
+            let total_percentage_reject= if total_votes > 0.0 {
+                (proposal_rejected_votes / total_votes) * 100.0
             } else {
                 0.0
             };
@@ -40,15 +44,17 @@ pub fn execute_proposal_on_required_vote(state : &mut State, proposal_id : Strin
 
             if total_votes >= min_require_vote {
                 ic_cdk::println!("come it thired time {:?} ", proposal_id);
-                if total_percentage >= min_threshold {
+                if total_percentage_approved >= min_threshold {
                     proposal.proposal_status = ProposalState::Accepted;
                     let clone_proposal = proposal.clone();
                     state.proposals.insert(proposal_id.clone(), clone_proposal);
-                } else if total_percentage > 0.0 {
+                } else if total_percentage_reject > min_threshold {
+                    ic_cdk::println!("testing Rejected");
                     proposal.proposal_status = ProposalState::Rejected;
                     let clone_proposal = proposal.clone();
                     state.proposals.insert(proposal_id.clone(), clone_proposal);
                 } else {
+                    ic_cdk::println!("testing Expired");
                     proposal.proposal_status = ProposalState::Expired;
                     let clone_proposal = proposal.clone();
                     state.proposals.insert(proposal_id.clone(), clone_proposal);
