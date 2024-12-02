@@ -396,7 +396,7 @@ const DaoProfile = () => {
           <Container
             classes={`${className} __mainComponent lg:py-8 lg:pb-20 py-6 tablet:px-28 px-6 tablet:flex-row gap-2 flex-col w-full`}
           >
-            <div className="flex justify-between w-full md:gap-2 gap-10 z-20 relative flex-wrap">
+            <div className="flex justify-between w-full gap-2 z-20 relative flex-wrap">
               <div className="flex items-start">
                 <div
                   className="w-[85px] h-[49px] lg:w-[207px] lg:h-[120px] bg-[#C2C2C2] md:w-[145px] md:h-[84px] rounded overflow-hidden flex-shrink-0"
