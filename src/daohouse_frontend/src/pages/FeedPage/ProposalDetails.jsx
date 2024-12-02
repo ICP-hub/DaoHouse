@@ -27,6 +27,7 @@ const ProposalsDetails = () => {
   const [commentCount, setCommentCount] = useState(0); 
   const [isRequested, setIsRequested] = useState(false);
   const [isMember, setIsMember] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState(null)
 
   const maxWords = 90;
 
@@ -67,6 +68,7 @@ const ProposalsDetails = () => {
           const profileResponse = await backendActor.get_user_profile();
           if (profileResponse.Ok) {
           const currentUserId = Principal.fromText(profileResponse.Ok.user_id.toString());
+          setCurrentUserId(currentUserId)
           const daoMembers = daoDetails?.all_dao_user || [];
           const requestedToJoin = daoDetails?.requested_dao_user || []; 
           const isUserRequested =
@@ -112,55 +114,49 @@ const ProposalsDetails = () => {
   const confirmJoinDao = async () => {
     setLoadingJoinedDAO(true)
     try {
-      const daohouseBackendId = Principal.fromText(process.env.CANISTER_ID_DAOHOUSE_BACKEND);
       const place_to_join = "General Members";
-  
+
       const joinDaoPayload = {
         place_to_join: place_to_join,
       };
-      
+
       const response = await daoActor.ask_to_join_dao(joinDaoPayload);
-      const daoDetails = await daoActor.get_dao_detail();
-      const profileResponse = await backendActor.get_user_profile();
-          if (profileResponse.Ok) {
-          const currentUserId = Principal.fromText(profileResponse.Ok.user_id.toString());
-          const daoMembers = daoDetails?.all_dao_user || [];
-          const requestedToJoin = daoDetails?.requested_dao_user || []; 
-          const isUserRequested =
-              Array.isArray(requestedToJoin) &&
-              requestedToJoin.some(
-                (member) => member.toString() === currentUserId.toString()
-              );
-            setIsRequested(isUserRequested);        
-          const isCurrentUserMember = daoMembers.some(member => member.toString() === currentUserId.toString());
-          if (isCurrentUserMember) {
-            setIsMember(true);
-            setJoinStatus("Joined");
-          } else if (isRequested) {
-            setJoinStatus("Requested");
-          } else {
-            setIsRequested(false);
-            // setIsMember(false);
-            setJoinStatus("Join DAO");
-          }
-        }
-      
-      const sound = new Audio(messagesound)
+      const sound = new Audio(messagesound);
+
       if (response.Ok) {
-        // setJoinStatus("Requested");
         toast.success(response.Ok);
         sound.play();
+        const daoDetails = await daoActor.get_dao_detail();    
+            const daoMembers = daoDetails.all_dao_user;
+            const requestedToJoin = daoDetails.requested_dao_user;
+    
+            const isCurrentUserMember = daoMembers.some(
+              (member) => member.toString() === currentUserId.toString()
+            );
+            const isUserRequested = requestedToJoin.some(
+              (member) => member.toString() === currentUserId.toString()
+            );
+            setIsRequested(isUserRequested);
+        setIsMember(isCurrentUserMember);
+        if (isCurrentUserMember) {
+          setJoinStatus("Joined");
+        } else if (isUserRequested) {
+          setJoinStatus("Requested");
+        } else {
+          setIsRequested(false);
+          setIsMember(false);
+          setJoinStatus("Join DAO");
+        }
       } else {
-        console.error( response.Err );
         toast.error(response.Err);
       }
     } catch (error) {
-      setLoadingJoinedDAO(false)
-      console.error('Error sending join request:', error);
-      toast.error('Error sending join request');
+      setLoadingJoinedDAO(false);
+      console.error("Error sending join request:", error);
+      toast.error(error);
     } finally {
       setShowConfirmModal(false);
-      setLoadingJoinedDAO(false)
+      setLoadingJoinedDAO(false);
     }
   };
 
