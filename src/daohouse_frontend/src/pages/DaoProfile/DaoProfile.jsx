@@ -58,6 +58,7 @@ const DaoProfile = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [sortOrder, setSortOrder] = useState("newest");
+  const [currentUserId, setCurrentUserId] = useState(null)
   let itemsPerPage = 4;
 
   const fetchMetadataAndBalance = async (tokenActor, ownerPrincipal) => {
@@ -130,6 +131,7 @@ const DaoProfile = () => {
             const currentUserId = Principal.fromText(
               profileResponse.Ok.user_id.toString()
             );
+            setCurrentUserId(currentUserId)
 
             // Safely access daoDetails properties with optional chaining
             const daoGroups = await daoActor.get_dao_groups();
@@ -231,9 +233,29 @@ const DaoProfile = () => {
       const sound = new Audio(messagesound);
 
       if (response.Ok) {
-        setJoinStatus("Requested");
         toast.success(response.Ok);
         sound.play();
+        const daoDetails = await daoActor.get_dao_detail();    
+            const daoMembers = daoDetails.all_dao_user;
+            const requestedToJoin = daoDetails.requested_dao_user;
+    
+            const isCurrentUserMember = daoMembers.some(
+              (member) => member.toString() === currentUserId.toString()
+            );
+            const isUserRequested = requestedToJoin.some(
+              (member) => member.toString() === currentUserId.toString()
+            );
+            setIsRequested(isUserRequested);
+        setIsMember(isCurrentUserMember);
+        if (isCurrentUserMember) {
+          setJoinStatus("Joined");
+        } else if (isUserRequested) {
+          setJoinStatus("Requested");
+        } else {
+          setIsRequested(false);
+          setIsMember(false);
+          setJoinStatus("Join DAO");
+        }
       } else {
         toast.error(response.Err);
       }
