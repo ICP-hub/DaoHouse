@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { CircularProgress } from "@mui/material";
 import messagesound from "../../Sound/messagesound.mp3";
 import daoImage from "../../../assets/daoImage.png"
+import ShowModal from "../DaoProfile/ShowModal";
 
 const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, isJoinedDAO }) => {
 
@@ -241,35 +242,9 @@ const DaoCard = ({ name, members, groups, proposals, image_id, daoCanisterId, is
       </div>
       {/* Confirmation Modal */}
       {showConfirmModal && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center backdrop-blur-md">
-    <div className="bg-white p-6 rounded-lg shadow-lg md:w-[800px] text-center mx-4">
-      <h3 className="text-xl font-mulish font-semibold text-[#234A5A]">Ready to join this DAO?</h3>
-      <p className="mt-4 text-[16px] md:px-24 font-mulish">
-        You’re about to join a DAO! A proposal will be created to welcome you, and DAO members will vote on your request. 
-        You'll be notified once the results are in. Approval happens when members vote in your favor—good luck!
-      </p>
-      <div className="flex justify-center gap-4 mt-4">
-        <button
-          onClick={() => setShowConfirmModal(false)}
-          className="px-8 py-3 text-[12px] lg:text-[16px] text-black font-normal rounded-full shadow-md hover:bg-gray-200 hover:text-[#0d2933]"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={confirmJoinDao}
-          className="px-6 md:px-8 py-3 text-center text-[12px] lg:text-[16px] bg-[#0E3746] text-white rounded-full shadow-xl hover:bg-[#0d2933] hover:text-white"
-        >
-          {loading ? (
-               <CircularProgress size={24} sx={{ color: 'white' }} />
-            ) : (
-              "Join DAO"
-            )}
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
+                 <ShowModal  showConfirmModal={showConfirmModal} confirmJoinDao={confirmJoinDao} 
+                 setShowConfirmModal={setShowConfirmModal} loading={loading}/>
+                )}
     </div>
   );
 };
