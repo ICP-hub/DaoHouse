@@ -165,7 +165,7 @@ const DaoSetting = () => {
       <h3 className="text-md sm:text-lg font-semibold font-mulish">
         Types of Proposals
       </h3>
-      <ul className="list-disc pl-6 mt-2 sm:mt-4 space-y-7 text-sm sm:text-base font-mulish">
+      <ul className="list-disc pl-6 mt-2 sm:mt-4 space-y-6 text-sm sm:text-base font-mulish">
         <li>
           <strong>Remove Member To Dao Proposal:</strong> The RemoveMemberToDaoProposal is a formal process within the DAO that allows members to propose the removal of an individual from the organization. This proposal type is used to maintain the integrity, efficiency, and alignment of the DAO by addressing specific issues with a member.
         </li>
@@ -210,7 +210,7 @@ const DaoSetting = () => {
            <h3 className="text-md sm:text-lg font-semibold font-mulish">
         How Proposals Work
          </h3>
-          <ol className="list-decimal pl-5 mt-2 sm:mt-4 space-y-2 text-sm sm:text-base font-mulish">
+          <ol className="list-decimal pl-5 mt-2 sm:mt-4 space-y-4 text-sm sm:text-base font-mulish">
         <li>
           <strong>Creation:</strong> A member submits a proposal, detailing the topic or action (e.g., adding a member, transferring tokens, changing policies). The proposal will include relevant information such as conditions, voting options, and any supporting details.
         </li>
