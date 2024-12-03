@@ -40,10 +40,15 @@ const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, da
       return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
     });
   };
-  
+  const filteredProposals = searchTerm.trim()
+  ? allProposals.filter((proposal) =>
+      proposal.proposal_id.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  : allProposals;
+
   
   const displayedProposals =
-    searchTerm.trim() === "" ? sortProposals(allProposals) : sortProposals(fetchedProposals);
+    searchTerm.trim() === "" ? sortProposals(allProposals) : sortProposals(filteredProposals);
 
   return (
     <div className="mt-6 mb-6">
