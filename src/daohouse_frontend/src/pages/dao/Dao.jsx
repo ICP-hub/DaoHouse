@@ -141,7 +141,7 @@ const Dao = () => {
   const handleLogin = async () => {
     setLoading(true);
     try {
-      await login("Icp");
+      await login("ii");
       window.location.reload();
     } catch (error) {
       console.error('Login failed:', error);
@@ -153,7 +153,7 @@ const Dao = () => {
   const handleNFIDLogin = async () => {
     setLoading(true);
     try {
-      await signInNFID();
+      await login("nfid");
       window.location.reload();
     } catch (error) {
       console.error('NFID login failed:', error);
