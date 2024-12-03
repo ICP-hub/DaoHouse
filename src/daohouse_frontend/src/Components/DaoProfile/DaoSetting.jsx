@@ -62,7 +62,7 @@ const DaoSetting = () => {
                   Council
                 </h3>
                 <p className="mt-1 sm:mt-2 text-sm sm:text-base leading-relaxed font-mulish">
-                  The Council is a governing body within the DAO, often consisting of experienced or elected members tasked with overseeing operations, initiating critical proposals, and ensuring the DAO functions as intended.
+                In a DAO (Decentralized Autonomous Organization), the council is a group of special members who have advanced permissions and responsibilities. They can create all types of proposals and have administrative or controller rights over the DAO. The council plays a key role in decision-making, managing the DAO’s structure, and ensuring smooth operations. They are often trusted members who act as leaders, ensuring the DAO aligns with its goals and resolves conflicts when needed.
                 </p>
                 <ul className="list-disc pl-5 mt-2 sm:mt-4 space-y-2 text-sm sm:text-base font-mulish">
                   <li>Proposing and voting on strategic decisions.</li>
@@ -107,12 +107,9 @@ const DaoSetting = () => {
                   Tokenization
                 </h3>
                 <p className="mt-1 sm:mt-2 text-sm sm:text-base leading-relaxed font-mulish">
-                  Tokenization involves issuing tokens that represent membership, voting power, or ownership in the DAO. These tokens can be used for:
+                  Tokenization involves issuing tokens that represent membership,or ownership in the DAO. These tokens can be used for:
                 </p>
                 <ul className="list-disc pl-5 mt-2 sm:mt-4 space-y-2 text-sm sm:text-base font-mulish">
-                  <li>
-                    <strong>Governance:</strong> Voting on proposals.
-                  </li>
                   <li>
                     <strong>Rewards:</strong> Incentivizing contributions.
                   </li>
