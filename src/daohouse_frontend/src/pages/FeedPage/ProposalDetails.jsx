@@ -243,7 +243,7 @@ const ProposalsDetails = () => {
         <div className="flex justify-center gap-4 mt-4 md:mt-0  self-center md:self-start">
          {showConfirmModal && (
                  <ShowModal  showConfirmModal={showConfirmModal} confirmJoinDao={confirmJoinDao} 
-                 setShowConfirmModal={setShowConfirmModal} loading={loading}/>
+                 setShowConfirmModal={setShowConfirmModal} loadingJoinedDAO = {loadingJoinedDAO} />
                 )}
         </div>
       </div>
