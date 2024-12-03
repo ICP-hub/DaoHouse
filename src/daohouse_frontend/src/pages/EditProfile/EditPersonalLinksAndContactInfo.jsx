@@ -1,3 +1,4 @@
+import { CircularProgress } from "@mui/material";
 import React, { useState } from "react";
 
 const EditPersonalLinksAndContactInfo = ({
@@ -6,6 +7,7 @@ const EditPersonalLinksAndContactInfo = ({
   handleSaveChangesClick,
   closeModal,
   errors,
+  loading,
 }) => {
   const [contactNumberError, setContactNumberError] = useState("");
 
@@ -171,7 +173,11 @@ const EditPersonalLinksAndContactInfo = ({
           }`}
           disabled={isSaveDisabled()} // Disable button if contact number is less than 10 digits or if there is an error
         >
-          Save Changes
+          {loading ? (
+                <CircularProgress size={20} sx={{ color: 'white' }} />
+                ) : (
+                "Save"
+                )}
         </button>
       </div>
     </div>
