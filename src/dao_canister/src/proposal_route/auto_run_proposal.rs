@@ -499,14 +499,13 @@ pub fn change_group_permissions(state: &mut State, proposal: &Proposals) {
     if let Some(group_data) = &proposal.updated_group_permissions{
         let group_name = &group_data.group_name;
         let new_permissions = &group_data.updated_permissions;
-          if let Some(updated_group) = state.dao_groups.get(group_name) {
-            let mut prev_permissions = updated_group.group_permissions.clone();
-                prev_permissions = new_permissions.to_vec();
-                state.dao_groups.insert(group_name.to_string(), updated_group);
+          if let Some(mut updated_group) = state.dao_groups.get(group_name) {
+            updated_group.group_permissions = new_permissions.clone();
+            ic_cdk::println!("updated_group data is : {:?} ",updated_group.clone());
+            state.dao_groups.insert(group_name.to_string(), updated_group);
         }
     }
 }
-
 
 pub fn remove_member_to_group(state: &mut State, proposal: &Proposals) {
     let dao_groups = &mut state.dao_groups;
