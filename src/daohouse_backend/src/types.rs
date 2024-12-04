@@ -885,6 +885,7 @@ pub enum ProposalType {
     TokenTransfer,
     GeneralPurpose,
     MintNewTokens,
+    ChangeGroupPermissions,
 }
 
 // const MAX_VALUE_SIZE: u32 = 800;
