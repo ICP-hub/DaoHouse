@@ -49,6 +49,7 @@ pub enum ProposalType {
     TokenTransfer,
     GeneralPurpose,
     MintNewTokens,
+    ChangeGroupPermissions,
 }
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
@@ -74,6 +75,19 @@ pub struct ProposalStakes {
 #[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct JoinDao {
     pub place_to_join : String,
+}
+
+#[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
+pub struct UpdateGroupPermission{
+    pub group_name : String,
+    pub updated_permissions : Vec<ProposalType>
+}
+
+#[derive(Clone, CandidType, Deserialize, Serialize, Debug)]
+pub struct UpdatePermissionPayload {
+    pub proposal_entry : String,
+    pub description : String,
+    pub updated_permissions : UpdateGroupPermission,
 }
 
 #[derive(Clone, CandidType, Deserialize, Debug)]
@@ -113,8 +127,10 @@ pub struct Proposals {
     pub new_required_votes : Option<u32>,
     pub poll_query :  Option<String>,
     pub poll_options: Option<Vec<PollOptions>>,
-    pub ask_to_join_dao : Option<bool>
+    pub ask_to_join_dao : Option<bool>,
+    pub updated_group_permissions : Option<UpdateGroupPermission>,
 }
+
 
 #[derive(Clone, CandidType, Serialize, Deserialize, Debug)]
 pub struct Comment {
@@ -156,7 +172,8 @@ pub struct ProposalInput {
     pub new_required_votes : Option<u32>,
     pub poll_query :  Option<String>,
     pub poll_options: Option<Vec<PollOptions>>,
-    pub ask_to_join_dao : Option<bool>
+    pub ask_to_join_dao : Option<bool>,
+    pub updated_group_permissions : Option<UpdateGroupPermission>,
 }
 
 #[derive(Clone , Debug, CandidType, Serialize, Deserialize)]

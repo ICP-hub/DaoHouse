@@ -158,6 +158,10 @@ const Members = ({ daoGroups, daoCouncil }) => {
                           <MemberSkeleton key={idx} />
                         ))}
                     </div>
+                  ) : groupMembers[group.group_name]?.length === 0 ? (
+                    <div className="text-center">
+                      No members in this group yet
+                    </div>
                   ) : groupMembers[group.group_name]?.length > 0 ? (
                     <div className="grid grid-cols-1 mobile:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                       {groupMembers[group.group_name].map(

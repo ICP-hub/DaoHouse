@@ -15,6 +15,8 @@ pub const TITLE_MINT_NEW_TOKENS : &str = "Mint new tokens";
 pub const TITLE_BOUNTY_DONE : &str = "Bounty done";
 pub const TITLE_CREATE_POLL : &str = "poll";
 pub const TITLE_CREATE_GENERAL_PURPOSE : &str = "general purpose";
+pub const TITLE_CREATE_CHANGE_GROUP_PERMISSION : &str = "change group permissions";
+
 
 pub const REQUEST_CREATE_PROPOSAL: &str = "proposal successfully created !.";
 pub const REQUEST_ADD_COUNCIL: &str = "Add Member to Counil proposal created successfully";

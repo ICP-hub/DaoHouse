@@ -145,11 +145,13 @@ type ProposalType = variant {
   TokenTransfer;
   AddMemberToDaoProposal;
   RemoveMemberToGroupProposal;
+  ChangeGroupPermissions;
   BountyRaised;
   AddMemberToGroupProposal;
   GeneralPurpose;
 };
 type Proposals = record {
+  updated_group_permissions : opt UpdateGroupPermission;
   principal_of_action : principal;
   share_count : nat64;
   token_to : opt principal;
@@ -220,9 +222,19 @@ type TokenTransferPolicy = record {
   tokens : nat64;
   proposal_entry : text;
 };
+type UpdateGroupPermission = record {
+  group_name : text;
+  updated_permissions : vec ProposalType;
+};
+type UpdatePermissionPayload = record {
+  description : text;
+  proposal_entry : text;
+  updated_permissions : UpdateGroupPermission;
+};
 type VoteParam = variant { No; Yes };
 service : (DaoInput) -> {
   add_ledger_canister_id : (LedgerCanisterId) -> (Result);
+  api_to_update_permission_groups : (UpdatePermissionPayload) -> (Result_1);
   ask_to_join_dao : (JoinDao) -> (Result_1);
   comment_on_proposal : (text, text) -> (Result_1);
   get_all_balances : (text) -> (ProposalStakes) query;

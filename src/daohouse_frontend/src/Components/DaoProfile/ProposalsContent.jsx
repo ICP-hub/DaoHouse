@@ -59,7 +59,7 @@ const ProposalsContent = ({ proposals, isMember, showActions = true, voteApi, da
           </h1>
           <Link
             to={`/create-proposal/${daoCanisterId}`}
-            className="flex justify-center items-center text-[16px] relative lg:w-[220px] lg:h-[50px] md:w-[185px] md:h-[46px] w-[150px] h-[50px] bg-white rounded-full"
+            className="flex justify-center items-center text-[16px] relative lg:w-[220px] lg:h-[50px] md:w-[185px] md:h-[46px] w-[130px] h-[40px] bg-white rounded-full"
             style={{
               boxShadow:
                 "0px 0.26px 1.22px 0px #0000000A, 0px 1.14px 2.53px 0px #00000010, 0px 2.8px 5.04px 0px #00000014, 0px 5.39px 9.87px 0px #00000019, 0px 9.07px 18.16px 0px #0000001F, 0px 14px 31px 0px #00000029",
@@ -160,10 +160,10 @@ export const SearchProposals = ({
 }) => {
   return (
     <div
-      className={`${className} flex items-center p-2 bg-${bgColor} rounded-full max-w-md mx-auto`}
+      className={`${className} flex items-center p-1 md:p-2 bg-${bgColor} rounded-full max-w-md mx-auto`}
       style={{ minWidth: width }}
     >
-      <div className="mx-3">
+      <div className="mx-3 hidden md:flex">
         <svg
           width="26"
           height="26"
@@ -184,7 +184,7 @@ export const SearchProposals = ({
         onChange={onChange}
         type="text"
         placeholder={placeholder}
-        className="pl-4 pr-10 py-2 w-full bg-transparent focus:outline-none placeholder-zinc-400 text-zinc-700 placeholder-custom"
+        className="md:pl-4 md:pr-10 md:py-2 w-full bg-transparent focus:outline-none placeholder-zinc-400 text-zinc-700 placeholder-custom"
         {...inputProps}
       />
     </div>
