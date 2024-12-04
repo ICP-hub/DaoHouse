@@ -60,6 +60,7 @@ export default function Card({
   const [pollOptions, setPollOptions] = useState(
     proposal?.poll_options ? proposal.poll_options[0] : []
   );
+  
 
 
 
@@ -922,22 +923,30 @@ export default function Card({
                   </div>
                 )}
 
-              {!isSubmittedProposals &&
-                proposal.proposal_type.AddMemberToGroupProposal !==
-                undefined && (
-                  <div className="w-full">
+              {!isSubmittedProposals &&  
+                proposal.proposal_type.ChangeGroupPermissions !== undefined && 
+                proposal.updated_group_permissions &&
+                proposal.updated_group_permissions.length > 0 &&
+                proposal.updated_group_permissions.map((group, index) => (
+                  <div key={index} className="w-full">
                     <div className="flex">
-                      <span className="font-bold">Group Name</span>:{" "}
-                      {proposal.group_to_join}
+                      <span className="font-bold">Group Name</span>: {group.group_name}
                     </div>
-                    <div className="whitespace-normal break-words mt-2">
-                      <span className="font-bold">New member</span>:{" "}
-                      {Principal.fromUint8Array(
-                        new Uint8Array(proposal.principal_of_action._arr)
-                      ).toText()}
+                    <div className="flex flex-col md:flex-row mt-2 break-words gap-2">
+                      <span className="font-bold">Updated Permissions:</span>
+                      <div className="">
+                        {group.updated_permissions
+                          .map((permission, idx) => {
+                            const permissionName = Object.keys(permission)[0];
+                            return permissionName;
+                          })
+                          .join(", ")}
+                      </div>
                     </div>
                   </div>
-                )}
+                ))}
+
+
               {!isSubmittedProposals &&
                 proposal.proposal_type.RemoveMemberToGroupProposal !==
                 undefined && (
