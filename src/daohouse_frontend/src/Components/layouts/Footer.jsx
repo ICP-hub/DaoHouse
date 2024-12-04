@@ -25,7 +25,7 @@ const Footer = () => {
 
 
             {/* Navigation Links */}
-            <div className="flex flex-row justify-center md:translate-x-[30px] items-center gap-4 sm:gap-6 md:gap-8 py-4 sm:py-6 px-4">
+            <div className="flex flex-row justify-center md:translate-x-[30px] items-center gap-4 sm:gap-6 big_phone:gap-8 py-4 sm:py-6 px-4">
               <Link
                 to="/"
                 className="text-[#3D3D3D] text-sm sm:text-base md:text-lg font-inter font-normal hover:underline"
