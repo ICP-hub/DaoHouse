@@ -63,6 +63,7 @@ pub async fn create_proposal_controller(
         poll_query: proposal.poll_query,
         poll_options: proposal.poll_options,
         ask_to_join_dao: proposal.ask_to_join_dao,
+        updated_group_permissions : proposal.updated_group_permissions,
     };
 
     let proposal_copy: ProposalInstance = ProposalInstance {

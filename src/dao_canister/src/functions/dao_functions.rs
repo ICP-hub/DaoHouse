@@ -1,6 +1,6 @@
 use crate::proposal_route::{create_proposal_controller, execute_proposal_on_required_vote};
 use crate::{
-    guards::*, AddMemberArgs, AddMemberToDaoArgs, BountyDone, BountyRaised, ChangeDaoConfigArg, ChangeDaoPolicy, CreateGeneralPurpose, CreatePoll, DaoGroup, JoinDao, LedgerCanisterId, MintTokenArgs, PollOptions, ProposalCreation, ProposalInput, ProposalState, RemoveDaoMemberArgs, RemoveMemberArgs, TokenTransferPolicy
+    guards::*, AddMemberArgs, AddMemberToDaoArgs, BountyDone, BountyRaised, ChangeDaoConfigArg, ChangeDaoPolicy, CreateGeneralPurpose, CreatePoll, DaoGroup, JoinDao, LedgerCanisterId, MintTokenArgs, PollOptions, ProposalCreation, ProposalInput, ProposalState, RemoveDaoMemberArgs, RemoveMemberArgs, TokenTransferPolicy, UpdatePermissionPayload
 };
 use crate::icrc_get_balance;
 use crate::{with_state, ProposalType};
@@ -83,7 +83,7 @@ async fn proposal_to_add_member_to_group(args: AddMemberArgs) -> Result<String, 
         proposal_created_at: None,
         proposal_expired_at: None,
         bounty_task: None,
-        
+        updated_group_permissions : None,
         required_votes: None,
         cool_down_period: None,
         group_to_remove: None,
@@ -164,6 +164,7 @@ async fn proposal_to_add_member_to_council(args: AddMemberToDaoArgs) -> Result<S
         poll_query: None,
         poll_options: None,
         ask_to_join_dao : None,
+        updated_group_permissions : None,
     };
 
     with_state(|state: &mut crate::state_handler::State| {
@@ -245,6 +246,7 @@ async fn proposal_to_remove_member_to_group(args: RemoveMemberArgs) -> Result<St
         poll_query: None,
         poll_options: None,
         ask_to_join_dao : None,
+        updated_group_permissions : None,
     };
 
     with_state(|state| {
@@ -303,7 +305,7 @@ async fn proposal_to_remove_member_to_dao(args: RemoveDaoMemberArgs) -> Result<S
         proposal_created_at: None,
         proposal_expired_at: None,
         bounty_task: None,
-        
+        updated_group_permissions : None,
         required_votes: None,
         cool_down_period: None,
         group_to_remove: None,
@@ -370,7 +372,7 @@ async fn proposal_to_change_dao_config(args: ChangeDaoConfigArg) -> Result<Strin
         proposal_created_at: None,
         proposal_expired_at: None,
         bounty_task: None,
-        
+        updated_group_permissions : None,
         required_votes: None,
         cool_down_period: None,
         group_to_remove: None,
@@ -430,7 +432,7 @@ async fn proposal_to_change_dao_policy(args: ChangeDaoPolicy) -> Result<String, 
         proposal_created_at: None,
         proposal_expired_at: None,
         bounty_task: None,
-        
+        updated_group_permissions : None,
         group_to_remove: None,
         required_votes: None,
         cool_down_period: Some(args.cool_down_period),
@@ -494,7 +496,7 @@ async fn proposal_to_transfer_token(args: TokenTransferPolicy) -> Result<String,
         proposal_created_at: None,
         proposal_expired_at: None,
         bounty_task: None,
-        
+        updated_group_permissions : None,
         required_votes: None,
         cool_down_period: None,
         group_to_remove: None,
@@ -601,7 +603,7 @@ async fn proposal_to_bounty_raised(args: BountyRaised) -> Result<String, String>
         proposal_created_at: None,
         proposal_expired_at: None,
         bounty_task: Some(args.bounty_task),
-        
+        updated_group_permissions : None,
         required_votes: None,
         cool_down_period: None,
         group_to_remove: None,
@@ -705,7 +707,7 @@ async fn proposal_to_bounty_done(args: BountyDone) -> Result<String, String> {
         proposal_created_at: None,
         proposal_expired_at: None,
         bounty_task,
-        
+        updated_group_permissions : None,
         required_votes: None,
         cool_down_period: None,
         group_to_remove: None,
@@ -841,6 +843,7 @@ async fn proposal_to_create_poll(args: CreatePoll) -> Result<String, String> {
         ask_to_join_dao : None,
         poll_query: Some(args.poll_query),
         poll_options: Some(poll_options),
+        updated_group_permissions : None,
     };
     create_proposal_controller(with_state(|state| state.dao.daohouse_canister_id), proposal).await;
     Ok(String::from(crate::utils::MESSAGE_POLL_CREATE_DONE))
@@ -901,9 +904,73 @@ async fn proposal_to_create_general_purpose(args: CreateGeneralPurpose) -> Resul
         ask_to_join_dao : None,
         poll_query: None,
         poll_options: None,
+        updated_group_permissions : None,
     };
     create_proposal_controller(with_state(|state| state.dao.daohouse_canister_id), proposal).await;
     Ok(String::from(crate::utils::MESSAGE_GENERAL_PURPOSE_CREATED))
+}
+
+
+#[update(guard = prevent_anonymous)]
+async fn api_to_update_permission_groups(args : UpdatePermissionPayload)-> Result<String, String> {
+    let proposal_data = ProposalCreation {
+        entry: args.proposal_entry.clone(),
+        proposal_type: ProposalType::ChangeGroupPermissions,
+    };
+
+    guard_check_proposal_creation(proposal_data)?;
+    let mut required_thredshold = 0;
+
+    let _ = with_state(|state| {
+        match state
+            .dao
+            .proposal_entry
+            .iter()
+            .find(|place| place.place_name == args.proposal_entry)
+        {
+            Some(val) => {
+                required_thredshold = val.min_required_thredshold;
+                Ok(())
+            }
+            None => {
+                return Err(format!(
+                    "No place Found with the name of {:?}",
+                    args.proposal_entry
+                ));
+            }
+        }
+    });
+
+    let proposal = ProposalInput {
+        principal_of_action: Some(api::caller()),
+        proposal_description: args.description,
+        proposal_title: String::from(crate::utils::TITLE_CREATE_CHANGE_GROUP_PERMISSION),
+        proposal_type: ProposalType::ChangeGroupPermissions,
+        new_dao_name: None,
+        group_to_join: None,
+        dao_purpose: None,
+        tokens: None,
+        token_from: None,
+        token_to: None,
+        proposal_created_at: None,
+        proposal_expired_at: None,
+        bounty_task: None,
+        required_votes: None,
+        cool_down_period: None,
+        group_to_remove: None,
+        minimum_threadsold: required_thredshold,
+        link_of_task: None,
+        associated_proposal_id: None,
+        new_required_votes: None,
+        ask_to_join_dao : None,
+        poll_query: None,
+        poll_options: None,
+        updated_group_permissions : Some(args.updated_permissions)
+    };
+
+    create_proposal_controller(with_state(|state| state.dao.daohouse_canister_id), proposal).await;
+
+    Ok(String::from("Change group proposal created successfully"))
 }
 
 #[update(guard = prevent_anonymous)]
@@ -1010,6 +1077,7 @@ async fn ask_to_join_dao(args: JoinDao) -> Result<String, String> {
         poll_query: None,
         poll_options: None,
         ask_to_join_dao : None,
+        updated_group_permissions : None,
     };
     with_state(| state | state.dao.requested_dao_user.push(api::caller()));
     create_proposal_controller(daohouse_backend_id, proposal).await;
@@ -1085,7 +1153,7 @@ pub async fn proposal_to_mint_new_dao_tokens(args: MintTokenArgs) -> Result<Stri
         proposal_created_at: None,
         proposal_expired_at: None,
         bounty_task: None,
-        
+        updated_group_permissions : None,
         required_votes: None,
         cool_down_period: None,
         group_to_remove: None,
