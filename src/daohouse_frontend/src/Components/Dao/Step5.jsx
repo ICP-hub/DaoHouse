@@ -141,7 +141,7 @@ const Step5 = ({ setData, setActiveStep, data }) => {
               >
 
                 <section className="flex justify-between items-center pt-2">
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-2 w-20">
                     <p className="text-sm text-gray-500">{item.name}</p>
                     <p className="text-sm text-gray-500">
                       {item.memberCount} members
@@ -223,9 +223,9 @@ const RangeInput = ({ arrayIndex, value, handleVoteChange }) => {
           background: gradient,
         }}
       />
-      <span className="text-xs translate-x-[40px] font-semibold block sm:hidden">
+      {/* <span className="text-xs translate-x-[40px] font-semibold block sm:hidden">
         {currentValue} %
-      </span>
+      </span> */}
     </div>
   );
 };
