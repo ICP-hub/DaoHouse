@@ -21,16 +21,19 @@ import TokenPaymentModal from "./TokenPaymentModal";
 import MintNewTokens from "./MintNewTokens";
 import { FaInfoCircle } from "react-icons/fa";
 import AddMemberToCouncil from "./AddMemberToCouncil";
+import UpdateGroupsPermissions from "./UpdateGroupsPermissions";
 
 function CreateProposal() {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loadingPayment, setLoadingPayment] = useState(false);
   const [proposalType, setProposalType] = useState('');
+  const [group, setGroup] = useState('');
   const [dao, setDao] = useState(null);
   const [descriptionError, setDescriptionError] = useState("");
   const[principalError,setPrincipalError] = useState("");
   const [proposalEntry, setProposalEntry] = useState(''); 
+  const [selectedPermissions, setSelectedPermissions] = useState({});
   const [tokenTransfer, setTokenTransfer] = useState({
     to: '',
     description: '',
@@ -71,6 +74,12 @@ function CreateProposal() {
     group_name: "",
     description: "",
     action_member: "",
+  });
+
+  const [updateGroupsPermissions, setUpdateGroupsPermissions] = useState({
+    group_name: "",
+    description: "",
+    updated_permissions: {}
   });
 
   const [bountyRaised, setBountyRaised] = useState({
@@ -156,9 +165,23 @@ function CreateProposal() {
       try {
         const daoActor = await createDaoActor(daoCanisterId,{agentOptions: {identity,},});
         if (daoActor) {
+          
+          const daoGroups = await daoActor.get_dao_groups();
+          
           const daoDetails = await daoActor.get_dao_detail();
+
+          const groupPermissions = daoGroups.reduce((acc, group) => {
+            acc[group.group_name] = group.group_permissions.map(
+              (permission) => Object.keys(permission)[0]
+            );
+            return acc;
+          }, {});
+  
+          setSelectedPermissions(groupPermissions); 
+                  
+          
           setDao(daoDetails);
-            setIsPrivate(daoDetails.ask_to_join_dao);
+          setIsPrivate(daoDetails.ask_to_join_dao);
           const names = daoDetails.proposal_entry.filter((group) => group.place_name !== "Council").map((group) => group.place_name );
           setGroupNames(names);
         }
@@ -191,6 +214,14 @@ function CreateProposal() {
   const handleInputBountyDone = (e) => {
     const { name, value } = e.target;
     setBountyDone((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleInputUpdateGroupsPermissions = (e) => {
+    const { name, value } = e.target;
+    setUpdateGroupsPermissions((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -518,13 +549,26 @@ function CreateProposal() {
           });
           break;
 
-          case "MintNewTokens":
-            await submitMintNewTokens({
-              total_amount: Number(mintNewTokens.total_amount),
-              description: mintNewTokens.description,
-              proposal_entry: proposalEntry,
-            });
-            break;
+        case "MintNewTokens":
+          await submitMintNewTokens({
+            total_amount: Number(mintNewTokens.total_amount),
+            description: mintNewTokens.description,
+            proposal_entry: proposalEntry,
+          });
+          break;
+
+        case "UpdateGroupsPermissions":
+          await submitUpdateGroupsPermissions({
+            proposal_entry: proposalEntry,
+            description: updateGroupsPermissions.description,
+            updated_permissions: {
+              group_name: updateGroupsPermissions.group_name,
+              updated_permissions: (selectedPermissions[updateGroupsPermissions.group_name] || []).map(
+                (permission) => ({ [permission]: null })
+              ),
+            },
+          });
+          break;
 
         default:
           toast.error(
@@ -910,6 +954,44 @@ function CreateProposal() {
     }
   };
 
+  const submitUpdateGroupsPermissions = async (updateGroupsPermissionsData) => {
+    try {
+      const { updated_permissions } = updateGroupsPermissionsData;
+      
+  
+      if (
+        !updated_permissions ||
+        !updated_permissions.group_name ||
+        !Array.isArray(updated_permissions.updated_permissions) ||
+        updated_permissions.updated_permissions.some(
+          (perm) => typeof perm !== "object" || perm === null
+        )
+      ) {
+        throw new Error("Invalid updated_permissions structure in the payload.");
+      }
+  
+      const daoCanister = await createDaoActor(daoCanisterId);
+  
+      const response = await daoCanister.api_to_update_permission_groups(updateGroupsPermissionsData);
+  
+      if (response.Ok) {
+        toast.success(response.Ok);
+        movetodao();
+  
+        setUpdateGroupsPermissions({
+          group_name: "",
+          description: "",
+          updated_permissions: {},
+        });
+      } else {
+        toast.error(response.Err);
+      }
+    } catch (error) {
+      console.error("Error during update permissions proposal submission:", error);
+      toast.error("Failed to create update permissions proposal");
+    }
+  };
+    
   useEffect(() => {
     if (showModal) {
       document.body.classList.add('overflow-hidden');
@@ -1007,6 +1089,9 @@ function CreateProposal() {
                       </option>
                       <option value="MintNewTokens">
                         Mint New Tokens
+                      </option>
+                      <option value="UpdateGroupsPermissions">
+                        Update Groups Permissions
                       </option>
                     </select>
                   </div>
@@ -1167,6 +1252,17 @@ function CreateProposal() {
                  handleInputMintToken={handleInputMintNewTokens}
                 />
                  )}
+
+                  {proposalType === "UpdateGroupsPermissions" && (
+                    <UpdateGroupsPermissions
+                      updateGroupsPermissions={updateGroupsPermissions}
+                      handleInputUpdateGroupsPermissions={handleInputUpdateGroupsPermissions}
+                      groupNames={groupNames}
+                      dao={dao}
+                      selectedPermissions={selectedPermissions}
+                      setSelectedPermissions={setSelectedPermissions}
+                    />
+                  )}
 
 
                   {/* Submit Button */}
