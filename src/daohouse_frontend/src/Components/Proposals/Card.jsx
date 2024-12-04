@@ -505,7 +505,7 @@ export default function Card({
                 <div className="w-24 h-6 md:w-36 md:h-8 bg-gray-400"></div>
               ) : (
 
-                <h2 className="tablet:text-[32px] md:text-[24px] text-[14px] tablet:font-normal font-medium text-left text-white"
+                <h2 className="tablet:text-[28px] md:text-[24px] text-[14px] tablet:font-normal font-medium text-left text-white"
                   title={userProfile?.username || "Username.user"} >
                   {truncateUsername(userProfile?.username, 15)}
 
@@ -544,9 +544,9 @@ export default function Card({
             {/* Votes Section */}
             <div className="flex justify-center gap-4 md:gap-8 mt-4 md:mt-0">
               {/* Approved Votes */}
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col  items-center">
                 <CircularProgressBar
-                  percentage={
+                 percentage={
                     proposal?.proposal_type.Polls !== undefined
                       ? Math.floor(
                         (pollOptions?.reduce(
@@ -589,7 +589,7 @@ export default function Card({
             </div>
           </div>
           {!isMember && (
-                <div className="text-center w-full bg-red-200 rounded-full mt-4 py-1">
+                <div className={` ${isSubmittedProposals ? " hidden" : "flex justify-center text-center w-full bg-red-200 text-sm md:text-md rounded-full mt-4 py-1"}`}>
                 You are not allowed to vote on this proposal
               </div>
               )}
@@ -1044,7 +1044,7 @@ export default function Card({
                   </div>
                 )}
 
-              <div className="w-full flex justify-between flex-wrap">
+              <div className={`w-full flex justify-between  flex-wrap ${isSubmittedProposals && "mt-10"}`}>
                 <div className="flex flex-wrap justify-start md:justify-start md:mt-0 gap-2 small_phone:gap-4 md:gap-2">
                   {showActions && (
                     <button
@@ -1121,7 +1121,7 @@ export default function Card({
                 {!isProposalDetails && (
                   <div className="bg-[#CDEFFE] rounded-xl cursor-pointer flex">
                     <button
-                      className="px-4 py-1 font-mulish"
+                      className="px-2 py-1 text-sm md:px-4  md:text-lg font-mulish"
                       onClick={handleViewMore}
                     >
                       View More

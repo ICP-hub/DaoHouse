@@ -26,7 +26,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 const EditProfile = () => {
   const { userProfile, fetchUserProfile } = useUserProfile();
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const { backendActor, frontendCanisterId, identity, principal } = useAuth();
  
 
@@ -139,7 +138,6 @@ const EditProfile = () => {
         toast.error(`${response.Err}`);
       } else {
         toast.success("Profile created successfully");
-        setIsModalOpen(true);
         setTimeout(() => {
           navigate('/my-profile');
           window.scrollTo(0, 0); // Scrolls to the top of the page
@@ -153,10 +151,7 @@ const EditProfile = () => {
     }
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
+ 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setProfileData((prevData) => ({ ...prevData, [name]: value }));
@@ -252,38 +247,6 @@ const EditProfile = () => {
     
   }, [userProfile]);
 
-  // ADDED LOGIC FOR STOP SCROLLING 
-  useEffect(() => {
-    const bodyStyle = document.body.style;
- if (isModalOpen) {
-      Object.assign(bodyStyle, {
-        position: 'fixed',
-        top: '0',
-        left: '0',
-        width: '100%',
-        overflow: 'hidden',
-      });
-    } else {
-      Object.assign(bodyStyle, {
-        position: '',
-        top: '',
-        left: '',
-        width: '',
-        overflow: '',
-      });
-    }
-
-    return () => {
-      Object.assign(bodyStyle, {
-        position: '',
-        top: '',
-        left: '',
-        width: '',
-        overflow: '',
-      });
-    };
-  }, [isModalOpen]); // STOP SCROLLING 
-
   const isSaveDisabled = () => {
     // Disable Save button if contact number is less than 10 digits
     return !profileData.contact_number || profileData.contact_number.length < 10 || errors.contact_number;
@@ -352,7 +315,7 @@ const EditProfile = () => {
         </Container>
       </div>
       <Container>
-        <div className={`relative ${isModalOpen ? "blur-sm" : ""}`}>
+        <div className={`relative `}>
           <div className="md:mt-12 mt-8 md:mx-24 mx-6 bg-[#F4F2EC] md:p-6 p-4 rounded-lg">
             <div className="flex items-center gap-2">
               <img
@@ -442,9 +405,10 @@ const EditProfile = () => {
               profileData={profileData}
               handleInputChange={handleInputChange}
               handleSaveChangesClick={handleSaveChangesClick}
-              closeModal={() => setIsModalOpen(false)}
+              closeModal={handleDiscardClick}
               errors={errors}
               isSaveDisabled={isSaveDisabled} // Pass the function to disable the button
+              loading ={loading}
             />
               <div className="hidden sm:flex justify-center gap-5 mt-8">
                 <button
@@ -470,10 +434,6 @@ const EditProfile = () => {
           </div>
         </div>
       </Container>
-      {/* <SuccessModal isOpen={isModalOpen} onClose={closeModal} />
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black opacity-40 z-40"></div>
-      )} */}
     </div>
   );
 };

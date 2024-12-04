@@ -162,8 +162,8 @@ const Following = () => {
                         </button>
                       </div>
                       <div className="flex-1 overflow-hidden">
-                        <h4 className="text-lg font-mulish truncate">
-                          {dao?.dao_name || "No Name"}
+                        <h4 className="text-lg font-mulish truncate w-44">
+                          {dao?.dao_name || "No Name "}
                         </h4>
                         <p className="text-gray-500 truncate max-w-[200px] whitespace-nowrap">
                           {dao?.purpose || "No Purpose"}
