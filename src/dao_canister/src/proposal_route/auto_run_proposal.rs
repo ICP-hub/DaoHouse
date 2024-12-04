@@ -97,14 +97,14 @@ pub fn execute_proposal_on_required_vote(state : &mut State, proposal_id : Strin
                             state.proposals.insert(proposal_id.clone(), proposal);
                         }
                     }
-                    // ProposalType::ChangeGroupPermissions => {
-                    //     if !proposal.has_been_processed_second {
-                    //         ic_cdk::println!(" ChangeGroupPermissions ");
-                    //         ChangeGroupPermissions(state, &proposal);
-                    //         proposal.has_been_processed_second = true;
-                    //         state.proposals.insert(proposal_id.clone(), proposal);
-                    //     }
-                    // }
+                    ProposalType::ChangeGroupPermissions => {
+                        if !proposal.has_been_processed_second {
+                            ic_cdk::println!(" ChangeGroupPermissions ");
+                            change_group_permissions(state, &proposal);
+                            proposal.has_been_processed_second = true;
+                            state.proposals.insert(proposal_id.clone(), proposal);
+                        }
+                    }
                     ProposalType::RemoveMemberToDaoProposal => {
                         if !proposal.has_been_processed_second {
                             ic_cdk::println!(" RemoveMemberToDaoProposal ");
@@ -308,6 +308,14 @@ pub fn check_proposals() {
                                 state.proposals.insert(proposal_id.clone(), proposal);
                             }
                         }
+                        ProposalType::ChangeGroupPermissions => {
+                            if !proposal.has_been_processed_second {
+                                ic_cdk::println!(" ChangeGroupPermissions ");
+                                change_group_permissions(state, &proposal);
+                                proposal.has_been_processed_second = true;
+                                state.proposals.insert(proposal_id.clone(), proposal);
+                            }
+                        }
                         ProposalType::RemoveMemberToDaoProposal => {
                             if !proposal.has_been_processed_second {
                                 ic_cdk::println!(" RemoveMemberToDaoProposal ");
@@ -487,13 +495,17 @@ pub fn add_member_to_group(state: &mut State, proposal: &Proposals) {
     }
 }
 
-// pub fn chnage_group_permissions(state: &mut State, proposal: &Proposals){
-//     if let Some(update_group_permissions) = &proposal.updated_group_permissions {
-//         if let Some(group_name ) = &update_group_permissions.group_name{
-
-//         }
-//     }
-// }
+pub fn change_group_permissions(state: &mut State, proposal: &Proposals) {
+    if let Some(group_data) = &proposal.updated_group_permissions{
+        let group_name = &group_data.group_name;
+        let new_permissions = &group_data.updated_permissions;
+          if let Some(mut updated_group) = state.dao_groups.get(group_name) {
+            updated_group.group_permissions = new_permissions.clone();
+            ic_cdk::println!("updated_group data is : {:?} ",updated_group.clone());
+            state.dao_groups.insert(group_name.to_string(), updated_group);
+        }
+    }
+}
 
 pub fn remove_member_to_group(state: &mut State, proposal: &Proposals) {
     let dao_groups = &mut state.dao_groups;
